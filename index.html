@@ -12,6 +12,20 @@
     body { font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     input[type=number]::-webkit-inner-spin-button, 
     input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    .column-resizer {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 7px;
+      bottom: 0;
+      cursor: col-resize;
+      user-select: none;
+      z-index: 20;
+    }
+    .column-resizer:hover, .column-resizer.is-resizing {
+      background-color: #3b82f6;
+      border-right: 2px solid #1d4ed8;
+    }
   </style>
 </head>
 <body class="bg-slate-100/70 text-slate-800 antialiased p-2 sm:p-5 min-h-screen">
@@ -226,7 +240,7 @@
               📢 성지특가 광고표 & 마진 자동 계산
             </h2>
             <p class="text-xs text-slate-500 mt-0.5">
-              기종명 직접 수정 가능 · 마우스 드래그(⠿)로 순서 끌올 · <b>[숨김]</b> 시 최하단 자동 이동 및 광고 제외
+              통신사별(SK·KT·LG) 독자 순서/숨김 지원 · 엑셀식 열 너비 조절(경계선 드래그) · 기종명 직접 수정
             </p>
           </div>
 
@@ -265,18 +279,42 @@
               </span>
             </div>
 
-            <div class="overflow-hidden border border-slate-200 rounded-xl">
-              <table class="w-full text-xs text-left">
-                <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200">
+            <div class="overflow-x-auto border border-slate-200 rounded-xl">
+              <table id="adTable" class="w-full text-xs text-left border-collapse" style="table-layout: fixed; min-width: 780px;">
+                <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 select-none">
                   <tr>
-                    <th class="p-2.5 w-16 text-center">순서(드래그)</th>
-                    <th class="p-2.5 w-16 text-center">게시상태</th>
-                    <th class="p-2.5 min-w-[150px]">기종명 (직접수정)</th>
-                    <th class="p-2.5 w-24 text-center bg-slate-100/70">기준넷가</th>
-                    <th class="p-2.5 w-20 text-center">번이가</th>
-                    <th class="p-2.5 w-20 text-center">기변가</th>
-                    <th class="p-2.5 w-24 text-center bg-emerald-50/70 text-emerald-800">예상마진</th>
-                    <th class="p-2.5 min-w-[100px]">비고</th>
+                    <th class="relative p-2.5 text-center" style="width: 65px;">
+                      <span>순서</span>
+                      <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
+                    </th>
+                    <th class="relative p-2.5 text-center" style="width: 75px;">
+                      <span>게시상태</span>
+                      <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
+                    </th>
+                    <th class="relative p-2.5" style="width: 170px;">
+                      <span>기종명 (직접수정)</span>
+                      <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
+                    </th>
+                    <th class="relative p-2.5 text-center bg-slate-100/70" style="width: 100px;">
+                      <span>기준넷가</span>
+                      <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
+                    </th>
+                    <th class="relative p-2.5 text-center" style="width: 85px;">
+                      <span>번이가</span>
+                      <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
+                    </th>
+                    <th class="relative p-2.5 text-center" style="width: 85px;">
+                      <span>기변가</span>
+                      <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
+                    </th>
+                    <th class="relative p-2.5 text-center bg-emerald-50/70 text-emerald-800" style="width: 115px;">
+                      <span>예상마진</span>
+                      <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
+                    </th>
+                    <th class="relative p-2.5" style="width: 130px;">
+                      <span>비고</span>
+                      <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
+                    </th>
                   </tr>
                 </thead>
                 <tbody id="adTableBody" class="divide-y divide-slate-100">
@@ -638,6 +676,102 @@
       }
     ];
 
+    // ==================== 통신사별 독자 기종 순서 및 설정 관리 ====================
+    let adCarrierOrders = {
+      SK: null,
+      KT: null,
+      LG: null
+    };
+
+    function saveAdCarrierOrders() {
+      try {
+        localStorage.setItem('phone_ad_carrier_orders', JSON.stringify(adCarrierOrders));
+      } catch (e) {}
+    }
+
+    function loadAdCarrierOrders() {
+      try {
+        const saved = localStorage.getItem('phone_ad_carrier_orders');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && typeof parsed === 'object') {
+            adCarrierOrders = parsed;
+          }
+        }
+      } catch (e) {}
+    }
+
+    function getCarrierDeviceList(carrier) {
+      if (!adCarrierOrders[carrier] || !Array.isArray(adCarrierOrders[carrier]) || adCarrierOrders[carrier].length === 0) {
+        adCarrierOrders[carrier] = devices.map(d => d.id);
+      }
+      // devices에 있는 모든 기종이 포함되도록 동기화
+      devices.forEach(d => {
+        if (!adCarrierOrders[carrier].includes(d.id)) {
+          adCarrierOrders[carrier].push(d.id);
+        }
+      });
+      return adCarrierOrders[carrier].map(id => devices.find(d => d.id === id)).filter(Boolean);
+    }
+
+    // ==================== 엑셀 스타일 열 너비 조절 (Column Resizing) ====================
+    function initColResize(e, resizer) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const th = resizer.parentElement;
+      const startX = e.pageX;
+      const startWidth = th.offsetWidth;
+
+      resizer.classList.add('is-resizing');
+      document.body.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
+
+      function onMouseMove(moveEvent) {
+        const diff = moveEvent.pageX - startX;
+        const newWidth = Math.max(45, startWidth + diff);
+        th.style.width = newWidth + 'px';
+        th.style.minWidth = newWidth + 'px';
+      }
+
+      function onMouseUp() {
+        resizer.classList.remove('is-resizing');
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+        saveColumnWidths();
+      }
+
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+    }
+
+    function saveColumnWidths() {
+      try {
+        const widths = {};
+        document.querySelectorAll('#adTable thead th').forEach((th, i) => {
+          widths[i] = th.style.width;
+        });
+        localStorage.setItem('phone_ad_col_widths', JSON.stringify(widths));
+      } catch (e) {}
+    }
+
+    function loadColumnWidths() {
+      try {
+        const saved = localStorage.getItem('phone_ad_col_widths');
+        if (saved) {
+          const widths = JSON.parse(saved);
+          document.querySelectorAll('#adTable thead th').forEach((th, i) => {
+            if (widths[i]) {
+              th.style.width = widths[i];
+              th.style.minWidth = widths[i];
+            }
+          });
+        }
+      } catch (e) {}
+    }
+
     // PIN 조작
     function inputPin(d) {
       if (enteredPin.length < 6) {
@@ -794,6 +928,18 @@
       render();
     }
 
+    // 광고표 전용: 통신사별 독자 순서 이동
+    function moveDeviceAd(index, direction) {
+      const order = adCarrierOrders[activeAdCarrier];
+      const targetIndex = index + direction;
+      if (targetIndex < 0 || targetIndex >= order.length) return;
+      const temp = order[index];
+      order[index] = order[targetIndex];
+      order[targetIndex] = temp;
+      saveAdCarrierOrders();
+      renderAdSection();
+    }
+
     function swapDeviceOrder(currentIndex, targetId) {
       const targetIndex = devices.findIndex(x => x.id === targetId);
       if (targetIndex !== -1 && targetIndex !== currentIndex) {
@@ -843,12 +989,20 @@
 
       if (dragSourceIndex === null || dragSourceIndex === targetIdx || dragSourceType !== type) return;
 
-      const [moved] = devices.splice(dragSourceIndex, 1);
-      devices.splice(targetIdx, 0, moved);
+      if (type === 'ad') {
+        const order = adCarrierOrders[activeAdCarrier];
+        const [movedId] = order.splice(dragSourceIndex, 1);
+        order.splice(targetIdx, 0, movedId);
+        saveAdCarrierOrders();
+        renderAdSection();
+      } else {
+        const [moved] = devices.splice(dragSourceIndex, 1);
+        devices.splice(targetIdx, 0, moved);
+        render();
+      }
 
       dragSourceIndex = null;
       dragSourceType = null;
-      render();
     }
 
     function onRowDragEnd(e) {
@@ -1020,37 +1174,42 @@
       }
     }
 
-    // 광고표 숨김(제외) 토글 - 숨김 시 목록 맨 아래로 이동
+    // 광고표 숨김(제외) 토글 - 해당 통신사 목록에서만 최하단 이동
     function toggleAdHidden(id) {
-      const idx = devices.findIndex(x => x.id === id);
-      if (idx === -1) return;
-      const d = devices[idx];
+      const d = devices.find(x => x.id === id);
+      if (!d) return;
       if (!d.ad[activeAdCarrier]) d.ad[activeAdCarrier] = {};
 
       const willBeHidden = !d.ad[activeAdCarrier].hidden;
       d.ad[activeAdCarrier].hidden = willBeHidden;
 
-      if (willBeHidden) {
-        // 숨김 처리 시: 목록 맨 아래로 이동
-        const [removed] = devices.splice(idx, 1);
-        devices.push(removed);
-      } else {
-        // 다시 게시 시: 현재 숨김 처리된 기종들의 맨 위(게시 기종들 바로 다음)로 이동
-        const firstHiddenIdx = devices.findIndex((x, i) => i !== idx && x.ad[activeAdCarrier] && x.ad[activeAdCarrier].hidden);
-        if (firstHiddenIdx !== -1 && idx > firstHiddenIdx) {
-          const [removed] = devices.splice(idx, 1);
-          devices.splice(firstHiddenIdx, 0, removed);
+      const order = adCarrierOrders[activeAdCarrier];
+      const idx = order.indexOf(id);
+
+      if (idx !== -1) {
+        if (willBeHidden) {
+          // 숨김 처리 시: 해당 통신사 목록의 맨 아래로 이동
+          const [removedId] = order.splice(idx, 1);
+          order.push(removedId);
+        } else {
+          // 다시 게시 시: 해당 통신사 목록에서 현재 숨김 처리된 기종들의 맨 위(게시 기종들 바로 다음)로 이동
+          const carrierDevices = getCarrierDeviceList(activeAdCarrier);
+          const firstHiddenIdx = carrierDevices.findIndex((x, i) => i !== idx && x.ad[activeAdCarrier] && x.ad[activeAdCarrier].hidden);
+          if (firstHiddenIdx !== -1 && idx > firstHiddenIdx) {
+            const [removedId] = order.splice(idx, 1);
+            order.splice(firstHiddenIdx, 0, removedId);
+          }
         }
       }
 
-      render();
+      saveAdCarrierOrders();
+      renderAdSection();
     }
 
-    // 광고표 기종명 직접 수정
+    // 광고표 기종명 직접 수정 (통신사별 독립 태그 반영)
     function updateAdTag(id, val) {
       const d = devices.find(x => x.id === id);
       if (d) {
-        d.tag = val;
         if (!d.ad[activeAdCarrier]) d.ad[activeAdCarrier] = {};
         d.ad[activeAdCarrier].tag = val;
 
@@ -1065,7 +1224,9 @@
       const adBody = document.getElementById('adTableBody');
       adBody.innerHTML = '';
 
-      devices.forEach((d, idx) => {
+      const carrierDevices = getCarrierDeviceList(activeAdCarrier);
+
+      carrierDevices.forEach((d, idx) => {
         const tr = document.createElement('tr');
         const adData = d.ad[activeAdCarrier];
         const isHidden = !!adData.hidden;
@@ -1089,7 +1250,7 @@
 
         tr.innerHTML = `
           <!-- 순서 (드래그 핸들 ⠿ & ▲/▼ 끌올 지원) -->
-          <td class="p-2 text-center text-slate-400 whitespace-nowrap">
+          <td class="p-2 text-center text-slate-400 whitespace-nowrap overflow-hidden">
             <div class="flex items-center justify-center gap-1.5">
               <div class="drag-handle cursor-grab active:cursor-grabbing p-1.5 rounded-lg bg-slate-50 hover:bg-blue-100 hover:text-blue-700 text-slate-400 select-none transition border border-slate-200/80 shadow-xs flex items-center justify-center"
                    title="마우스로 드래그하여 순서 변경 (위로 끌올 / 아래로 이동)"
@@ -1101,14 +1262,14 @@
                 </svg>
               </div>
               <div class="flex flex-col gap-0.5">
-                <button onclick="moveDevice(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} class="w-4 h-3.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[8px] flex items-center justify-center" title="위로 한 칸">▲</button>
-                <button onclick="moveDevice(${idx}, 1)" ${idx === devices.length - 1 ? 'disabled' : ''} class="w-4 h-3.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[8px] flex items-center justify-center" title="아래로 한 칸">▼</button>
+                <button onclick="moveDeviceAd(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} class="w-4 h-3.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[8px] flex items-center justify-center" title="위로 한 칸">▲</button>
+                <button onclick="moveDeviceAd(${idx}, 1)" ${idx === carrierDevices.length - 1 ? 'disabled' : ''} class="w-4 h-3.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[8px] flex items-center justify-center" title="아래로 한 칸">▼</button>
               </div>
             </div>
           </td>
 
           <!-- 숨김 / 게시 토글 버튼 -->
-          <td class="p-2 text-center">
+          <td class="p-2 text-center overflow-hidden">
             <button onclick="toggleAdHidden('${d.id}')"
                     class="px-2 py-1 rounded-lg text-[11px] font-bold border transition ${isHidden ? 'bg-slate-100 text-slate-400 border-slate-300' : 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100'}">
               ${isHidden ? '🚫 숨김' : '👁️ 게시'}
@@ -1116,7 +1277,7 @@
           </td>
 
           <!-- 기종명 직접 수정 (드롭다운 대신 인풋) -->
-          <td class="p-2">
+          <td class="p-2 overflow-hidden">
             <div class="space-y-0.5">
               <input type="text"
                      value="${currentTag}"
@@ -1128,29 +1289,29 @@
           </td>
 
           <!-- 기준 넷가 (번/기) -->
-          <td class="p-2 text-center bg-slate-50/70 font-mono text-[11px] text-slate-600">
+          <td class="p-2 text-center bg-slate-50/70 font-mono text-[11px] text-slate-600 overflow-hidden truncate">
             ${netMnp !== null ? netMnp : '품절'} / ${netChg !== null ? netChg : '품절'}
           </td>
 
           <!-- 번이가 입력 -->
-          <td class="p-2 text-center">
+          <td class="p-2 text-center overflow-hidden">
             <input type="text" value="${adData.mnp}" oninput="updateAdVal('${d.id}', 'mnp', this.value)"
-                   class="w-16 px-1.5 py-1 text-center font-bold bg-white border border-slate-300 rounded text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+                   class="w-full max-w-[70px] px-1.5 py-1 text-center font-bold bg-white border border-slate-300 rounded text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" />
           </td>
 
           <!-- 기변가 입력 -->
-          <td class="p-2 text-center">
+          <td class="p-2 text-center overflow-hidden">
             <input type="text" value="${adData.chg}" oninput="updateAdVal('${d.id}', 'chg', this.value)"
-                   class="w-16 px-1.5 py-1 text-center font-bold bg-white border border-slate-300 rounded text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+                   class="w-full max-w-[70px] px-1.5 py-1 text-center font-bold bg-white border border-slate-300 rounded text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" />
           </td>
 
           <!-- 예상 마진 (번/기) 실시간 노출 -->
-          <td id="margin-cell-${d.id}" class="p-2 text-center bg-emerald-50/50 text-[11px]">
+          <td id="margin-cell-${d.id}" class="p-2 text-center bg-emerald-50/50 text-[11px] overflow-hidden truncate">
             ${formatMarginBadge(marginMnp)} / ${formatMarginBadge(marginChg)}
           </td>
 
           <!-- 비고 -->
-          <td class="p-2">
+          <td class="p-2 overflow-hidden">
             <input type="text" value="${adData.note || ''}" placeholder="비고(선택)" oninput="updateAdVal('${d.id}', 'note', this.value)"
                    class="w-full px-2 py-1 bg-white border border-slate-200 rounded text-xs text-slate-600 focus:ring-1 focus:ring-blue-500" />
           </td>
@@ -1183,12 +1344,13 @@
       }
     }
 
-    // 광고 문구 생성 (숨김 처리된 기종은 완전히 제외, 사용자 지정 기종명 반영)
+    // 광고 문구 생성 (통신사 독자 순서 적용 및 숨김 처리된 기종 제외)
     function generateAdString(carrier) {
       let outputLines = [];
       let lastGroup = null;
 
-      devices.forEach(d => {
+      const carrierDevices = getCarrierDeviceList(carrier);
+      carrierDevices.forEach(d => {
         const adData = d.ad[carrier];
         // 숨김 처리된 기종은 광고 문구에서 완전히 제외
         if (adData && adData.hidden) return;
@@ -1313,6 +1475,8 @@
       }
     }
 
+    loadAdCarrierOrders();
+    loadColumnWidths();
     updateDots();
   </script>
 </body>
