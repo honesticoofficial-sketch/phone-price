@@ -14,8 +14,8 @@
     input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased p-2 sm:p-6 min-h-screen">
-  <div id="app" class="max-w-6xl mx-auto space-y-5">
+<body class="bg-slate-100/70 text-slate-800 antialiased p-2 sm:p-5 min-h-screen">
+  <div id="app" class="max-w-6xl mx-auto space-y-4">
 
     <!-- ==================== 1. PIN 잠금 모달 ==================== -->
     <div id="pinModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
@@ -39,18 +39,18 @@
         </div>
 
         <!-- Numeric Keypad -->
-        <div class="grid grid-cols-3 gap-2.5 max-w-[210px] mx-auto mb-2">
-          <button onclick="inputPin('1')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 active:bg-blue-50 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">1</button>
-          <button onclick="inputPin('2')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 active:bg-blue-50 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">2</button>
-          <button onclick="inputPin('3')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 active:bg-blue-50 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">3</button>
-          <button onclick="inputPin('4')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 active:bg-blue-50 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">4</button>
-          <button onclick="inputPin('5')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 active:bg-blue-50 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">5</button>
-          <button onclick="inputPin('6')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 active:bg-blue-50 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">6</button>
-          <button onclick="inputPin('7')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 active:bg-blue-50 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">7</button>
-          <button onclick="inputPin('8')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 active:bg-blue-50 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">8</button>
-          <button onclick="inputPin('9')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 active:bg-blue-50 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">9</button>
+        <div class="grid grid-cols-3 gap-2 max-w-[210px] mx-auto mb-2">
+          <button onclick="inputPin('1')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">1</button>
+          <button onclick="inputPin('2')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">2</button>
+          <button onclick="inputPin('3')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">3</button>
+          <button onclick="inputPin('4')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">4</button>
+          <button onclick="inputPin('5')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">5</button>
+          <button onclick="inputPin('6')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">6</button>
+          <button onclick="inputPin('7')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">7</button>
+          <button onclick="inputPin('8')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">8</button>
+          <button onclick="inputPin('9')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">9</button>
           <button onclick="clearPin()" class="h-11 rounded-xl bg-rose-50 text-rose-600 font-semibold text-xs border border-rose-200">초기화</button>
-          <button onclick="inputPin('0')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 active:bg-blue-50 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">0</button>
+          <button onclick="inputPin('0')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">0</button>
           <button onclick="backspacePin()" class="h-11 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center border border-slate-200">⌫</button>
         </div>
         <p id="pinMsg" class="text-xs text-rose-500 font-semibold h-4"></p>
@@ -58,123 +58,112 @@
     </div>
 
     <!-- ==================== 상단 헤더 ==================== -->
-    <header class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs flex flex-wrap items-center justify-between gap-4">
+    <header class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-extrabold text-sm shadow-md shadow-blue-500/20">
+        <div class="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-white font-black text-sm shadow-sm">
           NET
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h1 class="font-extrabold text-lg text-slate-900 tracking-tight">휴대폰 넷가 & 시세 관리</h1>
-            <span class="text-[11px] px-2 py-0.5 rounded-md font-semibold bg-blue-50 text-blue-700 border border-blue-200">
-              오늘자 단가 연동
+            <h1 class="font-extrabold text-base text-slate-900 tracking-tight">휴대폰 넷가 & 시세 관리 시스템</h1>
+            <span class="text-[11px] px-2 py-0.5 rounded-md font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+              3사 출고가/공시 연동
             </span>
           </div>
-          <p class="text-xs text-slate-500">기본부가넷가 / 올부가넷가 실시간 산출표</p>
+          <p class="text-xs text-slate-500">기본부가넷가 / 올부가넷가 실시간 산출</p>
         </div>
       </div>
 
       <!-- 상단 우측 버튼군 -->
       <div class="flex items-center gap-2">
-        <button onclick="openSettingsModal()" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 transition">
-          ⚙️ 공시 & 출고가 확인
+        <button onclick="openSettingsModal()" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white shadow-xs transition">
+          ⚙️ 공시 & 출고가 수정/확인
         </button>
-        <button onclick="lockApp()" class="flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-semibold bg-white hover:bg-slate-100 text-slate-600 border border-slate-300 transition">
+        <button onclick="lockApp()" class="px-3 py-2 rounded-xl text-xs font-semibold bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 transition">
           🔒 잠금
         </button>
       </div>
     </header>
 
-    <!-- ==================== 네비게이션 탭 ==================== -->
-    <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+    <!-- ==================== 네비게이션 탭 & 보기 필터 ==================== -->
+    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3">
       <div class="flex gap-2">
-        <button onclick="switchTab('calc')" id="tabBtn-calc" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-blue-600 text-white shadow-sm transition">
-          📊 넷가 산출표 (기본부가 / 올부가)
+        <button onclick="switchTab('calc')" id="tabBtn-calc" class="px-5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-white shadow-xs transition">
+          📊 넷가 산출표
         </button>
-        <button onclick="switchTab('daily')" id="tabBtn-daily" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition">
+        <button onclick="switchTab('daily')" id="tabBtn-daily" class="px-5 py-2 rounded-xl text-xs font-bold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition">
           ✍️ 오늘자 대리점 단가 입력
         </button>
-        <button onclick="switchTab('ad')" id="tabBtn-ad" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition">
+        <button onclick="switchTab('ad')" id="tabBtn-ad" class="px-5 py-2 rounded-xl text-xs font-bold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition">
           📢 성지특가 광고표 & 복사
         </button>
       </div>
 
-      <!-- 넷가표 보기 모드 필터 (기본부가만 / 올부가만 / 둘 다) -->
-      <div id="viewFilterBox" class="flex items-center gap-1 text-xs bg-slate-100 p-1 rounded-xl border border-slate-200">
-        <button onclick="setNetDisplayMode('both')" id="dispMode-both" class="px-3 py-1 rounded-lg font-bold bg-white text-slate-900 shadow-xs">
+      <!-- 넷가표 보기 모드 필터 -->
+      <div id="viewFilterBox" class="flex items-center gap-1 text-xs bg-white p-1 rounded-xl border border-slate-200 shadow-2xs">
+        <button onclick="setNetDisplayMode('both')" id="dispMode-both" class="px-3 py-1 rounded-lg font-bold bg-slate-900 text-white shadow-xs">
           전체 보기 (기본 + 올부가)
         </button>
-        <button onclick="setNetDisplayMode('basic')" id="dispMode-basic" class="px-3 py-1 rounded-lg font-medium text-slate-600 hover:text-slate-900">
+        <button onclick="setNetDisplayMode('basic')" id="dispMode-basic" class="px-3 py-1 rounded-lg font-semibold text-slate-600 hover:text-slate-900">
           기본부가만
         </button>
-        <button onclick="setNetDisplayMode('all')" id="dispMode-all" class="px-3 py-1 rounded-lg font-medium text-slate-600 hover:text-slate-900">
-          올부가만 (-15만 반영)
+        <button onclick="setNetDisplayMode('all')" id="dispMode-all" class="px-3 py-1 rounded-lg font-semibold text-slate-600 hover:text-slate-900">
+          올부가만 (-15만)
         </button>
       </div>
     </div>
 
     <!-- ==================== TAB 1: 넷가 산출표 ==================== -->
-    <div id="tab-calc" class="space-y-4">
+    <div id="tab-calc" class="space-y-3">
       
-      <!-- 부가서비스 요약 가이드 카드 (화이트 클린) -->
+      <!-- 통신사 부가조건 안내 요약바 -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-        <!-- 🔴 SK -->
-        <div class="p-3.5 bg-white rounded-2xl border border-rose-200 shadow-xs space-y-1">
-          <div class="flex items-center justify-between">
-            <span class="font-extrabold text-rose-700 flex items-center gap-1.5">
-              <span class="w-2 h-2 rounded-full bg-rose-600"></span> SK 부가조건
-            </span>
-            <span class="text-[11px] font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-100">올부가 차감: -15만</span>
+        <div class="p-3 bg-white rounded-xl border border-slate-200 shadow-2xs">
+          <div class="flex justify-between items-center mb-1">
+            <span class="font-bold text-rose-600 flex items-center gap-1.5">🔴 SKT</span>
+            <span class="text-[11px] font-semibold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded">올부가 -15만</span>
           </div>
-          <p class="text-[11px] text-slate-500">기본부가: 마이스마트콜3(M+1), T올케어플러스(M+1)</p>
+          <p class="text-[11px] text-slate-500">기본: 마이스마트콜3(M+1), T올케어플러스(M+1)</p>
         </div>
-
-        <!-- 🔵 KT -->
-        <div class="p-3.5 bg-white rounded-2xl border border-blue-200 shadow-xs space-y-1">
-          <div class="flex items-center justify-between">
-            <span class="font-extrabold text-blue-700 flex items-center gap-1.5">
-              <span class="w-2 h-2 rounded-full bg-blue-600"></span> KT 부가조건
-            </span>
-            <span class="text-[11px] font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">올부가 차감: -15만</span>
+        <div class="p-3 bg-white rounded-xl border border-slate-200 shadow-2xs">
+          <div class="flex justify-between items-center mb-1">
+            <span class="font-bold text-blue-600 flex items-center gap-1.5">🔵 KT</span>
+            <span class="text-[11px] font-semibold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">올부가 -15만</span>
           </div>
-          <p class="text-[11px] text-slate-500">기본부가: 필수팩 L(M+4), 폰 안심보험(M+3)</p>
+          <p class="text-[11px] text-slate-500">기본: 필수팩 L(M+4), 폰 안심보험(M+3)</p>
         </div>
-
-        <!-- 🟡 LG -->
-        <div class="p-3.5 bg-white rounded-2xl border border-pink-200 shadow-xs space-y-1">
-          <div class="flex items-center justify-between">
-            <span class="font-extrabold text-pink-700 flex items-center gap-1.5">
-              <span class="w-2 h-2 rounded-full bg-pink-600"></span> LG 부가조건
-            </span>
-            <span class="text-[11px] font-semibold text-pink-600 bg-pink-50 px-2 py-0.5 rounded-md border border-pink-100">올부가 차감: -15만</span>
+        <div class="p-3 bg-white rounded-xl border border-slate-200 shadow-2xs">
+          <div class="flex justify-between items-center mb-1">
+            <span class="font-bold text-pink-600 flex items-center gap-1.5">🟡 LGU+</span>
+            <span class="text-[11px] font-semibold text-pink-600 bg-pink-50 px-1.5 py-0.5 rounded">올부가 -15만</span>
           </div>
-          <p class="text-[11px] text-slate-500">기본부가: 교보sam+구글원(95일), V컬러링, 폰교체패스</p>
+          <p class="text-[11px] text-slate-500">기본: 교보sam+구글원(95일), V컬러링, 폰교체패스</p>
         </div>
       </div>
 
-      <!-- 메인 넷가 비교 테이블 (화이트 & 하이 콘트라스트) -->
+      <!-- 메인 넷가 비교 테이블 (가독성 극대화, 큰 폰트, 심플 숫자) -->
       <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
         <div class="overflow-x-auto">
           <table class="w-full text-xs text-left border-collapse">
             <thead>
               <!-- 1단 통신사 헤더 -->
-              <tr class="bg-slate-50 text-slate-800 font-bold border-b border-slate-200 text-center">
-                <th rowspan="2" class="p-3 text-left min-w-[150px] border-r border-slate-200 bg-slate-100/70">
-                  기종명 (출고가)
+              <tr class="bg-slate-100 text-slate-800 font-extrabold border-b border-slate-200 text-center">
+                <th rowspan="2" class="p-3 text-left min-w-[170px] border-r border-slate-200 bg-slate-100">
+                  기종명
                 </th>
-                <th colspan="2" class="p-2.5 bg-rose-50/70 text-rose-800 border-r border-slate-200">
+                <th colspan="2" class="p-2.5 bg-rose-50/80 text-rose-700 border-r border-slate-200">
                   🔴 SKT
                 </th>
-                <th colspan="2" class="p-2.5 bg-blue-50/70 text-blue-800 border-r border-slate-200">
+                <th colspan="2" class="p-2.5 bg-blue-50/80 text-blue-700 border-r border-slate-200">
                   🔵 KT
                 </th>
-                <th colspan="2" class="p-2.5 bg-pink-50/70 text-pink-800">
+                <th colspan="2" class="p-2.5 bg-pink-50/80 text-pink-700">
                   🟡 LGU+
                 </th>
               </tr>
 
-              <!-- 2단 번이/기변 서브헤더 -->
-              <tr class="bg-white text-[11px] text-slate-600 font-semibold border-b border-slate-200 text-center">
+              <!-- 2단 번이/기변 서브헤더 (순서: 번이 먼저, 기변 나중) -->
+              <tr class="bg-slate-50 text-[11px] text-slate-600 font-bold border-b border-slate-200 text-center">
                 <th class="p-2 w-36 border-r border-slate-200">번호이동</th>
                 <th class="p-2 w-36 border-r border-slate-200">기기변경</th>
                 <th class="p-2 w-36 border-r border-slate-200">번호이동</th>
@@ -197,7 +186,7 @@
         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
           <div>
             <h2 class="text-sm font-extrabold text-slate-900">✍️ 오늘자 대리점 단가(리베이트) 직접 입력</h2>
-            <p class="text-xs text-slate-500">각 통신사별로 오늘 단가를 입력하면 넷가표에 실시간 자동 계산됩니다.</p>
+            <p class="text-xs text-slate-500">입력 즉시 첫 번째 탭의 넷가표에 실시간 반영됩니다.</p>
           </div>
           <!-- 통신사 선택 -->
           <div class="flex gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200">
@@ -228,14 +217,13 @@
 
     <!-- ==================== TAB 3: 성지특가 광고표 & 복사 ==================== -->
     <div id="tab-ad" class="space-y-4 hidden">
-      <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs space-y-6">
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs space-y-5">
         
-        <!-- 상단 헤더 & 원클릭 복사 버튼 -->
         <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
           <div>
             <h2 class="text-base font-extrabold text-slate-900">📢 성지특가 광고 시세표</h2>
             <p class="text-xs text-slate-500 mt-0.5">
-              보내주신 양식(#기종약칭 번이가/기변가 비고) 그대로 완성된 광고 문구를 1초 만에 복사할 수 있습니다.
+              양식(#기종약칭 번이가/기변가 비고) 그대로 완성된 광고 문구를 1초 만에 복사할 수 있습니다.
             </p>
           </div>
           <button onclick="copyAdTextFormatted()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2">
@@ -243,14 +231,11 @@
           </button>
         </div>
 
-        <!-- 2분할 레이아웃: 좌측(단가/비고 편집) vs 우측(실제 게시 문구 미리보기) -->
+        <!-- 2분할 레이아웃: 좌측(편집) vs 우측(미리보기) -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          
-          <!-- 좌측: 광고 가격 및 태그 설정 (7열) -->
-          <div class="lg:col-span-7 space-y-4">
+          <div class="lg:col-span-7 space-y-3">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-slate-700">📌 기종별 광고가격 & 비고(태그) 수정:</span>
-              <!-- 통신사 필터 -->
+              <span class="text-xs font-bold text-slate-700">📌 기종별 광고가격 & 비고 수정:</span>
               <div class="flex gap-1 text-xs">
                 <button onclick="setAdCarrier('LG')" id="adTab-LG" class="px-3 py-1 rounded-lg font-bold bg-pink-100 text-pink-700 border border-pink-200">LG 특가</button>
                 <button onclick="setAdCarrier('KT')" id="adTab-KT" class="px-3 py-1 rounded-lg font-bold bg-slate-100 text-slate-600">KT 특가</button>
@@ -275,7 +260,7 @@
             </div>
           </div>
 
-          <!-- 우측: 게시 문구 실시간 미리보기 (5열) -->
+          <!-- 우측: 게시 문구 실시간 미리보기 -->
           <div class="lg:col-span-5 space-y-2">
             <div class="flex items-center justify-between">
               <span class="text-xs font-bold text-slate-700">👀 최종 게시 문구 미리보기:</span>
@@ -285,37 +270,48 @@
               <!-- 미리보기 텍스트 -->
             </div>
           </div>
-
         </div>
 
       </div>
     </div>
 
-    <!-- ==================== 설정 모달: 공시지원금 & 출고가 확인 ==================== -->
-    <div id="settingsModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
-      <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full p-6 border border-slate-200 space-y-4 max-h-[90vh] flex flex-col">
+    <!-- ==================== 4. 설정 모달: 공시지원금 & 출고가 직접 수정 ==================== -->
+    <div id="settingsModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 hidden">
+      <div class="bg-white rounded-3xl shadow-2xl max-w-5xl w-full p-6 border border-slate-200 space-y-4 max-h-[92vh] flex flex-col">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
           <div>
             <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
-              ⚙️ 공시지원금 & 출고가 마스터 설정값
+              ⚙️ 공시지원금 & 출고가 마스터 설정 (직접 수정 가능)
             </h3>
             <p class="text-xs text-slate-500 mt-0.5">
-              현재 시스템에 등록된 기종별 출고가와 3사 공시지원금(기변/번이) 내역입니다.
+              통신사별 출고가와 번이/기변 공시를 칸별로 직접 수정할 수 있습니다. 수정 시 넷가가 즉시 자동 재계산됩니다.
             </p>
           </div>
           <button onclick="closeSettingsModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-lg">&times;</button>
         </div>
 
         <div class="overflow-y-auto flex-1 border border-slate-200 rounded-xl">
-          <table class="w-full text-xs text-left">
-            <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 sticky top-0">
-              <tr>
-                <th class="p-2.5">#</th>
-                <th class="p-2.5 min-w-[160px]">기종명</th>
-                <th class="p-2.5 w-24 text-center">출고가(만원)</th>
-                <th class="p-2.5 w-36 text-center bg-rose-50 text-rose-800">SK 공시 (기변/번이)</th>
-                <th class="p-2.5 w-36 text-center bg-blue-50 text-blue-800">KT 공시 (기변/번이)</th>
-                <th class="p-2.5 w-36 text-center bg-pink-50 text-pink-800">LG 공시 (기변/번이)</th>
+          <table class="w-full text-xs text-left border-collapse">
+            <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 sticky top-0 z-10">
+              <tr class="text-center">
+                <th rowspan="2" class="p-2.5 text-left min-w-[150px] bg-slate-100 border-r border-slate-200">기종명</th>
+                <th colspan="3" class="p-2 bg-rose-50 text-rose-800 border-r border-slate-200">🔴 SKT 설정</th>
+                <th colspan="3" class="p-2 bg-blue-50 text-blue-800 border-r border-slate-200">🔵 KT 설정</th>
+                <th colspan="3" class="p-2 bg-pink-50 text-pink-800">🟡 LGU+ 설정</th>
+              </tr>
+              <tr class="text-[11px] text-slate-600 text-center bg-slate-50 border-b border-slate-200">
+                <!-- SK -->
+                <th class="p-1.5 w-20 border-r border-slate-200">출고가</th>
+                <th class="p-1.5 w-18 border-r border-slate-200 font-extrabold text-rose-700">번이공시</th>
+                <th class="p-1.5 w-18 border-r border-slate-200 font-extrabold text-rose-700">기변공시</th>
+                <!-- KT -->
+                <th class="p-1.5 w-20 border-r border-slate-200">출고가</th>
+                <th class="p-1.5 w-18 border-r border-slate-200 font-extrabold text-blue-700">번이공시</th>
+                <th class="p-1.5 w-18 border-r border-slate-200 font-extrabold text-blue-700">기변공시</th>
+                <!-- LG -->
+                <th class="p-1.5 w-20 border-r border-slate-200">출고가</th>
+                <th class="p-1.5 w-18 border-r border-slate-200 font-extrabold text-pink-700">번이공시</th>
+                <th class="p-1.5 w-18 font-extrabold text-pink-700">기변공시</th>
               </tr>
             </thead>
             <tbody id="settingsTableBody" class="divide-y divide-slate-100">
@@ -326,10 +322,10 @@
 
         <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
           <span class="text-slate-500 font-medium">
-            💡 공시지원금이나 출고가가 바뀌었을 때 대화창에서 저(AI)에게 말씀해 주시면 즉시 업데이트해 드립니다!
+            💡 값을 입력하고 [설정 완료]를 누르면 즉시 넷가표에 반영됩니다.
           </span>
-          <button onclick="closeSettingsModal()" class="px-5 py-2 rounded-xl bg-slate-900 text-white font-bold hover:bg-slate-800">
-            닫기
+          <button onclick="closeSettingsModal()" class="px-6 py-2.5 rounded-xl bg-slate-900 text-white font-bold hover:bg-slate-800 shadow-sm transition">
+            설정 완료
           </button>
         </div>
       </div>
@@ -348,33 +344,213 @@
     let activeInputCarrier = "LG";
     let activeAdCarrier = "LG";
     let netDisplayMode = "both"; // 'both', 'basic', 'all'
+    const ALL_ADD_DISCOUNT = 15; // 올부가 추가할인 일괄 -15만원
 
-    // 올부가 할인 일괄 -15만원
-    const ALL_ADD_DISCOUNT = 15;
-
-    // 3. 기기 마스터 데이터
+    // 3. 기기 마스터 데이터 (통신사별 출고가 & 공시 분리 완벽 세팅)
     const devices = [
       // 갤럭시 S 시리즈
-      { id: 's26', group: 'S', tag: '#S26', name: '갤럭시 S26 256G', price: 125.4, sub: { SK: { chg: 60, mnp: 50 }, KT: { chg: 60, mnp: 50 }, LG: { chg: 60, mnp: 50 } }, rate: { SK: { mnp: 59, chg: 62 }, KT: { mnp: 78, chg: 68 }, LG: { mnp: 83, chg: 79 } }, loc: { SK: '도매', KT: '도매', LG: '도매' }, ad: { SK: { mnp: '5', chg: '-10', note: '' }, KT: { mnp: '-15', chg: '-15', note: '' }, LG: { mnp: '-20', chg: '-25', note: '*인상전' } } },
-      { id: 's26p', group: 'S', tag: '#S26+', name: '갤럭시 S26+ 256G', price: 145.2, sub: { SK: { chg: 60, mnp: 50 }, KT: { chg: 60, mnp: 50 }, LG: { chg: 60, mnp: 50 } }, rate: { SK: { mnp: 59, chg: 62 }, KT: { mnp: 68, chg: 52 }, LG: { mnp: 77, chg: 73 } }, loc: { SK: '도매', KT: '도매', LG: '도매' }, ad: { SK: { mnp: '25', chg: '9', note: '' }, KT: { mnp: '15', chg: '25', note: '' }, LG: { mnp: '5', chg: '0', note: '' } } },
-      { id: 's26u', group: 'S', tag: '#S26U', name: '갤럭시 S26 Ultra 256G', price: 179.74, sub: { SK: { chg: 60, mnp: 50 }, KT: { chg: 60, mnp: 50 }, LG: { chg: 60, mnp: 50 } }, rate: { SK: { mnp: 59, chg: 62 }, KT: { mnp: 68, chg: 52 }, LG: { mnp: 77, chg: 73 } }, loc: { SK: '도매', KT: '도매', LG: '도매' }, ad: { SK: { mnp: '59', chg: '45', note: '' }, KT: { mnp: '49', chg: '55', note: '' }, LG: { mnp: '39', chg: '35', note: '*인상전' } } },
-      { id: 's25', group: 'S', tag: '#S25', name: '갤럭시 S25 256G', price: 115.5, sub: { SK: { chg: 50, mnp: 50 }, KT: { chg: 50, mnp: 50 }, LG: { chg: 50, mnp: 50 } }, rate: { SK: { mnp: 47, chg: 43 }, KT: { mnp: 89, chg: 67 }, LG: { mnp: '품절', chg: '품절' } }, loc: { SK: '도매', KT: '도매', LG: '도매' }, ad: { SK: { mnp: '5', chg: '9', note: '' }, KT: { mnp: '-35', chg: '-15', note: '' }, LG: { mnp: '품절', chg: '품절', note: '' } } },
-      { id: 's25u', group: 'S', tag: '#S25U', name: '갤럭시 S25 Ultra 256G', price: 169.84, sub: { SK: { chg: 50, mnp: 50 }, KT: { chg: 50, mnp: 50 }, LG: { chg: 50, mnp: 50 } }, rate: { SK: { mnp: 50, chg: 46 }, KT: { mnp: 89, chg: 67 }, LG: { mnp: '품절', chg: '품절' } }, loc: { SK: '도매', KT: '도매', LG: '도매' }, ad: { SK: { mnp: '59', chg: '59', note: '' }, KT: { mnp: '19', chg: '39', note: '' }, LG: { mnp: '품절', chg: '품절', note: '' } } },
-      { id: 's25e', group: 'S', tag: '#S25엣지', name: '갤럭시 S25 엣지 256G', price: 135.3, sub: { SK: { chg: 68, mnp: 68 }, KT: { chg: 70, mnp: 70 }, LG: { chg: 70, mnp: 70 } }, rate: { SK: { mnp: 40, chg: 52 }, KT: { mnp: '품절', chg: '품절' }, LG: { mnp: 73, chg: 86 } }, loc: { SK: '도매', KT: '도매', LG: '도매' }, ad: { SK: { mnp: '29', chg: '19', note: '' }, KT: { mnp: '', chg: '', note: '' }, LG: { mnp: '-20', chg: '-35', note: '' } } },
+      {
+        id: 's26', group: 'S', tag: '#S26', name: '갤럭시 S26 256G',
+        prices: { SK: 125.4, KT: 125.4, LG: 125.4 },
+        sub: {
+          SK: { mnp: 50, chg: 60 },
+          KT: { mnp: 50, chg: 60 },
+          LG: { mnp: 50, chg: 60 }
+        },
+        rate: { SK: { mnp: 59, chg: 62 }, KT: { mnp: 78, chg: 68 }, LG: { mnp: 83, chg: 79 } },
+        loc: { SK: '도매', KT: '도매', LG: '도매' },
+        ad: { SK: { mnp: '5', chg: '-10', note: '' }, KT: { mnp: '-15', chg: '-15', note: '' }, LG: { mnp: '-20', chg: '-25', note: '*인상전' } }
+      },
+      {
+        id: 's26p', group: 'S', tag: '#S26+', name: '갤럭시 S26+ 256G',
+        prices: { SK: 145.2, KT: 145.2, LG: 145.2 },
+        sub: {
+          SK: { mnp: 50, chg: 60 },
+          KT: { mnp: 50, chg: 60 },
+          LG: { mnp: 50, chg: 60 }
+        },
+        rate: { SK: { mnp: 59, chg: 62 }, KT: { mnp: 68, chg: 52 }, LG: { mnp: 77, chg: 73 } },
+        loc: { SK: '도매', KT: '도매', LG: '도매' },
+        ad: { SK: { mnp: '25', chg: '9', note: '' }, KT: { mnp: '15', chg: '25', note: '' }, LG: { mnp: '5', chg: '0', note: '' } }
+      },
+      {
+        id: 's26u', group: 'S', tag: '#S26U', name: '갤럭시 S26 Ultra 256G',
+        prices: { SK: 179.74, KT: 179.74, LG: 179.74 },
+        sub: {
+          SK: { mnp: 50, chg: 60 },
+          KT: { mnp: 50, chg: 60 },
+          LG: { mnp: 50, chg: 60 }
+        },
+        rate: { SK: { mnp: 59, chg: 62 }, KT: { mnp: 68, chg: 52 }, LG: { mnp: 77, chg: 73 } },
+        loc: { SK: '도매', KT: '도매', LG: '도매' },
+        ad: { SK: { mnp: '59', chg: '45', note: '' }, KT: { mnp: '49', chg: '55', note: '' }, LG: { mnp: '39', chg: '35', note: '*인상전' } }
+      },
+      {
+        id: 's25', group: 'S', tag: '#S25', name: '갤럭시 S25 256G',
+        prices: { SK: 115.5, KT: 115.5, LG: 115.5 },
+        sub: {
+          SK: { mnp: 50, chg: 50 },
+          KT: { mnp: 50, chg: 50 },
+          LG: { mnp: 50, chg: 50 }
+        },
+        rate: { SK: { mnp: 47, chg: 43 }, KT: { mnp: 89, chg: 67 }, LG: { mnp: '품절', chg: '품절' } },
+        loc: { SK: '도매', KT: '도매', LG: '도매' },
+        ad: { SK: { mnp: '5', chg: '9', note: '' }, KT: { mnp: '-35', chg: '-15', note: '' }, LG: { mnp: '품절', chg: '품절', note: '' } }
+      },
+      {
+        id: 's25u', group: 'S', tag: '#S25U', name: '갤럭시 S25 Ultra 256G',
+        prices: { SK: 169.84, KT: 169.84, LG: 169.84 },
+        sub: {
+          SK: { mnp: 50, chg: 50 },
+          KT: { mnp: 50, chg: 50 },
+          LG: { mnp: 50, chg: 50 }
+        },
+        rate: { SK: { mnp: 50, chg: 46 }, KT: { mnp: 89, chg: 67 }, LG: { mnp: '품절', chg: '품절' } },
+        loc: { SK: '도매', KT: '도매', LG: '도매' },
+        ad: { SK: { mnp: '59', chg: '59', note: '' }, KT: { mnp: '19', chg: '39', note: '' }, LG: { mnp: '품절', chg: '품절', note: '' } }
+      },
+      {
+        id: 's25e', group: 'S', tag: '#S25엣지', name: '갤럭시 S25 엣지 256G',
+        // SK 출고가 149.6, KT/LG는 135.3
+        prices: { SK: 149.6, KT: 135.3, LG: 135.3 },
+        sub: {
+          SK: { mnp: 68, chg: 68 },
+          KT: { mnp: 70, chg: 70 },
+          LG: { mnp: 70, chg: 70 }
+        },
+        rate: { SK: { mnp: 40, chg: 52 }, KT: { mnp: '품절', chg: '품절' }, LG: { mnp: 73, chg: 86 } },
+        loc: { SK: '도매', KT: '도매', LG: '도매' },
+        ad: { SK: { mnp: '29', chg: '19', note: '' }, KT: { mnp: '', chg: '', note: '' }, LG: { mnp: '-20', chg: '-35', note: '' } }
+      },
 
       // 폴더블 시리즈
-      { id: 'flip8', group: 'FOLD', tag: '#플립8', name: '갤럭시 Z 플립8', price: 168.3, sub: { SK: { chg: 50, mnp: 50 }, KT: { chg: 50, mnp: 50 }, LG: { chg: 50, mnp: 50 } }, rate: { SK: { mnp: 65, chg: 63 }, KT: { mnp: 69, chg: 48 }, LG: { mnp: 86, chg: 77 } }, loc: { SK: '도매', KT: '도매', LG: '도매' }, ad: { SK: { mnp: '45', chg: '45', note: '' }, KT: { mnp: '35', chg: '59', note: '' }, LG: { mnp: '19', chg: '29', note: '' } } },
-      { id: 'fold8', group: 'FOLD', tag: '#폴드8와이드', name: '갤럭시 Z 폴드8', price: 227.81, sub: { SK: { chg: 50, mnp: 50 }, KT: { chg: 60, mnp: 60 }, LG: { chg: 50, mnp: 50 } }, rate: { SK: { mnp: 55, chg: 70 }, KT: { mnp: 82, chg: 64 }, LG: { mnp: 99, chg: 96 } }, loc: { SK: '도매', KT: '도매', LG: '도매' }, ad: { SK: { mnp: '109', chg: '95', note: '' }, KT: { mnp: '75', chg: '95', note: '' }, LG: { mnp: '65', chg: '69', note: '' } } },
-      { id: 'fold8u', group: 'FOLD', tag: '#폴드8울트라', name: '갤럭시 Z 폴드8 Ultra', price: 257.73, sub: { SK: { chg: 50, mnp: 50 }, KT: { chg: 50, mnp: 50 }, LG: { chg: 50, mnp: 50 } }, rate: { SK: { mnp: 65, chg: 58 }, KT: { mnp: 69, chg: 48 }, LG: { mnp: 86, chg: 77 } }, loc: { SK: '도매', KT: '도매', LG: '도매' }, ad: { SK: { mnp: '129', chg: '139', note: '' }, KT: { mnp: '125', chg: '149', note: '' }, LG: { mnp: '109', chg: '119', note: '' } } },
+      {
+        id: 'flip8', group: 'FOLD', tag: '#플립8', name: '갤럭시 Z 플립8',
+        prices: { SK: 168.3, KT: 168.3, LG: 168.3 },
+        sub: {
+          SK: { mnp: 50, chg: 50 },
+          KT: { mnp: 50, chg: 50 },
+          LG: { mnp: 50, chg: 50 }
+        },
+        rate: { SK: { mnp: 65, chg: 63 }, KT: { mnp: 69, chg: 48 }, LG: { mnp: 86, chg: 77 } },
+        loc: { SK: '도매', KT: '도매', LG: '도매' },
+        ad: { SK: { mnp: '45', chg: '45', note: '' }, KT: { mnp: '35', chg: '59', note: '' }, LG: { mnp: '19', chg: '29', note: '' } }
+      },
+      {
+        id: 'fold8', group: 'FOLD', tag: '#폴드8와이드', name: '갤럭시 Z 폴드8',
+        prices: { SK: 227.81, KT: 227.81, LG: 227.81 },
+        // KT 공시는 60, SK/LG는 50
+        sub: {
+          SK: { mnp: 50, chg: 50 },
+          KT: { mnp: 60, chg: 60 },
+          LG: { mnp: 50, chg: 50 }
+        },
+        rate: { SK: { mnp: 55, chg: 70 }, KT: { mnp: 82, chg: 64 }, LG: { mnp: 99, chg: 96 } },
+        loc: { SK: '도매', KT: '도매', LG: '도매' },
+        ad: { SK: { mnp: '109', chg: '95', note: '' }, KT: { mnp: '75', chg: '95', note: '' }, LG: { mnp: '65', chg: '69', note: '' } }
+      },
+      {
+        id: 'fold8u', group: 'FOLD', tag: '#폴드8울트라', name: '갤럭시 Z 폴드8 Ultra',
+        prices: { SK: 257.73, KT: 257.73, LG: 257.73 },
+        sub: {
+          SK: { mnp: 50, chg: 50 },
+          KT: { mnp: 50, chg: 50 },
+          LG: { mnp: 50, chg: 50 }
+        },
+        rate: { SK: { mnp: 65, chg: 58 }, KT: { mnp: 69, chg: 48 }, LG: { mnp: 86, chg: 77 } },
+        loc: { SK: '도매', KT: '도매', LG: '도매' },
+        ad: { SK: { mnp: '129', chg: '139', note: '' }, KT: { mnp: '125', chg: '149', note: '' }, LG: { mnp: '109', chg: '119', note: '' } }
+      },
 
       // 아이폰 시리즈
-      { id: 'ip17', group: 'IPHONE', tag: '#아17', name: '아이폰17 256G', price: 145.2, sub: { SK: { chg: 45, mnp: 45 }, KT: { chg: 45, mnp: 50 }, LG: { chg: 45, mnp: 55 } }, rate: { SK: { mnp: 49, chg: 52 }, KT: { mnp: 57, chg: 52 }, LG: { mnp: 62, chg: 44 } }, loc: { SK: '도매', KT: '도매', LG: '도매' }, ad: { SK: { mnp: '39', chg: '35', note: '' }, KT: { mnp: '25', chg: '35', note: '' }, LG: { mnp: '15', chg: '45', note: '' } } },
-      { id: 'ipair', group: 'IPHONE', tag: '#17에어', name: '아이폰 AIR 256G', price: 158.4, sub: { SK: { chg: 45, mnp: 45 }, KT: { chg: 45, mnp: 45 }, LG: { chg: 45, mnp: 55 } }, rate: { SK: { mnp: 59, chg: 47 }, KT: { mnp: 60, chg: 55 }, LG: { mnp: 128, chg: 44 } }, loc: { SK: '도매', KT: '도매', LG: '온라인' }, ad: { SK: { mnp: '45', chg: '55', note: '' }, KT: { mnp: '39', chg: '45', note: '' }, LG: { mnp: '-35', chg: '55', note: '' } } },
-      { id: 'ip17p', group: 'IPHONE', tag: '#17프로', name: '아이폰17 PRO 256G', price: 178.2, sub: { SK: { chg: 45, mnp: 45 }, KT: { chg: 45, mnp: 45 }, LG: { chg: 45, mnp: 55 } }, rate: { SK: { mnp: 49, chg: 37 }, KT: { mnp: 57, chg: 52 }, LG: { mnp: 62, chg: 44 } }, loc: { SK: '도매', KT: '도매', LG: '도매' }, ad: { SK: { mnp: '75', chg: '85', note: '' }, KT: { mnp: '65', chg: '69', note: '' }, LG: { mnp: '49', chg: '75', note: '' } } },
-      { id: 'ip18', group: 'IPHONE', tag: '#아18', name: '아이폰18 256G', price: 0, coming: true, sub: { SK: { chg: 0, mnp: 0 }, KT: { chg: 0, mnp: 0 }, LG: { chg: 0, mnp: 0 } }, rate: { SK: { mnp: '', chg: '' }, KT: { mnp: '', chg: '' }, LG: { mnp: '', chg: '' } }, loc: { SK: '도매', KT: '도매', LG: '도매' }, ad: { SK: { mnp: '', chg: '', note: '' }, KT: { mnp: '', chg: '', note: '' }, LG: { mnp: '', chg: '', note: '출시전' } } },
-      { id: 'ip18p', group: 'IPHONE', tag: '#아18프로', name: '아이폰18PRO 256G', price: 199.1, sub: { SK: { chg: 45, mnp: 45 }, KT: { chg: 45, mnp: 45 }, LG: { chg: 45, mnp: 45 } }, rate: { SK: { mnp: 42, chg: 45 }, KT: { mnp: 73, chg: 49 }, LG: { mnp: 68, chg: 49 } }, loc: { SK: '도매', KT: '도매', LG: '도매' }, ad: { SK: { mnp: '99', chg: '95', note: '' }, KT: { mnp: '69', chg: '95', note: '' }, LG: { mnp: '75', chg: '95', note: '' } } },
-      { id: 'ip18pm', group: 'IPHONE', tag: '#아18맥스', name: '아이폰18PROMAX 256G', price: 220, sub: { SK: { chg: 20, mnp: 20 }, KT: { chg: 20, mnp: 20 }, LG: { chg: 20, mnp: 20 } }, rate: { SK: { mnp: 48, chg: 65 }, KT: { mnp: 73, chg: 49 }, LG: { mnp: 68, chg: 49 } }, loc: { SK: '도매', KT: '도매', LG: '도매' }, ad: { SK: { mnp: '139', chg: '125', note: '' }, KT: { mnp: '115', chg: '139', note: '' }, LG: { mnp: '119', chg: '139', note: '' } } },
-      { id: 'ipduo', group: 'IPHONE', tag: '#아이폰듀오', name: '아이폰Duo 256G', price: 330, sub: { SK: { chg: 45, mnp: 45 }, KT: { chg: 45, mnp: 45 }, LG: { chg: 45, mnp: 45 } }, rate: { SK: { mnp: 45, chg: 23 }, KT: { mnp: 64, chg: 31 }, LG: { mnp: 50, chg: 25 } }, loc: { SK: '도매', KT: '도매', LG: '도매' }, ad: { SK: { mnp: '229', chg: '249', note: '' }, KT: { mnp: '209', chg: '245', note: '' }, LG: { mnp: '225', chg: '249', note: '(사전예약)' } } }
+      {
+        id: 'ip17', group: 'IPHONE', tag: '#아17', name: '아이폰17 256G',
+        prices: { SK: 145.2, KT: 145.2, LG: 145.2 },
+        // LG 번이공시 55, KT 번이공시 50, SK는 45
+        sub: {
+          SK: { mnp: 45, chg: 45 },
+          KT: { mnp: 50, chg: 45 },
+          LG: { mnp: 55, chg: 45 }
+        },
+        rate: { SK: { mnp: 49, chg: 52 }, KT: { mnp: 57, chg: 52 }, LG: { mnp: 62, chg: 44 } },
+        loc: { SK: '도매', KT: '도매', LG: '도매' },
+        ad: { SK: { mnp: '39', chg: '35', note: '' }, KT: { mnp: '25', chg: '35', note: '' }, LG: { mnp: '15', chg: '45', note: '' } }
+      },
+      {
+        id: 'ipair', group: 'IPHONE', tag: '#17에어', name: '아이폰 AIR 256G',
+        prices: { SK: 158.4, KT: 158.4, LG: 158.4 },
+        // LG 번이공시 55, KT/SK 번이 45
+        sub: {
+          SK: { mnp: 45, chg: 45 },
+          KT: { mnp: 45, chg: 45 },
+          LG: { mnp: 55, chg: 45 }
+        },
+        rate: { SK: { mnp: 59, chg: 47 }, KT: { mnp: 60, chg: 55 }, LG: { mnp: 128, chg: 44 } },
+        loc: { SK: '도매', KT: '도매', LG: '온라인' },
+        ad: { SK: { mnp: '45', chg: '55', note: '' }, KT: { mnp: '39', chg: '45', note: '' }, LG: { mnp: '-35', chg: '55', note: '' } }
+      },
+      {
+        id: 'ip17p', group: 'IPHONE', tag: '#17프로', name: '아이폰17 PRO 256G',
+        prices: { SK: 178.2, KT: 178.2, LG: 178.2 },
+        // LG 번이공시 55, KT/SK 번이 45
+        sub: {
+          SK: { mnp: 45, chg: 45 },
+          KT: { mnp: 45, chg: 45 },
+          LG: { mnp: 55, chg: 45 }
+        },
+        rate: { SK: { mnp: 49, chg: 37 }, KT: { mnp: 57, chg: 52 }, LG: { mnp: 62, chg: 44 } },
+        loc: { SK: '도매', KT: '도매', LG: '도매' },
+        ad: { SK: { mnp: '75', chg: '85', note: '' }, KT: { mnp: '65', chg: '69', note: '' }, LG: { mnp: '49', chg: '75', note: '' } }
+      },
+      {
+        id: 'ip18', group: 'IPHONE', tag: '#아18', name: '아이폰18 256G',
+        prices: { SK: 0, KT: 0, LG: 0 },
+        coming: true,
+        sub: {
+          SK: { mnp: 0, chg: 0 },
+          KT: { mnp: 0, chg: 0 },
+          LG: { mnp: 0, chg: 0 }
+        },
+        rate: { SK: { mnp: '', chg: '' }, KT: { mnp: '', chg: '' }, LG: { mnp: '', chg: '' } },
+        loc: { SK: '도매', KT: '도매', LG: '도매' },
+        ad: { SK: { mnp: '', chg: '', note: '' }, KT: { mnp: '', chg: '', note: '' }, LG: { mnp: '', chg: '', note: '출시전' } }
+      },
+      {
+        id: 'ip18p', group: 'IPHONE', tag: '#아18프로', name: '아이폰18PRO 256G',
+        prices: { SK: 199.1, KT: 199.1, LG: 199.1 },
+        sub: {
+          SK: { mnp: 45, chg: 45 },
+          KT: { mnp: 45, chg: 45 },
+          LG: { mnp: 45, chg: 45 }
+        },
+        rate: { SK: { mnp: 42, chg: 45 }, KT: { mnp: 73, chg: 49 }, LG: { mnp: 68, chg: 49 } },
+        loc: { SK: '도매', KT: '도매', LG: '도매' },
+        ad: { SK: { mnp: '99', chg: '95', note: '' }, KT: { mnp: '69', chg: '95', note: '' }, LG: { mnp: '75', chg: '95', note: '' } }
+      },
+      {
+        id: 'ip18pm', group: 'IPHONE', tag: '#아18맥스', name: '아이폰18PROMAX 256G',
+        prices: { SK: 220, KT: 220, LG: 220 },
+        sub: {
+          SK: { mnp: 20, chg: 20 },
+          KT: { mnp: 20, chg: 20 },
+          LG: { mnp: 20, chg: 20 }
+        },
+        rate: { SK: { mnp: 48, chg: 65 }, KT: { mnp: 73, chg: 49 }, LG: { mnp: 68, chg: 49 } },
+        loc: { SK: '도매', KT: '도매', LG: '도매' },
+        ad: { SK: { mnp: '139', chg: '125', note: '' }, KT: { mnp: '115', chg: '139', note: '' }, LG: { mnp: '119', chg: '139', note: '' } }
+      },
+      {
+        id: 'ipduo', group: 'IPHONE', tag: '#아이폰듀오', name: '아이폰Duo 256G',
+        prices: { SK: 330, KT: 330, LG: 330 },
+        sub: {
+          SK: { mnp: 45, chg: 45 },
+          KT: { mnp: 45, chg: 45 },
+          LG: { mnp: 45, chg: 45 }
+        },
+        rate: { SK: { mnp: 45, chg: 23 }, KT: { mnp: 64, chg: 31 }, LG: { mnp: 50, chg: 25 } },
+        loc: { SK: '도매', KT: '도매', LG: '도매' },
+        ad: { SK: { mnp: '229', chg: '249', note: '' }, KT: { mnp: '209', chg: '245', note: '' }, LG: { mnp: '225', chg: '249', note: '(사전예약)' } }
+      }
     ];
 
     // PIN 조작
@@ -408,7 +584,7 @@
       const dots = document.getElementById('pinDots').children;
       for (let i = 0; i < 6; i++) {
         if (i < enteredPin.length) {
-          dots[i].className = "w-3.5 h-3.5 rounded-full bg-blue-600 border-2 border-blue-600";
+          dots[i].className = "w-3.5 h-3.5 rounded-full bg-slate-900 border-2 border-slate-900";
         } else {
           dots[i].className = "w-3.5 h-3.5 rounded-full border-2 border-slate-200 bg-white";
         }
@@ -426,37 +602,38 @@
         document.getElementById(`tab-${id}`).classList.toggle('hidden', id !== t);
         const b = document.getElementById(`tabBtn-${id}`);
         if (id === t) {
-          b.className = "px-5 py-2.5 rounded-xl text-xs font-bold bg-blue-600 text-white shadow-sm transition";
+          b.className = "px-5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-white shadow-xs transition";
         } else {
-          b.className = "px-5 py-2.5 rounded-xl text-xs font-bold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition";
+          b.className = "px-5 py-2 rounded-xl text-xs font-bold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition";
         }
       });
       document.getElementById('viewFilterBox').classList.toggle('hidden', t !== 'calc');
       render();
     }
 
-    // 넷가 필터 모드 (both, basic, all)
+    // 넷가 필터 모드
     function setNetDisplayMode(m) {
       netDisplayMode = m;
       ['both', 'basic', 'all'].forEach(x => {
         const btn = document.getElementById(`dispMode-${x}`);
         if (x === m) {
-          btn.className = "px-3 py-1 rounded-lg font-bold bg-white text-slate-900 shadow-xs";
+          btn.className = "px-3 py-1 rounded-lg font-bold bg-slate-900 text-white shadow-xs";
         } else {
-          btn.className = "px-3 py-1 rounded-lg font-medium text-slate-600 hover:text-slate-900";
+          btn.className = "px-3 py-1 rounded-lg font-semibold text-slate-600 hover:text-slate-900";
         }
       });
       render();
     }
 
     // 넷가 계산 함수
+    // 공식: 출고가 - 공시지원금 - 대리점단가 (- 올부가 15만원)
     function calcNet(d, carrier, type, mode = 'basic') {
       if (d.coming) return null;
       const rateVal = d.rate[carrier][type];
       if (rateVal === '품절' || rateVal === '' || rateVal === null || isNaN(rateVal)) return null;
 
-      const release = d.price;
-      const sub = d.sub[carrier][type] || 0;
+      const release = (d.prices && d.prices[carrier] !== undefined) ? d.prices[carrier] : (d.price || 0);
+      const sub = (d.sub[carrier] && d.sub[carrier][type] !== undefined) ? d.sub[carrier][type] : 0;
       const rebate = parseFloat(rateVal);
 
       let net = release - sub - rebate;
@@ -468,68 +645,88 @@
       return Math.round(net * 100) / 100;
     }
 
-    function formatNetHtml(val) {
+    // 심플 포맷터: "차비 얼마" 대신 엑셀처럼 심플하게 숫자만 출력 (마이너스, 플러스 구분)
+    function formatNetSimple(val, isLarge = false) {
       if (val === null) return `<span class="text-slate-400 font-normal">품절</span>`;
+      const sizeClass = isLarge ? "text-base font-extrabold" : "text-sm font-bold";
+      
       if (val < 0) {
-        return `<span class="inline-block px-1.5 py-0.5 rounded font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-200">차비 ${Math.abs(val)}</span>`;
+        // 마이너스 금액: 깔끔한 빨강/로즈 텍스트로 심플 표시 (예: -7.6)
+        return `<span class="${sizeClass} text-rose-600 tracking-tight">${val}</span>`;
       } else if (val === 0) {
-        return `<span class="font-bold text-amber-600">0원(공짜)</span>`;
+        return `<span class="${sizeClass} text-amber-600">0</span>`;
       } else {
-        return `<span class="font-extrabold text-slate-900">${val}만</span>`;
+        // 플러스 금액: 진한 슬레이트 텍스트 (예: 16.4)
+        return `<span class="${sizeClass} text-slate-900 tracking-tight">${val}</span>`;
       }
     }
 
+    // 넷가 셀 렌더링
     function renderCell(d, carrier, type) {
       if (d.coming) return `<span class="text-slate-400">출시전</span>`;
 
       const basicNet = calcNet(d, carrier, type, 'basic');
       const allNet = calcNet(d, carrier, type, 'all');
 
-      if (basicNet === null) return `<span class="text-slate-400">품절</span>`;
+      if (basicNet === null) return `<span class="text-slate-400 font-normal">품절</span>`;
 
       if (netDisplayMode === 'basic') {
-        return `<div class="py-1">${formatNetHtml(basicNet)}</div>`;
+        return `<div class="py-1.5">${formatNetSimple(basicNet, true)}</div>`;
       } else if (netDisplayMode === 'all') {
-        return `<div class="py-1">${formatNetHtml(allNet)}</div>`;
+        return `<div class="py-1.5">${formatNetSimple(allNet, true)}</div>`;
       } else {
+        // 전체 보기: 기본부가와 올부가를 상하로 시원하게 배치
         return `
-          <div class="space-y-1 py-0.5">
-            <div class="flex items-center justify-between text-[11px] gap-1">
-              <span class="text-slate-400 font-medium">기본:</span>
-              <span class="font-bold">${basicNet < 0 ? '차비 ' + Math.abs(basicNet) : basicNet + '만'}</span>
+          <div class="py-1 space-y-1">
+            <div class="flex items-center justify-between text-xs px-1">
+              <span class="text-slate-400 font-medium text-[11px]">기본</span>
+              ${formatNetSimple(basicNet, false)}
             </div>
-            <div class="flex items-center justify-between text-[11px] gap-1 pt-0.5 border-t border-slate-100">
-              <span class="text-blue-600 font-semibold">올부가:</span>
-              ${formatNetHtml(allNet)}
+            <div class="flex items-center justify-between text-xs px-1 pt-1 border-t border-slate-100">
+              <span class="text-blue-600 font-bold text-[11px]">올부가</span>
+              ${formatNetSimple(allNet, false)}
             </div>
           </div>
         `;
       }
     }
 
+    // 메인 테이블 렌더
     function render() {
-      // 1. 넷가 테이블 렌더
       const tbody = document.getElementById('calcTableBody');
       tbody.innerHTML = '';
       devices.forEach(d => {
         const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50 transition border-b border-slate-100 text-center";
+        tr.className = "hover:bg-slate-50/80 transition border-b border-slate-100 text-center";
+
+        // 통신사별 출고가 표시 (다를 경우 각각 안내)
+        const skP = d.prices ? d.prices.SK : d.price;
+        const ktP = d.prices ? d.prices.KT : d.price;
+        const lgP = d.prices ? d.prices.LG : d.price;
+        let priceSummary = `${skP}만`;
+        if (skP !== ktP || skP !== lgP) {
+          priceSummary = `SK ${skP} / KT,LG ${lgP}만`;
+        }
+
         tr.innerHTML = `
-          <td class="p-3 text-left font-bold text-slate-900 border-r border-slate-200 bg-slate-50/50">
-            <div class="text-xs">${d.name}</div>
-            <div class="text-[11px] text-slate-500 font-normal mt-0.5">출고가: ${d.price ? d.price + '만' : '출시전'}</div>
+          <td class="p-3 text-left font-bold text-slate-900 border-r border-slate-200 bg-slate-50/40">
+            <div class="text-xs font-extrabold text-slate-900">${d.name}</div>
+            <div class="text-[11px] text-slate-400 font-normal mt-0.5">출고가: ${d.coming ? '출시전' : priceSummary}</div>
           </td>
-          <td class="p-2 border-r border-slate-200">${renderCell(d, 'SK', 'mnp')}</td>
-          <td class="p-2 border-r border-slate-200">${renderCell(d, 'SK', 'chg')}</td>
-          <td class="p-2 border-r border-slate-200">${renderCell(d, 'KT', 'mnp')}</td>
-          <td class="p-2 border-r border-slate-200">${renderCell(d, 'KT', 'chg')}</td>
-          <td class="p-2 border-r border-slate-200">${renderCell(d, 'LG', 'mnp')}</td>
-          <td class="p-2">${renderCell(d, 'LG', 'chg')}</td>
+          <!-- SK 번이 / 기변 -->
+          <td class="p-2 border-r border-slate-200 bg-rose-50/10">${renderCell(d, 'SK', 'mnp')}</td>
+          <td class="p-2 border-r border-slate-200 bg-rose-50/10">${renderCell(d, 'SK', 'chg')}</td>
+          <!-- KT 번이 / 기변 -->
+          <td class="p-2 border-r border-slate-200 bg-blue-50/10">${renderCell(d, 'KT', 'mnp')}</td>
+          <td class="p-2 border-r border-slate-200 bg-blue-50/10">${renderCell(d, 'KT', 'chg')}</td>
+          <!-- LG 번이 / 기변 -->
+          <td class="p-2 border-r border-slate-200 bg-pink-50/10">${renderCell(d, 'LG', 'mnp')}</td>
+          <td class="p-2 bg-pink-50/10">${renderCell(d, 'LG', 'chg')}</td>
         `;
         tbody.appendChild(tr);
       });
 
-      // 2. 단가 입력 테이블
+      // 단가 입력 테이블
       const dailyBody = document.getElementById('dailyTableBody');
       dailyBody.innerHTML = '';
       devices.forEach((d, idx) => {
@@ -551,10 +748,7 @@
         dailyBody.appendChild(tr);
       });
 
-      // 3. 성지특가 렌더
       renderAdSection();
-
-      // 4. 설정 테이블
       renderSettingsTable();
     }
 
@@ -579,6 +773,7 @@
       }
     }
 
+    // 광고 섹션
     function setAdCarrier(c) {
       activeAdCarrier = c;
       ['LG', 'KT', 'SK'].forEach(x => {
@@ -669,37 +864,94 @@
       });
     }
 
+    // 설정 모달 (공시 & 출고가 직접 수정)
     function openSettingsModal() {
       document.getElementById('settingsModal').classList.remove('hidden');
       renderSettingsTable();
     }
     function closeSettingsModal() {
       document.getElementById('settingsModal').classList.add('hidden');
+      render();
     }
 
+    // 설정 테이블 렌더 (번이 -> 기변 순서, 출고가 & 공시 칸 분리 및 직접 수정 input)
     function renderSettingsTable() {
       const tbody = document.getElementById('settingsTableBody');
       if (!tbody) return;
       tbody.innerHTML = '';
+
       devices.forEach((d, idx) => {
         const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50 border-b border-slate-100";
+        tr.className = "hover:bg-slate-50 border-b border-slate-100 text-center";
+
+        const skPrice = d.prices ? d.prices.SK : d.price;
+        const ktPrice = d.prices ? d.prices.KT : d.price;
+        const lgPrice = d.prices ? d.prices.LG : d.price;
+
         tr.innerHTML = `
-          <td class="p-2 text-center text-slate-400">${idx + 1}</td>
-          <td class="p-2 font-bold text-slate-800">${d.name}</td>
-          <td class="p-2 text-center font-bold text-slate-700">${d.price ? d.price + '만' : '출시전'}</td>
-          <td class="p-2 text-center bg-rose-50/40 text-rose-900 font-semibold">
-            ${d.sub.SK.chg}만 / ${d.sub.SK.mnp}만
+          <td class="p-2 text-left font-bold text-slate-800 bg-slate-50/50 border-r border-slate-200">
+            <span class="text-slate-400 font-normal mr-1">${idx + 1}.</span> ${d.name}
           </td>
-          <td class="p-2 text-center bg-blue-50/40 text-blue-900 font-semibold">
-            ${d.sub.KT.chg}만 / ${d.sub.KT.mnp}만
+
+          <!-- SK 설정 (출고가 / 번이공시 / 기변공시) -->
+          <td class="p-1 border-r border-slate-200">
+            <input type="number" step="0.01" value="${skPrice}" onchange="updateDevicePrice('${d.id}', 'SK', this.value)"
+                   class="w-16 px-1 py-1 text-center font-bold bg-white border border-slate-300 rounded text-xs focus:ring-1 focus:ring-rose-500" />
           </td>
-          <td class="p-2 text-center bg-pink-50/40 text-pink-900 font-semibold">
-            ${d.sub.LG.chg}만 / ${d.sub.LG.mnp}만
+          <td class="p-1 border-r border-slate-200">
+            <input type="number" value="${d.sub.SK.mnp}" onchange="updateDeviceSub('${d.id}', 'SK', 'mnp', this.value)"
+                   class="w-14 px-1 py-1 text-center font-bold text-rose-700 bg-rose-50/50 border border-rose-200 rounded text-xs focus:ring-1 focus:ring-rose-500" />
+          </td>
+          <td class="p-1 border-r border-slate-200">
+            <input type="number" value="${d.sub.SK.chg}" onchange="updateDeviceSub('${d.id}', 'SK', 'chg', this.value)"
+                   class="w-14 px-1 py-1 text-center font-bold text-rose-700 bg-rose-50/50 border border-rose-200 rounded text-xs focus:ring-1 focus:ring-rose-500" />
+          </td>
+
+          <!-- KT 설정 (출고가 / 번이공시 / 기변공시) -->
+          <td class="p-1 border-r border-slate-200">
+            <input type="number" step="0.01" value="${ktPrice}" onchange="updateDevicePrice('${d.id}', 'KT', this.value)"
+                   class="w-16 px-1 py-1 text-center font-bold bg-white border border-slate-300 rounded text-xs focus:ring-1 focus:ring-blue-500" />
+          </td>
+          <td class="p-1 border-r border-slate-200">
+            <input type="number" value="${d.sub.KT.mnp}" onchange="updateDeviceSub('${d.id}', 'KT', 'mnp', this.value)"
+                   class="w-14 px-1 py-1 text-center font-bold text-blue-700 bg-blue-50/50 border border-blue-200 rounded text-xs focus:ring-1 focus:ring-blue-500" />
+          </td>
+          <td class="p-1 border-r border-slate-200">
+            <input type="number" value="${d.sub.KT.chg}" onchange="updateDeviceSub('${d.id}', 'KT', 'chg', this.value)"
+                   class="w-14 px-1 py-1 text-center font-bold text-blue-700 bg-blue-50/50 border border-blue-200 rounded text-xs focus:ring-1 focus:ring-blue-500" />
+          </td>
+
+          <!-- LG 설정 (출고가 / 번이공시 / 기변공시) -->
+          <td class="p-1 border-r border-slate-200">
+            <input type="number" step="0.01" value="${lgPrice}" onchange="updateDevicePrice('${d.id}', 'LG', this.value)"
+                   class="w-16 px-1 py-1 text-center font-bold bg-white border border-slate-300 rounded text-xs focus:ring-1 focus:ring-pink-500" />
+          </td>
+          <td class="p-1 border-r border-slate-200">
+            <input type="number" value="${d.sub.LG.mnp}" onchange="updateDeviceSub('${d.id}', 'LG', 'mnp', this.value)"
+                   class="w-14 px-1 py-1 text-center font-bold text-pink-700 bg-pink-50/50 border border-pink-200 rounded text-xs focus:ring-1 focus:ring-pink-500" />
+          </td>
+          <td class="p-1">
+            <input type="number" value="${d.sub.LG.chg}" onchange="updateDeviceSub('${d.id}', 'LG', 'chg', this.value)"
+                   class="w-14 px-1 py-1 text-center font-bold text-pink-700 bg-pink-50/50 border border-pink-200 rounded text-xs focus:ring-1 focus:ring-pink-500" />
           </td>
         `;
         tbody.appendChild(tr);
       });
+    }
+
+    function updateDevicePrice(id, carrier, val) {
+      const d = devices.find(x => x.id === id);
+      if (d) {
+        if (!d.prices) d.prices = { SK: d.price, KT: d.price, LG: d.price };
+        d.prices[carrier] = parseFloat(val) || 0;
+      }
+    }
+
+    function updateDeviceSub(id, carrier, type, val) {
+      const d = devices.find(x => x.id === id);
+      if (d) {
+        d.sub[carrier][type] = parseFloat(val) || 0;
+      }
     }
 
     updateDots();
