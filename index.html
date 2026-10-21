@@ -971,23 +971,6 @@
         }
       } catch (e) {}
     }
-      } catch (e) {}
-    }
-
-    function loadColumnWidths() {
-      try {
-        const saved = localStorage.getItem('phone_ad_col_widths');
-        if (saved) {
-          const widths = JSON.parse(saved);
-          document.querySelectorAll('#adTable thead th').forEach((th, i) => {
-            if (widths[i]) {
-              th.style.width = widths[i];
-              th.style.minWidth = widths[i];
-            }
-          });
-        }
-      } catch (e) {}
-    }
 
     // PIN 조작
     function inputPin(d) {
@@ -1030,6 +1013,23 @@
       clearPin();
       document.getElementById('pinModal').classList.remove('hidden');
     }
+
+    // 키보드 숫자 입력 지원 (물리 키보드로 PIN 입력 가능)
+    window.addEventListener('keydown', (e) => {
+      const pinModal = document.getElementById('pinModal');
+      if (pinModal && !pinModal.classList.contains('hidden')) {
+        if (/^[0-9]$/.test(e.key)) {
+          e.preventDefault();
+          inputPin(e.key);
+        } else if (e.key === 'Backspace') {
+          e.preventDefault();
+          backspacePin();
+        } else if (e.key === 'Escape') {
+          e.preventDefault();
+          clearPin();
+        }
+      }
+    });
 
     function switchTab(t) {
       currentTab = t;
@@ -1221,8 +1221,9 @@
         saveLayouts();
         renderCalcTable();
       } else if (type === 'daily') {
-        const [movedId] = dailyRows.splice(dragSourceIndex, 1);
-        dailyRows.splice(targetIdx, 0, movedId);
+        const rows = getDailyRows(activeInputCarrier);
+        const [movedId] = rows.splice(dragSourceIndex, 1);
+        rows.splice(targetIdx, 0, movedId);
         saveLayouts();
         renderDailyTable();
       }
@@ -1315,6 +1316,7 @@
       if (!dailyBody) return;
       dailyBody.innerHTML = '';
 
+      const dailyRows = getDailyRows(activeInputCarrier);
       dailyRows.forEach((rowId, idx) => {
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50 border-b border-slate-100 transition";
@@ -1370,7 +1372,7 @@
               </div>
               <div class="flex flex-col gap-0.5">
                 <button onclick="moveDeviceDaily(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} class="w-4 h-3.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[8px] flex items-center justify-center" title="위로 한 칸">▲</button>
-                <button onclick="moveDeviceDaily(${idx}, 1)" ${idx === currentRows.length - 1 ? 'disabled' : ''} class="w-4 h-3.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[8px] flex items-center justify-center" title="아래로 한 칸">▼</button>
+                <button onclick="moveDeviceDaily(${idx}, 1)" ${idx === dailyRows.length - 1 ? 'disabled' : ''} class="w-4 h-3.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[8px] flex items-center justify-center" title="아래로 한 칸">▼</button>
               </div>
               <button onclick="deleteDailyRow(${idx})" class="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50 text-xs ml-0.5" title="이 통신사에서 삭제 (넷가표 품절 연동)">✕</button>
             </div>
