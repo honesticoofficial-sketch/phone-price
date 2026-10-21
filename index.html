@@ -15,7 +15,7 @@
   </style>
 </head>
 <body class="bg-slate-100/70 text-slate-800 antialiased p-2 sm:p-5 min-h-screen">
-  <div id="app" class="max-w-6xl mx-auto space-y-4">
+  <div id="app" class="max-w-7xl mx-auto space-y-4">
 
     <!-- ==================== 1. PIN 잠금 모달 ==================== -->
     <div id="pinModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
@@ -67,10 +67,10 @@
           <div class="flex items-center gap-2">
             <h1 class="font-extrabold text-base text-slate-900 tracking-tight">휴대폰 넷가 & 시세 관리 시스템</h1>
             <span class="text-[11px] px-2 py-0.5 rounded-md font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-              3사 출고가/공시 연동
+              실시간 마진 계산 연동
             </span>
           </div>
-          <p class="text-xs text-slate-500">기본부가넷가 / 올부가넷가 실시간 산출</p>
+          <p class="text-xs text-slate-500">기본부가/올부가 선택 및 기종 자유 이동/선택 지원</p>
         </div>
       </div>
 
@@ -95,11 +95,11 @@
           ✍️ 오늘자 대리점 단가 입력
         </button>
         <button onclick="switchTab('ad')" id="tabBtn-ad" class="px-5 py-2 rounded-xl text-xs font-bold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition">
-          📢 성지특가 광고표 & 복사
+          📢 성지특가 광고표 & 마진 계산
         </button>
       </div>
 
-      <!-- 넷가표 보기 모드 필터 -->
+      <!-- 넷가표 보기 모드 필터 (TAB 1 전용) -->
       <div id="viewFilterBox" class="flex items-center gap-1 text-xs bg-white p-1 rounded-xl border border-slate-200 shadow-2xs">
         <button onclick="setNetDisplayMode('both')" id="dispMode-both" class="px-3 py-1 rounded-lg font-bold bg-slate-900 text-white shadow-xs">
           전체 보기 (기본 + 올부가)
@@ -141,12 +141,11 @@
         </div>
       </div>
 
-      <!-- 메인 넷가 비교 테이블 (가독성 극대화, 큰 폰트, 심플 숫자) -->
+      <!-- 메인 넷가 비교 테이블 -->
       <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
         <div class="overflow-x-auto">
           <table class="w-full text-xs text-left border-collapse">
             <thead>
-              <!-- 1단 통신사 헤더 -->
               <tr class="bg-slate-100 text-slate-800 font-extrabold border-b border-slate-200 text-center">
                 <th rowspan="2" class="p-3 text-left min-w-[170px] border-r border-slate-200 bg-slate-100">
                   기종명
@@ -161,8 +160,6 @@
                   🟡 LGU+
                 </th>
               </tr>
-
-              <!-- 2단 번이/기변 서브헤더 (순서: 번이 먼저, 기변 나중) -->
               <tr class="bg-slate-50 text-[11px] text-slate-600 font-bold border-b border-slate-200 text-center">
                 <th class="p-2 w-36 border-r border-slate-200">번호이동</th>
                 <th class="p-2 w-36 border-r border-slate-200">기기변경</th>
@@ -186,7 +183,7 @@
         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
           <div>
             <h2 class="text-sm font-extrabold text-slate-900">✍️ 오늘자 대리점 단가(리베이트) 직접 입력</h2>
-            <p class="text-xs text-slate-500">입력 즉시 첫 번째 탭의 넷가표에 실시간 반영됩니다.</p>
+            <p class="text-xs text-slate-500">순서 이동(▲/▼) 또는 기종을 변경하여 원하는 순서로 정렬할 수 있습니다.</p>
           </div>
           <!-- 통신사 선택 -->
           <div class="flex gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200">
@@ -200,11 +197,11 @@
           <table class="w-full text-xs text-left">
             <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200">
               <tr>
-                <th class="p-2.5 w-10 text-center">#</th>
-                <th class="p-2.5 min-w-[170px]">기종명</th>
-                <th class="p-2.5 w-40 text-center">번호이동 단가 (만원)</th>
-                <th class="p-2.5 w-40 text-center">기기변경 단가 (만원)</th>
-                <th class="p-2.5 w-28 text-center">단가처</th>
+                <th class="p-2.5 w-16 text-center">순서</th>
+                <th class="p-2.5 min-w-[200px]">기종 선택 (드롭다운)</th>
+                <th class="p-2.5 w-36 text-center">번호이동 단가 (만원)</th>
+                <th class="p-2.5 w-36 text-center">기기변경 단가 (만원)</th>
+                <th class="p-2.5 w-24 text-center">단가처</th>
               </tr>
             </thead>
             <tbody id="dailyTableBody" class="divide-y divide-slate-100">
@@ -215,42 +212,68 @@
       </div>
     </div>
 
-    <!-- ==================== TAB 3: 성지특가 광고표 & 복사 ==================== -->
+    <!-- ==================== TAB 3: 성지특가 광고표 & 마진 계산 ==================== -->
     <div id="tab-ad" class="space-y-4 hidden">
       <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs space-y-5">
         
+        <!-- 상단 헤더, 마진 기준 선택 & 원클릭 복사 -->
         <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
           <div>
-            <h2 class="text-base font-extrabold text-slate-900">📢 성지특가 광고 시세표</h2>
+            <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+              📢 성지특가 광고표 & 마진 자동 계산
+            </h2>
             <p class="text-xs text-slate-500 mt-0.5">
-              양식(#기종약칭 번이가/기변가 비고) 그대로 완성된 광고 문구를 1초 만에 복사할 수 있습니다.
+              광고가격을 적으면 넷가 대비 판매 마진이 즉시 계산됩니다. (행 순서 이동 ▲/▼ 및 기종 드롭다운 변경 가능)
             </p>
           </div>
-          <button onclick="copyAdTextFormatted()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2">
-            <span>📋</span> 시세표 문구 원클릭 복사
-          </button>
+
+          <!-- 우측: 마진 기준 토글 & 복사 버튼 -->
+          <div class="flex flex-wrap items-center gap-3">
+            <!-- 마진 계산 기준 선택 -->
+            <div class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs">
+              <span class="text-slate-500 font-semibold px-2">마진 산정 기준:</span>
+              <button onclick="setAdMarginBase('all')" id="adMarginBase-all" class="px-3 py-1.5 rounded-lg font-bold bg-white text-slate-900 shadow-xs">
+                ✨ 올부가 넷가 기준 (-15만 반영)
+              </button>
+              <button onclick="setAdMarginBase('basic')" id="adMarginBase-basic" class="px-3 py-1.5 rounded-lg font-semibold text-slate-600 hover:text-slate-900">
+                📋 기본부가 넷가 기준
+              </button>
+            </div>
+
+            <button onclick="copyAdTextFormatted()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2">
+              <span>📋</span> 시세표 문구 원클릭 복사
+            </button>
+          </div>
         </div>
 
-        <!-- 2분할 레이아웃: 좌측(편집) vs 우측(미리보기) -->
+        <!-- 2분할 레이아웃: 좌측(광고가/마진/순서변경) vs 우측(실제 게시 문구 미리보기) -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div class="lg:col-span-7 space-y-3">
+          <div class="lg:col-span-8 space-y-3">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-slate-700">📌 기종별 광고가격 & 비고 수정:</span>
-              <div class="flex gap-1 text-xs">
-                <button onclick="setAdCarrier('LG')" id="adTab-LG" class="px-3 py-1 rounded-lg font-bold bg-pink-100 text-pink-700 border border-pink-200">LG 특가</button>
-                <button onclick="setAdCarrier('KT')" id="adTab-KT" class="px-3 py-1 rounded-lg font-bold bg-slate-100 text-slate-600">KT 특가</button>
-                <button onclick="setAdCarrier('SK')" id="adTab-SK" class="px-3 py-1 rounded-lg font-bold bg-slate-100 text-slate-600">SK 특가</button>
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold text-slate-700">📌 통신사 선택:</span>
+                <div class="flex gap-1 text-xs">
+                  <button onclick="setAdCarrier('LG')" id="adTab-LG" class="px-3 py-1 rounded-lg font-bold bg-pink-100 text-pink-700 border border-pink-200">LG 특가</button>
+                  <button onclick="setAdCarrier('KT')" id="adTab-KT" class="px-3 py-1 rounded-lg font-bold bg-slate-100 text-slate-600">KT 특가</button>
+                  <button onclick="setAdCarrier('SK')" id="adTab-SK" class="px-3 py-1 rounded-lg font-bold bg-slate-100 text-slate-600">SK 특가</button>
+                </div>
               </div>
+              <span class="text-[11px] text-slate-500">
+                마진 = <b class="text-blue-600">광고가격</b> - <b class="text-slate-700" id="adMarginBaseLabel">올부가넷가</b>
+              </span>
             </div>
 
             <div class="overflow-hidden border border-slate-200 rounded-xl">
               <table class="w-full text-xs text-left">
                 <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200">
                   <tr>
-                    <th class="p-2.5">태그명</th>
+                    <th class="p-2.5 w-14 text-center">순서</th>
+                    <th class="p-2.5 min-w-[150px]">기종 (드롭다운)</th>
+                    <th class="p-2.5 w-28 text-center bg-slate-100/70">기준넷가(번/기)</th>
                     <th class="p-2.5 w-24 text-center">번이가</th>
                     <th class="p-2.5 w-24 text-center">기변가</th>
-                    <th class="p-2.5 w-36">비고 (예: *인상전)</th>
+                    <th class="p-2.5 w-28 text-center bg-emerald-50/70 text-emerald-800">예상마진(번/기)</th>
+                    <th class="p-2.5 min-w-[110px]">비고 (예: *인상전)</th>
                   </tr>
                 </thead>
                 <tbody id="adTableBody" class="divide-y divide-slate-100">
@@ -261,12 +284,12 @@
           </div>
 
           <!-- 우측: 게시 문구 실시간 미리보기 -->
-          <div class="lg:col-span-5 space-y-2">
+          <div class="lg:col-span-4 space-y-2">
             <div class="flex items-center justify-between">
               <span class="text-xs font-bold text-slate-700">👀 최종 게시 문구 미리보기:</span>
               <span class="text-[11px] text-slate-400">카페/밴드 게시용</span>
             </div>
-            <div class="bg-slate-900 text-slate-100 p-4 rounded-2xl font-mono text-xs leading-relaxed whitespace-pre shadow-inner h-[480px] overflow-y-auto border border-slate-800" id="adPreviewText">
+            <div class="bg-slate-900 text-slate-100 p-4 rounded-2xl font-mono text-xs leading-relaxed whitespace-pre shadow-inner h-[520px] overflow-y-auto border border-slate-800" id="adPreviewText">
               <!-- 미리보기 텍스트 -->
             </div>
           </div>
@@ -300,15 +323,12 @@
                 <th colspan="3" class="p-2 bg-pink-50 text-pink-800">🟡 LGU+ 설정</th>
               </tr>
               <tr class="text-[11px] text-slate-600 text-center bg-slate-50 border-b border-slate-200">
-                <!-- SK -->
                 <th class="p-1.5 w-20 border-r border-slate-200">출고가</th>
                 <th class="p-1.5 w-18 border-r border-slate-200 font-extrabold text-rose-700">번이공시</th>
                 <th class="p-1.5 w-18 border-r border-slate-200 font-extrabold text-rose-700">기변공시</th>
-                <!-- KT -->
                 <th class="p-1.5 w-20 border-r border-slate-200">출고가</th>
                 <th class="p-1.5 w-18 border-r border-slate-200 font-extrabold text-blue-700">번이공시</th>
                 <th class="p-1.5 w-18 border-r border-slate-200 font-extrabold text-blue-700">기변공시</th>
-                <!-- LG -->
                 <th class="p-1.5 w-20 border-r border-slate-200">출고가</th>
                 <th class="p-1.5 w-18 border-r border-slate-200 font-extrabold text-pink-700">번이공시</th>
                 <th class="p-1.5 w-18 font-extrabold text-pink-700">기변공시</th>
@@ -343,20 +363,16 @@
     let currentTab = "calc";
     let activeInputCarrier = "LG";
     let activeAdCarrier = "LG";
-    let netDisplayMode = "both"; // 'both', 'basic', 'all'
-    const ALL_ADD_DISCOUNT = 15; // 올부가 추가할인 일괄 -15만원
+    let netDisplayMode = "both";
+    let adMarginBase = "all"; // 'all' (올부가넷가 기준) or 'basic' (기본부가넷가 기준)
+    const ALL_ADD_DISCOUNT = 15;
 
-    // 3. 기기 마스터 데이터 (통신사별 출고가 & 공시 분리 완벽 세팅)
-    const devices = [
-      // 갤럭시 S 시리즈
+    // 3. 기기 마스터 데이터
+    let devices = [
       {
         id: 's26', group: 'S', tag: '#S26', name: '갤럭시 S26 256G',
         prices: { SK: 125.4, KT: 125.4, LG: 125.4 },
-        sub: {
-          SK: { mnp: 50, chg: 60 },
-          KT: { mnp: 50, chg: 60 },
-          LG: { mnp: 50, chg: 60 }
-        },
+        sub: { SK: { mnp: 50, chg: 60 }, KT: { mnp: 50, chg: 60 }, LG: { mnp: 50, chg: 60 } },
         rate: { SK: { mnp: 59, chg: 62 }, KT: { mnp: 78, chg: 68 }, LG: { mnp: 83, chg: 79 } },
         loc: { SK: '도매', KT: '도매', LG: '도매' },
         ad: { SK: { mnp: '5', chg: '-10', note: '' }, KT: { mnp: '-15', chg: '-15', note: '' }, LG: { mnp: '-20', chg: '-25', note: '*인상전' } }
@@ -364,11 +380,7 @@
       {
         id: 's26p', group: 'S', tag: '#S26+', name: '갤럭시 S26+ 256G',
         prices: { SK: 145.2, KT: 145.2, LG: 145.2 },
-        sub: {
-          SK: { mnp: 50, chg: 60 },
-          KT: { mnp: 50, chg: 60 },
-          LG: { mnp: 50, chg: 60 }
-        },
+        sub: { SK: { mnp: 50, chg: 60 }, KT: { mnp: 50, chg: 60 }, LG: { mnp: 50, chg: 60 } },
         rate: { SK: { mnp: 59, chg: 62 }, KT: { mnp: 68, chg: 52 }, LG: { mnp: 77, chg: 73 } },
         loc: { SK: '도매', KT: '도매', LG: '도매' },
         ad: { SK: { mnp: '25', chg: '9', note: '' }, KT: { mnp: '15', chg: '25', note: '' }, LG: { mnp: '5', chg: '0', note: '' } }
@@ -376,11 +388,7 @@
       {
         id: 's26u', group: 'S', tag: '#S26U', name: '갤럭시 S26 Ultra 256G',
         prices: { SK: 179.74, KT: 179.74, LG: 179.74 },
-        sub: {
-          SK: { mnp: 50, chg: 60 },
-          KT: { mnp: 50, chg: 60 },
-          LG: { mnp: 50, chg: 60 }
-        },
+        sub: { SK: { mnp: 50, chg: 60 }, KT: { mnp: 50, chg: 60 }, LG: { mnp: 50, chg: 60 } },
         rate: { SK: { mnp: 59, chg: 62 }, KT: { mnp: 68, chg: 52 }, LG: { mnp: 77, chg: 73 } },
         loc: { SK: '도매', KT: '도매', LG: '도매' },
         ad: { SK: { mnp: '59', chg: '45', note: '' }, KT: { mnp: '49', chg: '55', note: '' }, LG: { mnp: '39', chg: '35', note: '*인상전' } }
@@ -388,11 +396,7 @@
       {
         id: 's25', group: 'S', tag: '#S25', name: '갤럭시 S25 256G',
         prices: { SK: 115.5, KT: 115.5, LG: 115.5 },
-        sub: {
-          SK: { mnp: 50, chg: 50 },
-          KT: { mnp: 50, chg: 50 },
-          LG: { mnp: 50, chg: 50 }
-        },
+        sub: { SK: { mnp: 50, chg: 50 }, KT: { mnp: 50, chg: 50 }, LG: { mnp: 50, chg: 50 } },
         rate: { SK: { mnp: 47, chg: 43 }, KT: { mnp: 89, chg: 67 }, LG: { mnp: '품절', chg: '품절' } },
         loc: { SK: '도매', KT: '도매', LG: '도매' },
         ad: { SK: { mnp: '5', chg: '9', note: '' }, KT: { mnp: '-35', chg: '-15', note: '' }, LG: { mnp: '품절', chg: '품절', note: '' } }
@@ -400,38 +404,23 @@
       {
         id: 's25u', group: 'S', tag: '#S25U', name: '갤럭시 S25 Ultra 256G',
         prices: { SK: 169.84, KT: 169.84, LG: 169.84 },
-        sub: {
-          SK: { mnp: 50, chg: 50 },
-          KT: { mnp: 50, chg: 50 },
-          LG: { mnp: 50, chg: 50 }
-        },
+        sub: { SK: { mnp: 50, chg: 50 }, KT: { mnp: 50, chg: 50 }, LG: { mnp: 50, chg: 50 } },
         rate: { SK: { mnp: 50, chg: 46 }, KT: { mnp: 89, chg: 67 }, LG: { mnp: '품절', chg: '품절' } },
         loc: { SK: '도매', KT: '도매', LG: '도매' },
         ad: { SK: { mnp: '59', chg: '59', note: '' }, KT: { mnp: '19', chg: '39', note: '' }, LG: { mnp: '품절', chg: '품절', note: '' } }
       },
       {
         id: 's25e', group: 'S', tag: '#S25엣지', name: '갤럭시 S25 엣지 256G',
-        // SK 출고가 149.6, KT/LG는 135.3
         prices: { SK: 149.6, KT: 135.3, LG: 135.3 },
-        sub: {
-          SK: { mnp: 68, chg: 68 },
-          KT: { mnp: 70, chg: 70 },
-          LG: { mnp: 70, chg: 70 }
-        },
+        sub: { SK: { mnp: 68, chg: 68 }, KT: { mnp: 70, chg: 70 }, LG: { mnp: 70, chg: 70 } },
         rate: { SK: { mnp: 40, chg: 52 }, KT: { mnp: '품절', chg: '품절' }, LG: { mnp: 73, chg: 86 } },
         loc: { SK: '도매', KT: '도매', LG: '도매' },
         ad: { SK: { mnp: '29', chg: '19', note: '' }, KT: { mnp: '', chg: '', note: '' }, LG: { mnp: '-20', chg: '-35', note: '' } }
       },
-
-      // 폴더블 시리즈
       {
         id: 'flip8', group: 'FOLD', tag: '#플립8', name: '갤럭시 Z 플립8',
         prices: { SK: 168.3, KT: 168.3, LG: 168.3 },
-        sub: {
-          SK: { mnp: 50, chg: 50 },
-          KT: { mnp: 50, chg: 50 },
-          LG: { mnp: 50, chg: 50 }
-        },
+        sub: { SK: { mnp: 50, chg: 50 }, KT: { mnp: 50, chg: 50 }, LG: { mnp: 50, chg: 50 } },
         rate: { SK: { mnp: 65, chg: 63 }, KT: { mnp: 69, chg: 48 }, LG: { mnp: 86, chg: 77 } },
         loc: { SK: '도매', KT: '도매', LG: '도매' },
         ad: { SK: { mnp: '45', chg: '45', note: '' }, KT: { mnp: '35', chg: '59', note: '' }, LG: { mnp: '19', chg: '29', note: '' } }
@@ -439,12 +428,7 @@
       {
         id: 'fold8', group: 'FOLD', tag: '#폴드8와이드', name: '갤럭시 Z 폴드8',
         prices: { SK: 227.81, KT: 227.81, LG: 227.81 },
-        // KT 공시는 60, SK/LG는 50
-        sub: {
-          SK: { mnp: 50, chg: 50 },
-          KT: { mnp: 60, chg: 60 },
-          LG: { mnp: 50, chg: 50 }
-        },
+        sub: { SK: { mnp: 50, chg: 50 }, KT: { mnp: 60, chg: 60 }, LG: { mnp: 50, chg: 50 } },
         rate: { SK: { mnp: 55, chg: 70 }, KT: { mnp: 82, chg: 64 }, LG: { mnp: 99, chg: 96 } },
         loc: { SK: '도매', KT: '도매', LG: '도매' },
         ad: { SK: { mnp: '109', chg: '95', note: '' }, KT: { mnp: '75', chg: '95', note: '' }, LG: { mnp: '65', chg: '69', note: '' } }
@@ -452,26 +436,15 @@
       {
         id: 'fold8u', group: 'FOLD', tag: '#폴드8울트라', name: '갤럭시 Z 폴드8 Ultra',
         prices: { SK: 257.73, KT: 257.73, LG: 257.73 },
-        sub: {
-          SK: { mnp: 50, chg: 50 },
-          KT: { mnp: 50, chg: 50 },
-          LG: { mnp: 50, chg: 50 }
-        },
+        sub: { SK: { mnp: 50, chg: 50 }, KT: { mnp: 50, chg: 50 }, LG: { mnp: 50, chg: 50 } },
         rate: { SK: { mnp: 65, chg: 58 }, KT: { mnp: 69, chg: 48 }, LG: { mnp: 86, chg: 77 } },
         loc: { SK: '도매', KT: '도매', LG: '도매' },
         ad: { SK: { mnp: '129', chg: '139', note: '' }, KT: { mnp: '125', chg: '149', note: '' }, LG: { mnp: '109', chg: '119', note: '' } }
       },
-
-      // 아이폰 시리즈
       {
         id: 'ip17', group: 'IPHONE', tag: '#아17', name: '아이폰17 256G',
         prices: { SK: 145.2, KT: 145.2, LG: 145.2 },
-        // LG 번이공시 55, KT 번이공시 50, SK는 45
-        sub: {
-          SK: { mnp: 45, chg: 45 },
-          KT: { mnp: 50, chg: 45 },
-          LG: { mnp: 55, chg: 45 }
-        },
+        sub: { SK: { mnp: 45, chg: 45 }, KT: { mnp: 50, chg: 45 }, LG: { mnp: 55, chg: 45 } },
         rate: { SK: { mnp: 49, chg: 52 }, KT: { mnp: 57, chg: 52 }, LG: { mnp: 62, chg: 44 } },
         loc: { SK: '도매', KT: '도매', LG: '도매' },
         ad: { SK: { mnp: '39', chg: '35', note: '' }, KT: { mnp: '25', chg: '35', note: '' }, LG: { mnp: '15', chg: '45', note: '' } }
@@ -479,12 +452,7 @@
       {
         id: 'ipair', group: 'IPHONE', tag: '#17에어', name: '아이폰 AIR 256G',
         prices: { SK: 158.4, KT: 158.4, LG: 158.4 },
-        // LG 번이공시 55, KT/SK 번이 45
-        sub: {
-          SK: { mnp: 45, chg: 45 },
-          KT: { mnp: 45, chg: 45 },
-          LG: { mnp: 55, chg: 45 }
-        },
+        sub: { SK: { mnp: 45, chg: 45 }, KT: { mnp: 45, chg: 45 }, LG: { mnp: 55, chg: 45 } },
         rate: { SK: { mnp: 59, chg: 47 }, KT: { mnp: 60, chg: 55 }, LG: { mnp: 128, chg: 44 } },
         loc: { SK: '도매', KT: '도매', LG: '온라인' },
         ad: { SK: { mnp: '45', chg: '55', note: '' }, KT: { mnp: '39', chg: '45', note: '' }, LG: { mnp: '-35', chg: '55', note: '' } }
@@ -492,12 +460,7 @@
       {
         id: 'ip17p', group: 'IPHONE', tag: '#17프로', name: '아이폰17 PRO 256G',
         prices: { SK: 178.2, KT: 178.2, LG: 178.2 },
-        // LG 번이공시 55, KT/SK 번이 45
-        sub: {
-          SK: { mnp: 45, chg: 45 },
-          KT: { mnp: 45, chg: 45 },
-          LG: { mnp: 55, chg: 45 }
-        },
+        sub: { SK: { mnp: 45, chg: 45 }, KT: { mnp: 45, chg: 45 }, LG: { mnp: 55, chg: 45 } },
         rate: { SK: { mnp: 49, chg: 37 }, KT: { mnp: 57, chg: 52 }, LG: { mnp: 62, chg: 44 } },
         loc: { SK: '도매', KT: '도매', LG: '도매' },
         ad: { SK: { mnp: '75', chg: '85', note: '' }, KT: { mnp: '65', chg: '69', note: '' }, LG: { mnp: '49', chg: '75', note: '' } }
@@ -506,11 +469,7 @@
         id: 'ip18', group: 'IPHONE', tag: '#아18', name: '아이폰18 256G',
         prices: { SK: 0, KT: 0, LG: 0 },
         coming: true,
-        sub: {
-          SK: { mnp: 0, chg: 0 },
-          KT: { mnp: 0, chg: 0 },
-          LG: { mnp: 0, chg: 0 }
-        },
+        sub: { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } },
         rate: { SK: { mnp: '', chg: '' }, KT: { mnp: '', chg: '' }, LG: { mnp: '', chg: '' } },
         loc: { SK: '도매', KT: '도매', LG: '도매' },
         ad: { SK: { mnp: '', chg: '', note: '' }, KT: { mnp: '', chg: '', note: '' }, LG: { mnp: '', chg: '', note: '출시전' } }
@@ -518,11 +477,7 @@
       {
         id: 'ip18p', group: 'IPHONE', tag: '#아18프로', name: '아이폰18PRO 256G',
         prices: { SK: 199.1, KT: 199.1, LG: 199.1 },
-        sub: {
-          SK: { mnp: 45, chg: 45 },
-          KT: { mnp: 45, chg: 45 },
-          LG: { mnp: 45, chg: 45 }
-        },
+        sub: { SK: { mnp: 45, chg: 45 }, KT: { mnp: 45, chg: 45 }, LG: { mnp: 45, chg: 45 } },
         rate: { SK: { mnp: 42, chg: 45 }, KT: { mnp: 73, chg: 49 }, LG: { mnp: 68, chg: 49 } },
         loc: { SK: '도매', KT: '도매', LG: '도매' },
         ad: { SK: { mnp: '99', chg: '95', note: '' }, KT: { mnp: '69', chg: '95', note: '' }, LG: { mnp: '75', chg: '95', note: '' } }
@@ -530,11 +485,7 @@
       {
         id: 'ip18pm', group: 'IPHONE', tag: '#아18맥스', name: '아이폰18PROMAX 256G',
         prices: { SK: 220, KT: 220, LG: 220 },
-        sub: {
-          SK: { mnp: 20, chg: 20 },
-          KT: { mnp: 20, chg: 20 },
-          LG: { mnp: 20, chg: 20 }
-        },
+        sub: { SK: { mnp: 20, chg: 20 }, KT: { mnp: 20, chg: 20 }, LG: { mnp: 20, chg: 20 } },
         rate: { SK: { mnp: 48, chg: 65 }, KT: { mnp: 73, chg: 49 }, LG: { mnp: 68, chg: 49 } },
         loc: { SK: '도매', KT: '도매', LG: '도매' },
         ad: { SK: { mnp: '139', chg: '125', note: '' }, KT: { mnp: '115', chg: '139', note: '' }, LG: { mnp: '119', chg: '139', note: '' } }
@@ -542,11 +493,7 @@
       {
         id: 'ipduo', group: 'IPHONE', tag: '#아이폰듀오', name: '아이폰Duo 256G',
         prices: { SK: 330, KT: 330, LG: 330 },
-        sub: {
-          SK: { mnp: 45, chg: 45 },
-          KT: { mnp: 45, chg: 45 },
-          LG: { mnp: 45, chg: 45 }
-        },
+        sub: { SK: { mnp: 45, chg: 45 }, KT: { mnp: 45, chg: 45 }, LG: { mnp: 45, chg: 45 } },
         rate: { SK: { mnp: 45, chg: 23 }, KT: { mnp: 64, chg: 31 }, LG: { mnp: 50, chg: 25 } },
         loc: { SK: '도매', KT: '도매', LG: '도매' },
         ad: { SK: { mnp: '229', chg: '249', note: '' }, KT: { mnp: '209', chg: '245', note: '' }, LG: { mnp: '225', chg: '249', note: '(사전예약)' } }
@@ -625,8 +572,25 @@
       render();
     }
 
-    // 넷가 계산 함수
-    // 공식: 출고가 - 공시지원금 - 대리점단가 (- 올부가 15만원)
+    // 광고 마진 산정 기준 변경 (올부가 vs 기본부가)
+    function setAdMarginBase(b) {
+      adMarginBase = b;
+      const allBtn = document.getElementById('adMarginBase-all');
+      const basicBtn = document.getElementById('adMarginBase-basic');
+      const label = document.getElementById('adMarginBaseLabel');
+
+      if (b === 'all') {
+        allBtn.className = "px-3 py-1.5 rounded-lg font-bold bg-white text-slate-900 shadow-xs";
+        basicBtn.className = "px-3 py-1.5 rounded-lg font-semibold text-slate-600 hover:text-slate-900";
+        label.innerText = "올부가넷가";
+      } else {
+        basicBtn.className = "px-3 py-1.5 rounded-lg font-bold bg-white text-slate-900 shadow-xs";
+        allBtn.className = "px-3 py-1.5 rounded-lg font-semibold text-slate-600 hover:text-slate-900";
+        label.innerText = "기본부가넷가";
+      }
+      renderAdSection();
+    }
+
     function calcNet(d, carrier, type, mode = 'basic') {
       if (d.coming) return null;
       const rateVal = d.rate[carrier][type];
@@ -645,23 +609,19 @@
       return Math.round(net * 100) / 100;
     }
 
-    // 심플 포맷터: "차비 얼마" 대신 엑셀처럼 심플하게 숫자만 출력 (마이너스, 플러스 구분)
     function formatNetSimple(val, isLarge = false) {
       if (val === null) return `<span class="text-slate-400 font-normal">품절</span>`;
       const sizeClass = isLarge ? "text-base font-extrabold" : "text-sm font-bold";
       
       if (val < 0) {
-        // 마이너스 금액: 깔끔한 빨강/로즈 텍스트로 심플 표시 (예: -7.6)
         return `<span class="${sizeClass} text-rose-600 tracking-tight">${val}</span>`;
       } else if (val === 0) {
         return `<span class="${sizeClass} text-amber-600">0</span>`;
       } else {
-        // 플러스 금액: 진한 슬레이트 텍스트 (예: 16.4)
         return `<span class="${sizeClass} text-slate-900 tracking-tight">${val}</span>`;
       }
     }
 
-    // 넷가 셀 렌더링
     function renderCell(d, carrier, type) {
       if (d.coming) return `<span class="text-slate-400">출시전</span>`;
 
@@ -675,7 +635,6 @@
       } else if (netDisplayMode === 'all') {
         return `<div class="py-1.5">${formatNetSimple(allNet, true)}</div>`;
       } else {
-        // 전체 보기: 기본부가와 올부가를 상하로 시원하게 배치
         return `
           <div class="py-1 space-y-1">
             <div class="flex items-center justify-between text-xs px-1">
@@ -691,15 +650,24 @@
       }
     }
 
-    // 메인 테이블 렌더
+    // 순서 이동 함수 (배열 항목 위치 교환)
+    function moveDevice(index, direction) {
+      const targetIndex = index + direction;
+      if (targetIndex < 0 || targetIndex >= devices.length) return;
+      const temp = devices[index];
+      devices[index] = devices[targetIndex];
+      devices[targetIndex] = temp;
+      render();
+    }
+
     function render() {
+      // 1. 메인 넷가 산출표
       const tbody = document.getElementById('calcTableBody');
       tbody.innerHTML = '';
       devices.forEach(d => {
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50/80 transition border-b border-slate-100 text-center";
 
-        // 통신사별 출고가 표시 (다를 경우 각각 안내)
         const skP = d.prices ? d.prices.SK : d.price;
         const ktP = d.prices ? d.prices.KT : d.price;
         const lgP = d.prices ? d.prices.LG : d.price;
@@ -713,28 +681,34 @@
             <div class="text-xs font-extrabold text-slate-900">${d.name}</div>
             <div class="text-[11px] text-slate-400 font-normal mt-0.5">출고가: ${d.coming ? '출시전' : priceSummary}</div>
           </td>
-          <!-- SK 번이 / 기변 -->
           <td class="p-2 border-r border-slate-200 bg-rose-50/10">${renderCell(d, 'SK', 'mnp')}</td>
           <td class="p-2 border-r border-slate-200 bg-rose-50/10">${renderCell(d, 'SK', 'chg')}</td>
-          <!-- KT 번이 / 기변 -->
           <td class="p-2 border-r border-slate-200 bg-blue-50/10">${renderCell(d, 'KT', 'mnp')}</td>
           <td class="p-2 border-r border-slate-200 bg-blue-50/10">${renderCell(d, 'KT', 'chg')}</td>
-          <!-- LG 번이 / 기변 -->
           <td class="p-2 border-r border-slate-200 bg-pink-50/10">${renderCell(d, 'LG', 'mnp')}</td>
           <td class="p-2 bg-pink-50/10">${renderCell(d, 'LG', 'chg')}</td>
         `;
         tbody.appendChild(tr);
       });
 
-      // 단가 입력 테이블
+      // 2. 단가 입력 테이블 (순서 이동 버튼 및 드롭다운 지원)
       const dailyBody = document.getElementById('dailyTableBody');
       dailyBody.innerHTML = '';
       devices.forEach((d, idx) => {
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50 border-b border-slate-100";
         tr.innerHTML = `
-          <td class="p-2.5 text-center text-slate-400 font-medium">${idx + 1}</td>
-          <td class="p-2.5 font-bold text-slate-800">${d.name}</td>
+          <td class="p-2 text-center text-slate-400 font-medium whitespace-nowrap">
+            <div class="flex items-center justify-center gap-1">
+              <button onclick="moveDevice(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} class="w-6 h-6 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:hover:bg-slate-100 font-bold text-slate-600 text-xs">▲</button>
+              <button onclick="moveDevice(${idx}, 1)" ${idx === devices.length - 1 ? 'disabled' : ''} class="w-6 h-6 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:hover:bg-slate-100 font-bold text-slate-600 text-xs">▼</button>
+            </div>
+          </td>
+          <td class="p-2 font-bold text-slate-800">
+            <select onchange="swapDeviceOrder(${idx}, this.value)" class="w-full px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-800 focus:ring-1 focus:ring-blue-500">
+              ${devices.map(opt => `<option value="${opt.id}" ${opt.id === d.id ? 'selected' : ''}>${opt.name}</option>`).join('')}
+            </select>
+          </td>
           <td class="p-2 text-center">
             <input type="text" value="${d.rate[activeInputCarrier].mnp}" onchange="updateRate('${d.id}', 'mnp', this.value)"
                    class="w-28 px-2 py-1 text-center font-bold bg-white border border-slate-300 rounded-lg text-slate-900 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" />
@@ -750,6 +724,16 @@
 
       renderAdSection();
       renderSettingsTable();
+    }
+
+    function swapDeviceOrder(currentIndex, targetId) {
+      const targetIndex = devices.findIndex(x => x.id === targetId);
+      if (targetIndex !== -1 && targetIndex !== currentIndex) {
+        const temp = devices[currentIndex];
+        devices[currentIndex] = devices[targetIndex];
+        devices[targetIndex] = temp;
+        render();
+      }
     }
 
     function setCarrierInput(c) {
@@ -773,7 +757,6 @@
       }
     }
 
-    // 광고 섹션
     function setAdCarrier(c) {
       activeAdCarrier = c;
       ['LG', 'KT', 'SK'].forEach(x => {
@@ -788,27 +771,84 @@
       renderAdSection();
     }
 
+    // 마진 계산 헬퍼 함수
+    function calcAdMargin(d, carrier, type) {
+      const net = calcNet(d, carrier, type, adMarginBase);
+      if (net === null) return null;
+      const adVal = d.ad[carrier][type];
+      if (adVal === '' || adVal === null || isNaN(adVal) || adVal === '품절' || adVal === '출시전') return null;
+
+      const adNum = parseFloat(adVal);
+      return Math.round((adNum - net) * 100) / 100;
+    }
+
+    function formatMarginBadge(margin) {
+      if (margin === null) return `<span class="text-slate-300">-</span>`;
+      if (margin >= 0) {
+        return `<span class="font-bold text-emerald-700">+${margin}</span>`;
+      } else {
+        return `<span class="font-bold text-rose-600">${margin}</span>`;
+      }
+    }
+
     function renderAdSection() {
       const adBody = document.getElementById('adTableBody');
       adBody.innerHTML = '';
 
-      devices.forEach(d => {
+      devices.forEach((d, idx) => {
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50 border-b border-slate-100";
         const adData = d.ad[activeAdCarrier];
 
+        // 기준 넷가 (번이 / 기변)
+        const netMnp = calcNet(d, activeAdCarrier, 'mnp', adMarginBase);
+        const netChg = calcNet(d, activeAdCarrier, 'chg', adMarginBase);
+
+        // 예상 마진 계산 (광고가 - 넷가)
+        const marginMnp = calcAdMargin(d, activeAdCarrier, 'mnp');
+        const marginChg = calcAdMargin(d, activeAdCarrier, 'chg');
+
         tr.innerHTML = `
-          <td class="p-2.5 font-bold text-blue-700 font-mono">${d.tag}</td>
-          <td class="p-2 text-center">
-            <input type="text" value="${adData.mnp}" onchange="updateAdVal('${d.id}', 'mnp', this.value)"
-                   class="w-16 px-1.5 py-1 text-center font-bold bg-white border border-slate-300 rounded text-xs focus:ring-1 focus:ring-blue-500" />
+          <!-- 순서 이동 버튼 -->
+          <td class="p-2 text-center text-slate-400 whitespace-nowrap">
+            <div class="flex items-center justify-center gap-1">
+              <button onclick="moveDevice(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} class="w-5 h-5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-30 font-bold text-slate-600 text-[10px]">▲</button>
+              <button onclick="moveDevice(${idx}, 1)" ${idx === devices.length - 1 ? 'disabled' : ''} class="w-5 h-5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-30 font-bold text-slate-600 text-[10px]">▼</button>
+            </div>
           </td>
-          <td class="p-2 text-center">
-            <input type="text" value="${adData.chg}" onchange="updateAdVal('${d.id}', 'chg', this.value)"
-                   class="w-16 px-1.5 py-1 text-center font-bold bg-white border border-slate-300 rounded text-xs focus:ring-1 focus:ring-blue-500" />
-          </td>
+
+          <!-- 기종 드롭다운 선택 -->
           <td class="p-2">
-            <input type="text" value="${adData.note || ''}" placeholder="비고(선택)" onchange="updateAdVal('${d.id}', 'note', this.value)"
+            <select onchange="swapDeviceOrder(${idx}, this.value)" class="w-full px-1.5 py-1 bg-white border border-slate-200 rounded text-xs font-bold text-slate-800 focus:ring-1 focus:ring-blue-500">
+              ${devices.map(opt => `<option value="${opt.id}" ${opt.id === d.id ? 'selected' : ''}>${opt.tag} (${opt.name.slice(0, 10)})</option>`).join('')}
+            </select>
+          </td>
+
+          <!-- 기준 넷가 (번/기) -->
+          <td class="p-2 text-center bg-slate-50/70 font-mono text-[11px] text-slate-600">
+            ${netMnp !== null ? netMnp : '품절'} / ${netChg !== null ? netChg : '품절'}
+          </td>
+
+          <!-- 번이가 입력 -->
+          <td class="p-2 text-center">
+            <input type="text" value="${adData.mnp}" oninput="updateAdVal('${d.id}', 'mnp', this.value)"
+                   class="w-16 px-1.5 py-1 text-center font-bold bg-white border border-slate-300 rounded text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+          </td>
+
+          <!-- 기변가 입력 -->
+          <td class="p-2 text-center">
+            <input type="text" value="${adData.chg}" oninput="updateAdVal('${d.id}', 'chg', this.value)"
+                   class="w-16 px-1.5 py-1 text-center font-bold bg-white border border-slate-300 rounded text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+          </td>
+
+          <!-- 예상 마진 (번/기) 실시간 노출 -->
+          <td class="p-2 text-center bg-emerald-50/50 text-[11px]">
+            ${formatMarginBadge(marginMnp)} / ${formatMarginBadge(marginChg)}
+          </td>
+
+          <!-- 비고 -->
+          <td class="p-2">
+            <input type="text" value="${adData.note || ''}" placeholder="비고(선택)" oninput="updateAdVal('${d.id}', 'note', this.value)"
                    class="w-full px-2 py-1 bg-white border border-slate-200 rounded text-xs text-slate-600 focus:ring-1 focus:ring-blue-500" />
           </td>
         `;
@@ -828,29 +868,29 @@
     }
 
     function generateAdString(carrier) {
-      const groups = ['S', 'FOLD', 'IPHONE'];
       let outputLines = [];
+      let lastGroup = null;
 
-      groups.forEach((grp, idx) => {
-        const groupDevices = devices.filter(d => d.group === grp);
-        groupDevices.forEach(d => {
-          const adData = d.ad[carrier];
-          if (adData && (adData.mnp !== '' || adData.chg !== '' || adData.note !== '')) {
-            let pricePart = "";
-            if (adData.mnp === '품절' && adData.chg === '품절') {
-              pricePart = "품절";
-            } else if (adData.note === '출시전' || d.coming) {
-              pricePart = "출시전";
-            } else if (adData.mnp || adData.chg) {
-              pricePart = `${adData.mnp || '-'}/${adData.chg || '-'}`;
-            }
-
-            const notePart = adData.note ? (adData.note.startsWith('*') || adData.note.startsWith('(') ? ` ${adData.note}` : ` (${adData.note})`) : '';
-            outputLines.push(`${d.tag} ${pricePart}${notePart}`);
-          }
-        });
-        if (idx < groups.length - 1) {
+      devices.forEach(d => {
+        // 그룹이 바뀌면 빈 줄 하나 추가 (S시리즈, 폴더블, 아이폰 등 띄어쓰기 유지)
+        if (lastGroup !== null && lastGroup !== d.group) {
           outputLines.push("");
+        }
+        lastGroup = d.group;
+
+        const adData = d.ad[carrier];
+        if (adData && (adData.mnp !== '' || adData.chg !== '' || adData.note !== '')) {
+          let pricePart = "";
+          if (adData.mnp === '품절' && adData.chg === '품절') {
+            pricePart = "품절";
+          } else if (adData.note === '출시전' || d.coming) {
+            pricePart = "출시전";
+          } else if (adData.mnp || adData.chg) {
+            pricePart = `${adData.mnp || '-'}/${adData.chg || '-'}`;
+          }
+
+          const notePart = adData.note ? (adData.note.startsWith('*') || adData.note.startsWith('(') ? ` ${adData.note}` : ` (${adData.note})`) : '';
+          outputLines.push(`${d.tag} ${pricePart}${notePart}`);
         }
       });
 
@@ -864,7 +904,7 @@
       });
     }
 
-    // 설정 모달 (공시 & 출고가 직접 수정)
+    // 설정 모달
     function openSettingsModal() {
       document.getElementById('settingsModal').classList.remove('hidden');
       renderSettingsTable();
@@ -874,7 +914,6 @@
       render();
     }
 
-    // 설정 테이블 렌더 (번이 -> 기변 순서, 출고가 & 공시 칸 분리 및 직접 수정 input)
     function renderSettingsTable() {
       const tbody = document.getElementById('settingsTableBody');
       if (!tbody) return;
