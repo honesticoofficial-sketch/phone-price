@@ -184,7 +184,7 @@
           <div>
             <h2 class="text-sm font-extrabold text-slate-900">✍️ 오늘자 대리점 단가(리베이트) 직접 입력</h2>
             <p class="text-xs text-slate-500">
-              단가처 항목(도매 / 온라인 / 특판 / K1)을 번이/기변 각각 드롭다운으로 선택할 수 있습니다.
+              단가처 드롭다운(도매/온라인/특판/K1) 선택 및 마우스 드래그(⠿) 순서 끌올 지원
             </p>
           </div>
           <!-- 통신사 선택 -->
@@ -199,7 +199,7 @@
           <table class="w-full text-xs text-left">
             <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200">
               <tr>
-                <th class="p-2.5 w-16 text-center">순서</th>
+                <th class="p-2.5 w-16 text-center">순서(드래그)</th>
                 <th class="p-2.5 min-w-[190px]">기종 선택 (드롭다운)</th>
                 <th class="p-2.5 w-32 text-center">번호이동 단가</th>
                 <th class="p-2.5 w-32 text-center">번이 단가처</th>
@@ -226,7 +226,7 @@
               📢 성지특가 광고표 & 마진 자동 계산
             </h2>
             <p class="text-xs text-slate-500 mt-0.5">
-              가격 미반영 기종은 <b>[숨김]</b> 버튼을 누르면 광고 텍스트 생성에서 즉시 제외됩니다.
+              기종명 직접 수정 가능 · 마우스 드래그(⠿)로 순서 끌올 · <b>[숨김]</b> 시 최하단 자동 이동 및 광고 제외
             </p>
           </div>
 
@@ -269,9 +269,9 @@
               <table class="w-full text-xs text-left">
                 <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200">
                   <tr>
-                    <th class="p-2.5 w-14 text-center">순서</th>
+                    <th class="p-2.5 w-16 text-center">순서(드래그)</th>
                     <th class="p-2.5 w-16 text-center">게시상태</th>
-                    <th class="p-2.5 min-w-[140px]">기종 (드롭다운)</th>
+                    <th class="p-2.5 min-w-[150px]">기종명 (직접수정)</th>
                     <th class="p-2.5 w-24 text-center bg-slate-100/70">기준넷가</th>
                     <th class="p-2.5 w-20 text-center">번이가</th>
                     <th class="p-2.5 w-20 text-center">기변가</th>
@@ -804,6 +804,61 @@
       }
     }
 
+    // 마우스 드래그 앤 드롭 (순서 끌올 / 끌내림) 핸들러
+    let dragSourceIndex = null;
+    let dragSourceType = null;
+
+    function onRowDragStart(e, idx, type) {
+      dragSourceIndex = idx;
+      dragSourceType = type;
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', idx);
+
+      const tr = e.target.closest('tr');
+      if (tr) {
+        tr.classList.add('opacity-40', 'bg-blue-50');
+      }
+    }
+
+    function onRowDragOver(e, idx, type) {
+      if (dragSourceType !== type || dragSourceIndex === null) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      const tr = e.currentTarget;
+      if (dragSourceIndex !== idx) {
+        tr.classList.add('border-t-2', 'border-blue-500', 'bg-blue-50/20');
+      }
+    }
+
+    function onRowDragLeave(e) {
+      if (!e.currentTarget.contains(e.relatedTarget)) {
+        e.currentTarget.classList.remove('border-t-2', 'border-blue-500', 'bg-blue-50/20');
+      }
+    }
+
+    function onRowDrop(e, targetIdx, type) {
+      e.preventDefault();
+      const tr = e.currentTarget;
+      tr.classList.remove('border-t-2', 'border-blue-500', 'bg-blue-50/20');
+
+      if (dragSourceIndex === null || dragSourceIndex === targetIdx || dragSourceType !== type) return;
+
+      const [moved] = devices.splice(dragSourceIndex, 1);
+      devices.splice(targetIdx, 0, moved);
+
+      dragSourceIndex = null;
+      dragSourceType = null;
+      render();
+    }
+
+    function onRowDragEnd(e) {
+      dragSourceIndex = null;
+      dragSourceType = null;
+      document.querySelectorAll('tr').forEach(tr => {
+        tr.classList.remove('opacity-40', 'bg-blue-50', 'border-t-2', 'border-blue-500', 'bg-blue-50/20');
+      });
+    }
+
     function render() {
       // 1. 메인 넷가 산출표
       const tbody = document.getElementById('calcTableBody');
@@ -840,16 +895,31 @@
       dailyBody.innerHTML = '';
       devices.forEach((d, idx) => {
         const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50 border-b border-slate-100";
+        tr.className = "hover:bg-slate-50 border-b border-slate-100 transition";
+        tr.setAttribute('data-index', idx);
+        tr.setAttribute('ondragover', `onRowDragOver(event, ${idx}, 'daily')`);
+        tr.setAttribute('ondragleave', 'onRowDragLeave(event)');
+        tr.setAttribute('ondrop', `onRowDrop(event, ${idx}, 'daily')`);
 
         const curLocMnp = (d.loc && d.loc[activeInputCarrier]) ? d.loc[activeInputCarrier].mnp : '도매';
         const curLocChg = (d.loc && d.loc[activeInputCarrier]) ? d.loc[activeInputCarrier].chg : '도매';
 
         tr.innerHTML = `
           <td class="p-2 text-center text-slate-400 font-medium whitespace-nowrap">
-            <div class="flex items-center justify-center gap-1">
-              <button onclick="moveDevice(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} class="w-6 h-6 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:hover:bg-slate-100 font-bold text-slate-600 text-xs">▲</button>
-              <button onclick="moveDevice(${idx}, 1)" ${idx === devices.length - 1 ? 'disabled' : ''} class="w-6 h-6 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:hover:bg-slate-100 font-bold text-slate-600 text-xs">▼</button>
+            <div class="flex items-center justify-center gap-1.5">
+              <div class="drag-handle cursor-grab active:cursor-grabbing p-1.5 rounded-lg bg-slate-50 hover:bg-blue-100 hover:text-blue-700 text-slate-400 select-none transition border border-slate-200/80 shadow-xs flex items-center justify-center"
+                   title="마우스로 드래그하여 순서 변경 (위로 끌올 / 아래로 이동)"
+                   draggable="true"
+                   ondragstart="onRowDragStart(event, ${idx}, 'daily')"
+                   ondragend="onRowDragEnd(event)">
+                <svg class="w-3.5 h-3.5 pointer-events-none" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M7 2a2 2 0 10.001 4.001A2 2 0 007 2zm0 6a2 2 0 10.001 4.001A2 2 0 007 8zm0 6a2 2 0 10.001 4.001A2 2 0 007 14zm6-12a2 2 0 10.001 4.001A2 2 0 0013 2zm0 6a2 2 0 10.001 4.001A2 2 0 0013 8zm0 6a2 2 0 10.001 4.001A2 2 0 0013 14z"></path>
+                </svg>
+              </div>
+              <div class="flex flex-col gap-0.5">
+                <button onclick="moveDevice(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} class="w-4 h-3.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[8px] flex items-center justify-center" title="위로 한 칸">▲</button>
+                <button onclick="moveDevice(${idx}, 1)" ${idx === devices.length - 1 ? 'disabled' : ''} class="w-4 h-3.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[8px] flex items-center justify-center" title="아래로 한 칸">▼</button>
+              </div>
             </div>
           </td>
           <td class="p-2 font-bold text-slate-800">
@@ -950,12 +1020,44 @@
       }
     }
 
-    // 광고표 숨김(제외) 토글
+    // 광고표 숨김(제외) 토글 - 숨김 시 목록 맨 아래로 이동
     function toggleAdHidden(id) {
+      const idx = devices.findIndex(x => x.id === id);
+      if (idx === -1) return;
+      const d = devices[idx];
+      if (!d.ad[activeAdCarrier]) d.ad[activeAdCarrier] = {};
+
+      const willBeHidden = !d.ad[activeAdCarrier].hidden;
+      d.ad[activeAdCarrier].hidden = willBeHidden;
+
+      if (willBeHidden) {
+        // 숨김 처리 시: 목록 맨 아래로 이동
+        const [removed] = devices.splice(idx, 1);
+        devices.push(removed);
+      } else {
+        // 다시 게시 시: 현재 숨김 처리된 기종들의 맨 위(게시 기종들 바로 다음)로 이동
+        const firstHiddenIdx = devices.findIndex((x, i) => i !== idx && x.ad[activeAdCarrier] && x.ad[activeAdCarrier].hidden);
+        if (firstHiddenIdx !== -1 && idx > firstHiddenIdx) {
+          const [removed] = devices.splice(idx, 1);
+          devices.splice(firstHiddenIdx, 0, removed);
+        }
+      }
+
+      render();
+    }
+
+    // 광고표 기종명 직접 수정
+    function updateAdTag(id, val) {
       const d = devices.find(x => x.id === id);
-      if (d && d.ad[activeAdCarrier]) {
-        d.ad[activeAdCarrier].hidden = !d.ad[activeAdCarrier].hidden;
-        renderAdSection();
+      if (d) {
+        d.tag = val;
+        if (!d.ad[activeAdCarrier]) d.ad[activeAdCarrier] = {};
+        d.ad[activeAdCarrier].tag = val;
+
+        const previewEl = document.getElementById('adPreviewText');
+        if (previewEl) {
+          previewEl.innerText = generateAdString(activeAdCarrier);
+        }
       }
     }
 
@@ -972,18 +1074,36 @@
           ? "bg-slate-50/60 opacity-60 hover:opacity-100 transition border-b border-slate-100" 
           : "hover:bg-slate-50 border-b border-slate-100 transition";
 
+        tr.setAttribute('data-index', idx);
+        tr.setAttribute('ondragover', `onRowDragOver(event, ${idx}, 'ad')`);
+        tr.setAttribute('ondragleave', 'onRowDragLeave(event)');
+        tr.setAttribute('ondrop', `onRowDrop(event, ${idx}, 'ad')`);
+
         const netMnp = calcNet(d, activeAdCarrier, 'mnp', adMarginBase);
         const netChg = calcNet(d, activeAdCarrier, 'chg', adMarginBase);
 
         const marginMnp = calcAdMargin(d, activeAdCarrier, 'mnp');
         const marginChg = calcAdMargin(d, activeAdCarrier, 'chg');
 
+        const currentTag = (adData.tag !== undefined && adData.tag !== null && adData.tag !== '') ? adData.tag : d.tag;
+
         tr.innerHTML = `
-          <!-- 순서 이동 버튼 -->
+          <!-- 순서 (드래그 핸들 ⠿ & ▲/▼ 끌올 지원) -->
           <td class="p-2 text-center text-slate-400 whitespace-nowrap">
-            <div class="flex items-center justify-center gap-1">
-              <button onclick="moveDevice(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} class="w-5 h-5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-30 font-bold text-slate-600 text-[10px]">▲</button>
-              <button onclick="moveDevice(${idx}, 1)" ${idx === devices.length - 1 ? 'disabled' : ''} class="w-5 h-5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-30 font-bold text-slate-600 text-[10px]">▼</button>
+            <div class="flex items-center justify-center gap-1.5">
+              <div class="drag-handle cursor-grab active:cursor-grabbing p-1.5 rounded-lg bg-slate-50 hover:bg-blue-100 hover:text-blue-700 text-slate-400 select-none transition border border-slate-200/80 shadow-xs flex items-center justify-center"
+                   title="마우스로 드래그하여 순서 변경 (위로 끌올 / 아래로 이동)"
+                   draggable="true"
+                   ondragstart="onRowDragStart(event, ${idx}, 'ad')"
+                   ondragend="onRowDragEnd(event)">
+                <svg class="w-3.5 h-3.5 pointer-events-none" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M7 2a2 2 0 10.001 4.001A2 2 0 007 2zm0 6a2 2 0 10.001 4.001A2 2 0 007 8zm0 6a2 2 0 10.001 4.001A2 2 0 007 14zm6-12a2 2 0 10.001 4.001A2 2 0 0013 2zm0 6a2 2 0 10.001 4.001A2 2 0 0013 8zm0 6a2 2 0 10.001 4.001A2 2 0 0013 14z"></path>
+                </svg>
+              </div>
+              <div class="flex flex-col gap-0.5">
+                <button onclick="moveDevice(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} class="w-4 h-3.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[8px] flex items-center justify-center" title="위로 한 칸">▲</button>
+                <button onclick="moveDevice(${idx}, 1)" ${idx === devices.length - 1 ? 'disabled' : ''} class="w-4 h-3.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[8px] flex items-center justify-center" title="아래로 한 칸">▼</button>
+              </div>
             </div>
           </td>
 
@@ -995,11 +1115,16 @@
             </button>
           </td>
 
-          <!-- 기종 드롭다운 선택 -->
+          <!-- 기종명 직접 수정 (드롭다운 대신 인풋) -->
           <td class="p-2">
-            <select onchange="swapDeviceOrder(${idx}, this.value)" class="w-full px-1.5 py-1 bg-white border border-slate-200 rounded text-xs font-bold text-slate-800 focus:ring-1 focus:ring-blue-500">
-              ${devices.map(opt => `<option value="${opt.id}" ${opt.id === d.id ? 'selected' : ''}>${opt.tag} (${opt.name.slice(0, 10)})</option>`).join('')}
-            </select>
+            <div class="space-y-0.5">
+              <input type="text"
+                     value="${currentTag}"
+                     placeholder="${d.tag}"
+                     oninput="updateAdTag('${d.id}', this.value)"
+                     class="w-full px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+              <div class="text-[10px] text-slate-400 pl-0.5 truncate select-none">${d.name}</div>
+            </div>
           </td>
 
           <!-- 기준 넷가 (번/기) -->
@@ -1020,7 +1145,7 @@
           </td>
 
           <!-- 예상 마진 (번/기) 실시간 노출 -->
-          <td class="p-2 text-center bg-emerald-50/50 text-[11px]">
+          <td id="margin-cell-${d.id}" class="p-2 text-center bg-emerald-50/50 text-[11px]">
             ${formatMarginBadge(marginMnp)} / ${formatMarginBadge(marginChg)}
           </td>
 
@@ -1039,13 +1164,26 @@
 
     function updateAdVal(id, field, val) {
       const d = devices.find(x => x.id === id);
-      if (d) {
+      if (d && d.ad[activeAdCarrier]) {
         d.ad[activeAdCarrier][field] = val;
-        renderAdSection();
+
+        // 실시간 마진 배지 갱신 (인풋 포커스 유지)
+        const marginMnp = calcAdMargin(d, activeAdCarrier, 'mnp');
+        const marginChg = calcAdMargin(d, activeAdCarrier, 'chg');
+        const marginCell = document.getElementById(`margin-cell-${d.id}`);
+        if (marginCell) {
+          marginCell.innerHTML = `${formatMarginBadge(marginMnp)} / ${formatMarginBadge(marginChg)}`;
+        }
+
+        // 광고 문구 실시간 미리보기 갱신
+        const previewEl = document.getElementById('adPreviewText');
+        if (previewEl) {
+          previewEl.innerText = generateAdString(activeAdCarrier);
+        }
       }
     }
 
-    // 광고 문구 생성 (숨김 처리된 기종은 완전히 제외)
+    // 광고 문구 생성 (숨김 처리된 기종은 완전히 제외, 사용자 지정 기종명 반영)
     function generateAdString(carrier) {
       let outputLines = [];
       let lastGroup = null;
@@ -1071,7 +1209,8 @@
           }
 
           const notePart = adData.note ? (adData.note.startsWith('*') || adData.note.startsWith('(') ? ` ${adData.note}` : ` (${adData.note})`) : '';
-          outputLines.push(`${d.tag} ${pricePart}${notePart}`);
+          const tagToUse = (adData && adData.tag !== undefined && adData.tag !== '') ? adData.tag : d.tag;
+          outputLines.push(`${tagToUse} ${pricePart}${notePart}`);
         }
       });
 
