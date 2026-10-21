@@ -239,16 +239,34 @@
           </div>
         </div>
 
-        <div class="overflow-x-auto">
-          <table class="w-full text-xs text-left">
-            <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200">
+        <div class="overflow-x-auto border border-slate-200 rounded-xl">
+          <table id="dailyTable" class="w-full text-xs text-left border-collapse" style="table-layout: fixed; min-width: 680px;">
+            <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 select-none">
               <tr>
-                <th class="p-2.5 w-16 text-center">순서(드래그)</th>
-                <th class="p-2.5 min-w-[190px]">기종 선택 (드롭다운)</th>
-                <th class="p-2.5 w-32 text-center">번호이동 단가</th>
-                <th class="p-2.5 w-32 text-center">번이 단가처</th>
-                <th class="p-2.5 w-32 text-center">기기변경 단가</th>
-                <th class="p-2.5 w-32 text-center">기변 단가처</th>
+                <th class="relative p-2.5 text-center" style="width: 75px;">
+                  <span>순서</span>
+                  <div class="column-resizer" onmousedown="initColResize(event, this, 'dailyTable')" title="경계선을 드래그하여 열 너비 조절"></div>
+                </th>
+                <th class="relative p-2.5" style="width: 210px;">
+                  <span>기종 선택 (드롭다운)</span>
+                  <div class="column-resizer" onmousedown="initColResize(event, this, 'dailyTable')" title="경계선을 드래그하여 열 너비 조절"></div>
+                </th>
+                <th class="relative p-2.5 text-center" style="width: 105px;">
+                  <span>번호이동 단가</span>
+                  <div class="column-resizer" onmousedown="initColResize(event, this, 'dailyTable')" title="경계선을 드래그하여 열 너비 조절"></div>
+                </th>
+                <th class="relative p-2.5 text-center" style="width: 95px;">
+                  <span>번이 단가처</span>
+                  <div class="column-resizer" onmousedown="initColResize(event, this, 'dailyTable')" title="경계선을 드래그하여 열 너비 조절"></div>
+                </th>
+                <th class="relative p-2.5 text-center" style="width: 105px;">
+                  <span>기기변경 단가</span>
+                  <div class="column-resizer" onmousedown="initColResize(event, this, 'dailyTable')" title="경계선을 드래그하여 열 너비 조절"></div>
+                </th>
+                <th class="relative p-2.5 text-center" style="width: 95px;">
+                  <span>기변 단가처</span>
+                  <div class="column-resizer" onmousedown="initColResize(event, this, 'dailyTable')" title="경계선을 드래그하여 열 너비 조절"></div>
+                </th>
               </tr>
             </thead>
             <tbody id="dailyTableBody" class="divide-y divide-slate-100">
@@ -711,7 +729,11 @@
 
     // ==================== 독립 행 레이아웃 & 영속화 관리 ====================
     let calcRows = [];
-    let dailyRows = [];
+    let dailyCarrierRows = {
+      SK: null,
+      KT: null,
+      LG: null
+    };
     let adCarrierOrders = {
       SK: null,
       KT: null,
@@ -721,7 +743,7 @@
     function saveLayouts() {
       try {
         localStorage.setItem('phone_calc_rows', JSON.stringify(calcRows));
-        localStorage.setItem('phone_daily_rows', JSON.stringify(dailyRows));
+        localStorage.setItem('phone_daily_carrier_rows', JSON.stringify(dailyCarrierRows));
         localStorage.setItem('phone_ad_carrier_orders', JSON.stringify(adCarrierOrders));
       } catch (e) {}
     }
@@ -738,13 +760,10 @@
           calcRows = [...defaultIds];
         }
 
-        const savedDaily = localStorage.getItem('phone_daily_rows');
+        const savedDaily = localStorage.getItem('phone_daily_carrier_rows');
         if (savedDaily) {
           const parsed = JSON.parse(savedDaily);
-          if (Array.isArray(parsed) && parsed.length > 0) dailyRows = parsed;
-          else dailyRows = [...defaultIds];
-        } else {
-          dailyRows = [...defaultIds];
+          if (parsed && typeof parsed === 'object') dailyCarrierRows = parsed;
         }
 
         const savedAd = localStorage.getItem('phone_ad_carrier_orders');
@@ -754,8 +773,27 @@
         }
       } catch (e) {
         calcRows = [...defaultIds];
-        dailyRows = [...defaultIds];
       }
+
+      ['SK', 'KT', 'LG'].forEach(c => {
+        if (!dailyCarrierRows[c] || !Array.isArray(dailyCarrierRows[c])) {
+          dailyCarrierRows[c] = [...defaultIds];
+        }
+      });
+    }
+
+    function getDailyRows(carrier = activeInputCarrier) {
+      if (!dailyCarrierRows[carrier] || !Array.isArray(dailyCarrierRows[carrier])) {
+        dailyCarrierRows[carrier] = devices.map(d => d.id);
+      }
+      return dailyCarrierRows[carrier];
+    }
+
+    // 탭 2 해당 통신사 목록에 기종이 존재하는지 확인 (삭제 시 false -> 넷가표에서 해당 통신사 품절 처리)
+    function isDeviceActiveInDaily(carrier, deviceId) {
+      if (!deviceId || deviceId === 'empty') return false;
+      const rows = getDailyRows(carrier);
+      return rows.includes(deviceId);
     }
 
     function saveAdCarrierOrders() {
@@ -807,38 +845,49 @@
       renderCalcTable();
     }
 
-    // 2. 단가 입력표(TAB 2) 행 조작 함수들
+    // 2. 단가 입력표(TAB 2) 행 조작 함수들 (해당 통신사 전용)
     function addDailyRow(modelId = 'empty') {
-      dailyRows.push(modelId);
+      const rows = getDailyRows(activeInputCarrier);
+      rows.push(modelId);
       saveLayouts();
       renderDailyTable();
+      renderCalcTable();
     }
     function addDailyEmptyRow() {
-      dailyRows.push('empty');
+      const rows = getDailyRows(activeInputCarrier);
+      rows.push('empty');
       saveLayouts();
       renderDailyTable();
     }
     function resetDailyRows() {
-      dailyRows = devices.map(d => d.id);
-      saveLayouts();
-      renderDailyTable();
+      if (confirm(`[${activeInputCarrier}] 대리점 단가표를 기본 기종 전체 목록으로 초기화하시겠습니까?`)) {
+        dailyCarrierRows[activeInputCarrier] = devices.map(d => d.id);
+        saveLayouts();
+        renderDailyTable();
+        renderCalcTable();
+      }
     }
     function deleteDailyRow(idx) {
-      dailyRows.splice(idx, 1);
+      const rows = getDailyRows(activeInputCarrier);
+      rows.splice(idx, 1);
       saveLayouts();
       renderDailyTable();
+      renderCalcTable(); // 넷가 산출표 즉시 품절 연동!
     }
     function updateDailyRow(idx, val) {
-      dailyRows[idx] = val;
+      const rows = getDailyRows(activeInputCarrier);
+      rows[idx] = val;
       saveLayouts();
       renderDailyTable();
+      renderCalcTable();
     }
     function moveDeviceDaily(index, direction) {
+      const rows = getDailyRows(activeInputCarrier);
       const targetIndex = index + direction;
-      if (targetIndex < 0 || targetIndex >= dailyRows.length) return;
-      const temp = dailyRows[index];
-      dailyRows[index] = dailyRows[targetIndex];
-      dailyRows[targetIndex] = temp;
+      if (targetIndex < 0 || targetIndex >= rows.length) return;
+      const temp = rows[index];
+      rows[index] = rows[targetIndex];
+      rows[targetIndex] = temp;
       saveLayouts();
       renderDailyTable();
     }
@@ -866,7 +915,7 @@
     }
 
     // ==================== 엑셀 스타일 열 너비 조절 (Column Resizing) ====================
-    function initColResize(e, resizer) {
+    function initColResize(e, resizer, tableId = 'adTable') {
       e.preventDefault();
       e.stopPropagation();
 
@@ -880,7 +929,7 @@
 
       function onMouseMove(moveEvent) {
         const diff = moveEvent.pageX - startX;
-        const newWidth = Math.max(45, startWidth + diff);
+        const newWidth = Math.max(40, startWidth + diff);
         th.style.width = newWidth + 'px';
         th.style.minWidth = newWidth + 'px';
       }
@@ -891,20 +940,37 @@
         document.body.style.userSelect = '';
         document.removeEventListener('mousemove', onMouseMove);
         document.removeEventListener('mouseup', onMouseUp);
-        saveColumnWidths();
+        saveColumnWidths(tableId);
       }
 
       document.addEventListener('mousemove', onMouseMove);
       document.addEventListener('mouseup', onMouseUp);
     }
 
-    function saveColumnWidths() {
+    function saveColumnWidths(tableId = 'adTable') {
       try {
         const widths = {};
-        document.querySelectorAll('#adTable thead th').forEach((th, i) => {
+        document.querySelectorAll(`#${tableId} thead th`).forEach((th, i) => {
           widths[i] = th.style.width;
         });
-        localStorage.setItem('phone_ad_col_widths', JSON.stringify(widths));
+        localStorage.setItem(`phone_col_widths_${tableId}`, JSON.stringify(widths));
+      } catch (e) {}
+    }
+
+    function loadColumnWidths(tableId = 'adTable') {
+      try {
+        const saved = localStorage.getItem(`phone_col_widths_${tableId}`);
+        if (saved) {
+          const widths = JSON.parse(saved);
+          document.querySelectorAll(`#${tableId} thead th`).forEach((th, i) => {
+            if (widths[i]) {
+              th.style.width = widths[i];
+              th.style.minWidth = widths[i];
+            }
+          });
+        }
+      } catch (e) {}
+    }
       } catch (e) {}
     }
 
@@ -1013,6 +1079,9 @@
 
     function calcNet(d, carrier, type, mode = 'basic') {
       if (d.coming) return null;
+      // 탭 2 해당 통신사 목록에서 X로 삭제된 기종은 자동으로 품절 처리!
+      if (!isDeviceActiveInDaily(carrier, d.id)) return null;
+
       const rateVal = d.rate[carrier][type];
       if (rateVal === '품절' || rateVal === '' || rateVal === null || isNaN(rateVal)) return null;
 
@@ -1288,7 +1357,7 @@
         const curLocChg = (d.loc && d.loc[activeInputCarrier]) ? d.loc[activeInputCarrier].chg : '도매';
 
         tr.innerHTML = `
-          <td class="p-2 text-center text-slate-400 font-medium whitespace-nowrap">
+          <td class="p-2 text-center text-slate-400 font-medium whitespace-nowrap overflow-hidden">
             <div class="flex items-center justify-center gap-1.5">
               <div class="drag-handle cursor-grab active:cursor-grabbing p-1.5 rounded-lg bg-slate-50 hover:bg-blue-100 hover:text-blue-700 text-slate-400 select-none transition border border-slate-200/80 shadow-xs flex items-center justify-center"
                    title="마우스로 드래그하여 순서 변경 (위로 끌올 / 아래로 이동)"
@@ -1301,35 +1370,35 @@
               </div>
               <div class="flex flex-col gap-0.5">
                 <button onclick="moveDeviceDaily(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} class="w-4 h-3.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[8px] flex items-center justify-center" title="위로 한 칸">▲</button>
-                <button onclick="moveDeviceDaily(${idx}, 1)" ${idx === dailyRows.length - 1 ? 'disabled' : ''} class="w-4 h-3.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[8px] flex items-center justify-center" title="아래로 한 칸">▼</button>
+                <button onclick="moveDeviceDaily(${idx}, 1)" ${idx === currentRows.length - 1 ? 'disabled' : ''} class="w-4 h-3.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[8px] flex items-center justify-center" title="아래로 한 칸">▼</button>
               </div>
-              <button onclick="deleteDailyRow(${idx})" class="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50 text-xs ml-0.5" title="행 삭제">✕</button>
+              <button onclick="deleteDailyRow(${idx})" class="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50 text-xs ml-0.5" title="이 통신사에서 삭제 (넷가표 품절 연동)">✕</button>
             </div>
           </td>
-          <td class="p-2 font-bold text-slate-800 min-w-[190px]">
+          <td class="p-2 font-bold text-slate-800 overflow-hidden">
             <select onchange="updateDailyRow(${idx}, this.value)" class="w-full px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-800 focus:ring-1 focus:ring-blue-500">
               ${buildModelOptions(d.id)}
             </select>
           </td>
           <!-- 번이 단가 -->
-          <td class="p-2 text-center">
+          <td class="p-2 text-center overflow-hidden">
             <input type="text" value="${d.rate[activeInputCarrier].mnp}" onchange="updateRate('${d.id}', 'mnp', this.value)"
-                   class="w-24 px-2 py-1 text-center font-bold bg-white border border-slate-300 rounded-lg text-slate-900 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+                   class="w-full max-w-[80px] px-1.5 py-1 text-center font-bold bg-white border border-slate-300 rounded-lg text-slate-900 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" />
           </td>
           <!-- 번이 단가처 드롭다운 -->
-          <td class="p-2 text-center">
-            <select onchange="updateLocation('${d.id}', 'mnp', this.value)" class="px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-medium text-slate-700 focus:ring-1 focus:ring-blue-500">
+          <td class="p-2 text-center overflow-hidden">
+            <select onchange="updateLocation('${d.id}', 'mnp', this.value)" class="w-full max-w-[85px] px-1 py-1 bg-white border border-slate-300 rounded-lg text-xs font-medium text-slate-700 focus:ring-1 focus:ring-blue-500">
               ${LOCATION_OPTIONS.map(opt => `<option value="${opt}" ${opt === curLocMnp ? 'selected' : ''}>${opt}</option>`).join('')}
             </select>
           </td>
           <!-- 기변 단가 -->
-          <td class="p-2 text-center">
+          <td class="p-2 text-center overflow-hidden">
             <input type="text" value="${d.rate[activeInputCarrier].chg}" onchange="updateRate('${d.id}', 'chg', this.value)"
-                   class="w-24 px-2 py-1 text-center font-bold bg-white border border-slate-300 rounded-lg text-slate-900 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+                   class="w-full max-w-[80px] px-1.5 py-1 text-center font-bold bg-white border border-slate-300 rounded-lg text-slate-900 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" />
           </td>
           <!-- 기변 단가처 드롭다운 -->
-          <td class="p-2 text-center">
-            <select onchange="updateLocation('${d.id}', 'chg', this.value)" class="px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-medium text-slate-700 focus:ring-1 focus:ring-blue-500">
+          <td class="p-2 text-center overflow-hidden">
+            <select onchange="updateLocation('${d.id}', 'chg', this.value)" class="w-full max-w-[85px] px-1 py-1 bg-white border border-slate-300 rounded-lg text-xs font-medium text-slate-700 focus:ring-1 focus:ring-blue-500">
               ${LOCATION_OPTIONS.map(opt => `<option value="${opt}" ${opt === curLocChg ? 'selected' : ''}>${opt}</option>`).join('')}
             </select>
           </td>
@@ -1710,7 +1779,8 @@
     }
 
     loadLayouts();
-    loadColumnWidths();
+    loadColumnWidths('adTable');
+    loadColumnWidths('dailyTable');
     updateDots();
   </script>
 </body>
