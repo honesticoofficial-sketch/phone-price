@@ -31,7 +31,8 @@
 | 항목 | 주소 / 값 | 설명 |
 | :--- | :--- | :--- |
 | **GitHub 저장소** | `https://github.com/honesticoofficial-sketch/phone-price` | 프로젝트 소스코드 원본 저장소 |
-| **실시간 배포 웹사이트** | `https://honesticoofficial-sketch.github.io/phone-price/` | 모바일 및 PC 브라우저 즉시 접속 주소 |
+| **🌟 공식 웹사이트 (Vercel)** | **`https://phone-price-fawn.vercel.app`** | **아이디 노출 없는 깔끔한 메인 접속 주소 (실시간 자동 연동)** |
+| **보조 웹사이트 (GitHub Pages)** | `https://honesticoofficial-sketch.github.io/phone-price/` | 보조 백업 접속 주소 |
 | **👑 본사(마스터) PIN** | **`103105`** | 공시&출고가 설정 권한 보유, 명지점/광안점 자유로운 실시간 전환 및 전체 히스토리 열람 |
 | **📍 명지점 전용 PIN** | **`152411`** | 명지점 단가/광고/올부가할인 독립 관리 및 명지점 변경 내역만 독립 열람 |
 | **📍 광안점 전용 PIN** | **`152422`** | 광안점 단가/광고/올부가할인 독립 관리 및 광안점 변경 내역만 독립 열람 |
