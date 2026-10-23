@@ -157,6 +157,18 @@
           <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>실시간 클라우드 동기화</b><br>구글 파이어베이스 클라우드에 1초 단위로 자동 저장되며 명지점, 광안점, 본사가 항상 실시간으로 동일한 최신 데이터를 공유합니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>실시간 클라우드 동기화</b><br>구글 파이어베이스 클라우드에 1초 단위로 자동 저장되며 명지점, 광안점, 본사가 항상 실시간으로 동일한 최신 데이터를 공유합니다.')" title="동기화 안내">?</button>
         </div>
 
+        <!-- 버그/개선 요청 바로가기 버튼군 -->
+        <button onclick="openNewRequestModal()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white shadow-xs transition">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+          <span>+ 요청 등록</span>
+        </button>
+
+        <button onclick="switchTab('request')" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 transition">
+          <span class="text-sm">💬</span>
+          <span>요청 현황</span>
+          <span id="headerRequestBadge" class="hidden px-1.5 py-0.2 text-[10px] rounded-full bg-rose-500 text-white font-black">0</span>
+        </button>
+
         <!-- 변경 히스토리 모달 버튼 -->
         <button onclick="openHistoryModal()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 transition">
           <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -187,7 +199,7 @@
 
     <!-- ==================== 네비게이션 탭 & 보기 필터 ==================== -->
     <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3">
-      <div class="flex gap-2">
+      <div class="flex gap-2 flex-wrap">
         <button onclick="switchTab('calc')" id="tabBtn-calc" class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-slate-900 text-white shadow-xs transition">
           <svg class="w-3.5 h-3.5 text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
@@ -205,6 +217,14 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
           </svg>
           <span>성지특가 광고표 & 마진</span>
+        </button>
+        <button onclick="switchTab('request')" id="tabBtn-request" class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition relative">
+          <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          <span id="tabBtnRequestText">버그/개선 요청</span>
+          <span id="tabRequestPendingBadge" class="hidden ml-1 px-1.5 py-0.2 text-[10px] rounded-full bg-rose-500 text-white font-black">0</span>
         </button>
       </div>
 
@@ -234,15 +254,14 @@
         <!-- SKT 카드 -->
         <div class="p-3.5 bg-white rounded-2xl border border-slate-200/90 shadow-2xs space-y-2.5">
           <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-            <span class="inline-flex items-center gap-1 font-extrabold text-xs text-rose-700">
+            <span class="inline-flex items-center gap-1.5 font-extrabold text-xs text-rose-700">
               <span class="w-2.5 h-2.5 rounded-full bg-rose-500 ring-2 ring-rose-100"></span>
-              SKT 부가조건
-              <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>SKT 부가조건 & 유지기간</b><br>SKT 개통 시 필수 충족 요금제 및 유지 기간, 부가서비스 1~4 항목을 메모해두는 곳입니다. 입력 시 실시간으로 클라우드에 영구 저장됩니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>SKT 부가조건 & 유지기간</b><br>SKT 개통 시 필수 충족 요금제 및 유지 기간, 부가서비스 1~4 항목을 메모해두는 곳입니다. 입력 시 실시간으로 클라우드에 영구 저장됩니다.')" title="부가조건 안내">?</button>
+              SK 기본부가조건
             </span>
             <div class="flex items-center gap-1 bg-rose-50/80 border border-rose-200 px-2 py-0.5 rounded-lg">
               <span class="text-[11px] font-bold text-rose-700 flex items-center">
                 올부가 할인
-                <button type="button" class="help-btn mr-0.5" onmouseenter="showHelpTip(event, this, '<b>올부가 추가 할인액</b><br>고객이 고가 요금제와 필수 부가서비스를 모두 가입할 때 매장에서 추가로 공제해주는 특별 할인액(만원)입니다. [올부가 넷가] 계산 시 이 금액만큼 추가 차감됩니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>올부가 추가 할인액</b><br>고객이 고가 요금제와 필수 부가서비스를 모두 가입할 때 매장에서 추가로 공제해주는 특별 할인액(만원)입니다. [올부가 넷가] 계산 시 이 금액만큼 추가 차감됩니다.')" title="올부가 할인 안내">?</button>
+                <button type="button" class="help-btn mr-0.5" onmouseenter="showHelpTip(event, this, '<b>올부가 추가 할인금</b><br>기본부가를 제외한 매장 자체 추가 부가서비스 항목이 있을 때 추가되는 지원금 금액입니다. 즉, 기본부가에 미포함된 추가 부가할인금을 적는 곳입니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>올부가 추가 할인금</b><br>기본부가를 제외한 매장 자체 추가 부가서비스 항목이 있을 때 추가되는 지원금 금액입니다. 즉, 기본부가에 미포함된 추가 부가할인금을 적는 곳입니다.')" title="올부가 할인 안내">?</button>
               </span>
               <span class="text-rose-600 font-black text-xs">-</span>
               <input type="number" id="discount-SK" value="15" onchange="updateCarrierDiscount('SK', this.value)"
@@ -293,15 +312,14 @@
         <!-- KT 카드 -->
         <div class="p-3.5 bg-white rounded-2xl border border-slate-200/90 shadow-2xs space-y-2.5">
           <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-            <span class="inline-flex items-center gap-1 font-extrabold text-xs text-blue-700">
+            <span class="inline-flex items-center gap-1.5 font-extrabold text-xs text-blue-700">
               <span class="w-2.5 h-2.5 rounded-full bg-blue-500 ring-2 ring-blue-100"></span>
-              KT 부가조건
-              <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>KT 부가조건 & 유지기간</b><br>KT 개통 시 필수 충족 요금제 및 유지 기간, 부가서비스 1~4 항목을 메모해두는 곳입니다. 입력 시 실시간으로 클라우드에 영구 저장됩니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>KT 부가조건 & 유지기간</b><br>KT 개통 시 필수 충족 요금제 및 유지 기간, 부가서비스 1~4 항목을 메모해두는 곳입니다. 입력 시 실시간으로 클라우드에 영구 저장됩니다.')" title="부가조건 안내">?</button>
+              KT 기본부가조건
             </span>
             <div class="flex items-center gap-1 bg-blue-50/80 border border-blue-200 px-2 py-0.5 rounded-lg">
               <span class="text-[11px] font-bold text-blue-700 flex items-center">
                 올부가 할인
-                <button type="button" class="help-btn mr-0.5" onmouseenter="showHelpTip(event, this, '<b>KT 올부가 추가 할인액</b><br>KT 올부가 조건 충족 시 추가 지원하는 할인금(만원)입니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>KT 올부가 추가 할인액</b><br>KT 올부가 조건 충족 시 추가 지원하는 할인금(만원)입니다.')" title="올부가 할인 안내">?</button>
+                <button type="button" class="help-btn mr-0.5" onmouseenter="showHelpTip(event, this, '<b>올부가 추가 할인금</b><br>기본부가를 제외한 매장 자체 추가 부가서비스 항목이 있을 때 추가되는 지원금 금액입니다. 즉, 기본부가에 미포함된 추가 부가할인금을 적는 곳입니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>올부가 추가 할인금</b><br>기본부가를 제외한 매장 자체 추가 부가서비스 항목이 있을 때 추가되는 지원금 금액입니다. 즉, 기본부가에 미포함된 추가 부가할인금을 적는 곳입니다.')" title="올부가 할인 안내">?</button>
               </span>
               <span class="text-blue-600 font-black text-xs">-</span>
               <input type="number" id="discount-KT" value="15" onchange="updateCarrierDiscount('KT', this.value)"
@@ -352,15 +370,14 @@
         <!-- LGU+ 카드 -->
         <div class="p-3.5 bg-white rounded-2xl border border-slate-200/90 shadow-2xs space-y-2.5">
           <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-            <span class="inline-flex items-center gap-1 font-extrabold text-xs text-pink-700">
+            <span class="inline-flex items-center gap-1.5 font-extrabold text-xs text-pink-700">
               <span class="w-2.5 h-2.5 rounded-full bg-pink-500 ring-2 ring-pink-100"></span>
-              LGU+ 부가조건
-              <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>LGU+ 부가조건 & 유지기간</b><br>LGU+ 개통 시 필수 충족 요금제 및 유지 기간, 부가서비스 1~4 항목을 메모해두는 곳입니다. 입력 시 실시간으로 클라우드에 영구 저장됩니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>LGU+ 부가조건 & 유지기간</b><br>LGU+ 개통 시 필수 충족 요금제 및 유지 기간, 부가서비스 1~4 항목을 메모해두는 곳입니다. 입력 시 실시간으로 클라우드에 영구 저장됩니다.')" title="부가조건 안내">?</button>
+              LG 기본부가조건
             </span>
             <div class="flex items-center gap-1 bg-pink-50/80 border border-pink-200 px-2 py-0.5 rounded-lg">
               <span class="text-[11px] font-bold text-pink-700 flex items-center">
                 올부가 할인
-                <button type="button" class="help-btn mr-0.5" onmouseenter="showHelpTip(event, this, '<b>LGU+ 올부가 추가 할인액</b><br>LGU+ 올부가 조건 충족 시 추가 지원하는 할인금(만원)입니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>LGU+ 올부가 추가 할인액</b><br>LGU+ 올부가 조건 충족 시 추가 지원하는 할인금(만원)입니다.')" title="올부가 할인 안내">?</button>
+                <button type="button" class="help-btn mr-0.5" onmouseenter="showHelpTip(event, this, '<b>올부가 추가 할인금</b><br>기본부가를 제외한 매장 자체 추가 부가서비스 항목이 있을 때 추가되는 지원금 금액입니다. 즉, 기본부가에 미포함된 추가 부가할인금을 적는 곳입니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>올부가 추가 할인금</b><br>기본부가를 제외한 매장 자체 추가 부가서비스 항목이 있을 때 추가되는 지원금 금액입니다. 즉, 기본부가에 미포함된 추가 부가할인금을 적는 곳입니다.')" title="올부가 할인 안내">?</button>
               </span>
               <span class="text-pink-600 font-black text-xs">-</span>
               <input type="number" id="discount-LG" value="15" onchange="updateCarrierDiscount('LG', this.value)"
@@ -754,6 +771,68 @@
       </div>
     </div>
 
+    <!-- ==================== TAB 4: 버그 및 개선사항 요청 & 조치 관리 ==================== -->
+    <div id="tab-request" class="space-y-4 hidden">
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs space-y-5">
+        
+        <!-- 상단 헤더 & 새 요청 등록 버튼 -->
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
+          <div>
+            <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+              <span class="text-lg">🛠️</span>
+              <span id="tabRequestTitle">버그 신고 & 기능 개선 요청</span>
+              <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>버그 및 개선사항 게시판</b><br>매장 업무 중 발생한 오류나 추가가 필요한 기능을 자유롭게 요청할 수 있습니다.<br>명지점과 광안점이 함께 확인하며, 본사 관리자가 완료 또는 반려 사유를 실시간으로 공유합니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>버그 및 개선사항 게시판</b><br>매장 업무 중 발생한 오류나 추가가 필요한 기능을 자유롭게 요청할 수 있습니다.<br>명지점과 광안점이 함께 확인하며, 본사 관리자가 완료 또는 반려 사유를 실시간으로 공유합니다.')" title="요청함 안내">?</button>
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">
+              명지점과 광안점의 요청을 본사 관리자가 실시간으로 확인하고 조치 완료 또는 반려 사유를 공유합니다. (전 매장 공유)
+            </p>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button onclick="openNewRequestModal()" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+              <span>+ 새 요청 등록하기</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 필터 및 검색 바 -->
+        <div class="flex flex-wrap items-center justify-between gap-3 text-xs bg-slate-50 p-3 rounded-xl border border-slate-200/80">
+          <!-- 상태 필터 -->
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="text-slate-500 font-bold px-1">상태:</span>
+            <button onclick="filterRequestStatus('all')" id="reqFilterStatus-all" class="px-3 py-1 rounded-lg font-bold bg-white text-slate-900 shadow-2xs border border-slate-200">
+              전체 (<span id="reqCount-all">0</span>)
+            </button>
+            <button onclick="filterRequestStatus('pending')" id="reqFilterStatus-pending" class="px-3 py-1 rounded-lg font-semibold text-amber-700 hover:bg-white transition">
+              🟡 검토중 (<span id="reqCount-pending">0</span>)
+            </button>
+            <button onclick="filterRequestStatus('completed')" id="reqFilterStatus-completed" class="px-3 py-1 rounded-lg font-semibold text-emerald-700 hover:bg-white transition">
+              🟢 조치 완료 (<span id="reqCount-completed">0</span>)
+            </button>
+            <button onclick="filterRequestStatus('rejected')" id="reqFilterStatus-rejected" class="px-3 py-1 rounded-lg font-semibold text-rose-700 hover:bg-white transition">
+              🔴 반려됨 (<span id="reqCount-rejected">0</span>)
+            </button>
+          </div>
+
+          <!-- 매장 필터 -->
+          <div class="flex items-center gap-1.5">
+            <span class="text-slate-500 font-bold px-1">매장:</span>
+            <button onclick="filterRequestStore('all')" id="reqFilterStore-all" class="px-2.5 py-1 rounded-lg font-bold bg-white text-slate-900 shadow-2xs border border-slate-200">전체</button>
+            <button onclick="filterRequestStore('myeongji')" id="reqFilterStore-myeongji" class="px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition">📍 명지점</button>
+            <button onclick="filterRequestStore('gwangan')" id="reqFilterStore-gwangan" class="px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition">📍 광안점</button>
+            <button onclick="filterRequestStore('master')" id="reqFilterStore-master" class="px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition">👑 본사</button>
+          </div>
+        </div>
+
+        <!-- 요청 목록 렌더링 컨테이너 -->
+        <div id="supportRequestsContainer" class="space-y-3">
+          <!-- JS 렌더링 -->
+        </div>
+
+      </div>
+    </div>
+
     <!-- ==================== 4. 설정 모달: 공시지원금 & 출고가 직접 수정 ==================== -->
     <div id="settingsModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-3 hidden">
       <div class="bg-white rounded-3xl shadow-2xl max-w-5xl w-full p-6 border border-slate-200 space-y-4 max-h-[92vh] flex flex-col">
@@ -1094,6 +1173,76 @@
           </button>
           <button onclick="addNewDeviceSubmit()" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black shadow-xs transition text-xs flex items-center gap-1.5">
             <span>💾 기종 추가 완료</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 6. 버그/개선사항 등록 모달 ==================== -->
+    <div id="newRequestModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-3 hidden">
+      <div class="bg-white rounded-3xl shadow-2xl max-w-xl w-full p-6 border border-slate-200 space-y-4 max-h-[90vh] flex flex-col">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div>
+            <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+              <span class="text-lg">📝</span>
+              <span>버그 신고 & 기능 개선 요청 등록</span>
+            </h3>
+            <p class="text-xs text-slate-500 mt-0.5">
+              입력하신 내용은 본사 관리자 및 전 매장에 실시간으로 공유됩니다.
+            </p>
+          </div>
+          <button onclick="closeNewRequestModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-lg transition">&times;</button>
+        </div>
+
+        <div class="space-y-3.5 text-xs overflow-y-auto pr-1">
+          <!-- 신청 매장 표시 -->
+          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
+            <span class="font-bold text-slate-600">작성 매장 / 작성자</span>
+            <span id="newReqStoreBadge" class="px-2.5 py-1 rounded-lg font-black text-xs bg-indigo-50 text-indigo-700 border border-indigo-200">
+              📍 명지점
+            </span>
+          </div>
+
+          <!-- 요청 구분 및 우선순위 2열 -->
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1">
+              <label class="block font-bold text-slate-700">요청 구분 <span class="text-rose-500">*</span></label>
+              <select id="newReqCategory" class="w-full p-2.5 bg-white border border-slate-300 rounded-xl font-bold text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                <option value="feature">💡 기능 / 화면 개선 제안</option>
+                <option value="bug">🐛 버그 / 오류 신고</option>
+                <option value="question">❓ 사용법 문의 / 기타</option>
+              </select>
+            </div>
+            <div class="space-y-1">
+              <label class="block font-bold text-slate-700">우선순위 / 긴급도</label>
+              <select id="newReqPriority" class="w-full p-2.5 bg-white border border-slate-300 rounded-xl font-bold text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                <option value="normal">보통 (일반 제안/개선)</option>
+                <option value="high">⚡ 중요 (빠른 검토 요망)</option>
+                <option value="urgent">🚨 긴급 (영업/계산 지장)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- 제목 -->
+          <div class="space-y-1">
+            <label class="block font-bold text-slate-700">요청 제목 <span class="text-rose-500">*</span></label>
+            <input type="text" id="newReqTitle" class="w-full p-2.5 bg-white border border-slate-300 rounded-xl font-semibold text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="예: 대리점 단가 입력 시 특정 기종 반응 속도 개선 요청" />
+          </div>
+
+          <!-- 상세 내용 -->
+          <div class="space-y-1">
+            <label class="block font-bold text-slate-700">상세 내용 <span class="text-rose-500">*</span></label>
+            <textarea id="newReqContent" rows="5" class="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-xs font-medium focus:ring-2 focus:ring-indigo-500 focus:outline-none leading-relaxed" placeholder="발생한 문제 상황이나 필요한 기능, 화면 구성에 대한 아이디어를 구체적으로 적어주세요."></textarea>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+          <button onclick="closeNewRequestModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition text-xs">
+            취소
+          </button>
+          <button onclick="submitSupportRequest()" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black shadow-xs transition text-xs flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <span>요청 등록하기</span>
           </button>
         </div>
       </div>
@@ -1877,6 +2026,7 @@
       if (unsubscribeMasterConfig) { unsubscribeMasterConfig(); unsubscribeMasterConfig = null; }
       if (unsubscribeStoreData) { unsubscribeStoreData(); unsubscribeStoreData = null; }
       if (unsubscribeAuditHistory) { unsubscribeAuditHistory(); unsubscribeAuditHistory = null; }
+      if (unsubscribeSupportRequests) { unsubscribeSupportRequests(); unsubscribeSupportRequests = null; }
       try {
         sessionStorage.removeItem('phone_current_pin');
       } catch(e) {}
@@ -1909,17 +2059,25 @@
 
     function switchTab(t) {
       currentTab = t;
-      ['calc', 'daily', 'ad'].forEach(id => {
-        document.getElementById(`tab-${id}`).classList.toggle('hidden', id !== t);
+      ['calc', 'daily', 'ad', 'request'].forEach(id => {
+        const tabEl = document.getElementById(`tab-${id}`);
+        if (tabEl) tabEl.classList.toggle('hidden', id !== t);
         const b = document.getElementById(`tabBtn-${id}`);
-        if (id === t) {
-          b.className = "px-5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-white shadow-xs transition";
-        } else {
-          b.className = "px-5 py-2 rounded-xl text-xs font-bold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition";
+        if (b) {
+          if (id === t) {
+            b.className = "flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-slate-900 text-white shadow-xs transition relative";
+          } else {
+            b.className = "flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition relative";
+          }
         }
       });
-      document.getElementById('viewFilterBox').classList.toggle('hidden', t !== 'calc');
-      render();
+      const vfb = document.getElementById('viewFilterBox');
+      if (vfb) vfb.classList.toggle('hidden', t !== 'calc');
+      if (t === 'request') {
+        renderSupportRequests();
+      } else {
+        render();
+      }
     }
 
     function setNetDisplayMode(m) {
@@ -3137,6 +3295,15 @@
           copyBtn.classList.remove('flex');
         }
       }
+
+      const tabReqText = document.getElementById('tabBtnRequestText');
+      const tabReqTitle = document.getElementById('tabRequestTitle');
+      if (tabReqText) {
+        tabReqText.innerText = currentRole === 'master' ? '요청 관리' : '버그/개선 요청';
+      }
+      if (tabReqTitle) {
+        tabReqTitle.innerText = currentRole === 'master' ? '버그/개선 요청 통합 관리' : '버그 신고 & 기능 개선 요청';
+      }
     }
 
     function updateMasterSwitcherButtons() {
@@ -3258,6 +3425,9 @@
 
       // 3. 실시간 변경 히스토리 리스너
       subscribeAuditHistory();
+
+      // 4. 버그 및 개선사항 요청 리스너
+      subscribeSupportRequests();
     }
 
     function subscribeStoreData() {
@@ -3637,6 +3807,479 @@
           </tr>
         `;
       }).join('');
+    }
+
+    // ==================== 6. 버그 신고 및 기능 개선 요청 시스템 ====================
+    let allSupportRequests = [];
+    let currentReqStatusFilter = 'all';
+    let currentReqStoreFilter = 'all';
+    let unsubscribeSupportRequests = null;
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function subscribeSupportRequests() {
+      if (unsubscribeSupportRequests) {
+        unsubscribeSupportRequests();
+        unsubscribeSupportRequests = null;
+      }
+      if (!db) return;
+
+      unsubscribeSupportRequests = db.collection('support_requests')
+        .orderBy('createdAt', 'desc')
+        .limit(100)
+        .onSnapshot((snapshot) => {
+          allSupportRequests = [];
+          snapshot.forEach(doc => {
+            allSupportRequests.push({ id: doc.id, ...doc.data() });
+          });
+          renderSupportRequests();
+        }, (err) => {
+          console.error("Support requests subscription error:", err);
+        });
+    }
+
+    function openNewRequestModal() {
+      const modal = document.getElementById('newRequestModal');
+      const badge = document.getElementById('newReqStoreBadge');
+      if (badge) {
+        if (currentRole === 'master') {
+          badge.innerText = '👑 본사 관리자';
+          badge.className = 'px-2.5 py-1 rounded-lg font-black text-xs bg-purple-50 text-purple-700 border border-purple-200';
+        } else if (currentStoreId === 'myeongji') {
+          badge.innerText = '📍 명지점';
+          badge.className = 'px-2.5 py-1 rounded-lg font-black text-xs bg-indigo-50 text-indigo-700 border border-indigo-200';
+        } else {
+          badge.innerText = '📍 광안점';
+          badge.className = 'px-2.5 py-1 rounded-lg font-black text-xs bg-emerald-50 text-emerald-700 border border-emerald-200';
+        }
+      }
+      const titleInput = document.getElementById('newReqTitle');
+      const contentInput = document.getElementById('newReqContent');
+      const catSelect = document.getElementById('newReqCategory');
+      const priSelect = document.getElementById('newReqPriority');
+
+      if (titleInput) titleInput.value = '';
+      if (contentInput) contentInput.value = '';
+      if (catSelect) catSelect.value = 'feature';
+      if (priSelect) priSelect.value = 'normal';
+
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeNewRequestModal() {
+      const modal = document.getElementById('newRequestModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function submitSupportRequest() {
+      const titleInput = document.getElementById('newReqTitle');
+      const contentInput = document.getElementById('newReqContent');
+      const catSelect = document.getElementById('newReqCategory');
+      const priSelect = document.getElementById('newReqPriority');
+
+      const title = (titleInput ? titleInput.value : '').trim();
+      const content = (contentInput ? contentInput.value : '').trim();
+      const category = catSelect ? catSelect.value : 'feature';
+      const priority = priSelect ? priSelect.value : 'normal';
+
+      if (!title) {
+        alert('요청 제목을 입력해주세요.');
+        if (titleInput) titleInput.focus();
+        return;
+      }
+      if (!content) {
+        alert('상세 내용을 입력해주세요.');
+        if (contentInput) contentInput.focus();
+        return;
+      }
+
+      if (!db) {
+        alert('클라우드에 연결되지 않아 등록할 수 없습니다.');
+        return;
+      }
+
+      const now = new Date();
+      const pad = (n) => String(n).padStart(2, '0');
+      const timeStr = `${now.getFullYear()}.${pad(now.getMonth()+1)}.${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+      const actor = currentRole === 'master' ? '본사 (마스터)' : currentStoreName;
+
+      const payload = {
+        storeId: currentRole === 'master' ? 'master' : currentStoreId,
+        storeName: actor,
+        category: category,
+        priority: priority,
+        title: title,
+        content: content,
+        status: 'pending',
+        responseComment: '',
+        rejectReason: '',
+        resolvedBy: '',
+        resolvedAt: '',
+        createdTimeStr: timeStr,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      db.collection('support_requests').add(payload)
+        .then(() => {
+          logAudit('버그/개선 요청', `[${actor}] ${title}`);
+          closeNewRequestModal();
+          switchTab('request');
+          alert('요청이 정상적으로 등록되었습니다. 전 매장과 본사 관리자가 실시간으로 확인합니다.');
+        })
+        .catch(err => {
+          console.error("Error submitting support request:", err);
+          alert('요청 등록 중 오류가 발생했습니다: ' + err.message);
+        });
+    }
+
+    function filterRequestStatus(status) {
+      currentReqStatusFilter = status;
+      ['all', 'pending', 'completed', 'rejected'].forEach(s => {
+        const btn = document.getElementById(`reqFilterStatus-${s}`);
+        if (!btn) return;
+        if (s === status) {
+          btn.className = "px-3 py-1 rounded-lg font-bold bg-white text-slate-900 shadow-2xs border border-slate-200";
+        } else {
+          btn.className = "px-3 py-1 rounded-lg font-semibold text-slate-500 hover:bg-white transition";
+        }
+      });
+      renderSupportRequests();
+    }
+
+    function filterRequestStore(storeId) {
+      currentReqStoreFilter = storeId;
+      ['all', 'myeongji', 'gwangan', 'master'].forEach(s => {
+        const btn = document.getElementById(`reqFilterStore-${s}`);
+        if (!btn) return;
+        if (s === storeId) {
+          btn.className = "px-2.5 py-1 rounded-lg font-bold bg-white text-slate-900 shadow-2xs border border-slate-200";
+        } else {
+          btn.className = "px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition";
+        }
+      });
+      renderSupportRequests();
+    }
+
+    function renderSupportRequests() {
+      const container = document.getElementById('supportRequestsContainer');
+      if (!container) return;
+
+      const totalCount = allSupportRequests.length;
+      const pendingCount = allSupportRequests.filter(r => (r.status || 'pending') === 'pending').length;
+      const completedCount = allSupportRequests.filter(r => r.status === 'completed').length;
+      const rejectedCount = allSupportRequests.filter(r => r.status === 'rejected').length;
+
+      const countAll = document.getElementById('reqCount-all');
+      const countPending = document.getElementById('reqCount-pending');
+      const countCompleted = document.getElementById('reqCount-completed');
+      const countRejected = document.getElementById('reqCount-rejected');
+
+      if (countAll) countAll.innerText = totalCount;
+      if (countPending) countPending.innerText = pendingCount;
+      if (countCompleted) countCompleted.innerText = completedCount;
+      if (countRejected) countRejected.innerText = rejectedCount;
+
+      const tabBadge = document.getElementById('tabRequestPendingBadge');
+      const headerBadge = document.getElementById('headerRequestBadge');
+      if (tabBadge) {
+        if (pendingCount > 0) {
+          tabBadge.innerText = pendingCount;
+          tabBadge.classList.remove('hidden');
+        } else {
+          tabBadge.classList.add('hidden');
+        }
+      }
+      if (headerBadge) {
+        if (pendingCount > 0) {
+          headerBadge.innerText = pendingCount;
+          headerBadge.classList.remove('hidden');
+        } else {
+          headerBadge.classList.add('hidden');
+        }
+      }
+
+      let list = allSupportRequests.slice();
+      if (currentReqStatusFilter !== 'all') {
+        list = list.filter(r => (r.status || 'pending') === currentReqStatusFilter);
+      }
+      if (currentReqStoreFilter !== 'all') {
+        list = list.filter(r => r.storeId === currentReqStoreFilter);
+      }
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="p-12 text-center text-slate-400 bg-slate-50/60 rounded-2xl border border-dashed border-slate-200">
+            <span class="text-3xl block mb-2">📋</span>
+            <p class="font-bold text-slate-600 text-sm">해당 조건의 요청 내역이 없습니다.</p>
+            <p class="text-xs text-slate-400 mt-1">상단의 [+ 새 요청 등록하기] 버튼으로 필요한 기능이나 오류를 편하게 남겨주세요!</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = list.map(req => {
+        let catBadge = '';
+        if (req.category === 'bug') {
+          catBadge = '<span class="px-2 py-0.5 rounded-md text-[11px] font-black bg-rose-50 text-rose-700 border border-rose-200">🐛 버그 신고</span>';
+        } else if (req.category === 'feature') {
+          catBadge = '<span class="px-2 py-0.5 rounded-md text-[11px] font-black bg-blue-50 text-blue-700 border border-blue-200">💡 기능 개선</span>';
+        } else {
+          catBadge = '<span class="px-2 py-0.5 rounded-md text-[11px] font-black bg-purple-50 text-purple-700 border border-purple-200">❓ 사용 문의</span>';
+        }
+
+        let storeBadge = '';
+        if (req.storeId === 'myeongji' || (req.storeName && req.storeName.includes('명지'))) {
+          storeBadge = '<span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">📍 명지점</span>';
+        } else if (req.storeId === 'gwangan' || (req.storeName && req.storeName.includes('광안'))) {
+          storeBadge = '<span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">📍 광안점</span>';
+        } else {
+          storeBadge = '<span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-purple-50 text-purple-700 border border-purple-200">👑 본사</span>';
+        }
+
+        let priBadge = '';
+        if (req.priority === 'urgent') {
+          priBadge = '<span class="px-2 py-0.5 rounded-md text-[11px] font-black bg-rose-600 text-white animate-pulse">🚨 긴급</span>';
+        } else if (req.priority === 'high') {
+          priBadge = '<span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-300">⚡ 중요</span>';
+        }
+
+        const status = req.status || 'pending';
+        let statusBadge = '';
+        if (status === 'completed') {
+          statusBadge = '<span class="px-2.5 py-1 rounded-lg text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1">🟢 조치 완료</span>';
+        } else if (status === 'rejected') {
+          statusBadge = '<span class="px-2.5 py-1 rounded-lg text-xs font-black bg-rose-100 text-rose-800 border border-rose-300 flex items-center gap-1">🔴 반려됨</span>';
+        } else {
+          statusBadge = '<span class="px-2.5 py-1 rounded-lg text-xs font-black bg-amber-100 text-amber-800 border border-amber-300 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>검토 대기중</span>';
+        }
+
+        let resolutionHtml = '';
+        if (status === 'completed') {
+          resolutionHtml = `
+            <div class="mt-3 p-3.5 bg-emerald-50/80 border border-emerald-200 rounded-xl space-y-1">
+              <div class="flex items-center justify-between text-xs font-bold text-emerald-900">
+                <span class="flex items-center gap-1.5">
+                  <span>✅</span>
+                  <span>본사 관리자 조치 완료 안내</span>
+                </span>
+                <span class="text-[11px] text-emerald-700 font-medium">${escapeHtml(req.resolvedAt || '')}</span>
+              </div>
+              <p class="text-xs text-emerald-800 leading-relaxed font-medium whitespace-pre-wrap">${escapeHtml(req.responseComment || '요청하신 사항이 시스템에 반영/조치 완료되었습니다.')}</p>
+            </div>
+          `;
+        } else if (status === 'rejected') {
+          resolutionHtml = `
+            <div class="mt-3 p-3.5 bg-rose-50/90 border border-rose-200 rounded-xl space-y-1">
+              <div class="flex items-center justify-between text-xs font-bold text-rose-900">
+                <span class="flex items-center gap-1.5">
+                  <span>🚫</span>
+                  <span>본사 관리자 반려 사유 안내</span>
+                </span>
+                <span class="text-[11px] text-rose-700 font-medium">${escapeHtml(req.resolvedAt || '')}</span>
+              </div>
+              <p class="text-xs text-rose-800 leading-relaxed font-bold whitespace-pre-wrap">${escapeHtml(req.rejectReason || '해결이 불가하거나 보류된 요청입니다.')}</p>
+            </div>
+          `;
+        }
+
+        let masterActionsHtml = '';
+        if (currentRole === 'master') {
+          masterActionsHtml = `
+            <div class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between gap-2 flex-wrap text-xs">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="text-slate-500 font-bold text-[11px]">👑 본사 조치:</span>
+                ${status !== 'completed' ? `
+                  <button onclick="resolveSupportRequest('${req.id}')" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition flex items-center gap-1">
+                    <span>✅ 완료 체크</span>
+                  </button>
+                ` : `
+                  <button onclick="promptEditSupportComment('${req.id}')" class="px-2.5 py-1 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-bold transition">
+                    <span>✏️ 완료 메시지 수정</span>
+                  </button>
+                `}
+                ${status !== 'rejected' ? `
+                  <button onclick="promptRejectSupportRequest('${req.id}')" class="px-2.5 py-1 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold transition flex items-center gap-1">
+                    <span>🚫 반려 사유 입력</span>
+                  </button>
+                ` : `
+                  <button onclick="promptEditSupportRejectReason('${req.id}')" class="px-2.5 py-1 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-800 font-bold transition">
+                    <span>✏️ 반려 사유 수정</span>
+                  </button>
+                `}
+                ${status !== 'pending' ? `
+                  <button onclick="resetSupportRequestToPending('${req.id}')" class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition text-[11px]">
+                    <span>🔄 검토중으로 되돌리기</span>
+                  </button>
+                ` : ''}
+              </div>
+              <button onclick="deleteSupportRequest('${req.id}')" class="px-2.5 py-1 rounded-lg bg-white hover:bg-rose-50 text-slate-400 hover:text-rose-600 border border-slate-200 hover:border-rose-300 font-medium transition text-[11px]">
+                삭제
+              </button>
+            </div>
+          `;
+        }
+
+        return `
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-2xs hover:shadow-xs transition space-y-2">
+            <div class="flex items-center justify-between gap-2 flex-wrap">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                ${catBadge}
+                ${storeBadge}
+                ${priBadge}
+                <span class="text-[11px] text-slate-400 font-mono ml-1">${escapeHtml(req.createdTimeStr || '')}</span>
+              </div>
+              <div>
+                ${statusBadge}
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-sm font-extrabold text-slate-900">${escapeHtml(req.title || '')}</h3>
+              <p class="text-xs text-slate-700 mt-1.5 leading-relaxed whitespace-pre-wrap font-medium">${escapeHtml(req.content || '')}</p>
+            </div>
+
+            ${resolutionHtml}
+            ${masterActionsHtml}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function resolveSupportRequest(reqId) {
+      if (currentRole !== 'master') {
+        alert('본사 관리자만 완료 처리할 수 있습니다.');
+        return;
+      }
+      const req = allSupportRequests.find(r => r.id === reqId);
+      if (!req) return;
+
+      const comment = prompt("조치 완료 안내 메시지를 입력하세요 (비워두면 기본 메시지가 저장됩니다):", "조치 및 시스템 반영이 완료되었습니다.");
+      if (comment === null) return;
+
+      const now = new Date();
+      const pad = (n) => String(n).padStart(2, '0');
+      const timeStr = `${now.getFullYear()}.${pad(now.getMonth()+1)}.${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+
+      db.collection('support_requests').doc(reqId).update({
+        status: 'completed',
+        responseComment: comment.trim() || '조치 및 시스템 반영이 완료되었습니다.',
+        resolvedBy: '본사 관리자',
+        resolvedAt: timeStr,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        logAudit('요청 조치 완료', `요청 '${req.title}' 조치 완료 처리: ${comment.trim() || '완료'}`);
+      }).catch(err => {
+        alert('완료 처리 중 오류: ' + err.message);
+      });
+    }
+
+    function promptRejectSupportRequest(reqId) {
+      if (currentRole !== 'master') {
+        alert('본사 관리자만 반려 처리할 수 있습니다.');
+        return;
+      }
+      const req = allSupportRequests.find(r => r.id === reqId);
+      if (!req) return;
+
+      const reason = prompt("매장 직원에게 안내할 [반려 사유]를 구체적으로 입력해주세요 (필수):");
+      if (reason === null) return;
+      if (!reason.trim()) {
+        alert('반려 사유를 반드시 입력해야 반려 처리가 가능합니다.');
+        return;
+      }
+
+      const now = new Date();
+      const pad = (n) => String(n).padStart(2, '0');
+      const timeStr = `${now.getFullYear()}.${pad(now.getMonth()+1)}.${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+
+      db.collection('support_requests').doc(reqId).update({
+        status: 'rejected',
+        rejectReason: reason.trim(),
+        resolvedBy: '본사 관리자',
+        resolvedAt: timeStr,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        logAudit('요청 반려', `요청 '${req.title}' 반려 처리 사유: ${reason.trim()}`);
+      }).catch(err => {
+        alert('반려 처리 중 오류: ' + err.message);
+      });
+    }
+
+    function promptEditSupportComment(reqId) {
+      if (currentRole !== 'master') return;
+      const req = allSupportRequests.find(r => r.id === reqId);
+      if (!req) return;
+
+      const newComment = prompt("수정할 완료 안내 메시지를 입력하세요:", req.responseComment || '조치 및 시스템 반영이 완료되었습니다.');
+      if (newComment === null) return;
+
+      db.collection('support_requests').doc(reqId).update({
+        responseComment: newComment.trim(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        logAudit('요청 메모 수정', `요청 '${req.title}' 완료 메시지 수정`);
+      });
+    }
+
+    function promptEditSupportRejectReason(reqId) {
+      if (currentRole !== 'master') return;
+      const req = allSupportRequests.find(r => r.id === reqId);
+      if (!req) return;
+
+      const newReason = prompt("수정할 반려 사유를 입력하세요:", req.rejectReason || '');
+      if (newReason === null) return;
+      if (!newReason.trim()) {
+        alert('반려 사유는 비워둘 수 없습니다.');
+        return;
+      }
+
+      db.collection('support_requests').doc(reqId).update({
+        rejectReason: newReason.trim(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        logAudit('요청 반려사유 수정', `요청 '${req.title}' 반려 사유 수정: ${newReason.trim()}`);
+      });
+    }
+
+    function resetSupportRequestToPending(reqId) {
+      if (currentRole !== 'master') return;
+      const req = allSupportRequests.find(r => r.id === reqId);
+      if (!req) return;
+
+      if (!confirm(`'${req.title}' 요청을 다시 [검토 대기중] 상태로 되돌리시겠습니까?`)) return;
+
+      db.collection('support_requests').doc(reqId).update({
+        status: 'pending',
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        logAudit('요청 상태 변경', `요청 '${req.title}' 다시 검토중으로 변경`);
+      });
+    }
+
+    function deleteSupportRequest(reqId) {
+      if (currentRole !== 'master') {
+        alert('본사 관리자만 요청을 삭제할 수 있습니다.');
+        return;
+      }
+      const req = allSupportRequests.find(r => r.id === reqId);
+      if (!req) return;
+
+      if (!confirm(`정말 '${req.title}' 요청을 영구 삭제하시겠습니까?`)) return;
+
+      db.collection('support_requests').doc(reqId).delete().then(() => {
+        logAudit('요청 삭제', `요청 '${req.title}' 영구 삭제`);
+      }).catch(err => {
+        alert('삭제 중 오류: ' + err.message);
+      });
     }
 
     loadLayouts();
