@@ -198,10 +198,10 @@
       <!-- 통신사 부가조건 안내 및 올부가 할인액 통신사별 실시간 수정 바 -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
         <!-- SKT 카드 -->
-        <div class="p-3.5 bg-white rounded-2xl border border-slate-200/90 shadow-2xs space-y-2">
-          <div class="flex justify-between items-center">
+        <div class="p-3.5 bg-white rounded-2xl border border-slate-200/90 shadow-2xs space-y-2.5">
+          <div class="flex justify-between items-center border-b border-slate-100 pb-2">
             <span class="inline-flex items-center gap-1.5 font-extrabold text-xs text-rose-700">
-              <span class="w-2.5 h-2.5 rounded-full bg-rose-500 ring-2 ring-rose-100"></span> SKT
+              <span class="w-2.5 h-2.5 rounded-full bg-rose-500 ring-2 ring-rose-100"></span> SKT 부가조건
             </span>
             <div class="flex items-center gap-1 bg-rose-50/80 border border-rose-200 px-2 py-0.5 rounded-lg">
               <span class="text-[11px] font-bold text-rose-700">올부가 할인</span>
@@ -211,14 +211,51 @@
               <span class="text-[11px] font-bold text-rose-700">만</span>
             </div>
           </div>
-          <p class="text-[11px] text-slate-500">기본: 마이스마트콜3(M+1), T올케어플러스(M+1)</p>
+          <div class="space-y-1.5">
+            <div class="flex items-center gap-1.5">
+              <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">요금제 :</span>
+              <input type="text" id="cond-SK-plan" onchange="updateCarrierCondition('SK', 'plan', this.value)"
+                     class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-rose-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
+                     placeholder="예: 109,000원 6개월" />
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">부가1 :</span>
+              <input type="text" id="cond-SK-add1" onchange="updateCarrierCondition('SK', 'add1', this.value)"
+                     class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-rose-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
+                     placeholder="예: 마이스마트콜 (M+1)" />
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">부가2 :</span>
+              <input type="text" id="cond-SK-add2" onchange="updateCarrierCondition('SK', 'add2', this.value)"
+                     class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-rose-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
+                     placeholder="예: 보험 (M+1)" />
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">부가3 :</span>
+              <input type="text" id="cond-SK-add3" onchange="updateCarrierCondition('SK', 'add3', this.value)"
+                     class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-rose-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
+                     placeholder="부가서비스 3" />
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">부가4 :</span>
+              <input type="text" id="cond-SK-add4" onchange="updateCarrierCondition('SK', 'add4', this.value)"
+                     class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-rose-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
+                     placeholder="부가서비스 4" />
+            </div>
+            <div class="flex items-center gap-1.5 pt-0.5 border-t border-slate-100">
+              <span class="text-[11px] font-extrabold text-rose-600 w-14 shrink-0">특이사항:</span>
+              <input type="text" id="cond-SK-note" onchange="updateCarrierCondition('SK', 'note', this.value)"
+                     class="w-full px-2 py-0.5 bg-rose-50/40 hover:bg-white focus:bg-white border border-rose-200 focus:border-rose-400 rounded-md text-xs font-semibold text-rose-800 focus:outline-none transition"
+                     placeholder="예: 18프로맥스 선약단가 공시적용기준" />
+            </div>
+          </div>
         </div>
 
         <!-- KT 카드 -->
-        <div class="p-3.5 bg-white rounded-2xl border border-slate-200/90 shadow-2xs space-y-2">
-          <div class="flex justify-between items-center">
+        <div class="p-3.5 bg-white rounded-2xl border border-slate-200/90 shadow-2xs space-y-2.5">
+          <div class="flex justify-between items-center border-b border-slate-100 pb-2">
             <span class="inline-flex items-center gap-1.5 font-extrabold text-xs text-blue-700">
-              <span class="w-2.5 h-2.5 rounded-full bg-blue-500 ring-2 ring-blue-100"></span> KT
+              <span class="w-2.5 h-2.5 rounded-full bg-blue-500 ring-2 ring-blue-100"></span> KT 부가조건
             </span>
             <div class="flex items-center gap-1 bg-blue-50/80 border border-blue-200 px-2 py-0.5 rounded-lg">
               <span class="text-[11px] font-bold text-blue-700">올부가 할인</span>
@@ -228,14 +265,51 @@
               <span class="text-[11px] font-bold text-blue-700">만</span>
             </div>
           </div>
-          <p class="text-[11px] text-slate-500">기본: 필수팩 L(M+4), 폰 안심보험(M+3)</p>
+          <div class="space-y-1.5">
+            <div class="flex items-center gap-1.5">
+              <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">요금제 :</span>
+              <input type="text" id="cond-KT-plan" onchange="updateCarrierCondition('KT', 'plan', this.value)"
+                     class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-blue-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
+                     placeholder="예: 110,000원 6개월" />
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">부가1 :</span>
+              <input type="text" id="cond-KT-add1" onchange="updateCarrierCondition('KT', 'add1', this.value)"
+                     class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-blue-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
+                     placeholder="예: 필수팩 L (M+4)" />
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">부가2 :</span>
+              <input type="text" id="cond-KT-add2" onchange="updateCarrierCondition('KT', 'add2', this.value)"
+                     class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-blue-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
+                     placeholder="예: 폰 안심보험 (M+3)" />
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">부가3 :</span>
+              <input type="text" id="cond-KT-add3" onchange="updateCarrierCondition('KT', 'add3', this.value)"
+                     class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-blue-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
+                     placeholder="부가서비스 3" />
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">부가4 :</span>
+              <input type="text" id="cond-KT-add4" onchange="updateCarrierCondition('KT', 'add4', this.value)"
+                     class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-blue-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
+                     placeholder="부가서비스 4" />
+            </div>
+            <div class="flex items-center gap-1.5 pt-0.5 border-t border-slate-100">
+              <span class="text-[11px] font-extrabold text-blue-600 w-14 shrink-0">특이사항:</span>
+              <input type="text" id="cond-KT-note" onchange="updateCarrierCondition('KT', 'note', this.value)"
+                     class="w-full px-2 py-0.5 bg-blue-50/40 hover:bg-white focus:bg-white border border-blue-200 focus:border-blue-400 rounded-md text-xs font-semibold text-blue-800 focus:outline-none transition"
+                     placeholder="특이사항 메모" />
+            </div>
+          </div>
         </div>
 
         <!-- LGU+ 카드 -->
-        <div class="p-3.5 bg-white rounded-2xl border border-slate-200/90 shadow-2xs space-y-2">
-          <div class="flex justify-between items-center">
+        <div class="p-3.5 bg-white rounded-2xl border border-slate-200/90 shadow-2xs space-y-2.5">
+          <div class="flex justify-between items-center border-b border-slate-100 pb-2">
             <span class="inline-flex items-center gap-1.5 font-extrabold text-xs text-pink-700">
-              <span class="w-2.5 h-2.5 rounded-full bg-pink-500 ring-2 ring-pink-100"></span> LGU+
+              <span class="w-2.5 h-2.5 rounded-full bg-pink-500 ring-2 ring-pink-100"></span> LGU+ 부가조건
             </span>
             <div class="flex items-center gap-1 bg-pink-50/80 border border-pink-200 px-2 py-0.5 rounded-lg">
               <span class="text-[11px] font-bold text-pink-700">올부가 할인</span>
@@ -245,7 +319,44 @@
               <span class="text-[11px] font-bold text-pink-700">만</span>
             </div>
           </div>
-          <p class="text-[11px] text-slate-500">기본: 교보sam+구글원(95일), V컬러링, 폰교체패스</p>
+          <div class="space-y-1.5">
+            <div class="flex items-center gap-1.5">
+              <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">요금제 :</span>
+              <input type="text" id="cond-LG-plan" onchange="updateCarrierCondition('LG', 'plan', this.value)"
+                     class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-pink-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
+                     placeholder="예: 105,000원 6개월" />
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">부가1 :</span>
+              <input type="text" id="cond-LG-add1" onchange="updateCarrierCondition('LG', 'add1', this.value)"
+                     class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-pink-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
+                     placeholder="예: 교보sam+구글원 (95일)" />
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">부가2 :</span>
+              <input type="text" id="cond-LG-add2" onchange="updateCarrierCondition('LG', 'add2', this.value)"
+                     class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-pink-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
+                     placeholder="예: V컬러링 (M+1)" />
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">부가3 :</span>
+              <input type="text" id="cond-LG-add3" onchange="updateCarrierCondition('LG', 'add3', this.value)"
+                     class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-pink-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
+                     placeholder="예: 폰교체패스 (M+1)" />
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">부가4 :</span>
+              <input type="text" id="cond-LG-add4" onchange="updateCarrierCondition('LG', 'add4', this.value)"
+                     class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-pink-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
+                     placeholder="부가서비스 4" />
+            </div>
+            <div class="flex items-center gap-1.5 pt-0.5 border-t border-slate-100">
+              <span class="text-[11px] font-extrabold text-pink-600 w-14 shrink-0">특이사항:</span>
+              <input type="text" id="cond-LG-note" onchange="updateCarrierCondition('LG', 'note', this.value)"
+                     class="w-full px-2 py-0.5 bg-pink-50/40 hover:bg-white focus:bg-white border border-pink-200 focus:border-pink-400 rounded-md text-xs font-semibold text-pink-800 focus:outline-none transition"
+                     placeholder="특이사항 메모" />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -335,9 +446,9 @@
               <span>초기화</span>
             </button>
             <div class="flex gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200">
-              <button onclick="setCarrierInput('SK')" id="inputTab-SK" class="px-4 py-1.5 rounded-lg text-xs font-bold text-slate-600 transition">SK</button>
+              <button onclick="setCarrierInput('SK')" id="inputTab-SK" class="px-4 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-900 shadow-xs transition">SK</button>
               <button onclick="setCarrierInput('KT')" id="inputTab-KT" class="px-4 py-1.5 rounded-lg text-xs font-bold text-slate-600 transition">KT</button>
-              <button onclick="setCarrierInput('LG')" id="inputTab-LG" class="px-4 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-900 shadow-xs transition">LG</button>
+              <button onclick="setCarrierInput('LG')" id="inputTab-LG" class="px-4 py-1.5 rounded-lg text-xs font-bold text-slate-600 transition">LG</button>
             </div>
           </div>
         </div>
@@ -426,9 +537,9 @@
               <div class="flex flex-wrap items-center gap-2">
                 <span class="text-xs font-bold text-slate-700">통신사 선택:</span>
                 <div class="flex gap-1 text-xs">
-                  <button onclick="setAdCarrier('LG')" id="adTab-LG" class="px-3.5 py-1.5 rounded-lg font-bold bg-pink-100 text-pink-700 border border-pink-200 transition">LG 특가</button>
+                  <button onclick="setAdCarrier('SK')" id="adTab-SK" class="px-3.5 py-1.5 rounded-lg font-bold bg-rose-100 text-rose-700 border border-rose-200 transition">SK 특가</button>
                   <button onclick="setAdCarrier('KT')" id="adTab-KT" class="px-3.5 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 transition">KT 특가</button>
-                  <button onclick="setAdCarrier('SK')" id="adTab-SK" class="px-3.5 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 transition">SK 특가</button>
+                  <button onclick="setAdCarrier('LG')" id="adTab-LG" class="px-3.5 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 transition">LG 특가</button>
                 </div>
                 <button onclick="addAdEmptyRow()" class="px-3 py-1.5 bg-white hover:bg-slate-50 border border-dashed border-slate-300 rounded-lg text-xs font-bold text-slate-600 shadow-2xs flex items-center gap-1.5 transition">
                   <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"/></svg>
@@ -683,11 +794,79 @@
 
     // 2. 화면 상태
     let currentTab = "calc";
-    let activeInputCarrier = "LG";
-    let activeAdCarrier = "LG";
+    let activeInputCarrier = "SK";
+    let activeAdCarrier = "SK";
     let netDisplayMode = "both";
     let adMarginBase = "all";
     let allAddDiscounts = { SK: 15, KT: 15, LG: 15 };
+
+    // 통신사별 상세 부가조건 (요금제, 부가1~4, 특이사항)
+    let carrierConditions = {
+      SK: {
+        plan: "109,000원 6개월",
+        add1: "마이스마트콜 (M+1)",
+        add2: "보험 (M+1)",
+        add3: "",
+        add4: "",
+        note: "18프로맥스 선약단가 공시적용기준"
+      },
+      KT: {
+        plan: "110,000원 6개월",
+        add1: "필수팩 L (M+4)",
+        add2: "폰 안심보험 (M+3)",
+        add3: "",
+        add4: "",
+        note: ""
+      },
+      LG: {
+        plan: "105,000원 6개월",
+        add1: "교보sam+구글원 (95일)",
+        add2: "V컬러링 (M+1)",
+        add3: "폰교체패스 (M+1)",
+        add4: "",
+        note: ""
+      }
+    };
+
+    function loadCarrierConditions() {
+      try {
+        const saved = localStorage.getItem('phone_carrier_conditions');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && typeof parsed === 'object') {
+            ['SK', 'KT', 'LG'].forEach(c => {
+              if (parsed[c]) {
+                carrierConditions[c] = { ...carrierConditions[c], ...parsed[c] };
+              }
+            });
+          }
+        }
+      } catch (e) {}
+      syncCarrierConditionInputs();
+    }
+
+    function syncCarrierConditionInputs() {
+      ['SK', 'KT', 'LG'].forEach(c => {
+        const cond = carrierConditions[c] || {};
+        ['plan', 'add1', 'add2', 'add3', 'add4', 'note'].forEach(field => {
+          const el = document.getElementById(`cond-${c}-${field}`);
+          if (el) el.value = cond[field] || '';
+        });
+      });
+    }
+
+    function updateCarrierCondition(carrier, field, val) {
+      if (!carrierConditions[carrier]) carrierConditions[carrier] = {};
+      const oldVal = carrierConditions[carrier][field] || '';
+      carrierConditions[carrier][field] = val;
+
+      try {
+        localStorage.setItem('phone_carrier_conditions', JSON.stringify(carrierConditions));
+      } catch (e) {}
+
+      const fieldKo = { plan: '요금제', add1: '부가1', add2: '부가2', add3: '부가3', add4: '부가4', note: '특이사항' }[field] || field;
+      scheduleStoreSave('부가조건 설정', `${carrier} ${fieldKo}: ${oldVal || '-'} → ${val}`);
+    }
 
     function loadDiscounts() {
       try {
@@ -1801,13 +1980,14 @@
 
     function setAdCarrier(c) {
       activeAdCarrier = c;
-      ['LG', 'KT', 'SK'].forEach(x => {
+      ['SK', 'KT', 'LG'].forEach(x => {
         const btn = document.getElementById(`adTab-${x}`);
+        if (!btn) return;
         if (x === c) {
-          const colorClass = x === 'LG' ? 'bg-pink-100 text-pink-700 border-pink-200' : x === 'KT' ? 'bg-blue-100 text-blue-700 border-blue-200' : 'bg-rose-100 text-rose-700 border-rose-200';
-          btn.className = `px-3 py-1 rounded-lg font-bold border ${colorClass}`;
+          const colorClass = x === 'SK' ? 'bg-rose-100 text-rose-700 border-rose-200' : x === 'KT' ? 'bg-blue-100 text-blue-700 border-blue-200' : 'bg-pink-100 text-pink-700 border-pink-200';
+          btn.className = `px-3.5 py-1.5 rounded-lg font-bold border ${colorClass} transition`;
         } else {
-          btn.className = "px-3 py-1 rounded-lg font-bold bg-slate-100 text-slate-600 border-transparent";
+          btn.className = "px-3.5 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 border-transparent transition";
         }
       });
       renderAdSection();
@@ -2332,6 +2512,16 @@
               syncDiscountInputs();
             }
 
+            // 부가조건 복원
+            if (data.carrierConditions && typeof data.carrierConditions === 'object') {
+              ['SK', 'KT', 'LG'].forEach(c => {
+                if (data.carrierConditions[c]) {
+                  carrierConditions[c] = { ...carrierConditions[c], ...data.carrierConditions[c] };
+                }
+              });
+              syncCarrierConditionInputs();
+            }
+
             // 행 레이아웃 복원
             if (Array.isArray(data.calcRows) && data.calcRows.length > 0) {
               calcRows = data.calcRows;
@@ -2413,6 +2603,7 @@
         updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
         updatedBy: '시스템 초기 시드',
         allAddDiscounts: { SK: 15, KT: 15, LG: 15 },
+        carrierConditions: carrierConditions,
         calcRows: devices.map(d => d.id),
         dailyCarrierRows: {
           SK: devices.map(d => d.id),
@@ -2455,6 +2646,7 @@
           updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
           updatedBy: actor,
           allAddDiscounts: allAddDiscounts,
+          carrierConditions: carrierConditions,
           calcRows: calcRows,
           dailyCarrierRows: dailyCarrierRows,
           adCarrierOrders: adCarrierOrders,
@@ -2648,6 +2840,8 @@
           catBadge = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-sky-50 text-sky-700 border border-sky-200">광고시세</span>`;
         } else if (item.category === '올부가 할인') {
           catBadge = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">올부가</span>`;
+        } else if (item.category === '부가조건 설정') {
+          catBadge = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">부가조건</span>`;
         } else if (item.category === '출고가/공시 설정') {
           catBadge = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-300">공시설정</span>`;
         } else {
@@ -2667,6 +2861,7 @@
 
     loadLayouts();
     loadDiscounts();
+    loadCarrierConditions();
     loadColumnWidths('adTable');
     loadColumnWidths('dailyTable');
     updateDots();
