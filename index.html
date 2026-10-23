@@ -47,16 +47,7 @@
           </svg>
         </div>
         <h2 class="text-base font-extrabold text-slate-900 tracking-tight mb-0.5">매장 보안 잠금</h2>
-        <p class="text-xs text-slate-500 mb-2">마스터 또는 매장 PIN 번호 6자리를 입력하세요</p>
-
-        <!-- 매장별 PIN 안내 칩 -->
-        <div class="text-[11px] text-slate-500 mb-4 bg-slate-50 rounded-xl py-2 px-3 border border-slate-100 flex items-center justify-center gap-2 flex-wrap">
-          <span class="inline-flex items-center gap-1 font-semibold text-slate-700">📍 명지점 <b class="font-mono text-indigo-600 font-black">111111</b></span>
-          <span class="text-slate-300">•</span>
-          <span class="inline-flex items-center gap-1 font-semibold text-slate-700">📍 광안점 <b class="font-mono text-emerald-600 font-black">222222</b></span>
-          <span class="text-slate-300">•</span>
-          <span class="inline-flex items-center gap-1 font-semibold text-slate-700">👑 본사 <b class="font-mono text-purple-600 font-black">152411</b></span>
-        </div>
+        <p class="text-xs text-slate-500 mb-6">보안 PIN 번호 6자리를 입력하세요</p>
 
         <!-- PIN Dots -->
         <div class="flex justify-center gap-2.5 mb-5" id="pinDots">
@@ -597,13 +588,17 @@
           <button onclick="closeHistoryModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-lg transition">&times;</button>
         </div>
 
-        <!-- 필터 탭 바 -->
+        <!-- 필터 탭 바 (마스터: 전체 필터 / 매장: 본인 매장 배지) -->
         <div class="flex items-center justify-between gap-2 flex-wrap text-xs">
-          <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
+          <div id="historyFilterContainer" class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
             <button onclick="filterHistory('all')" id="histFilter-all" class="px-3 py-1 rounded-lg font-bold bg-white text-slate-900 shadow-2xs">전체 내역</button>
             <button onclick="filterHistory('myeongji')" id="histFilter-myeongji" class="px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900">📍 명지점</button>
             <button onclick="filterHistory('gwangan')" id="histFilter-gwangan" class="px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900">📍 광안점</button>
             <button onclick="filterHistory('master')" id="histFilter-master" class="px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900">👑 본사</button>
+          </div>
+          <div id="historyStoreTitleBadge" class="hidden items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black bg-indigo-50 text-indigo-700 border border-indigo-200">
+            <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+            <span id="historyStoreTitleText">우리 매장 변경 내역</span>
           </div>
           <span id="historyCountBadge" class="text-[11px] text-slate-500 font-medium">최근 기록 로딩 중...</span>
         </div>
@@ -668,9 +663,9 @@
 
     // 3가지 PIN 인증 권한 및 매장 매핑
     const STORE_ROLES = {
-      "152411": { role: "master", storeId: "myeongji", name: "본사 (마스터)" },
-      "111111": { role: "store", storeId: "myeongji", name: "명지점" },
-      "222222": { role: "store", storeId: "gwangan", name: "광안점" }
+      "103105": { role: "master", storeId: "myeongji", name: "본사 (마스터)" },
+      "152411": { role: "store", storeId: "myeongji", name: "명지점" },
+      "152422": { role: "store", storeId: "gwangan", name: "광안점" }
     };
 
     let currentRole = null;          // 'master' | 'store'
@@ -2099,7 +2094,7 @@
     // 설정 모달
     function openSettingsModal() {
       if (currentRole !== 'master') {
-        alert("🔒 [접근 제한]\n\n'공시 & 출고가 설정'은 본사 마스터(PIN: 152411) 전용 메뉴입니다.\n매장 직원은 넷가 산출표, 대리점 단가 입력, 성지특가 광고표를 수정하실 수 있습니다.");
+        alert("🔒 [접근 제한]\n\n'공시 & 출고가 설정'은 본사 마스터 전용 메뉴입니다.\n매장 직원은 넷가 산출표, 대리점 단가 입력, 성지특가 광고표를 수정하실 수 있습니다.");
         return;
       }
       document.getElementById('settingsModal').classList.remove('hidden');
@@ -2560,7 +2555,26 @@
     }
 
     function openHistoryModal() {
-      document.getElementById('historyModal').classList.remove('hidden');
+      const modal = document.getElementById('historyModal');
+      const filterBox = document.getElementById('historyFilterContainer');
+      const storeTitleBadge = document.getElementById('historyStoreTitleBadge');
+      const storeTitleText = document.getElementById('historyStoreTitleText');
+
+      if (currentRole === 'master') {
+        if (filterBox) filterBox.classList.remove('hidden');
+        if (storeTitleBadge) storeTitleBadge.classList.add('hidden');
+      } else {
+        if (filterBox) filterBox.classList.add('hidden');
+        if (storeTitleBadge) {
+          storeTitleBadge.classList.remove('hidden');
+          storeTitleBadge.classList.add('flex');
+        }
+        if (storeTitleText) {
+          storeTitleText.innerText = `📍 ${currentStoreName} 변경 내역`;
+        }
+      }
+
+      modal.classList.remove('hidden');
       renderHistoryTable();
     }
 
@@ -2588,12 +2602,18 @@
       if (!tbody) return;
 
       let filtered = allHistoryRecords;
-      if (currentHistoryFilter === 'myeongji') {
-        filtered = filtered.filter(r => r.storeId === 'myeongji' && r.role !== 'master');
-      } else if (currentHistoryFilter === 'gwangan') {
-        filtered = filtered.filter(r => r.storeId === 'gwangan' && r.role !== 'master');
-      } else if (currentHistoryFilter === 'master') {
-        filtered = filtered.filter(r => r.role === 'master' || (r.storeName && r.storeName.includes('본사')));
+      if (currentRole !== 'master') {
+        // 일반 매장(명지/광안)은 오직 본인 매장의 변경 내역만 확인 가능
+        filtered = filtered.filter(r => r.storeId === currentStoreId && r.role !== 'master');
+      } else {
+        // 마스터(본사)는 전체 또는 필터링 조회
+        if (currentHistoryFilter === 'myeongji') {
+          filtered = filtered.filter(r => r.storeId === 'myeongji' && r.role !== 'master');
+        } else if (currentHistoryFilter === 'gwangan') {
+          filtered = filtered.filter(r => r.storeId === 'gwangan' && r.role !== 'master');
+        } else if (currentHistoryFilter === 'master') {
+          filtered = filtered.filter(r => r.role === 'master' || (r.storeName && r.storeName.includes('본사')));
+        }
       }
 
       if (badge) {
