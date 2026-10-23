@@ -32,6 +32,32 @@
       background-color: #3b82f6;
       border-right: 2px solid #1d4ed8;
     }
+    .help-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 15px;
+      height: 15px;
+      border-radius: 9999px;
+      background-color: #f1f5f9;
+      color: #64748b;
+      font-size: 10px;
+      font-weight: 800;
+      line-height: 1;
+      border: 1px solid #cbd5e1;
+      cursor: pointer;
+      vertical-align: middle;
+      margin-left: 3px;
+      transition: all 0.15s ease;
+      user-select: none;
+      flex-shrink: 0;
+    }
+    .help-btn:hover {
+      background-color: #4f46e5;
+      color: #ffffff;
+      border-color: #4338ca;
+      transform: scale(1.1);
+    }
   </style>
 </head>
 <body class="bg-slate-50/70 text-slate-800 antialiased p-2 sm:p-5 min-h-screen">
@@ -99,6 +125,7 @@
               <span>NET PRICE</span>
               <span class="text-xs font-normal text-slate-300">|</span>
               <span class="font-extrabold text-slate-800 text-sm">스마트폰 넷가 & 시세 관리 시스템</span>
+              <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>넷가 산출 & 단가 관리 시스템</b><br>출고가에서 공시지원금과 오늘자 대리점 단가를 빼서 매장의 순 마진과 성지 광고 시세를 한눈에 실시간으로 산출하는 통합 관리 프로그램입니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>넷가 산출 & 단가 관리 시스템</b><br>출고가에서 공시지원금과 오늘자 대리점 단가를 빼서 매장의 순 마진과 성지 광고 시세를 한눈에 실시간으로 산출하는 통합 관리 프로그램입니다.')" title="도움말">?</button>
             </h1>
             <span class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> 실시간 계산
@@ -127,6 +154,7 @@
         <div id="syncStatusBadge" class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-200">
           <span id="syncStatusDot" class="w-2 h-2 rounded-full bg-emerald-500"></span>
           <span id="syncStatusText">클라우드 연결 중...</span>
+          <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>실시간 클라우드 동기화</b><br>구글 파이어베이스 클라우드에 1초 단위로 자동 저장되며 명지점, 광안점, 본사가 항상 실시간으로 동일한 최신 데이터를 공유합니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>실시간 클라우드 동기화</b><br>구글 파이어베이스 클라우드에 1초 단위로 자동 저장되며 명지점, 광안점, 본사가 항상 실시간으로 동일한 최신 데이터를 공유합니다.')" title="동기화 안내">?</button>
         </div>
 
         <!-- 변경 히스토리 모달 버튼 -->
@@ -136,6 +164,7 @@
             <polyline points="12 6 12 12 16 14"/>
           </svg>
           <span>변경 내역</span>
+          <span class="help-btn" onmouseenter="showHelpTip(event, this, '<b>변경 히스토리</b><br>누가 언제 어떤 단가나 공시지원금을 수정했는지 실시간으로 기록되는 보안 감사 로그입니다. 매장은 본인 매장 수정내용과 본사의 수정분을 조회할 수 있습니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>변경 히스토리</b><br>누가 언제 어떤 단가나 공시지원금을 수정했는지 실시간으로 기록되는 보안 감사 로그입니다. 매장은 본인 매장 수정내용과 본사의 수정분을 조회할 수 있습니다.')" title="변경 내역 안내">?</span>
         </button>
 
         <button onclick="openSettingsModal()" class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white shadow-xs transition">
@@ -144,6 +173,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
           </svg>
           <span>공시 & 출고가 설정</span>
+          <span class="help-btn" onmouseenter="showHelpTip(event, this, '<b>본사 관리자 전용 설정</b><br>통신사별 출고가와 번이/기변 공시지원금을 직접 수정하거나 신규 기종 추가 및 삭제가 가능합니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>본사 관리자 전용 설정</b><br>통신사별 출고가와 번이/기변 공시지원금을 직접 수정하거나 신규 기종 추가 및 삭제가 가능합니다.')" title="설정 안내">?</span>
         </button>
 
         <button onclick="lockApp()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-white hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 text-slate-700 border border-slate-200 transition">
@@ -180,6 +210,10 @@
 
       <!-- 넷가표 보기 모드 필터 (TAB 1 전용) -->
       <div id="viewFilterBox" class="flex items-center gap-1 text-xs bg-white p-1 rounded-xl border border-slate-200 shadow-2xs">
+        <span class="text-[11px] font-bold text-slate-400 pl-1.5 flex items-center">
+          보기
+          <button type="button" class="help-btn mr-1" onmouseenter="showHelpTip(event, this, '<b>보기 모드 필터</b><br>• 전체 보기: 기본 넷가와 올부가 넷가를 모두 표시합니다.<br>• 기본부가만: 추가 할인 없는 기본 조건 넷가만 봅니다.<br>• 올부가만: 추가 할인이 적용된 최종 조건 넷가만 집중해서 봅니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>보기 모드 필터</b><br>• 전체 보기: 기본 넷가와 올부가 넷가를 모두 표시합니다.<br>• 기본부가만: 추가 할인 없는 기본 조건 넷가만 봅니다.<br>• 올부가만: 추가 할인이 적용된 최종 조건 넷가만 집중해서 봅니다.')" title="보기 모드 안내">?</button>:
+        </span>
         <button onclick="setNetDisplayMode('both')" id="dispMode-both" class="px-3 py-1.5 rounded-lg font-bold bg-slate-900 text-white shadow-xs transition">
           전체 보기 (기본 + 올부가)
         </button>
@@ -200,11 +234,16 @@
         <!-- SKT 카드 -->
         <div class="p-3.5 bg-white rounded-2xl border border-slate-200/90 shadow-2xs space-y-2.5">
           <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-            <span class="inline-flex items-center gap-1.5 font-extrabold text-xs text-rose-700">
-              <span class="w-2.5 h-2.5 rounded-full bg-rose-500 ring-2 ring-rose-100"></span> SKT 부가조건
+            <span class="inline-flex items-center gap-1 font-extrabold text-xs text-rose-700">
+              <span class="w-2.5 h-2.5 rounded-full bg-rose-500 ring-2 ring-rose-100"></span>
+              SKT 부가조건
+              <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>SKT 부가조건 & 유지기간</b><br>SKT 개통 시 필수 충족 요금제 및 유지 기간, 부가서비스 1~4 항목을 메모해두는 곳입니다. 입력 시 실시간으로 클라우드에 영구 저장됩니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>SKT 부가조건 & 유지기간</b><br>SKT 개통 시 필수 충족 요금제 및 유지 기간, 부가서비스 1~4 항목을 메모해두는 곳입니다. 입력 시 실시간으로 클라우드에 영구 저장됩니다.')" title="부가조건 안내">?</button>
             </span>
             <div class="flex items-center gap-1 bg-rose-50/80 border border-rose-200 px-2 py-0.5 rounded-lg">
-              <span class="text-[11px] font-bold text-rose-700">올부가 할인</span>
+              <span class="text-[11px] font-bold text-rose-700 flex items-center">
+                올부가 할인
+                <button type="button" class="help-btn mr-0.5" onmouseenter="showHelpTip(event, this, '<b>올부가 추가 할인액</b><br>고객이 고가 요금제와 필수 부가서비스를 모두 가입할 때 매장에서 추가로 공제해주는 특별 할인액(만원)입니다. [올부가 넷가] 계산 시 이 금액만큼 추가 차감됩니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>올부가 추가 할인액</b><br>고객이 고가 요금제와 필수 부가서비스를 모두 가입할 때 매장에서 추가로 공제해주는 특별 할인액(만원)입니다. [올부가 넷가] 계산 시 이 금액만큼 추가 차감됩니다.')" title="올부가 할인 안내">?</button>
+              </span>
               <span class="text-rose-600 font-black text-xs">-</span>
               <input type="number" id="discount-SK" value="15" onchange="updateCarrierDiscount('SK', this.value)"
                      class="w-12 px-1 py-0.5 text-center font-black text-rose-700 bg-white border border-rose-300 rounded text-xs focus:ring-1 focus:ring-rose-500 focus:outline-none" />
@@ -254,11 +293,16 @@
         <!-- KT 카드 -->
         <div class="p-3.5 bg-white rounded-2xl border border-slate-200/90 shadow-2xs space-y-2.5">
           <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-            <span class="inline-flex items-center gap-1.5 font-extrabold text-xs text-blue-700">
-              <span class="w-2.5 h-2.5 rounded-full bg-blue-500 ring-2 ring-blue-100"></span> KT 부가조건
+            <span class="inline-flex items-center gap-1 font-extrabold text-xs text-blue-700">
+              <span class="w-2.5 h-2.5 rounded-full bg-blue-500 ring-2 ring-blue-100"></span>
+              KT 부가조건
+              <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>KT 부가조건 & 유지기간</b><br>KT 개통 시 필수 충족 요금제 및 유지 기간, 부가서비스 1~4 항목을 메모해두는 곳입니다. 입력 시 실시간으로 클라우드에 영구 저장됩니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>KT 부가조건 & 유지기간</b><br>KT 개통 시 필수 충족 요금제 및 유지 기간, 부가서비스 1~4 항목을 메모해두는 곳입니다. 입력 시 실시간으로 클라우드에 영구 저장됩니다.')" title="부가조건 안내">?</button>
             </span>
             <div class="flex items-center gap-1 bg-blue-50/80 border border-blue-200 px-2 py-0.5 rounded-lg">
-              <span class="text-[11px] font-bold text-blue-700">올부가 할인</span>
+              <span class="text-[11px] font-bold text-blue-700 flex items-center">
+                올부가 할인
+                <button type="button" class="help-btn mr-0.5" onmouseenter="showHelpTip(event, this, '<b>KT 올부가 추가 할인액</b><br>KT 올부가 조건 충족 시 추가 지원하는 할인금(만원)입니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>KT 올부가 추가 할인액</b><br>KT 올부가 조건 충족 시 추가 지원하는 할인금(만원)입니다.')" title="올부가 할인 안내">?</button>
+              </span>
               <span class="text-blue-600 font-black text-xs">-</span>
               <input type="number" id="discount-KT" value="15" onchange="updateCarrierDiscount('KT', this.value)"
                      class="w-12 px-1 py-0.5 text-center font-black text-blue-700 bg-white border border-blue-300 rounded text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none" />
@@ -308,11 +352,16 @@
         <!-- LGU+ 카드 -->
         <div class="p-3.5 bg-white rounded-2xl border border-slate-200/90 shadow-2xs space-y-2.5">
           <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-            <span class="inline-flex items-center gap-1.5 font-extrabold text-xs text-pink-700">
-              <span class="w-2.5 h-2.5 rounded-full bg-pink-500 ring-2 ring-pink-100"></span> LGU+ 부가조건
+            <span class="inline-flex items-center gap-1 font-extrabold text-xs text-pink-700">
+              <span class="w-2.5 h-2.5 rounded-full bg-pink-500 ring-2 ring-pink-100"></span>
+              LGU+ 부가조건
+              <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>LGU+ 부가조건 & 유지기간</b><br>LGU+ 개통 시 필수 충족 요금제 및 유지 기간, 부가서비스 1~4 항목을 메모해두는 곳입니다. 입력 시 실시간으로 클라우드에 영구 저장됩니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>LGU+ 부가조건 & 유지기간</b><br>LGU+ 개통 시 필수 충족 요금제 및 유지 기간, 부가서비스 1~4 항목을 메모해두는 곳입니다. 입력 시 실시간으로 클라우드에 영구 저장됩니다.')" title="부가조건 안내">?</button>
             </span>
             <div class="flex items-center gap-1 bg-pink-50/80 border border-pink-200 px-2 py-0.5 rounded-lg">
-              <span class="text-[11px] font-bold text-pink-700">올부가 할인</span>
+              <span class="text-[11px] font-bold text-pink-700 flex items-center">
+                올부가 할인
+                <button type="button" class="help-btn mr-0.5" onmouseenter="showHelpTip(event, this, '<b>LGU+ 올부가 추가 할인액</b><br>LGU+ 올부가 조건 충족 시 추가 지원하는 할인금(만원)입니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>LGU+ 올부가 추가 할인액</b><br>LGU+ 올부가 조건 충족 시 추가 지원하는 할인금(만원)입니다.')" title="올부가 할인 안내">?</button>
+              </span>
               <span class="text-pink-600 font-black text-xs">-</span>
               <input type="number" id="discount-LG" value="15" onchange="updateCarrierDiscount('LG', this.value)"
                      class="w-12 px-1 py-0.5 text-center font-black text-pink-700 bg-white border border-pink-300 rounded text-xs focus:ring-1 focus:ring-pink-500 focus:outline-none" />
@@ -363,7 +412,10 @@
       <!-- 넷가표 기종 편집 바 -->
       <div class="flex flex-wrap items-center justify-between gap-2 px-1 pb-1">
         <div class="flex items-center gap-2">
-          <span class="text-xs font-bold text-slate-700">기종 목록:</span>
+          <span class="text-xs font-bold text-slate-700 flex items-center">
+            기종 목록:
+            <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>기종 행 편집</b><br>• 행 추가: 원하는 기종을 골라 새 행을 아래에 추가합니다.<br>• 구분선 추가: 기종 간 카테고리(예: S시리즈/폴더블/아이폰)를 시각적으로 분리하는 여백 줄을 만듭니다.<br>• 좌측 핸들 아이콘을 드래그하여 순서를 위아래로 자유롭게 변경할 수 있습니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>기종 행 편집</b><br>• 행 추가: 원하는 기종을 골라 새 행을 아래에 추가합니다.<br>• 구분선 추가: 기종 간 카테고리(예: S시리즈/폴더블/아이폰)를 시각적으로 분리하는 여백 줄을 만듭니다.<br>• 좌측 핸들 아이콘을 드래그하여 순서를 위아래로 자유롭게 변경할 수 있습니다.')" title="기종 행 편집 안내">?</button>
+          </span>
           <button onclick="addCalcRow('empty')" class="px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold text-slate-700 shadow-2xs flex items-center gap-1.5 transition">
             <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
             <span>기종 행 추가</span>
@@ -389,7 +441,10 @@
             <thead>
               <tr class="bg-slate-100 text-slate-800 font-extrabold border-b border-slate-200 text-center">
                 <th rowspan="2" class="p-3 text-left min-w-[210px] border-r border-slate-200 bg-slate-100 text-slate-700">
-                  기종 선택 (드롭다운)
+                  <span class="flex items-center">
+                    기종 선택 (드롭다운)
+                    <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>기종 선택 드롭다운</b><br>원하는 기종을 선택하면 해당 기종의 출고가, 공시지원금, 오늘자 대리점 단가가 즉시 연동되어 실시간 넷가가 표출됩니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>기종 선택 드롭다운</b><br>원하는 기종을 선택하면 해당 기종의 출고가, 공시지원금, 오늘자 대리점 단가가 즉시 연동되어 실시간 넷가가 표출됩니다.')" title="기종 선택 안내">?</button>
+                  </span>
                 </th>
                 <th colspan="2" class="p-2.5 bg-rose-50/90 text-rose-800 border-r border-slate-200">
                   <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-rose-500"></span>SKT</span>
@@ -402,12 +457,42 @@
                 </th>
               </tr>
               <tr class="bg-slate-50 text-[11px] text-slate-600 font-bold border-b border-slate-200 text-center">
-                <th class="p-2 w-36 border-r border-slate-200">번호이동</th>
-                <th class="p-2 w-36 border-r border-slate-200">기기변경</th>
-                <th class="p-2 w-36 border-r border-slate-200">번호이동</th>
-                <th class="p-2 w-36 border-r border-slate-200">기기변경</th>
-                <th class="p-2 w-36 border-r border-slate-200">번호이동</th>
-                <th class="p-2 w-36">기기변경</th>
+                <th class="p-2 w-36 border-r border-slate-200">
+                  <span class="flex items-center justify-center">
+                    번호이동
+                    <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>번호이동 넷가 공식</b><br>출고가 - 번이공시 - 번이 대리점단가 - 올부가할인 = 매장 실질 원가(넷가)<br>• 마이너스(-) 숫자는 고객 페이백 또는 추가 마진 여력을 나타냅니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>번호이동 넷가 공식</b><br>출고가 - 번이공시 - 번이 대리점단가 - 올부가할인 = 매장 실질 원가(넷가)<br>• 마이너스(-) 숫자는 고객 페이백 또는 추가 마진 여력을 나타냅니다.')" title="번호이동 넷가 안내">?</button>
+                  </span>
+                </th>
+                <th class="p-2 w-36 border-r border-slate-200">
+                  <span class="flex items-center justify-center">
+                    기기변경
+                    <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>기기변경 넷가 공식</b><br>출고가 - 기변공시 - 기변 대리점단가 - 올부가할인 = 매장 실질 원가(넷가)')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>기기변경 넷가 공식</b><br>출고가 - 기변공시 - 기변 대리점단가 - 올부가할인 = 매장 실질 원가(넷가)')" title="기기변경 넷가 안내">?</button>
+                  </span>
+                </th>
+                <th class="p-2 w-36 border-r border-slate-200">
+                  <span class="flex items-center justify-center">
+                    번호이동
+                    <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>KT 번호이동 넷가</b><br>출고가 - KT 번이공시 - KT 번이단가 - 올부가할인')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>KT 번호이동 넷가</b><br>출고가 - KT 번이공시 - KT 번이단가 - 올부가할인')" title="번호이동 안내">?</button>
+                  </span>
+                </th>
+                <th class="p-2 w-36 border-r border-slate-200">
+                  <span class="flex items-center justify-center">
+                    기기변경
+                    <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>KT 기기변경 넷가</b><br>출고가 - KT 기변공시 - KT 기변단가 - 올부가할인')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>KT 기기변경 넷가</b><br>출고가 - KT 기변공시 - KT 기변단가 - 올부가할인')" title="기기변경 안내">?</button>
+                  </span>
+                </th>
+                <th class="p-2 w-36 border-r border-slate-200">
+                  <span class="flex items-center justify-center">
+                    번호이동
+                    <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>LGU+ 번호이동 넷가</b><br>출고가 - LG 번이공시 - LG 번이단가 - 올부가할인')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>LGU+ 번호이동 넷가</b><br>출고가 - LG 번이공시 - LG 번이단가 - 올부가할인')" title="번호이동 안내">?</button>
+                  </span>
+                </th>
+                <th class="p-2 w-36">
+                  <span class="flex items-center justify-center">
+                    기기변경
+                    <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>LGU+ 기기변경 넷가</b><br>출고가 - LG 기변공시 - LG 기변단가 - 올부가할인')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>LGU+ 기기변경 넷가</b><br>출고가 - LG 기변공시 - LG 기변단가 - 올부가할인')" title="기기변경 안내">?</button>
+                  </span>
+                </th>
               </tr>
             </thead>
             <tbody id="calcTableBody" class="divide-y divide-slate-100">
@@ -426,6 +511,7 @@
             <h2 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
               <svg class="w-4 h-4 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
               <span>오늘자 대리점 단가(리베이트) 직접 입력</span>
+              <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>오늘자 대리점 단가 입력표</b><br>대리점에서 매일 아침 수신되는 리베이트 단가를 기종별, 통신사별로 입력하는 공간입니다. 번이/기변 단가와 거래처(도매/온라인 등)를 매장별로 독립 관리합니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>오늘자 대리점 단가 입력표</b><br>대리점에서 매일 아침 수신되는 리베이트 단가를 기종별, 통신사별로 입력하는 공간입니다. 번이/기변 단가와 거래처(도매/온라인 등)를 매장별로 독립 관리합니다.')" title="단가 입력 안내">?</button>
             </h2>
             <p class="text-xs text-slate-500 mt-0.5">
               단가처 드롭다운(도매/온라인/특판/K1) · 기종 드롭다운(구분선 지원) · 넷가표와 완전히 분리된 독립 순서
@@ -433,6 +519,13 @@
           </div>
           <!-- 통신사 선택 및 행 추가 -->
           <div class="flex flex-wrap items-center gap-2">
+            <!-- 마스터 전용 대리점 단가 복사 버튼 -->
+            <button id="masterCopyPriceBtn" onclick="openCopyPriceModal()" class="hidden px-3 py-1.5 bg-purple-50 hover:bg-purple-100 border border-purple-300 rounded-lg text-xs font-bold text-purple-700 shadow-2xs items-center gap-1.5 transition">
+              <svg class="w-3.5 h-3.5 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/></svg>
+              <span>대리점 단가 매장 복사</span>
+              <span class="help-btn" onmouseenter="showHelpTip(event, this, '<b>대리점 단가 매장 간 복사 (본사 전용)</b><br>바쁜 시간대에 한쪽 매장(예: 명지점)에서 입력한 당일 단가를 다른 매장(예: 광안점)으로 원클릭 복사하여 덮어씌웁니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>대리점 단가 매장 간 복사 (본사 전용)</b><br>바쁜 시간대에 한쪽 매장(예: 명지점)에서 입력한 당일 단가를 다른 매장(예: 광안점)으로 원클릭 복사하여 덮어씌웁니다.')" title="단가 복사 안내">?</span>
+            </button>
+
             <button onclick="addDailyRow('empty')" class="px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold text-slate-700 shadow-2xs flex items-center gap-1.5 transition">
               <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
               <span>행 추가</span>
@@ -458,27 +551,45 @@
             <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 select-none">
               <tr>
                 <th class="relative p-2.5 text-center" style="width: 75px;">
-                  <span>순서</span>
+                  <span class="flex items-center justify-center">
+                    순서
+                    <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>단가표 순서 이동</b><br>좌측 핸들 아이콘을 마우스로 잡고 위아래로 끌어서 배치 순서를 바꿀 수 있습니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>단가표 순서 이동</b><br>좌측 핸들 아이콘을 마우스로 잡고 위아래로 끌어서 배치 순서를 바꿀 수 있습니다.')" title="순서 이동 안내">?</button>
+                  </span>
                   <div class="column-resizer" onmousedown="initColResize(event, this, 'dailyTable')" title="경계선을 드래그하여 열 너비 조절"></div>
                 </th>
                 <th class="relative p-2.5" style="width: 210px;">
-                  <span>기종 선택 (드롭다운)</span>
+                  <span class="flex items-center">
+                    기종 선택 (드롭다운)
+                    <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>기종 선택 드롭다운</b><br>단가를 입력할 모델을 선택합니다. 넷가표와 완전히 독립적이므로 자유롭게 순서를 구성할 수 있습니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>기종 선택 드롭다운</b><br>단가를 입력할 모델을 선택합니다. 넷가표와 완전히 독립적이므로 자유롭게 순서를 구성할 수 있습니다.')" title="기종 선택 안내">?</button>
+                  </span>
                   <div class="column-resizer" onmousedown="initColResize(event, this, 'dailyTable')" title="경계선을 드래그하여 열 너비 조절"></div>
                 </th>
                 <th class="relative p-2.5 text-center" style="width: 105px;">
-                  <span>번호이동 단가</span>
+                  <span class="flex items-center justify-center">
+                    번호이동 단가
+                    <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>번호이동 대리점 단가 (리베이트)</b><br>통신사 번호이동 개통 시 대리점에서 매장에 지급하는 단가(만원)입니다. 숫자만 입력하거나 품절 시 0 또는 비워두실 수 있습니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>번호이동 대리점 단가 (리베이트)</b><br>통신사 번호이동 개통 시 대리점에서 매장에 지급하는 단가(만원)입니다. 숫자만 입력하거나 품절 시 0 또는 비워두실 수 있습니다.')" title="번이 단가 안내">?</button>
+                  </span>
                   <div class="column-resizer" onmousedown="initColResize(event, this, 'dailyTable')" title="경계선을 드래그하여 열 너비 조절"></div>
                 </th>
                 <th class="relative p-2.5 text-center" style="width: 95px;">
-                  <span>번이 단가처</span>
+                  <span class="flex items-center justify-center">
+                    번이 단가처
+                    <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>단가처 (거래처)</b><br>도매, 온라인, 특판, K1 등 해당 단가를 주는 거래처명을 지정합니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>단가처 (거래처)</b><br>도매, 온라인, 특판, K1 등 해당 단가를 주는 거래처명을 지정합니다.')" title="단가처 안내">?</button>
+                  </span>
                   <div class="column-resizer" onmousedown="initColResize(event, this, 'dailyTable')" title="경계선을 드래그하여 열 너비 조절"></div>
                 </th>
                 <th class="relative p-2.5 text-center" style="width: 105px;">
-                  <span>기기변경 단가</span>
+                  <span class="flex items-center justify-center">
+                    기기변경 단가
+                    <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>기기변경 대리점 단가 (리베이트)</b><br>통신사 기기변경 개통 시 대리점에서 매장에 지급하는 단가(만원)입니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>기기변경 대리점 단가 (리베이트)</b><br>통신사 기기변경 개통 시 대리점에서 매장에 지급하는 단가(만원)입니다.')" title="기변 단가 안내">?</button>
+                  </span>
                   <div class="column-resizer" onmousedown="initColResize(event, this, 'dailyTable')" title="경계선을 드래그하여 열 너비 조절"></div>
                 </th>
                 <th class="relative p-2.5 text-center" style="width: 95px;">
-                  <span>기변 단가처</span>
+                  <span class="flex items-center justify-center">
+                    기변 단가처
+                    <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>기기변경 단가처</b><br>기변 단가를 제공하는 거래처명을 지정합니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>기기변경 단가처</b><br>기변 단가를 제공하는 거래처명을 지정합니다.')" title="단가처 안내">?</button>
+                  </span>
                   <div class="column-resizer" onmousedown="initColResize(event, this, 'dailyTable')" title="경계선을 드래그하여 열 너비 조절"></div>
                 </th>
               </tr>
@@ -503,6 +614,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
               </svg>
               <span>성지특가 광고표 & 마진 시뮬레이션</span>
+              <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>성지특가 광고표 & 마진 시뮬레이션</b><br>오늘 입력된 단가와 마진을 바탕으로 네이버 카페/밴드/당근 등에 즉시 게시할 수 있는 광고 시세표 문구를 자동 생성합니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>성지특가 광고표 & 마진 시뮬레이션</b><br>오늘 입력된 단가와 마진을 바탕으로 네이버 카페/밴드/당근 등에 즉시 게시할 수 있는 광고 시세표 문구를 자동 생성합니다.')" title="광고표 안내">?</button>
             </h2>
             <p class="text-xs text-slate-500 mt-0.5">
               통신사별(SK·KT·LG) 독자 순서/숨김 지원 · 엑셀식 열 너비 조절(경계선 드래그) · 기종명 직접 수정
@@ -512,7 +624,10 @@
           <!-- 우측: 마진 기준 토글 & 복사 버튼 -->
           <div class="flex flex-wrap items-center gap-3">
             <div class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs">
-              <span class="text-slate-500 font-semibold px-2">마진 산정 기준:</span>
+              <span class="text-slate-500 font-semibold px-2 flex items-center">
+                마진 산정 기준:
+                <button type="button" class="help-btn mr-0.5" onmouseenter="showHelpTip(event, this, '<b>마진 계산 기준</b><br>• 올부가 넷가 기준: 추가 할인액까지 공제한 후 남는 순수 이익<br>• 기본부가 넷가 기준: 추가 할인을 고려하지 않은 원가 대비 이익')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>마진 계산 기준</b><br>• 올부가 넷가 기준: 추가 할인액까지 공제한 후 남는 순수 이익<br>• 기본부가 넷가 기준: 추가 할인을 고려하지 않은 원가 대비 이익')" title="마진 기준 안내">?</button>
+              </span>
               <button onclick="setAdMarginBase('all')" id="adMarginBase-all" class="px-3 py-1.5 rounded-lg font-bold bg-white text-slate-900 shadow-xs transition">
                 올부가 넷가 기준 (부가할인 반영)
               </button>
@@ -526,6 +641,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
               </svg>
               <span>시세표 문구 원클릭 복사</span>
+              <span class="help-btn" onmouseenter="showHelpTip(event, this, '<b>시세표 문구 원클릭 복사</b><br>클릭하면 카페/밴드/카카오톡 전용 시세표 텍스트가 클립보드에 자동 복사됩니다. 그대로 붙여넣기(Ctrl+V)하여 바로 마케팅에 활용하세요.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>시세표 문구 원클릭 복사</b><br>클릭하면 카페/밴드/카카오톡 전용 시세표 텍스트가 클립보드에 자동 복사됩니다. 그대로 붙여넣기(Ctrl+V)하여 바로 마케팅에 활용하세요.')" title="원클릭 복사 안내">?</span>
             </button>
           </div>
         </div>
@@ -560,31 +676,52 @@
                       <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
                     </th>
                     <th class="relative p-2.5 text-center" style="width: 75px;">
-                      <span>게시상태</span>
+                      <span class="flex items-center justify-center">
+                        게시상태
+                        <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>게시 스위치 (ON/OFF)</b><br>OFF로 끄면 외부 광고 텍스트 복사에서 해당 기종이 자동으로 제외됩니다. 재고 소진 시 임시로 숨길 때 유용합니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>게시 스위치 (ON/OFF)</b><br>OFF로 끄면 외부 광고 텍스트 복사에서 해당 기종이 자동으로 제외됩니다. 재고 소진 시 임시로 숨길 때 유용합니다.')" title="게시상태 안내">?</button>
+                      </span>
                       <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
                     </th>
                     <th class="relative p-2.5" style="width: 170px;">
-                      <span>기종명 (직접수정)</span>
+                      <span class="flex items-center">
+                        기종명 (직접수정)
+                        <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>광고용 기종명</b><br>광고 시세표 텍스트에 표기될 모델명을 직접 수정할 수 있습니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>광고용 기종명</b><br>광고 시세표 텍스트에 표기될 모델명을 직접 수정할 수 있습니다.')" title="기종명 안내">?</button>
+                      </span>
                       <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
                     </th>
                     <th class="relative p-2.5 text-center bg-slate-100/70" style="width: 100px;">
-                      <span>기준넷가</span>
+                      <span class="flex items-center justify-center">
+                        기준넷가
+                        <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>기준넷가</b><br>출고가 - 공시지원금 - 대리점단가 - 부가할인 = 매장의 실제 매입 원가입니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>기준넷가</b><br>출고가 - 공시지원금 - 대리점단가 - 부가할인 = 매장의 실제 매입 원가입니다.')" title="기준넷가 안내">?</button>
+                      </span>
                       <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
                     </th>
                     <th class="relative p-2.5 text-center" style="width: 85px;">
-                      <span>번이가</span>
+                      <span class="flex items-center justify-center">
+                        번이가
+                        <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>성지 특가 (번호이동 판매가)</b><br>소비자에게 홍보할 최종 할인가격(만원)입니다. 마이너스(-) 숫자는 고객 페이백(차비)입니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>성지 특가 (번호이동 판매가)</b><br>소비자에게 홍보할 최종 할인가격(만원)입니다. 마이너스(-) 숫자는 고객 페이백(차비)입니다.')" title="번이가 안내">?</button>
+                      </span>
                       <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
                     </th>
                     <th class="relative p-2.5 text-center" style="width: 85px;">
-                      <span>기변가</span>
+                      <span class="flex items-center justify-center">
+                        기변가
+                        <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>성지 특가 (기기변경 판매가)</b><br>소비자에게 홍보할 최종 기변 할인가격(만원)입니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>성지 특가 (기기변경 판매가)</b><br>소비자에게 홍보할 최종 기변 할인가격(만원)입니다.')" title="기변가 안내">?</button>
+                      </span>
                       <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
                     </th>
                     <th class="relative p-2.5 text-center bg-emerald-50/70 text-emerald-800" style="width: 115px;">
-                      <span>예상마진</span>
+                      <span class="flex items-center justify-center">
+                        예상마진
+                        <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>예상 순이익 (마진)</b><br>광고가격 - 기준넷가 = 1대 개통 시 매장에 남는 순이익입니다. 녹색은 흑자 마진, 적색은 손실을 의미합니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>예상 순이익 (마진)</b><br>광고가격 - 기준넷가 = 1대 개통 시 매장에 남는 순이익입니다. 녹색은 흑자 마진, 적색은 손실을 의미합니다.')" title="예상마진 안내">?</button>
+                      </span>
                       <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
                     </th>
                     <th class="relative p-2.5" style="width: 130px;">
-                      <span>비고</span>
+                      <span class="flex items-center">
+                        비고
+                        <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>비고 메모</b><br>예: *인상전, 재고소량, 선약단가 등 광고 텍스트 옆에 괄호로 붙을 메모입니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>비고 메모</b><br>예: *인상전, 재고소량, 선약단가 등 광고 텍스트 옆에 괄호로 붙을 메모입니다.')" title="비고 안내">?</button>
+                      </span>
                       <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
                     </th>
                   </tr>
@@ -628,12 +765,19 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
               </svg>
               <span>공시지원금 & 출고가 마스터 설정 (직접 수정 가능)</span>
+              <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>공시지원금 & 출고가 마스터 설정</b><br>통신사별 출고가와 번이/기변 공시를 입력하면 전 매장에 실시간으로 동기화되며 넷가가 자동 재계산됩니다.<br>우측 [+ 신규 기종 추가] 버튼으로 새 기종을 직접 등록할 수 있습니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>공시지원금 & 출고가 마스터 설정</b><br>통신사별 출고가와 번이/기변 공시를 입력하면 전 매장에 실시간으로 동기화되며 넷가가 자동 재계산됩니다.<br>우측 [+ 신규 기종 추가] 버튼으로 새 기종을 직접 등록할 수 있습니다.')" title="설정 안내">?</button>
             </h3>
             <p class="text-xs text-slate-500 mt-0.5">
               통신사별 출고가와 번이/기변 공시를 칸별로 직접 수정할 수 있습니다. 수정 시 넷가가 즉시 자동 재계산됩니다.
             </p>
           </div>
-          <button onclick="closeSettingsModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-lg transition">&times;</button>
+          <div class="flex items-center gap-2">
+            <button onclick="openAddDeviceModal()" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs transition">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+              <span>+ 신규 기종 추가</span>
+            </button>
+            <button onclick="closeSettingsModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-lg transition">&times;</button>
+          </div>
         </div>
 
         <div class="overflow-y-auto flex-1 border border-slate-200 rounded-xl">
@@ -741,6 +885,225 @@
             닫기
           </button>
         </div>
+      </div>
+    </div>
+
+    <!-- ==================== 대리점 단가 매장 간 복사 모달 (마스터 전용) ==================== -->
+    <div id="copyPriceModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-4 hidden">
+      <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 border border-slate-200 space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-sm font-black text-slate-900">대리점 단가 매장 간 복사</h3>
+              <p class="text-[11px] text-slate-500">바쁜 매장을 위해 한쪽 매장 단가를 다른 매장에 즉시 복사합니다</p>
+            </div>
+          </div>
+          <button onclick="closeCopyPriceModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-lg transition">&times;</button>
+        </div>
+
+        <div class="space-y-4 text-xs">
+          <!-- 매장 선택 -->
+          <div class="grid grid-cols-2 gap-3 p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">보내는 매장 (복사 원본)</label>
+              <select id="copySrcStore" onchange="onCopySrcChanged()" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl font-bold text-slate-900 focus:ring-2 focus:ring-purple-500">
+                <option value="myeongji">📍 명지점</option>
+                <option value="gwangan">📍 광안점</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">받는 매장 (붙여넣기 대상)</label>
+              <select id="copyTgtStore" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl font-bold text-slate-900 focus:ring-2 focus:ring-purple-500">
+                <option value="gwangan">📍 광안점</option>
+                <option value="myeongji">📍 명지점</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- 복사 범위 선택 -->
+          <div class="space-y-2 p-3.5 bg-purple-50/50 rounded-2xl border border-purple-100">
+            <span class="block font-bold text-purple-900 mb-1.5">복사할 통신사 범위</span>
+            <label class="flex items-center gap-2 p-2 bg-white rounded-xl border border-purple-200 cursor-pointer hover:bg-purple-50/50 transition">
+              <input type="radio" name="copyCarrierScope" value="all" checked class="text-purple-600 focus:ring-purple-500" />
+              <div class="flex-1">
+                <span class="font-extrabold text-slate-900">전체 통신사 일괄 복사 (추천)</span>
+                <span class="block text-[11px] text-slate-500">SKT + KT + LGU+ 전체 기종 단가 및 단가처 동시 복사</span>
+              </div>
+            </label>
+            <label class="flex items-center gap-2 p-2 bg-white rounded-xl border border-purple-200 cursor-pointer hover:bg-purple-50/50 transition">
+              <input type="radio" name="copyCarrierScope" value="current" class="text-purple-600 focus:ring-purple-500" />
+              <div class="flex-1">
+                <span class="font-extrabold text-slate-900">현재 작업 중인 통신사만 복사</span>
+                <span class="block text-[11px] text-slate-500"><span id="copyCurrentCarrierText" class="font-bold text-purple-700">SK</span> 통신사의 단가만 대상 매장으로 복사</span>
+              </div>
+            </label>
+          </div>
+
+          <!-- 추가 옵션 -->
+          <div class="space-y-2 px-1">
+            <span class="block font-bold text-slate-700">부가 복사 옵션</span>
+            <label class="flex items-center gap-2 cursor-pointer text-slate-700">
+              <input type="checkbox" id="copyConditionCheck" checked class="rounded text-purple-600 focus:ring-purple-500" />
+              <span class="font-semibold">통신사별 부가조건(요금제, 부가서비스 유지기간 등)도 함께 복사</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer text-slate-700">
+              <input type="checkbox" id="copyOrderCheck" class="rounded text-purple-600 focus:ring-purple-500" />
+              <span class="font-semibold">단가표 행 배치 순서(구분선 포함)도 동일하게 맞추기</span>
+            </label>
+          </div>
+
+          <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 text-[11px] leading-relaxed">
+            ⚠️ <b>주의:</b> 복사 실행 시 받는 매장의 해당 통신사 단가가 덮어씌워지며, 구글 클라우드에 즉시 실시간 동기화됩니다.
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+          <button onclick="closeCopyPriceModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition text-xs">
+            취소
+          </button>
+          <button onclick="executeCopyPrices()" class="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-black shadow-xs transition text-xs flex items-center gap-1.5">
+            <span>🚀 복사 실행하기</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 신규 기종 추가 모달 (마스터 전용) ==================== -->
+    <div id="addDeviceModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-3 hidden">
+      <div class="bg-white rounded-3xl shadow-2xl max-w-xl w-full p-6 border border-slate-200 space-y-4 max-h-[92vh] flex flex-col">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold">
+              +
+            </div>
+            <div>
+              <h3 class="text-sm font-black text-slate-900">신규 스마트폰 기종 직접 추가</h3>
+              <p class="text-[11px] text-slate-500">새로 출시된 모델을 마스터 데이터에 즉시 등록합니다</p>
+            </div>
+          </div>
+          <button onclick="closeAddDeviceModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-lg transition">&times;</button>
+        </div>
+
+        <div class="overflow-y-auto flex-1 space-y-4 text-xs pr-1">
+          <!-- 기본 정보 -->
+          <div class="space-y-3 p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
+            <div>
+              <label class="block font-bold text-slate-800 mb-1">기종명 (필수) <span class="text-rose-500">*</span></label>
+              <input type="text" id="newDevName" placeholder="예: 아이폰 SE4 128G, 갤럭시 A36 128G" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl font-bold text-slate-900 focus:ring-2 focus:ring-indigo-500" />
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">시리즈 분류</label>
+                <select id="newDevGroup" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl font-bold text-slate-800 focus:ring-2 focus:ring-indigo-500">
+                  <option value="S">갤럭시 S시리즈 (S)</option>
+                  <option value="FOLD">갤럭시 폴더블 (Z)</option>
+                  <option value="IPHONE">아이폰 (iPhone)</option>
+                  <option value="A">보급형 / 기타 (A)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">식별 태그 (선택)</label>
+                <input type="text" id="newDevTag" placeholder="예: #SE4, #A36" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl font-bold text-slate-800 focus:ring-2 focus:ring-indigo-500" />
+              </div>
+            </div>
+          </div>
+
+          <!-- 통신사별 출고가 (만원) -->
+          <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-800">통신사별 출고가 (만원)</span>
+              <button type="button" onclick="syncSamePrices(document.getElementById('newDevPriceSK').value)" class="text-[11px] px-2 py-0.5 rounded bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold transition">
+                SK 출고가를 KT/LG에 동일 복사
+              </button>
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+              <div class="p-2 bg-white rounded-xl border border-rose-200 text-center">
+                <span class="block text-[11px] font-extrabold text-rose-700 mb-1">SKT 출고가</span>
+                <input type="number" step="0.01" id="newDevPriceSK" placeholder="100.0" oninput="if(!document.getElementById('newDevPriceKT').value) syncSamePrices(this.value)" class="w-full text-center font-black text-rose-900 border border-slate-200 rounded-lg py-1 text-xs" />
+              </div>
+              <div class="p-2 bg-white rounded-xl border border-blue-200 text-center">
+                <span class="block text-[11px] font-extrabold text-blue-700 mb-1">KT 출고가</span>
+                <input type="number" step="0.01" id="newDevPriceKT" placeholder="100.0" class="w-full text-center font-black text-blue-900 border border-slate-200 rounded-lg py-1 text-xs" />
+              </div>
+              <div class="p-2 bg-white rounded-xl border border-pink-200 text-center">
+                <span class="block text-[11px] font-extrabold text-pink-700 mb-1">LGU+ 출고가</span>
+                <input type="number" step="0.01" id="newDevPriceLG" placeholder="100.0" class="w-full text-center font-black text-pink-900 border border-slate-200 rounded-lg py-1 text-xs" />
+              </div>
+            </div>
+          </div>
+
+          <!-- 통신사별 기본 공시지원금 (만원) -->
+          <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-800">기본 공시지원금 설정 (만원)</span>
+              <button type="button" onclick="syncSameSubs(document.getElementById('newDevSubSK_mnp').value, document.getElementById('newDevSubSK_chg').value)" class="text-[11px] px-2 py-0.5 rounded bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold transition">
+                SK 공시를 KT/LG에 동일 복사
+              </button>
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+              <!-- SK 공시 -->
+              <div class="p-2 bg-white rounded-xl border border-rose-200 space-y-1">
+                <span class="block text-[11px] font-extrabold text-rose-700 text-center">SKT</span>
+                <div class="flex items-center gap-1">
+                  <span class="text-[10px] text-slate-400 font-bold w-7">번이:</span>
+                  <input type="number" id="newDevSubSK_mnp" value="0" class="w-full text-center font-bold text-rose-700 border border-slate-200 rounded py-0.5 text-xs" />
+                </div>
+                <div class="flex items-center gap-1">
+                  <span class="text-[10px] text-slate-400 font-bold w-7">기변:</span>
+                  <input type="number" id="newDevSubSK_chg" value="0" class="w-full text-center font-bold text-rose-700 border border-slate-200 rounded py-0.5 text-xs" />
+                </div>
+              </div>
+
+              <!-- KT 공시 -->
+              <div class="p-2 bg-white rounded-xl border border-blue-200 space-y-1">
+                <span class="block text-[11px] font-extrabold text-blue-700 text-center">KT</span>
+                <div class="flex items-center gap-1">
+                  <span class="text-[10px] text-slate-400 font-bold w-7">번이:</span>
+                  <input type="number" id="newDevSubKT_mnp" value="0" class="w-full text-center font-bold text-blue-700 border border-slate-200 rounded py-0.5 text-xs" />
+                </div>
+                <div class="flex items-center gap-1">
+                  <span class="text-[10px] text-slate-400 font-bold w-7">기변:</span>
+                  <input type="number" id="newDevSubKT_chg" value="0" class="w-full text-center font-bold text-blue-700 border border-slate-200 rounded py-0.5 text-xs" />
+                </div>
+              </div>
+
+              <!-- LG 공시 -->
+              <div class="p-2 bg-white rounded-xl border border-pink-200 space-y-1">
+                <span class="block text-[11px] font-extrabold text-pink-700 text-center">LGU+</span>
+                <div class="flex items-center gap-1">
+                  <span class="text-[10px] text-slate-400 font-bold w-7">번이:</span>
+                  <input type="number" id="newDevSubLG_mnp" value="0" class="w-full text-center font-bold text-pink-700 border border-slate-200 rounded py-0.5 text-xs" />
+                </div>
+                <div class="flex items-center gap-1">
+                  <span class="text-[10px] text-slate-400 font-bold w-7">기변:</span>
+                  <input type="number" id="newDevSubLG_chg" value="0" class="w-full text-center font-bold text-pink-700 border border-slate-200 rounded py-0.5 text-xs" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+          <button onclick="closeAddDeviceModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition text-xs">
+            취소
+          </button>
+          <button onclick="addNewDeviceSubmit()" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black shadow-xs transition text-xs flex items-center gap-1.5">
+            <span>💾 기종 추가 완료</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 플로팅 도움말 툴팁 풍선 (전역) ==================== -->
+    <div id="globalHelpTooltip" class="fixed z-[100] bg-slate-900/95 backdrop-blur text-white text-xs rounded-xl p-3 shadow-2xl pointer-events-none opacity-0 transition-opacity duration-150 border border-slate-700 leading-relaxed font-normal hidden">
+      <div class="flex items-start gap-2">
+        <span class="text-amber-400 font-bold text-sm shrink-0">💡</span>
+        <div id="globalHelpTooltipContent" class="text-slate-200"></div>
       </div>
     </div>
 
@@ -2300,7 +2663,18 @@
 
         tr.innerHTML = `
           <td class="p-2 text-left font-bold text-slate-800 bg-slate-50/50 border-r border-slate-200">
-            <span class="text-slate-400 font-normal mr-1">${idx + 1}.</span> ${d.name}
+            <div class="flex items-center justify-between gap-1">
+              <div class="truncate">
+                <span class="text-slate-400 font-normal mr-1">${idx + 1}.</span>
+                <span>${d.name}</span>
+                <span class="text-[10px] text-slate-400 font-mono block">${d.tag || ''}</span>
+              </div>
+              <button onclick="deleteDevice('${d.id}')" title="기종 삭제" class="p-1 text-slate-300 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition shrink-0">
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+              </button>
+            </div>
           </td>
 
           <!-- SK 설정 -->
@@ -2349,6 +2723,360 @@
       });
     }
 
+    // 신규 기종 추가 및 삭제 관리 함수들
+    function openAddDeviceModal() {
+      if (currentRole !== 'master') {
+        alert("👑 본사 관리자만 신규 기종을 추가할 수 있습니다.");
+        return;
+      }
+      document.getElementById('addDeviceModal').classList.remove('hidden');
+      document.getElementById('newDevName').value = '';
+      document.getElementById('newDevTag').value = '';
+      document.getElementById('newDevPriceSK').value = '';
+      document.getElementById('newDevPriceKT').value = '';
+      document.getElementById('newDevPriceLG').value = '';
+      document.getElementById('newDevSubSK_mnp').value = '0';
+      document.getElementById('newDevSubSK_chg').value = '0';
+      document.getElementById('newDevSubKT_mnp').value = '0';
+      document.getElementById('newDevSubKT_chg').value = '0';
+      document.getElementById('newDevSubLG_mnp').value = '0';
+      document.getElementById('newDevSubLG_chg').value = '0';
+      setTimeout(() => document.getElementById('newDevName').focus(), 100);
+    }
+
+    function closeAddDeviceModal() {
+      document.getElementById('addDeviceModal').classList.add('hidden');
+    }
+
+    function syncSamePrices(val) {
+      if (val !== undefined && val !== '') {
+        document.getElementById('newDevPriceKT').value = val;
+        document.getElementById('newDevPriceLG').value = val;
+      }
+    }
+
+    function syncSameSubs(mnpVal, chgVal) {
+      if (mnpVal !== undefined && mnpVal !== '') {
+        document.getElementById('newDevSubKT_mnp').value = mnpVal;
+        document.getElementById('newDevSubLG_mnp').value = mnpVal;
+      }
+      if (chgVal !== undefined && chgVal !== '') {
+        document.getElementById('newDevSubKT_chg').value = chgVal;
+        document.getElementById('newDevSubLG_chg').value = chgVal;
+      }
+    }
+
+    function addNewDeviceSubmit() {
+      const name = document.getElementById('newDevName').value.trim();
+      if (!name) {
+        alert('기종명을 입력해주세요. (예: 아이폰 SE4 128G)');
+        document.getElementById('newDevName').focus();
+        return;
+      }
+
+      const group = document.getElementById('newDevGroup').value || 'S';
+      let tag = document.getElementById('newDevTag').value.trim();
+      if (!tag) {
+        tag = '#' + name.replace(/갤럭시\s*|아이폰\s*/g, '').split(' ')[0];
+      }
+      if (!tag.startsWith('#')) tag = '#' + tag;
+
+      const pSK = parseFloat(document.getElementById('newDevPriceSK').value) || 0;
+      const pKT = parseFloat(document.getElementById('newDevPriceKT').value) || pSK;
+      const pLG = parseFloat(document.getElementById('newDevPriceLG').value) || pSK;
+
+      const sSK_mnp = parseFloat(document.getElementById('newDevSubSK_mnp').value) || 0;
+      const sSK_chg = parseFloat(document.getElementById('newDevSubSK_chg').value) || 0;
+      const sKT_mnp = parseFloat(document.getElementById('newDevSubKT_mnp').value) || 0;
+      const sKT_chg = parseFloat(document.getElementById('newDevSubKT_chg').value) || 0;
+      const sLG_mnp = parseFloat(document.getElementById('newDevSubLG_mnp').value) || 0;
+      const sLG_chg = parseFloat(document.getElementById('newDevSubLG_chg').value) || 0;
+
+      const safeBase = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const newId = (safeBase.length >= 3 ? safeBase.substring(0, 8) : 'dev') + '_' + Math.random().toString(36).substring(2, 6);
+
+      const newDevice = {
+        id: newId,
+        group: group,
+        tag: tag,
+        name: name,
+        prices: { SK: pSK, KT: pKT, LG: pLG },
+        price: pSK,
+        sub: {
+          SK: { mnp: sSK_mnp, chg: sSK_chg },
+          KT: { mnp: sKT_mnp, chg: sKT_chg },
+          LG: { mnp: sLG_mnp, chg: sLG_chg }
+        },
+        rate: {
+          SK: { mnp: 0, chg: 0 },
+          KT: { mnp: 0, chg: 0 },
+          LG: { mnp: 0, chg: 0 }
+        },
+        loc: {
+          SK: { mnp: '도매', chg: '도매' },
+          KT: { mnp: '도매', chg: '도매' },
+          LG: { mnp: '도매', chg: '도매' }
+        },
+        ad: {
+          SK: { mnp: '0', chg: '0', note: '', hidden: false },
+          KT: { mnp: '0', chg: '0', note: '', hidden: false },
+          LG: { mnp: '0', chg: '0', note: '', hidden: false }
+        }
+      };
+
+      devices.push(newDevice);
+      calcRows.push(newId);
+      ['SK', 'KT', 'LG'].forEach(c => {
+        if (!dailyCarrierRows[c]) dailyCarrierRows[c] = devices.map(d => d.id);
+        else dailyCarrierRows[c].push(newId);
+
+        if (!adCarrierOrders[c]) adCarrierOrders[c] = devices.map(d => d.id);
+        else adCarrierOrders[c].push(newId);
+      });
+
+      scheduleMasterSave('기종 추가', `신규 기종 '${name}' 등록 완료`);
+      saveLayouts('기종 추가', `신규 기종 '${name}' 레이아웃 등록`);
+      renderSettingsTable();
+      render();
+      closeAddDeviceModal();
+      alert(`✅ [신규 기종 등록 완료]\n'${name}' 기종이 성공적으로 등록되었습니다!\n공시 & 출고가 설정창 및 단가 입력표에서 바로 확인하실 수 있습니다.`);
+    }
+
+    function deleteDevice(deviceId) {
+      const d = devices.find(x => x.id === deviceId);
+      if (!d) return;
+
+      if (!confirm(`⚠️ [기종 삭제 확인]\n\n'${d.name}' (${d.tag}) 기종을 정말 삭제하시겠습니까?\n\n삭제 시 모든 매장의 넷가 산출표, 대리점 단가표, 성지 광고표에서 함께 제외됩니다.`)) {
+        return;
+      }
+
+      devices = devices.filter(x => x.id !== deviceId);
+      calcRows = calcRows.filter(x => x !== deviceId);
+      ['SK', 'KT', 'LG'].forEach(c => {
+        if (dailyCarrierRows[c]) dailyCarrierRows[c] = dailyCarrierRows[c].filter(x => x !== deviceId);
+        if (adCarrierOrders[c]) adCarrierOrders[c] = adCarrierOrders[c].filter(x => x !== deviceId);
+      });
+
+      scheduleMasterSave('기종 삭제', `'${d.name}' 기종 삭제 완료`);
+      saveLayouts('기종 삭제', `'${d.name}' 레이아웃에서 제거`);
+      renderSettingsTable();
+      render();
+      alert(`🗑️ '${d.name}' 기종이 삭제되었습니다.`);
+    }
+
+    // ==================== 마스터 대리점 단가 매장 간 복사 ====================
+    function openCopyPriceModal() {
+      if (currentRole !== 'master') {
+        alert("👑 본사 관리자만 대리점 단가 복사 기능을 이용할 수 있습니다.");
+        return;
+      }
+      const modal = document.getElementById('copyPriceModal');
+      const srcSelect = document.getElementById('copySrcStore');
+      const tgtSelect = document.getElementById('copyTgtStore');
+      const currentCarrierSpan = document.getElementById('copyCurrentCarrierText');
+
+      if (currentCarrierSpan) {
+        currentCarrierSpan.innerText = activeInputCarrier;
+      }
+
+      if (srcSelect && tgtSelect) {
+        srcSelect.value = currentStoreId;
+        tgtSelect.value = currentStoreId === 'myeongji' ? 'gwangan' : 'myeongji';
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeCopyPriceModal() {
+      const modal = document.getElementById('copyPriceModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function onCopySrcChanged() {
+      const srcSelect = document.getElementById('copySrcStore');
+      const tgtSelect = document.getElementById('copyTgtStore');
+      if (srcSelect.value === 'myeongji') {
+        tgtSelect.value = 'gwangan';
+      } else {
+        tgtSelect.value = 'myeongji';
+      }
+    }
+
+    async function executeCopyPrices() {
+      if (currentRole !== 'master') return;
+      const srcStore = document.getElementById('copySrcStore').value;
+      const tgtStore = document.getElementById('copyTgtStore').value;
+      if (srcStore === tgtStore) {
+        alert('출발 매장과 도착 매장이 동일합니다. 서로 다른 매장을 선택해주세요.');
+        return;
+      }
+
+      const scopeRadio = document.querySelector('input[name="copyCarrierScope"]:checked');
+      const scope = scopeRadio ? scopeRadio.value : 'all';
+      const copyConditions = document.getElementById('copyConditionCheck').checked;
+      const copyOrder = document.getElementById('copyOrderCheck').checked;
+
+      const srcName = srcStore === 'myeongji' ? '명지점' : '광안점';
+      const tgtName = tgtStore === 'myeongji' ? '명지점' : '광안점';
+      const carriersToCopy = scope === 'all' ? ['SK', 'KT', 'LG'] : [activeInputCarrier];
+      const carriersLabel = scope === 'all' ? '전체 통신사(SK·KT·LG)' : `${activeInputCarrier} 통신사만`;
+
+      const confirmMsg = `📋 [대리점 단가 복사 확인]\n\n` +
+        `• 출발 매장: ${srcName}\n` +
+        `• 도착 매장: ${tgtName}\n` +
+        `• 복사 통신사: ${carriersLabel}\n` +
+        `• 부가 옵션: ${copyConditions ? '부가조건 포함, ' : ''}${copyOrder ? '단가표 순서 동일화' : '단가/단가처'}\n\n` +
+        `${tgtName}의 기존 해당 단가가 ${srcName} 단가로 덮어씌워집니다.\n정말 복사하여 동기화하시겠습니까?`;
+
+      if (!confirm(confirmMsg)) return;
+
+      try {
+        setSyncStatus('syncing', '단가 복사 동기화 중...');
+
+        // 1. Fetch Source Data
+        let srcRates = {}, srcLocs = {}, srcConds = {}, srcRows = {};
+        if (srcStore === currentStoreId) {
+          devices.forEach(d => {
+            srcRates[d.id] = JSON.parse(JSON.stringify(d.rate || {}));
+            srcLocs[d.id] = JSON.parse(JSON.stringify(d.loc || {}));
+          });
+          srcConds = JSON.parse(JSON.stringify(carrierConditions));
+          srcRows = JSON.parse(JSON.stringify(dailyCarrierRows));
+        } else {
+          const srcDoc = await db.collection('stores').doc(srcStore).get();
+          if (!srcDoc.exists) throw new Error(`${srcName} 데이터가 클라우드에 존재하지 않습니다.`);
+          const dData = srcDoc.data();
+          srcRates = dData.rates || {};
+          srcLocs = dData.locs || {};
+          srcConds = dData.carrierConditions || {};
+          srcRows = dData.dailyCarrierRows || {};
+        }
+
+        // 2. Fetch Target Data
+        const tgtDoc = await db.collection('stores').doc(tgtStore).get();
+        let tgtData = tgtDoc.exists ? tgtDoc.data() : {};
+        let tgtRates = tgtData.rates || {};
+        let tgtLocs = tgtData.locs || {};
+        let tgtConds = tgtData.carrierConditions || {};
+        let tgtDailyRows = tgtData.dailyCarrierRows || {};
+
+        // 3. Deep-merge for selected carriers
+        carriersToCopy.forEach(c => {
+          devices.forEach(d => {
+            if (!tgtRates[d.id]) tgtRates[d.id] = { SK: { change: 0, mnp: 0 }, KT: { change: 0, mnp: 0 }, LG: { change: 0, mnp: 0 } };
+            if (!tgtLocs[d.id]) tgtLocs[d.id] = { SK: { change: '도매', mnp: '도매' }, KT: { change: '도매', mnp: '도매' }, LG: { change: '도매', mnp: '도매' } };
+
+            if (srcRates[d.id] && srcRates[d.id][c]) {
+              tgtRates[d.id][c] = { ...srcRates[d.id][c] };
+            }
+            if (srcLocs[d.id] && srcLocs[d.id][c]) {
+              tgtLocs[d.id][c] = { ...srcLocs[d.id][c] };
+            }
+          });
+
+          if (copyConditions && srcConds[c]) {
+            if (!tgtConds[c]) tgtConds[c] = {};
+            tgtConds[c] = { ...srcConds[c] };
+          }
+
+          if (copyOrder && srcRows[c]) {
+            tgtDailyRows[c] = [...srcRows[c]];
+          }
+        });
+
+        // 4. Save to target store in Firestore
+        const payload = {
+          storeId: tgtStore,
+          storeName: tgtName,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          updatedBy: '본사 (마스터 단가 복사)',
+          rates: tgtRates,
+          locs: tgtLocs
+        };
+        if (copyConditions) payload.carrierConditions = tgtConds;
+        if (copyOrder) payload.dailyCarrierRows = tgtDailyRows;
+
+        await db.collection('stores').doc(tgtStore).set(payload, { merge: true });
+
+        // 5. Audit History Log
+        const auditDesc = `[${srcName} → ${tgtName}] ${carriersLabel} 대리점 단가 및 단가처 복사 적용`;
+        logAudit('대리점 단가 복사', auditDesc);
+
+        // 6. If target store is currently viewed by Master, update local memory & re-render!
+        if (currentStoreId === tgtStore) {
+          devices.forEach(d => {
+            if (tgtRates[d.id]) d.rate = tgtRates[d.id];
+            if (tgtLocs[d.id]) d.loc = tgtLocs[d.id];
+          });
+          if (copyConditions) carrierConditions = tgtConds;
+          if (copyOrder) dailyCarrierRows = tgtDailyRows;
+          render();
+        }
+
+        closeCopyPriceModal();
+        setSyncStatus('online', '클라우드 동기화 완료');
+        alert(`✅ [단가 복사 완료]\n\n${srcName}의 ${carriersLabel} 대리점 단가가 ${tgtName}에 성공적으로 복사·적용되었습니다!`);
+      } catch (err) {
+        console.error("Error executing price copy:", err);
+        alert('단가 복사 중 오류가 발생했습니다: ' + err.message);
+        setSyncStatus('error', '복사 실패');
+      }
+    }
+
+    // ==================== 플로팅 도움말 툴팁 제어 ====================
+    let activeTooltipEl = null;
+
+    function showHelpTip(e, el, text) {
+      const tip = document.getElementById('globalHelpTooltip');
+      const content = document.getElementById('globalHelpTooltipContent');
+      if (!tip || !content) return;
+
+      content.innerHTML = text;
+      tip.classList.remove('hidden');
+      tip.style.opacity = '1';
+
+      const rect = el.getBoundingClientRect();
+      const tipWidth = 260;
+      let left = rect.left + (rect.width / 2) - (tipWidth / 2);
+      if (left < 10) left = 10;
+      if (left + tipWidth > window.innerWidth - 10) left = window.innerWidth - tipWidth - 10;
+
+      let top = rect.bottom + 8;
+      if (top + 120 > window.innerHeight) {
+        top = Math.max(10, rect.top - 110);
+      }
+
+      tip.style.left = `${left}px`;
+      tip.style.top = `${top}px`;
+      tip.style.width = `${tipWidth}px`;
+      activeTooltipEl = el;
+    }
+
+    function hideHelpTip() {
+      const tip = document.getElementById('globalHelpTooltip');
+      if (!tip) return;
+      tip.style.opacity = '0';
+      setTimeout(() => {
+        if (tip.style.opacity === '0') tip.classList.add('hidden');
+      }, 150);
+      activeTooltipEl = null;
+    }
+
+    function toggleHelpTip(e, el, text) {
+      if (e) e.stopPropagation();
+      if (activeTooltipEl === el) {
+        hideHelpTip();
+      } else {
+        showHelpTip(e, el, text);
+      }
+    }
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.help-btn') && !e.target.closest('#globalHelpTooltip')) {
+        hideHelpTip();
+      }
+    });
+
     function updateDevicePrice(id, carrier, val) {
       const d = devices.find(x => x.id === id);
       if (d) {
@@ -2376,6 +3104,7 @@
       const badge = document.getElementById('userBadge');
       const badgeText = document.getElementById('userBadgeText');
       const switcher = document.getElementById('masterStoreSwitcher');
+      const copyBtn = document.getElementById('masterCopyPriceBtn');
       if (!badge || !badgeText) return;
 
       badge.classList.remove('hidden');
@@ -2390,6 +3119,10 @@
           switcher.classList.add('flex');
           updateMasterSwitcherButtons();
         }
+        if (copyBtn) {
+          copyBtn.classList.remove('hidden');
+          copyBtn.classList.add('flex');
+        }
       } else {
         badgeText.innerText = `📍 ${currentStoreName}`;
         badge.className = currentStoreId === 'myeongji'
@@ -2398,6 +3131,10 @@
         if (switcher) {
           switcher.classList.add('hidden');
           switcher.classList.remove('flex');
+        }
+        if (copyBtn) {
+          copyBtn.classList.add('hidden');
+          copyBtn.classList.remove('flex');
         }
       }
     }
@@ -2462,16 +3199,52 @@
           seedMasterDevices();
         } else {
           const data = doc.data();
-          if (data && Array.isArray(data.devices)) {
-            data.devices.forEach(masterD => {
+          if (data && Array.isArray(data.devices) && data.devices.length > 0) {
+            const remoteList = data.devices;
+            const remoteIds = new Set(remoteList.map(d => d.id));
+
+            // 1. 원격에서 삭제된 기종은 로컬에서도 안전하게 제거
+            devices = devices.filter(d => remoteIds.has(d.id));
+            calcRows = calcRows.filter(id => id === 'empty' || remoteIds.has(id));
+            ['SK', 'KT', 'LG'].forEach(c => {
+              if (dailyCarrierRows[c]) dailyCarrierRows[c] = dailyCarrierRows[c].filter(id => id === 'empty' || remoteIds.has(id));
+              if (adCarrierOrders[c]) adCarrierOrders[c] = adCarrierOrders[c].filter(id => id === 'empty' || remoteIds.has(id));
+            });
+
+            // 2. 기존 기종 정보 업데이트 및 신규 등록 기종 실시간 추가
+            remoteList.forEach(masterD => {
               const localD = devices.find(d => d.id === masterD.id);
               if (localD) {
                 if (masterD.prices) localD.prices = masterD.prices;
                 if (masterD.sub) localD.sub = masterD.sub;
                 if (masterD.name) localD.name = masterD.name;
+                if (masterD.group) localD.group = masterD.group;
+                if (masterD.tag) localD.tag = masterD.tag;
+              } else {
+                devices.push({
+                  id: masterD.id,
+                  group: masterD.group || 'S',
+                  tag: masterD.tag || '',
+                  name: masterD.name,
+                  prices: masterD.prices || { SK: 100, KT: 100, LG: 100 },
+                  price: (masterD.prices && masterD.prices.SK) || 100,
+                  sub: masterD.sub || { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } },
+                  rate: { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } },
+                  loc: { SK: { mnp: '도매', chg: '도매' }, KT: { mnp: '도매', chg: '도매' }, LG: { mnp: '도매', chg: '도매' } },
+                  ad: { SK: { mnp: '0', chg: '0', note: '', hidden: false }, KT: { mnp: '0', chg: '0', note: '', hidden: false }, LG: { mnp: '0', chg: '0', note: '', hidden: false } }
+                });
+                if (!calcRows.includes(masterD.id)) calcRows.push(masterD.id);
+                ['SK', 'KT', 'LG'].forEach(c => {
+                  if (dailyCarrierRows[c] && !dailyCarrierRows[c].includes(masterD.id)) dailyCarrierRows[c].push(masterD.id);
+                  if (adCarrierOrders[c] && !adCarrierOrders[c].includes(masterD.id)) adCarrierOrders[c].push(masterD.id);
+                });
               }
             });
             render();
+            const setModal = document.getElementById('settingsModal');
+            if (setModal && !setModal.classList.contains('hidden')) {
+              renderSettingsTable();
+            }
           }
         }
         setSyncStatus('online', '클라우드 동기화 완료');
@@ -2795,14 +3568,14 @@
 
       let filtered = allHistoryRecords;
       if (currentRole !== 'master') {
-        // 일반 매장(명지/광안)은 오직 본인 매장의 변경 내역만 확인 가능
-        filtered = filtered.filter(r => r.storeId === currentStoreId && r.role !== 'master');
+        // 일반 매장(명지/광안)은 본인 매장의 변경 내역(매장 직원 + 본사 마스터가 해당 매장 수정한 내역) 및 공통 공시/기종 설정 확인
+        filtered = filtered.filter(r => r.storeId === currentStoreId || r.category === '출고가/공시 설정' || r.category === '기종 추가' || r.category === '기종 삭제' || (r.category === '대리점 단가 복사' && (r.storeId === currentStoreId || (r.description && r.description.includes(currentStoreName)))));
       } else {
-        // 마스터(본사)는 전체 또는 필터링 조회
+        // 마스터(본사)는 전체 또는 매장별 필터링 조회
         if (currentHistoryFilter === 'myeongji') {
-          filtered = filtered.filter(r => r.storeId === 'myeongji' && r.role !== 'master');
+          filtered = filtered.filter(r => r.storeId === 'myeongji' || (r.description && r.description.includes('명지')));
         } else if (currentHistoryFilter === 'gwangan') {
-          filtered = filtered.filter(r => r.storeId === 'gwangan' && r.role !== 'master');
+          filtered = filtered.filter(r => r.storeId === 'gwangan' || (r.description && r.description.includes('광안')));
         } else if (currentHistoryFilter === 'master') {
           filtered = filtered.filter(r => r.role === 'master' || (r.storeName && r.storeName.includes('본사')));
         }
@@ -2826,7 +3599,8 @@
       tbody.innerHTML = filtered.map(item => {
         let roleBadge = '';
         if (item.role === 'master' || (item.storeName && item.storeName.includes('본사'))) {
-          roleBadge = `<span class="px-2 py-0.5 rounded-md text-[11px] font-extrabold bg-purple-50 text-purple-700 border border-purple-200">👑 본사</span>`;
+          const storeSub = item.storeId === 'myeongji' ? ' (명지)' : item.storeId === 'gwangan' ? ' (광안)' : '';
+          roleBadge = `<span class="px-2 py-0.5 rounded-md text-[11px] font-extrabold bg-purple-50 text-purple-700 border border-purple-200">👑 본사 관리자${storeSub}</span>`;
         } else if (item.storeId === 'myeongji' || (item.storeName && item.storeName.includes('명지'))) {
           roleBadge = `<span class="px-2 py-0.5 rounded-md text-[11px] font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-200">📍 명지점</span>`;
         } else {
@@ -2836,6 +3610,12 @@
         let catBadge = '';
         if (item.category === '대리점 단가 입력') {
           catBadge = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">단가입력</span>`;
+        } else if (item.category === '대리점 단가 복사') {
+          catBadge = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200">단가복사</span>`;
+        } else if (item.category === '기종 추가') {
+          catBadge = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-teal-50 text-teal-700 border border-teal-200">기종추가</span>`;
+        } else if (item.category === '기종 삭제') {
+          catBadge = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">기종삭제</span>`;
         } else if (item.category === '성지특가 광고') {
           catBadge = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-sky-50 text-sky-700 border border-sky-200">광고시세</span>`;
         } else if (item.category === '올부가 할인') {
