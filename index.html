@@ -157,18 +157,6 @@
           <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>실시간 클라우드 동기화</b><br>구글 파이어베이스 클라우드에 1초 단위로 자동 저장되며 명지점, 광안점, 본사가 항상 실시간으로 동일한 최신 데이터를 공유합니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>실시간 클라우드 동기화</b><br>구글 파이어베이스 클라우드에 1초 단위로 자동 저장되며 명지점, 광안점, 본사가 항상 실시간으로 동일한 최신 데이터를 공유합니다.')" title="동기화 안내">?</button>
         </div>
 
-        <!-- 버그/개선 요청 바로가기 버튼군 -->
-        <button onclick="openNewRequestModal()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white shadow-xs transition">
-          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-          <span>+ 요청 등록</span>
-        </button>
-
-        <button onclick="switchTab('request')" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 transition">
-          <span class="text-sm">💬</span>
-          <span>요청 현황</span>
-          <span id="headerRequestBadge" class="hidden px-1.5 py-0.2 text-[10px] rounded-full bg-rose-500 text-white font-black">0</span>
-        </button>
-
         <!-- 변경 히스토리 모달 버튼 -->
         <button onclick="openHistoryModal()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 transition">
           <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -3989,21 +3977,12 @@
       if (countRejected) countRejected.innerText = rejectedCount;
 
       const tabBadge = document.getElementById('tabRequestPendingBadge');
-      const headerBadge = document.getElementById('headerRequestBadge');
       if (tabBadge) {
         if (pendingCount > 0) {
           tabBadge.innerText = pendingCount;
           tabBadge.classList.remove('hidden');
         } else {
           tabBadge.classList.add('hidden');
-        }
-      }
-      if (headerBadge) {
-        if (pendingCount > 0) {
-          headerBadge.innerText = pendingCount;
-          headerBadge.classList.remove('hidden');
-        } else {
-          headerBadge.classList.add('hidden');
         }
       }
 
