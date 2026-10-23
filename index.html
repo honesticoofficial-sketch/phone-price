@@ -11,6 +11,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Pretendard Font -->
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <!-- Firebase App & Firestore Compat SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <style>
     body { font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     input[type=number]::-webkit-inner-spin-button, 
@@ -36,15 +39,24 @@
 
     <!-- ==================== 1. PIN 잠금 모달 ==================== -->
     <div id="pinModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-4">
-      <div class="bg-white rounded-3xl shadow-2xl p-7 max-w-xs w-full text-center border border-slate-200/80">
+      <div class="bg-white rounded-3xl shadow-2xl p-7 max-w-sm w-full text-center border border-slate-200/80">
         <div class="w-14 h-14 bg-slate-900 text-sky-400 rounded-2xl flex items-center justify-center mx-auto mb-3.5 shadow-sm border border-slate-800">
           <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
             <path d="M7 11V7a5 5 0 0110 0v4"/>
           </svg>
         </div>
-        <h2 class="text-base font-extrabold text-slate-900 tracking-tight mb-0.5">단가표 보안 잠금</h2>
-        <p class="text-xs text-slate-500 mb-5">보안 PIN 번호 6자리를 입력하세요</p>
+        <h2 class="text-base font-extrabold text-slate-900 tracking-tight mb-0.5">매장 보안 잠금</h2>
+        <p class="text-xs text-slate-500 mb-2">마스터 또는 매장 PIN 번호 6자리를 입력하세요</p>
+
+        <!-- 매장별 PIN 안내 칩 -->
+        <div class="text-[11px] text-slate-500 mb-4 bg-slate-50 rounded-xl py-2 px-3 border border-slate-100 flex items-center justify-center gap-2 flex-wrap">
+          <span class="inline-flex items-center gap-1 font-semibold text-slate-700">📍 명지점 <b class="font-mono text-indigo-600 font-black">111111</b></span>
+          <span class="text-slate-300">•</span>
+          <span class="inline-flex items-center gap-1 font-semibold text-slate-700">📍 광안점 <b class="font-mono text-emerald-600 font-black">222222</b></span>
+          <span class="text-slate-300">•</span>
+          <span class="inline-flex items-center gap-1 font-semibold text-slate-700">👑 본사 <b class="font-mono text-purple-600 font-black">152411</b></span>
+        </div>
 
         <!-- PIN Dots -->
         <div class="flex justify-center gap-2.5 mb-5" id="pinDots">
@@ -106,7 +118,35 @@
       </div>
 
       <!-- 상단 우측 버튼군 -->
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-2 flex-wrap">
+        <!-- 현재 접속 매장/역할 배지 -->
+        <div id="userBadge" class="hidden items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black bg-indigo-50 text-indigo-700 border border-indigo-200">
+          <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+          <span id="userBadgeText">매장</span>
+        </div>
+
+        <!-- 본사 마스터 전용 매장 전환기 -->
+        <div id="masterStoreSwitcher" class="hidden items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-bold gap-1">
+          <span class="text-[11px] text-slate-500 px-1 font-medium">매장 보기:</span>
+          <button id="switchBtn-myeongji" onclick="masterSwitchStore('myeongji')" class="px-2.5 py-1 rounded-lg bg-white text-slate-900 shadow-2xs font-extrabold transition">📍 명지점</button>
+          <button id="switchBtn-gwangan" onclick="masterSwitchStore('gwangan')" class="px-2.5 py-1 rounded-lg text-slate-500 hover:text-slate-900 transition">📍 광안점</button>
+        </div>
+
+        <!-- 클라우드 실시간 상태 표시 -->
+        <div id="syncStatusBadge" class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-200">
+          <span id="syncStatusDot" class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span id="syncStatusText">클라우드 연결 중...</span>
+        </div>
+
+        <!-- 변경 히스토리 모달 버튼 -->
+        <button onclick="openHistoryModal()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 transition">
+          <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          <span>변경 내역</span>
+        </button>
+
         <button onclick="openSettingsModal()" class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white shadow-xs transition">
           <svg class="w-3.5 h-3.5 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
@@ -114,12 +154,12 @@
           </svg>
           <span>공시 & 출고가 설정</span>
         </button>
-        <button onclick="lockApp()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 transition">
-          <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-            <path d="M7 11V7a5 5 0 0110 0v4"/>
+
+        <button onclick="lockApp()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-white hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 text-slate-700 border border-slate-200 transition">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
           </svg>
-          <span>보안 잠금</span>
+          <span>로그아웃</span>
         </button>
       </div>
     </header>
@@ -538,13 +578,113 @@
       </div>
     </div>
 
+    <!-- ==================== 5. 변경 내역 (히스토리) 모달 ==================== -->
+    <div id="historyModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-3 hidden">
+      <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full p-6 border border-slate-200 space-y-4 max-h-[88vh] flex flex-col">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div>
+            <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+              <svg class="w-4 h-4 text-slate-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              <span>실시간 단가 & 설정 변경 히스토리</span>
+            </h3>
+            <p class="text-xs text-slate-500 mt-0.5">
+              매장별 단가 수정, 광고 가격, 공시지원금, 올부가 할인 변경 이력이 구글 시트처럼 자동 기록됩니다.
+            </p>
+          </div>
+          <button onclick="closeHistoryModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-lg transition">&times;</button>
+        </div>
+
+        <!-- 필터 탭 바 -->
+        <div class="flex items-center justify-between gap-2 flex-wrap text-xs">
+          <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
+            <button onclick="filterHistory('all')" id="histFilter-all" class="px-3 py-1 rounded-lg font-bold bg-white text-slate-900 shadow-2xs">전체 내역</button>
+            <button onclick="filterHistory('myeongji')" id="histFilter-myeongji" class="px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900">📍 명지점</button>
+            <button onclick="filterHistory('gwangan')" id="histFilter-gwangan" class="px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900">📍 광안점</button>
+            <button onclick="filterHistory('master')" id="histFilter-master" class="px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900">👑 본사</button>
+          </div>
+          <span id="historyCountBadge" class="text-[11px] text-slate-500 font-medium">최근 기록 로딩 중...</span>
+        </div>
+
+        <!-- 히스토리 테이블 -->
+        <div class="overflow-y-auto flex-1 border border-slate-200 rounded-xl">
+          <table class="w-full text-xs text-left border-collapse">
+            <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 sticky top-0 z-10">
+              <tr>
+                <th class="p-2.5 text-center w-36">일시</th>
+                <th class="p-2.5 text-center w-28">매장 / 작업자</th>
+                <th class="p-2.5 text-center w-28">구분</th>
+                <th class="p-2.5 text-left">상세 변경 내역</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody" class="divide-y divide-slate-100">
+              <tr>
+                <td colspan="4" class="p-8 text-center text-slate-400">변경 내역을 불러오는 중입니다...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+          <span class="text-slate-400 text-[11px]">
+            ⚡ 변경 즉시 클라우드에 영구 기록되어 브라우저나 PC가 재부팅되어도 안전하게 보존됩니다.
+          </span>
+          <button onclick="closeHistoryModal()" class="px-5 py-2 rounded-xl bg-slate-900 text-white font-bold hover:bg-slate-800 shadow-xs transition">
+            닫기
+          </button>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <script>
-    // 1. PIN 보안
-    const CORRECT_PIN = "152411";
+    // ==================== 1. Firebase Firestore 연동 & 멀티 매장 계정 보안 ====================
+    const firebaseConfig = {
+      apiKey: "AIzaSyAGDez1xHB9Y4X50SlXDGbXLWm1UeOF_J0",
+      authDomain: "phone-price-91c3c.firebaseapp.com",
+      projectId: "phone-price-91c3c",
+      storageBucket: "phone-price-91c3c.firebasestorage.app",
+      messagingSenderId: "774472083753",
+      appId: "1:774472083753:web:67c7b1f70c913f61d36f38"
+    };
+
+    let firebaseApp = null;
+    let db = null;
+    try {
+      if (typeof firebase !== 'undefined') {
+        if (!firebase.apps.length) {
+          firebaseApp = firebase.initializeApp(firebaseConfig);
+        } else {
+          firebaseApp = firebase.app();
+        }
+        db = firebase.firestore();
+      }
+    } catch (e) {
+      console.error("Firebase 초기화 에러:", e);
+    }
+
+    // 3가지 PIN 인증 권한 및 매장 매핑
+    const STORE_ROLES = {
+      "152411": { role: "master", storeId: "myeongji", name: "본사 (마스터)" },
+      "111111": { role: "store", storeId: "myeongji", name: "명지점" },
+      "222222": { role: "store", storeId: "gwangan", name: "광안점" }
+    };
+
+    let currentRole = null;          // 'master' | 'store'
+    let currentStoreId = 'myeongji'; // 'myeongji' | 'gwangan'
+    let currentStoreName = '';       // '명지점' | '광안점' | '본사 (마스터)'
     let enteredPin = "";
     let isUnlocked = false;
+
+    // 실시간 리스너 구독 해제 핸들
+    let unsubscribeMasterConfig = null;
+    let unsubscribeStoreData = null;
+    let unsubscribeAuditHistory = null;
+    let storeSaveTimer = null;
+    let masterSaveTimer = null;
 
     // 2. 화면 상태
     let currentTab = "calc";
@@ -569,10 +709,11 @@
       syncDiscountInputs();
     }
 
-    function saveDiscounts() {
+    function saveDiscounts(category = '', description = '') {
       try {
         localStorage.setItem('phone_all_add_discounts', JSON.stringify(allAddDiscounts));
       } catch (e) {}
+      scheduleStoreSave(category, description);
     }
 
     function syncDiscountInputs() {
@@ -585,9 +726,10 @@
     }
 
     function updateCarrierDiscount(carrier, val) {
+      const oldVal = allAddDiscounts[carrier];
       const num = parseFloat(val);
       allAddDiscounts[carrier] = isNaN(num) ? 0 : num;
-      saveDiscounts();
+      saveDiscounts('올부가 할인', `${carrier} 올부가 할인액: ${oldVal}만 → ${allAddDiscounts[carrier]}만원`);
       renderCalcTable();
       if (currentTab === 'ad') {
         renderAdSection();
@@ -875,12 +1017,13 @@
       LG: null
     };
 
-    function saveLayouts() {
+    function saveLayouts(category = '', description = '') {
       try {
         localStorage.setItem('phone_calc_rows', JSON.stringify(calcRows));
         localStorage.setItem('phone_daily_carrier_rows', JSON.stringify(dailyCarrierRows));
         localStorage.setItem('phone_ad_carrier_orders', JSON.stringify(adCarrierOrders));
       } catch (e) {}
+      scheduleStoreSave(category, description);
     }
 
     function loadLayouts() {
@@ -1147,20 +1290,29 @@
       } catch (e) {}
     }
 
-    // PIN 조작
+    // PIN 및 멀티 매장 계정 로그인
     function inputPin(d) {
       if (enteredPin.length < 6) {
         enteredPin += d;
         updateDots();
       }
       if (enteredPin.length === 6) {
-        if (enteredPin === CORRECT_PIN) {
-          document.getElementById('pinModal').classList.add('hidden');
+        const auth = STORE_ROLES[enteredPin];
+        if (auth) {
+          currentRole = auth.role;
+          currentStoreId = auth.storeId;
+          currentStoreName = auth.name;
           isUnlocked = true;
-          render();
+          try {
+            sessionStorage.setItem('phone_current_pin', enteredPin);
+          } catch(e) {}
+          document.getElementById('pinModal').classList.add('hidden');
+          document.getElementById('pinMsg').innerText = "";
+          updateUserHeaderBadge();
+          initFirestoreListeners();
         } else {
-          document.getElementById('pinMsg').innerText = "PIN 번호가 일치하지 않습니다.";
-          setTimeout(clearPin, 500);
+          document.getElementById('pinMsg').innerText = "일치하는 매장 PIN 번호가 없습니다.";
+          setTimeout(clearPin, 600);
         }
       }
     }
@@ -1185,8 +1337,20 @@
       }
     }
     function lockApp() {
+      if (unsubscribeMasterConfig) { unsubscribeMasterConfig(); unsubscribeMasterConfig = null; }
+      if (unsubscribeStoreData) { unsubscribeStoreData(); unsubscribeStoreData = null; }
+      if (unsubscribeAuditHistory) { unsubscribeAuditHistory(); unsubscribeAuditHistory = null; }
+      try {
+        sessionStorage.removeItem('phone_current_pin');
+      } catch(e) {}
       clearPin();
+      isUnlocked = false;
+      currentRole = null;
       document.getElementById('pinModal').classList.remove('hidden');
+      const userBadge = document.getElementById('userBadge');
+      if (userBadge) userBadge.classList.add('hidden');
+      const switcher = document.getElementById('masterStoreSwitcher');
+      if (switcher) switcher.classList.add('hidden');
     }
 
     // 키보드 숫자 입력 지원 (물리 키보드로 PIN 입력 가능)
@@ -1609,7 +1773,10 @@
       if (d) {
         if (!d.loc) d.loc = { SK: { mnp: '도매', chg: '도매' }, KT: { mnp: '도매', chg: '도매' }, LG: { mnp: '도매', chg: '도매' } };
         if (!d.loc[activeInputCarrier]) d.loc[activeInputCarrier] = { mnp: '도매', chg: '도매' };
+        const oldVal = d.loc[activeInputCarrier][type];
         d.loc[activeInputCarrier][type] = val;
+        const typeKo = type === 'mnp' ? '번이' : '기변';
+        scheduleStoreSave('대리점 단가 입력', `${d.name} (${activeInputCarrier} ${typeKo}) 단가처: ${oldVal || '도매'} → ${val}`);
       }
     }
 
@@ -1629,8 +1796,11 @@
     function updateRate(id, type, val) {
       const d = devices.find(x => x.id === id);
       if (d) {
+        const oldVal = d.rate[activeInputCarrier][type];
         d.rate[activeInputCarrier][type] = val;
         render();
+        const typeKo = type === 'mnp' ? '번이' : '기변';
+        scheduleStoreSave('대리점 단가 입력', `${d.name} (${activeInputCarrier} ${typeKo}) 단가: ${oldVal || '-'} → ${val}만`);
       }
     }
 
@@ -1705,12 +1875,14 @@
       const d = devices.find(x => x.id === id);
       if (d) {
         if (!d.ad[activeAdCarrier]) d.ad[activeAdCarrier] = {};
+        const oldVal = d.ad[activeAdCarrier].tag || d.tag;
         d.ad[activeAdCarrier].tag = val;
 
         const previewEl = document.getElementById('adPreviewText');
         if (previewEl) {
           previewEl.innerText = generateAdString(activeAdCarrier);
         }
+        scheduleStoreSave('성지특가 광고', `${d.name} (${activeAdCarrier}) 태그명: ${oldVal} → ${val}`);
       }
     }
 
@@ -1853,6 +2025,7 @@
     function updateAdVal(id, field, val) {
       const d = devices.find(x => x.id === id);
       if (d && d.ad[activeAdCarrier]) {
+        const oldVal = d.ad[activeAdCarrier][field];
         d.ad[activeAdCarrier][field] = val;
 
         // 실시간 마진 배지 갱신 (인풋 포커스 유지)
@@ -1868,6 +2041,10 @@
         if (previewEl) {
           previewEl.innerText = generateAdString(activeAdCarrier);
         }
+
+        const fieldMap = { mnp: '번이가', chg: '기변가', note: '비고', hidden: '게시상태' };
+        const fieldKo = fieldMap[field] || field;
+        scheduleStoreSave('성지특가 광고', `${d.name} (${activeAdCarrier}) 광고 ${fieldKo}: ${oldVal || '-'} → ${val}`);
       }
     }
 
@@ -1921,6 +2098,10 @@
 
     // 설정 모달
     function openSettingsModal() {
+      if (currentRole !== 'master') {
+        alert("🔒 [접근 제한]\n\n'공시 & 출고가 설정'은 본사 마스터(PIN: 152411) 전용 메뉴입니다.\n매장 직원은 넷가 산출표, 대리점 단가 입력, 성지특가 광고표를 수정하실 수 있습니다.");
+        return;
+      }
       document.getElementById('settingsModal').classList.remove('hidden');
       renderSettingsTable();
     }
@@ -1997,15 +2178,471 @@
       const d = devices.find(x => x.id === id);
       if (d) {
         if (!d.prices) d.prices = { SK: d.price, KT: d.price, LG: d.price };
-        d.prices[carrier] = parseFloat(val) || 0;
+        const oldVal = d.prices[carrier];
+        const numVal = parseFloat(val) || 0;
+        d.prices[carrier] = numVal;
+        scheduleMasterSave('출고가/공시 설정', `${d.name} (${carrier}) 출고가: ${oldVal}만 → ${numVal}만원`);
       }
     }
 
     function updateDeviceSub(id, carrier, type, val) {
       const d = devices.find(x => x.id === id);
       if (d) {
-        d.sub[carrier][type] = parseFloat(val) || 0;
+        const oldVal = d.sub[carrier][type];
+        const numVal = parseFloat(val) || 0;
+        d.sub[carrier][type] = numVal;
+        const typeKo = type === 'mnp' ? '번이' : '기변';
+        scheduleMasterSave('출고가/공시 설정', `${d.name} (${carrier} ${typeKo}) 공시지원금: ${oldVal}만 → ${numVal}만원`);
       }
+    }
+
+    // ==================== 사용자 헤더 배지 & 매장 스위처 관리 ====================
+    function updateUserHeaderBadge() {
+      const badge = document.getElementById('userBadge');
+      const badgeText = document.getElementById('userBadgeText');
+      const switcher = document.getElementById('masterStoreSwitcher');
+      if (!badge || !badgeText) return;
+
+      badge.classList.remove('hidden');
+      badge.classList.add('flex');
+
+      if (currentRole === 'master') {
+        const activeLabel = currentStoreId === 'myeongji' ? '명지점' : '광안점';
+        badgeText.innerText = `👑 본사 관리자 (${activeLabel} 관리 중)`;
+        badge.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black bg-purple-50 text-purple-700 border border-purple-200";
+        if (switcher) {
+          switcher.classList.remove('hidden');
+          switcher.classList.add('flex');
+          updateMasterSwitcherButtons();
+        }
+      } else {
+        badgeText.innerText = `📍 ${currentStoreName}`;
+        badge.className = currentStoreId === 'myeongji'
+          ? "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black bg-indigo-50 text-indigo-700 border border-indigo-200"
+          : "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black bg-emerald-50 text-emerald-700 border border-emerald-200";
+        if (switcher) {
+          switcher.classList.add('hidden');
+          switcher.classList.remove('flex');
+        }
+      }
+    }
+
+    function updateMasterSwitcherButtons() {
+      const btnM = document.getElementById('switchBtn-myeongji');
+      const btnG = document.getElementById('switchBtn-gwangan');
+      if (!btnM || !btnG) return;
+      if (currentStoreId === 'myeongji') {
+        btnM.className = "px-2.5 py-1 rounded-lg bg-white text-slate-900 shadow-2xs font-extrabold transition";
+        btnG.className = "px-2.5 py-1 rounded-lg text-slate-500 hover:text-slate-900 font-bold transition";
+      } else {
+        btnG.className = "px-2.5 py-1 rounded-lg bg-white text-slate-900 shadow-2xs font-extrabold transition";
+        btnM.className = "px-2.5 py-1 rounded-lg text-slate-500 hover:text-slate-900 font-bold transition";
+      }
+    }
+
+    function masterSwitchStore(targetStoreId) {
+      if (currentRole !== 'master') return;
+      if (currentStoreId === targetStoreId) return;
+      currentStoreId = targetStoreId;
+      updateUserHeaderBadge();
+      subscribeStoreData();
+    }
+
+    // ==================== 클라우드 연결 상태 배지 관리 ====================
+    function setSyncStatus(state, msg) {
+      const dot = document.getElementById('syncStatusDot');
+      const text = document.getElementById('syncStatusText');
+      const badge = document.getElementById('syncStatusBadge');
+      if (!dot || !text || !badge) return;
+
+      badge.classList.remove('hidden');
+      badge.classList.add('inline-flex');
+      text.innerText = msg;
+
+      if (state === 'online') {
+        dot.className = "w-2 h-2 rounded-full bg-emerald-500";
+        badge.className = "hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200";
+      } else if (state === 'syncing') {
+        dot.className = "w-2 h-2 rounded-full bg-sky-500 animate-pulse";
+        badge.className = "hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-sky-50 text-sky-700 border border-sky-200";
+      } else {
+        dot.className = "w-2 h-2 rounded-full bg-rose-500 animate-ping";
+        badge.className = "hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200";
+      }
+    }
+
+    // ==================== Firebase Firestore 실시간 동기화 & 영속화 로직 ====================
+    function initFirestoreListeners() {
+      if (!db) {
+        setSyncStatus('error', 'Firebase 연결 오류');
+        render();
+        return;
+      }
+      setSyncStatus('syncing', '클라우드 동기화 중...');
+
+      // 1. 공시 및 출고가 마스터 데이터 리스너
+      const masterDocRef = db.collection('global_config').doc('devices_master');
+      unsubscribeMasterConfig = masterDocRef.onSnapshot((doc) => {
+        if (!doc.exists) {
+          seedMasterDevices();
+        } else {
+          const data = doc.data();
+          if (data && Array.isArray(data.devices)) {
+            data.devices.forEach(masterD => {
+              const localD = devices.find(d => d.id === masterD.id);
+              if (localD) {
+                if (masterD.prices) localD.prices = masterD.prices;
+                if (masterD.sub) localD.sub = masterD.sub;
+                if (masterD.name) localD.name = masterD.name;
+              }
+            });
+            render();
+          }
+        }
+        setSyncStatus('online', '클라우드 동기화 완료');
+      }, (err) => {
+        console.error("Master config snapshot error:", err);
+        setSyncStatus('error', '동기화 연결 실패');
+      });
+
+      // 2. 매장별 독립 데이터 리스너
+      subscribeStoreData();
+
+      // 3. 실시간 변경 히스토리 리스너
+      subscribeAuditHistory();
+    }
+
+    function subscribeStoreData() {
+      if (unsubscribeStoreData) {
+        unsubscribeStoreData();
+        unsubscribeStoreData = null;
+      }
+      if (!db) return;
+
+      const storeLabel = currentStoreId === 'myeongji' ? '명지점' : '광안점';
+      setSyncStatus('syncing', `${storeLabel} 데이터 로딩...`);
+
+      const storeDocRef = db.collection('stores').doc(currentStoreId);
+      unsubscribeStoreData = storeDocRef.onSnapshot((doc) => {
+        if (!doc.exists) {
+          seedStoreData(currentStoreId);
+        } else {
+          const data = doc.data();
+          if (data) {
+            // 올부가 할인 복원
+            if (data.allAddDiscounts && typeof data.allAddDiscounts === 'object') {
+              allAddDiscounts.SK = (data.allAddDiscounts.SK !== undefined) ? Number(data.allAddDiscounts.SK) : 15;
+              allAddDiscounts.KT = (data.allAddDiscounts.KT !== undefined) ? Number(data.allAddDiscounts.KT) : 15;
+              allAddDiscounts.LG = (data.allAddDiscounts.LG !== undefined) ? Number(data.allAddDiscounts.LG) : 15;
+              syncDiscountInputs();
+            }
+
+            // 행 레이아웃 복원
+            if (Array.isArray(data.calcRows) && data.calcRows.length > 0) {
+              calcRows = data.calcRows;
+            }
+            if (data.dailyCarrierRows && typeof data.dailyCarrierRows === 'object') {
+              dailyCarrierRows = data.dailyCarrierRows;
+            }
+            if (data.adCarrierOrders && typeof data.adCarrierOrders === 'object') {
+              adCarrierOrders = data.adCarrierOrders;
+            }
+
+            // rates, locs, ads 데이터 복원
+            if (data.rates) {
+              Object.keys(data.rates).forEach(deviceId => {
+                const localD = devices.find(d => d.id === deviceId);
+                if (localD && data.rates[deviceId]) {
+                  localD.rate = data.rates[deviceId];
+                }
+              });
+            }
+            if (data.locs) {
+              Object.keys(data.locs).forEach(deviceId => {
+                const localD = devices.find(d => d.id === deviceId);
+                if (localD && data.locs[deviceId]) {
+                  localD.loc = data.locs[deviceId];
+                }
+              });
+            }
+            if (data.ads) {
+              Object.keys(data.ads).forEach(deviceId => {
+                const localD = devices.find(d => d.id === deviceId);
+                if (localD && data.ads[deviceId]) {
+                  localD.ad = data.ads[deviceId];
+                }
+              });
+            }
+
+            render();
+          }
+        }
+        setSyncStatus('online', '클라우드 동기화 완료');
+      }, (err) => {
+        console.error("Store data snapshot error:", err);
+        setSyncStatus('error', '매장 데이터 연결 실패');
+      });
+    }
+
+    function seedMasterDevices() {
+      if (!db) return;
+      const masterList = devices.map(d => ({
+        id: d.id,
+        name: d.name,
+        group: d.group,
+        tag: d.tag,
+        prices: d.prices || { SK: d.price, KT: d.price, LG: d.price },
+        sub: d.sub
+      }));
+      db.collection('global_config').doc('devices_master').set({
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedBy: '시스템 초기 시드',
+        devices: masterList
+      }).catch(e => console.error("Error seeding master devices:", e));
+    }
+
+    function seedStoreData(storeId) {
+      if (!db) return;
+      const rates = {};
+      const locs = {};
+      const ads = {};
+      devices.forEach(d => {
+        rates[d.id] = d.rate;
+        locs[d.id] = d.loc;
+        ads[d.id] = d.ad;
+      });
+
+      const storePayload = {
+        storeId: storeId,
+        storeName: storeId === 'myeongji' ? '명지점' : '광안점',
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedBy: '시스템 초기 시드',
+        allAddDiscounts: { SK: 15, KT: 15, LG: 15 },
+        calcRows: devices.map(d => d.id),
+        dailyCarrierRows: {
+          SK: devices.map(d => d.id),
+          KT: devices.map(d => d.id),
+          LG: devices.map(d => d.id)
+        },
+        adCarrierOrders: {
+          SK: devices.map(d => d.id),
+          KT: devices.map(d => d.id),
+          LG: devices.map(d => d.id)
+        },
+        rates: rates,
+        locs: locs,
+        ads: ads
+      };
+
+      db.collection('stores').doc(storeId).set(storePayload).catch(e => console.error(`Error seeding store ${storeId}:`, e));
+    }
+
+    function scheduleStoreSave(category = '', description = '') {
+      if (!db) return;
+      setSyncStatus('syncing', '클라우드 저장 중...');
+
+      if (storeSaveTimer) clearTimeout(storeSaveTimer);
+      storeSaveTimer = setTimeout(() => {
+        const rates = {};
+        const locs = {};
+        const ads = {};
+        devices.forEach(d => {
+          rates[d.id] = d.rate;
+          locs[d.id] = d.loc;
+          ads[d.id] = d.ad;
+        });
+
+        const actor = currentRole === 'master' ? '본사 (마스터)' : currentStoreName;
+
+        const payload = {
+          storeId: currentStoreId,
+          storeName: currentStoreId === 'myeongji' ? '명지점' : '광안점',
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          updatedBy: actor,
+          allAddDiscounts: allAddDiscounts,
+          calcRows: calcRows,
+          dailyCarrierRows: dailyCarrierRows,
+          adCarrierOrders: adCarrierOrders,
+          rates: rates,
+          locs: locs,
+          ads: ads
+        };
+
+        db.collection('stores').doc(currentStoreId).set(payload, { merge: true })
+          .then(() => {
+            setSyncStatus('online', '클라우드 동기화 완료');
+            if (category && description) {
+              logAudit(category, description);
+            }
+          })
+          .catch(err => {
+            console.error("Save to store error:", err);
+            setSyncStatus('error', '저장 실패 - 재시도 필요');
+          });
+      }, 400);
+    }
+
+    function scheduleMasterSave(category = '', description = '') {
+      if (!db) return;
+      setSyncStatus('syncing', '공시/출고가 저장 중...');
+
+      if (masterSaveTimer) clearTimeout(masterSaveTimer);
+      masterSaveTimer = setTimeout(() => {
+        const masterList = devices.map(d => ({
+          id: d.id,
+          name: d.name,
+          group: d.group,
+          tag: d.tag,
+          prices: d.prices || { SK: d.price, KT: d.price, LG: d.price },
+          sub: d.sub
+        }));
+
+        db.collection('global_config').doc('devices_master').set({
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          updatedBy: '본사 (마스터)',
+          devices: masterList
+        }, { merge: true })
+          .then(() => {
+            setSyncStatus('online', '공시/출고가 동기화 완료');
+            if (category && description) {
+              logAudit(category, description);
+            }
+          })
+          .catch(err => {
+            console.error("Master save error:", err);
+            setSyncStatus('error', '공시 저장 실패');
+          });
+      }, 400);
+    }
+
+    function logAudit(category, description) {
+      if (!db) return;
+      const now = new Date();
+      const pad = (n) => String(n).padStart(2, '0');
+      const timeStr = `${now.getFullYear()}.${pad(now.getMonth()+1)}.${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+
+      const actor = currentRole === 'master' ? '본사 (마스터)' : currentStoreName;
+
+      db.collection('audit_history').add({
+        timestamp: timeStr,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        storeId: currentStoreId,
+        storeName: actor,
+        role: currentRole,
+        category: category,
+        description: description
+      }).catch(e => console.error("Error logging audit:", e));
+    }
+
+    // ==================== 실시간 변경 내역 (히스토리 모달) ====================
+    let allHistoryRecords = [];
+    let currentHistoryFilter = 'all';
+
+    function subscribeAuditHistory() {
+      if (unsubscribeAuditHistory) {
+        unsubscribeAuditHistory();
+        unsubscribeAuditHistory = null;
+      }
+      if (!db) return;
+
+      unsubscribeAuditHistory = db.collection('audit_history')
+        .orderBy('createdAt', 'desc')
+        .limit(50)
+        .onSnapshot((snapshot) => {
+          allHistoryRecords = [];
+          snapshot.forEach(doc => {
+            allHistoryRecords.push({ id: doc.id, ...doc.data() });
+          });
+          renderHistoryTable();
+        }, (err) => {
+          console.error("Audit history subscription error:", err);
+        });
+    }
+
+    function openHistoryModal() {
+      document.getElementById('historyModal').classList.remove('hidden');
+      renderHistoryTable();
+    }
+
+    function closeHistoryModal() {
+      document.getElementById('historyModal').classList.add('hidden');
+    }
+
+    function filterHistory(filter) {
+      currentHistoryFilter = filter;
+      ['all', 'myeongji', 'gwangan', 'master'].forEach(f => {
+        const btn = document.getElementById(`histFilter-${f}`);
+        if (!btn) return;
+        if (f === filter) {
+          btn.className = "px-3 py-1 rounded-lg font-bold bg-white text-slate-900 shadow-2xs";
+        } else {
+          btn.className = "px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900";
+        }
+      });
+      renderHistoryTable();
+    }
+
+    function renderHistoryTable() {
+      const tbody = document.getElementById('historyTableBody');
+      const badge = document.getElementById('historyCountBadge');
+      if (!tbody) return;
+
+      let filtered = allHistoryRecords;
+      if (currentHistoryFilter === 'myeongji') {
+        filtered = filtered.filter(r => r.storeId === 'myeongji' && r.role !== 'master');
+      } else if (currentHistoryFilter === 'gwangan') {
+        filtered = filtered.filter(r => r.storeId === 'gwangan' && r.role !== 'master');
+      } else if (currentHistoryFilter === 'master') {
+        filtered = filtered.filter(r => r.role === 'master' || (r.storeName && r.storeName.includes('본사')));
+      }
+
+      if (badge) {
+        badge.innerText = `총 ${filtered.length}건 표시 (최대 50건)`;
+      }
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="4" class="p-8 text-center text-slate-400 font-medium">
+              기록된 변경 내역이 없습니다. (단가나 광고가를 수정하면 여기에 실시간으로 기록됩니다)
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(item => {
+        let roleBadge = '';
+        if (item.role === 'master' || (item.storeName && item.storeName.includes('본사'))) {
+          roleBadge = `<span class="px-2 py-0.5 rounded-md text-[11px] font-extrabold bg-purple-50 text-purple-700 border border-purple-200">👑 본사</span>`;
+        } else if (item.storeId === 'myeongji' || (item.storeName && item.storeName.includes('명지'))) {
+          roleBadge = `<span class="px-2 py-0.5 rounded-md text-[11px] font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-200">📍 명지점</span>`;
+        } else {
+          roleBadge = `<span class="px-2 py-0.5 rounded-md text-[11px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200">📍 광안점</span>`;
+        }
+
+        let catBadge = '';
+        if (item.category === '대리점 단가 입력') {
+          catBadge = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">단가입력</span>`;
+        } else if (item.category === '성지특가 광고') {
+          catBadge = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-sky-50 text-sky-700 border border-sky-200">광고시세</span>`;
+        } else if (item.category === '올부가 할인') {
+          catBadge = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">올부가</span>`;
+        } else if (item.category === '출고가/공시 설정') {
+          catBadge = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-300">공시설정</span>`;
+        } else {
+          catBadge = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-slate-50 text-slate-600 border border-slate-200">${item.category || '기타'}</span>`;
+        }
+
+        return `
+          <tr class="hover:bg-slate-50/80 border-b border-slate-100 transition">
+            <td class="p-2.5 text-center text-slate-500 font-mono text-[11px] whitespace-nowrap">${item.timestamp || '-'}</td>
+            <td class="p-2.5 text-center whitespace-nowrap">${roleBadge}</td>
+            <td class="p-2.5 text-center whitespace-nowrap">${catBadge}</td>
+            <td class="p-2.5 text-slate-800 font-semibold leading-relaxed">${item.description || '-'}</td>
+          </tr>
+        `;
+      }).join('');
     }
 
     loadLayouts();
@@ -2013,6 +2650,15 @@
     loadColumnWidths('adTable');
     loadColumnWidths('dailyTable');
     updateDots();
+
+    // 브라우저 세션 PIN 자동 복원 (동일 탭 새로고침 시 즉시 로그인 유지)
+    try {
+      const savedSessionPin = sessionStorage.getItem('phone_current_pin');
+      if (savedSessionPin && STORE_ROLES[savedSessionPin]) {
+        enteredPin = savedSessionPin;
+        inputPin('');
+      }
+    } catch(e) {}
   </script>
 </body>
 </html>
