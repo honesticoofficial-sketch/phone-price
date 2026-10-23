@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>스마트폰 넷가 & 시세표 시스템</title>
+  <title>NET PRICE | 스마트폰 넷가 & 시세 관리 시스템</title>
+  <!-- Favicon: Modern Phone + Fintech Price Trend Vector Emblem -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f172a'/%3E%3Crect x='7' y='4' width='18' height='24' rx='4' fill='%231e293b' stroke='%23334155' stroke-width='1.5'/%3E%3Crect x='9.5' y='6.5' width='13' height='15' rx='1.5' fill='%23090d16'/%3E%3Cpath d='M11 16.5l2.8-3 2.5 2.5 4.7-5' stroke='%2338bdf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='21' cy='11' r='1.5' fill='%2338bdf8'/%3E%3Ccircle cx='16' cy='24.5' r='1' fill='%2364748b'/%3E%3C/svg%3E" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f172a'/%3E%3Crect x='7' y='4' width='18' height='24' rx='4' fill='%231e293b' stroke='%23334155' stroke-width='1.5'/%3E%3Crect x='9.5' y='6.5' width='13' height='15' rx='1.5' fill='%23090d16'/%3E%3Cpath d='M11 16.5l2.8-3 2.5 2.5 4.7-5' stroke='%2338bdf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='21' cy='11' r='1.5' fill='%2338bdf8'/%3E%3Ccircle cx='16' cy='24.5' r='1' fill='%2364748b'/%3E%3C/svg%3E" />
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Pretendard Font -->
@@ -28,19 +31,20 @@
     }
   </style>
 </head>
-<body class="bg-slate-100/70 text-slate-800 antialiased p-2 sm:p-5 min-h-screen">
+<body class="bg-slate-50/70 text-slate-800 antialiased p-2 sm:p-5 min-h-screen">
   <div id="app" class="max-w-7xl mx-auto space-y-4">
 
     <!-- ==================== 1. PIN 잠금 모달 ==================== -->
-    <div id="pinModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div class="bg-white rounded-3xl shadow-2xl p-7 max-w-xs w-full text-center border border-slate-100">
-        <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-inner">
-          <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+    <div id="pinModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-4">
+      <div class="bg-white rounded-3xl shadow-2xl p-7 max-w-xs w-full text-center border border-slate-200/80">
+        <div class="w-14 h-14 bg-slate-900 text-sky-400 rounded-2xl flex items-center justify-center mx-auto mb-3.5 shadow-sm border border-slate-800">
+          <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0110 0v4"/>
           </svg>
         </div>
-        <h2 class="text-base font-bold text-slate-900 mb-0.5">단가표 보안 잠금</h2>
-        <p class="text-xs text-slate-500 mb-5">PIN 번호 6자리를 입력하세요</p>
+        <h2 class="text-base font-extrabold text-slate-900 tracking-tight mb-0.5">단가표 보안 잠금</h2>
+        <p class="text-xs text-slate-500 mb-5">보안 PIN 번호 6자리를 입력하세요</p>
 
         <!-- PIN Dots -->
         <div class="flex justify-center gap-2.5 mb-5" id="pinDots">
@@ -54,47 +58,68 @@
 
         <!-- Numeric Keypad -->
         <div class="grid grid-cols-3 gap-2 max-w-[210px] mx-auto mb-2">
-          <button onclick="inputPin('1')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">1</button>
-          <button onclick="inputPin('2')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">2</button>
-          <button onclick="inputPin('3')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">3</button>
-          <button onclick="inputPin('4')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">4</button>
-          <button onclick="inputPin('5')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">5</button>
-          <button onclick="inputPin('6')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">6</button>
-          <button onclick="inputPin('7')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">7</button>
-          <button onclick="inputPin('8')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">8</button>
-          <button onclick="inputPin('9')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">9</button>
-          <button onclick="clearPin()" class="h-11 rounded-xl bg-rose-50 text-rose-600 font-semibold text-xs border border-rose-200">초기화</button>
-          <button onclick="inputPin('0')" class="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 text-base font-bold text-slate-700 border border-slate-200 shadow-xs">0</button>
-          <button onclick="backspacePin()" class="h-11 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center border border-slate-200">⌫</button>
+          <button onclick="inputPin('1')" class="h-11 rounded-xl bg-white hover:bg-slate-50 active:bg-slate-100 text-base font-bold text-slate-800 border border-slate-200 shadow-2xs transition">1</button>
+          <button onclick="inputPin('2')" class="h-11 rounded-xl bg-white hover:bg-slate-50 active:bg-slate-100 text-base font-bold text-slate-800 border border-slate-200 shadow-2xs transition">2</button>
+          <button onclick="inputPin('3')" class="h-11 rounded-xl bg-white hover:bg-slate-50 active:bg-slate-100 text-base font-bold text-slate-800 border border-slate-200 shadow-2xs transition">3</button>
+          <button onclick="inputPin('4')" class="h-11 rounded-xl bg-white hover:bg-slate-50 active:bg-slate-100 text-base font-bold text-slate-800 border border-slate-200 shadow-2xs transition">4</button>
+          <button onclick="inputPin('5')" class="h-11 rounded-xl bg-white hover:bg-slate-50 active:bg-slate-100 text-base font-bold text-slate-800 border border-slate-200 shadow-2xs transition">5</button>
+          <button onclick="inputPin('6')" class="h-11 rounded-xl bg-white hover:bg-slate-50 active:bg-slate-100 text-base font-bold text-slate-800 border border-slate-200 shadow-2xs transition">6</button>
+          <button onclick="inputPin('7')" class="h-11 rounded-xl bg-white hover:bg-slate-50 active:bg-slate-100 text-base font-bold text-slate-800 border border-slate-200 shadow-2xs transition">7</button>
+          <button onclick="inputPin('8')" class="h-11 rounded-xl bg-white hover:bg-slate-50 active:bg-slate-100 text-base font-bold text-slate-800 border border-slate-200 shadow-2xs transition">8</button>
+          <button onclick="inputPin('9')" class="h-11 rounded-xl bg-white hover:bg-slate-50 active:bg-slate-100 text-base font-bold text-slate-800 border border-slate-200 shadow-2xs transition">9</button>
+          <button onclick="clearPin()" class="h-11 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold text-xs border border-rose-200 transition">초기화</button>
+          <button onclick="inputPin('0')" class="h-11 rounded-xl bg-white hover:bg-slate-50 active:bg-slate-100 text-base font-bold text-slate-800 border border-slate-200 shadow-2xs transition">0</button>
+          <button onclick="backspacePin()" class="h-11 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center border border-slate-200 transition">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414-6.414A2 2 0 0110.828 5H20a2 2 0 012 2v10a2 2 0 01-2 2h-9.172a2 2 0 01-1.414-.586L3 12z"/></svg>
+          </button>
         </div>
         <p id="pinMsg" class="text-xs text-rose-500 font-semibold h-4"></p>
       </div>
     </div>
 
     <!-- ==================== 상단 헤더 ==================== -->
-    <header class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-white font-black text-sm shadow-sm">
-          NET
+    <header class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3.5">
+        <!-- Modern Custom Vector Logo -->
+        <div class="w-11 h-11 rounded-2xl bg-slate-950 flex items-center justify-center shadow-sm border border-slate-800 text-sky-400 shrink-0">
+          <svg class="w-6 h-6" viewBox="0 0 32 32" fill="none">
+            <rect x="7" y="4" width="18" height="24" rx="4" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+            <rect x="9.5" y="6.5" width="13" height="15" rx="1.5" fill="#090d16"/>
+            <path d="M11 16.5l2.8-3 2.5 2.5 4.7-5" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="21" cy="11" r="1.5" fill="#38bdf8"/>
+            <circle cx="16" cy="24.5" r="1" fill="#64748b"/>
+          </svg>
         </div>
         <div>
-          <div class="flex items-center gap-2">
-            <h1 class="font-extrabold text-base text-slate-900 tracking-tight">휴대폰 넷가 & 시세 관리 시스템</h1>
-            <span class="text-[11px] px-2 py-0.5 rounded-md font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-              실시간 마진 계산 & 숨김 제어 연동
+          <div class="flex items-center gap-2 flex-wrap">
+            <h1 class="font-black text-base text-slate-900 tracking-tight flex items-center gap-1.5">
+              <span>NET PRICE</span>
+              <span class="text-xs font-normal text-slate-300">|</span>
+              <span class="font-extrabold text-slate-800 text-sm">스마트폰 넷가 & 시세 관리 시스템</span>
+            </h1>
+            <span class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> 실시간 계산
             </span>
           </div>
-          <p class="text-xs text-slate-500">단가처 드롭다운(도매/온라인/특판/K1) · 광고표 미반영 숨김처리 지원</p>
+          <p class="text-xs text-slate-500 mt-0.5">통신 3사 넷가 대조 · 대리점 단가 독립 관리 · 마케팅 시세표 자동 생성</p>
         </div>
       </div>
 
       <!-- 상단 우측 버튼군 -->
       <div class="flex items-center gap-2">
-        <button onclick="openSettingsModal()" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white shadow-xs transition">
-          ⚙️ 공시 & 출고가 수정/확인
+        <button onclick="openSettingsModal()" class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white shadow-xs transition">
+          <svg class="w-3.5 h-3.5 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          <span>공시 & 출고가 설정</span>
         </button>
-        <button onclick="lockApp()" class="px-3 py-2 rounded-xl text-xs font-semibold bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 transition">
-          🔒 잠금
+        <button onclick="lockApp()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 transition">
+          <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0110 0v4"/>
+          </svg>
+          <span>보안 잠금</span>
         </button>
       </div>
     </header>
@@ -102,27 +127,36 @@
     <!-- ==================== 네비게이션 탭 & 보기 필터 ==================== -->
     <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3">
       <div class="flex gap-2">
-        <button onclick="switchTab('calc')" id="tabBtn-calc" class="px-5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-white shadow-xs transition">
-          📊 넷가 산출표
+        <button onclick="switchTab('calc')" id="tabBtn-calc" class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-slate-900 text-white shadow-xs transition">
+          <svg class="w-3.5 h-3.5 text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+          <span>넷가 산출표</span>
         </button>
-        <button onclick="switchTab('daily')" id="tabBtn-daily" class="px-5 py-2 rounded-xl text-xs font-bold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition">
-          ✍️ 오늘자 대리점 단가 입력
+        <button onclick="switchTab('daily')" id="tabBtn-daily" class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition">
+          <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+          </svg>
+          <span>대리점 단가 입력</span>
         </button>
-        <button onclick="switchTab('ad')" id="tabBtn-ad" class="px-5 py-2 rounded-xl text-xs font-bold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition">
-          📢 성지특가 광고표 & 마진 계산
+        <button onclick="switchTab('ad')" id="tabBtn-ad" class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition">
+          <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
+          </svg>
+          <span>성지특가 광고표 & 마진</span>
         </button>
       </div>
 
       <!-- 넷가표 보기 모드 필터 (TAB 1 전용) -->
       <div id="viewFilterBox" class="flex items-center gap-1 text-xs bg-white p-1 rounded-xl border border-slate-200 shadow-2xs">
-        <button onclick="setNetDisplayMode('both')" id="dispMode-both" class="px-3 py-1 rounded-lg font-bold bg-slate-900 text-white shadow-xs">
+        <button onclick="setNetDisplayMode('both')" id="dispMode-both" class="px-3 py-1.5 rounded-lg font-bold bg-slate-900 text-white shadow-xs transition">
           전체 보기 (기본 + 올부가)
         </button>
-        <button onclick="setNetDisplayMode('basic')" id="dispMode-basic" class="px-3 py-1 rounded-lg font-semibold text-slate-600 hover:text-slate-900">
+        <button onclick="setNetDisplayMode('basic')" id="dispMode-basic" class="px-3 py-1.5 rounded-lg font-semibold text-slate-600 hover:text-slate-900 transition">
           기본부가만
         </button>
-        <button onclick="setNetDisplayMode('all')" id="dispMode-all" class="px-3 py-1 rounded-lg font-semibold text-slate-600 hover:text-slate-900">
-          올부가만 (-15만)
+        <button onclick="setNetDisplayMode('all')" id="dispMode-all" class="px-3 py-1.5 rounded-lg font-semibold text-slate-600 hover:text-slate-900 transition">
+          올부가만 보기
         </button>
       </div>
     </div>
@@ -130,26 +164,55 @@
     <!-- ==================== TAB 1: 넷가 산출표 ==================== -->
     <div id="tab-calc" class="space-y-3">
       
-      <!-- 통신사 부가조건 안내 요약바 -->
+      <!-- 통신사 부가조건 안내 및 올부가 할인액 통신사별 실시간 수정 바 -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-        <div class="p-3 bg-white rounded-xl border border-slate-200 shadow-2xs">
-          <div class="flex justify-between items-center mb-1">
-            <span class="font-bold text-rose-600 flex items-center gap-1.5">🔴 SKT</span>
-            <span class="text-[11px] font-semibold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded">올부가 -15만</span>
+        <!-- SKT 카드 -->
+        <div class="p-3.5 bg-white rounded-2xl border border-slate-200/90 shadow-2xs space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="inline-flex items-center gap-1.5 font-extrabold text-xs text-rose-700">
+              <span class="w-2.5 h-2.5 rounded-full bg-rose-500 ring-2 ring-rose-100"></span> SKT
+            </span>
+            <div class="flex items-center gap-1 bg-rose-50/80 border border-rose-200 px-2 py-0.5 rounded-lg">
+              <span class="text-[11px] font-bold text-rose-700">올부가 할인</span>
+              <span class="text-rose-600 font-black text-xs">-</span>
+              <input type="number" id="discount-SK" value="15" onchange="updateCarrierDiscount('SK', this.value)"
+                     class="w-12 px-1 py-0.5 text-center font-black text-rose-700 bg-white border border-rose-300 rounded text-xs focus:ring-1 focus:ring-rose-500 focus:outline-none" />
+              <span class="text-[11px] font-bold text-rose-700">만</span>
+            </div>
           </div>
           <p class="text-[11px] text-slate-500">기본: 마이스마트콜3(M+1), T올케어플러스(M+1)</p>
         </div>
-        <div class="p-3 bg-white rounded-xl border border-slate-200 shadow-2xs">
-          <div class="flex justify-between items-center mb-1">
-            <span class="font-bold text-blue-600 flex items-center gap-1.5">🔵 KT</span>
-            <span class="text-[11px] font-semibold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">올부가 -15만</span>
+
+        <!-- KT 카드 -->
+        <div class="p-3.5 bg-white rounded-2xl border border-slate-200/90 shadow-2xs space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="inline-flex items-center gap-1.5 font-extrabold text-xs text-blue-700">
+              <span class="w-2.5 h-2.5 rounded-full bg-blue-500 ring-2 ring-blue-100"></span> KT
+            </span>
+            <div class="flex items-center gap-1 bg-blue-50/80 border border-blue-200 px-2 py-0.5 rounded-lg">
+              <span class="text-[11px] font-bold text-blue-700">올부가 할인</span>
+              <span class="text-blue-600 font-black text-xs">-</span>
+              <input type="number" id="discount-KT" value="15" onchange="updateCarrierDiscount('KT', this.value)"
+                     class="w-12 px-1 py-0.5 text-center font-black text-blue-700 bg-white border border-blue-300 rounded text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none" />
+              <span class="text-[11px] font-bold text-blue-700">만</span>
+            </div>
           </div>
           <p class="text-[11px] text-slate-500">기본: 필수팩 L(M+4), 폰 안심보험(M+3)</p>
         </div>
-        <div class="p-3 bg-white rounded-xl border border-slate-200 shadow-2xs">
-          <div class="flex justify-between items-center mb-1">
-            <span class="font-bold text-pink-600 flex items-center gap-1.5">🟡 LGU+</span>
-            <span class="text-[11px] font-semibold text-pink-600 bg-pink-50 px-1.5 py-0.5 rounded">올부가 -15만</span>
+
+        <!-- LGU+ 카드 -->
+        <div class="p-3.5 bg-white rounded-2xl border border-slate-200/90 shadow-2xs space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="inline-flex items-center gap-1.5 font-extrabold text-xs text-pink-700">
+              <span class="w-2.5 h-2.5 rounded-full bg-pink-500 ring-2 ring-pink-100"></span> LGU+
+            </span>
+            <div class="flex items-center gap-1 bg-pink-50/80 border border-pink-200 px-2 py-0.5 rounded-lg">
+              <span class="text-[11px] font-bold text-pink-700">올부가 할인</span>
+              <span class="text-pink-600 font-black text-xs">-</span>
+              <input type="number" id="discount-LG" value="15" onchange="updateCarrierDiscount('LG', this.value)"
+                     class="w-12 px-1 py-0.5 text-center font-black text-pink-700 bg-white border border-pink-300 rounded text-xs focus:ring-1 focus:ring-pink-500 focus:outline-none" />
+              <span class="text-[11px] font-bold text-pink-700">만</span>
+            </div>
           </div>
           <p class="text-[11px] text-slate-500">기본: 교보sam+구글원(95일), V컬러링, 폰교체패스</p>
         </div>
@@ -159,18 +222,21 @@
       <div class="flex flex-wrap items-center justify-between gap-2 px-1 pb-1">
         <div class="flex items-center gap-2">
           <span class="text-xs font-bold text-slate-700">기종 목록:</span>
-          <button onclick="addCalcRow('empty')" class="px-2.5 py-1.5 bg-white hover:bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold text-slate-700 shadow-2xs flex items-center gap-1">
-            <span>➕</span> 기종 행 추가
+          <button onclick="addCalcRow('empty')" class="px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold text-slate-700 shadow-2xs flex items-center gap-1.5 transition">
+            <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+            <span>기종 행 추가</span>
           </button>
-          <button onclick="addCalcEmptyRow()" class="px-2.5 py-1.5 bg-white hover:bg-slate-50 border border-dashed border-slate-300 rounded-lg text-xs font-bold text-slate-600 shadow-2xs flex items-center gap-1">
-            <span>⬜</span> 여백(구분선) 추가
+          <button onclick="addCalcEmptyRow()" class="px-3 py-1.5 bg-white hover:bg-slate-50 border border-dashed border-slate-300 rounded-lg text-xs font-bold text-slate-600 shadow-2xs flex items-center gap-1.5 transition">
+            <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"/></svg>
+            <span>구분선(여백) 추가</span>
           </button>
-          <button onclick="resetCalcRows()" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-semibold">
-            🔄 전체 기종 불러오기
+          <button onclick="resetCalcRows()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition">
+            <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            <span>전체 기종 초기화</span>
           </button>
         </div>
         <span class="text-[11px] text-slate-400">
-          💡 각 행 드롭다운에서 원하는 기종만 골라 담거나 <b>여백칸</b>으로 그룹을 나눌 수 있습니다.
+          💡 각 행 드롭다운에서 원하는 기종을 변경하거나 <b>구분선</b>으로 그룹을 깔끔하게 나눌 수 있습니다.
         </span>
       </div>
 
@@ -180,17 +246,17 @@
           <table class="w-full text-xs text-left border-collapse">
             <thead>
               <tr class="bg-slate-100 text-slate-800 font-extrabold border-b border-slate-200 text-center">
-                <th rowspan="2" class="p-3 text-left min-w-[210px] border-r border-slate-200 bg-slate-100">
+                <th rowspan="2" class="p-3 text-left min-w-[210px] border-r border-slate-200 bg-slate-100 text-slate-700">
                   기종 선택 (드롭다운)
                 </th>
-                <th colspan="2" class="p-2.5 bg-rose-50/80 text-rose-700 border-r border-slate-200">
-                  🔴 SKT
+                <th colspan="2" class="p-2.5 bg-rose-50/90 text-rose-800 border-r border-slate-200">
+                  <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-rose-500"></span>SKT</span>
                 </th>
-                <th colspan="2" class="p-2.5 bg-blue-50/80 text-blue-700 border-r border-slate-200">
-                  🔵 KT
+                <th colspan="2" class="p-2.5 bg-blue-50/90 text-blue-800 border-r border-slate-200">
+                  <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span>KT</span>
                 </th>
-                <th colspan="2" class="p-2.5 bg-pink-50/80 text-pink-700">
-                  🟡 LGU+
+                <th colspan="2" class="p-2.5 bg-pink-50/90 text-pink-800">
+                  <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-pink-500"></span>LGU+</span>
                 </th>
               </tr>
               <tr class="bg-slate-50 text-[11px] text-slate-600 font-bold border-b border-slate-200 text-center">
@@ -215,26 +281,32 @@
       <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-4">
         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
           <div>
-            <h2 class="text-sm font-extrabold text-slate-900">✍️ 오늘자 대리점 단가(리베이트) 직접 입력</h2>
-            <p class="text-xs text-slate-500">
-              단가처 드롭다운(도매/온라인/특판/K1) · 기종 드롭다운(여백 지원) · 넷가표와 완전히 분리된 독립 순서
+            <h2 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+              <svg class="w-4 h-4 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+              <span>오늘자 대리점 단가(리베이트) 직접 입력</span>
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">
+              단가처 드롭다운(도매/온라인/특판/K1) · 기종 드롭다운(구분선 지원) · 넷가표와 완전히 분리된 독립 순서
             </p>
           </div>
           <!-- 통신사 선택 및 행 추가 -->
           <div class="flex flex-wrap items-center gap-2">
-            <button onclick="addDailyRow('empty')" class="px-2.5 py-1.5 bg-white hover:bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold text-slate-700 shadow-2xs flex items-center gap-1">
-              <span>➕</span> 행 추가
+            <button onclick="addDailyRow('empty')" class="px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold text-slate-700 shadow-2xs flex items-center gap-1.5 transition">
+              <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+              <span>행 추가</span>
             </button>
-            <button onclick="addDailyEmptyRow()" class="px-2.5 py-1.5 bg-white hover:bg-slate-50 border border-dashed border-slate-300 rounded-lg text-xs font-bold text-slate-600 shadow-2xs flex items-center gap-1">
-              <span>⬜</span> 여백 추가
+            <button onclick="addDailyEmptyRow()" class="px-3 py-1.5 bg-white hover:bg-slate-50 border border-dashed border-slate-300 rounded-lg text-xs font-bold text-slate-600 shadow-2xs flex items-center gap-1.5 transition">
+              <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"/></svg>
+              <span>구분선 추가</span>
             </button>
-            <button onclick="resetDailyRows()" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-semibold">
-              🔄 초기화
+            <button onclick="resetDailyRows()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition">
+              <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              <span>초기화</span>
             </button>
             <div class="flex gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200">
-              <button onclick="setCarrierInput('SK')" id="inputTab-SK" class="px-4 py-1.5 rounded-lg text-xs font-bold text-slate-600">SK</button>
-              <button onclick="setCarrierInput('KT')" id="inputTab-KT" class="px-4 py-1.5 rounded-lg text-xs font-bold text-slate-600">KT</button>
-              <button onclick="setCarrierInput('LG')" id="inputTab-LG" class="px-4 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-900 shadow-xs">LG</button>
+              <button onclick="setCarrierInput('SK')" id="inputTab-SK" class="px-4 py-1.5 rounded-lg text-xs font-bold text-slate-600 transition">SK</button>
+              <button onclick="setCarrierInput('KT')" id="inputTab-KT" class="px-4 py-1.5 rounded-lg text-xs font-bold text-slate-600 transition">KT</button>
+              <button onclick="setCarrierInput('LG')" id="inputTab-LG" class="px-4 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-900 shadow-xs transition">LG</button>
             </div>
           </div>
         </div>
@@ -285,7 +357,10 @@
         <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
           <div>
             <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
-              📢 성지특가 광고표 & 마진 자동 계산
+              <svg class="w-4 h-4 text-slate-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
+              </svg>
+              <span>성지특가 광고표 & 마진 시뮬레이션</span>
             </h2>
             <p class="text-xs text-slate-500 mt-0.5">
               통신사별(SK·KT·LG) 독자 순서/숨김 지원 · 엑셀식 열 너비 조절(경계선 드래그) · 기종명 직접 수정
@@ -296,16 +371,19 @@
           <div class="flex flex-wrap items-center gap-3">
             <div class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs">
               <span class="text-slate-500 font-semibold px-2">마진 산정 기준:</span>
-              <button onclick="setAdMarginBase('all')" id="adMarginBase-all" class="px-3 py-1.5 rounded-lg font-bold bg-white text-slate-900 shadow-xs">
-                ✨ 올부가 넷가 기준 (-15만 반영)
+              <button onclick="setAdMarginBase('all')" id="adMarginBase-all" class="px-3 py-1.5 rounded-lg font-bold bg-white text-slate-900 shadow-xs transition">
+                올부가 넷가 기준 (부가할인 반영)
               </button>
-              <button onclick="setAdMarginBase('basic')" id="adMarginBase-basic" class="px-3 py-1.5 rounded-lg font-semibold text-slate-600 hover:text-slate-900">
-                📋 기본부가 넷가 기준
+              <button onclick="setAdMarginBase('basic')" id="adMarginBase-basic" class="px-3 py-1.5 rounded-lg font-semibold text-slate-600 hover:text-slate-900 transition">
+                기본부가 넷가 기준
               </button>
             </div>
 
             <button onclick="copyAdTextFormatted()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2">
-              <span>📋</span> 시세표 문구 원클릭 복사
+              <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+              </svg>
+              <span>시세표 문구 원클릭 복사</span>
             </button>
           </div>
         </div>
@@ -315,14 +393,15 @@
           <div class="lg:col-span-8 space-y-3">
             <div class="flex items-center justify-between">
               <div class="flex flex-wrap items-center gap-2">
-                <span class="text-xs font-bold text-slate-700">📌 통신사 선택:</span>
+                <span class="text-xs font-bold text-slate-700">통신사 선택:</span>
                 <div class="flex gap-1 text-xs">
-                  <button onclick="setAdCarrier('LG')" id="adTab-LG" class="px-3 py-1 rounded-lg font-bold bg-pink-100 text-pink-700 border border-pink-200">LG 특가</button>
-                  <button onclick="setAdCarrier('KT')" id="adTab-KT" class="px-3 py-1 rounded-lg font-bold bg-slate-100 text-slate-600">KT 특가</button>
-                  <button onclick="setAdCarrier('SK')" id="adTab-SK" class="px-3 py-1 rounded-lg font-bold bg-slate-100 text-slate-600">SK 특가</button>
+                  <button onclick="setAdCarrier('LG')" id="adTab-LG" class="px-3.5 py-1.5 rounded-lg font-bold bg-pink-100 text-pink-700 border border-pink-200 transition">LG 특가</button>
+                  <button onclick="setAdCarrier('KT')" id="adTab-KT" class="px-3.5 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 transition">KT 특가</button>
+                  <button onclick="setAdCarrier('SK')" id="adTab-SK" class="px-3.5 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 transition">SK 특가</button>
                 </div>
-                <button onclick="addAdEmptyRow()" class="px-2.5 py-1 bg-white hover:bg-slate-50 border border-dashed border-slate-300 rounded-lg text-xs font-bold text-slate-600 shadow-2xs flex items-center gap-1">
-                  <span>⬜</span> 여백(줄바꿈) 추가
+                <button onclick="addAdEmptyRow()" class="px-3 py-1.5 bg-white hover:bg-slate-50 border border-dashed border-slate-300 rounded-lg text-xs font-bold text-slate-600 shadow-2xs flex items-center gap-1.5 transition">
+                  <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"/></svg>
+                  <span>구분선(줄바꿈) 추가</span>
                 </button>
               </div>
               <span class="text-[11px] text-slate-500">
@@ -378,7 +457,13 @@
           <!-- 우측: 게시 문구 실시간 미리보기 -->
           <div class="lg:col-span-4 space-y-2">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-slate-700">👀 최종 게시 문구 미리보기:</span>
+              <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
+                <span>최종 게시 문구 미리보기</span>
+              </span>
               <span class="text-[11px] text-slate-400">카페/밴드 게시용</span>
             </div>
             <div class="bg-slate-900 text-slate-100 p-4 rounded-2xl font-mono text-xs leading-relaxed whitespace-pre shadow-inner h-[520px] overflow-y-auto border border-slate-800" id="adPreviewText">
@@ -391,18 +476,22 @@
     </div>
 
     <!-- ==================== 4. 설정 모달: 공시지원금 & 출고가 직접 수정 ==================== -->
-    <div id="settingsModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 hidden">
+    <div id="settingsModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-3 hidden">
       <div class="bg-white rounded-3xl shadow-2xl max-w-5xl w-full p-6 border border-slate-200 space-y-4 max-h-[92vh] flex flex-col">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
           <div>
             <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
-              ⚙️ 공시지원금 & 출고가 마스터 설정 (직접 수정 가능)
+              <svg class="w-4 h-4 text-slate-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+              <span>공시지원금 & 출고가 마스터 설정 (직접 수정 가능)</span>
             </h3>
             <p class="text-xs text-slate-500 mt-0.5">
               통신사별 출고가와 번이/기변 공시를 칸별로 직접 수정할 수 있습니다. 수정 시 넷가가 즉시 자동 재계산됩니다.
             </p>
           </div>
-          <button onclick="closeSettingsModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-lg">&times;</button>
+          <button onclick="closeSettingsModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-lg transition">&times;</button>
         </div>
 
         <div class="overflow-y-auto flex-1 border border-slate-200 rounded-xl">
@@ -410,9 +499,15 @@
             <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 sticky top-0 z-10">
               <tr class="text-center">
                 <th rowspan="2" class="p-2.5 text-left min-w-[150px] bg-slate-100 border-r border-slate-200">기종명</th>
-                <th colspan="3" class="p-2 bg-rose-50 text-rose-800 border-r border-slate-200">🔴 SKT 설정</th>
-                <th colspan="3" class="p-2 bg-blue-50 text-blue-800 border-r border-slate-200">🔵 KT 설정</th>
-                <th colspan="3" class="p-2 bg-pink-50 text-pink-800">🟡 LGU+ 설정</th>
+                <th colspan="3" class="p-2 bg-rose-50 text-rose-800 border-r border-slate-200">
+                  <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-rose-500"></span>SKT 설정</span>
+                </th>
+                <th colspan="3" class="p-2 bg-blue-50 text-blue-800 border-r border-slate-200">
+                  <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span>KT 설정</span>
+                </th>
+                <th colspan="3" class="p-2 bg-pink-50 text-pink-800">
+                  <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-pink-500"></span>LGU+ 설정</span>
+                </th>
               </tr>
               <tr class="text-[11px] text-slate-600 text-center bg-slate-50 border-b border-slate-200">
                 <th class="p-1.5 w-20 border-r border-slate-200">출고가</th>
@@ -457,7 +552,47 @@
     let activeAdCarrier = "LG";
     let netDisplayMode = "both";
     let adMarginBase = "all";
-    const ALL_ADD_DISCOUNT = 15;
+    let allAddDiscounts = { SK: 15, KT: 15, LG: 15 };
+
+    function loadDiscounts() {
+      try {
+        const saved = localStorage.getItem('phone_all_add_discounts');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && typeof parsed === 'object') {
+            allAddDiscounts.SK = (parsed.SK !== undefined && !isNaN(parsed.SK)) ? parseFloat(parsed.SK) : 15;
+            allAddDiscounts.KT = (parsed.KT !== undefined && !isNaN(parsed.KT)) ? parseFloat(parsed.KT) : 15;
+            allAddDiscounts.LG = (parsed.LG !== undefined && !isNaN(parsed.LG)) ? parseFloat(parsed.LG) : 15;
+          }
+        }
+      } catch (e) {}
+      syncDiscountInputs();
+    }
+
+    function saveDiscounts() {
+      try {
+        localStorage.setItem('phone_all_add_discounts', JSON.stringify(allAddDiscounts));
+      } catch (e) {}
+    }
+
+    function syncDiscountInputs() {
+      const skInput = document.getElementById('discount-SK');
+      const ktInput = document.getElementById('discount-KT');
+      const lgInput = document.getElementById('discount-LG');
+      if (skInput) skInput.value = allAddDiscounts.SK;
+      if (ktInput) ktInput.value = allAddDiscounts.KT;
+      if (lgInput) lgInput.value = allAddDiscounts.LG;
+    }
+
+    function updateCarrierDiscount(carrier, val) {
+      const num = parseFloat(val);
+      allAddDiscounts[carrier] = isNaN(num) ? 0 : num;
+      saveDiscounts();
+      renderCalcTable();
+      if (currentTab === 'ad') {
+        renderAdSection();
+      }
+    }
 
     // 단가처 드롭다운 옵션 목록
     const LOCATION_OPTIONS = ["도매", "온라인", "특판", "K1"];
@@ -801,7 +936,7 @@
     }
 
     function buildModelOptions(selectedId) {
-      let html = `<option value="empty" ${selectedId === 'empty' ? 'selected' : ''}>-- ⬜ 여백 (빈 칸) --</option>`;
+      let html = `<option value="empty" ${selectedId === 'empty' ? 'selected' : ''}>-- 구분선 (여백 칸) --</option>`;
       devices.forEach(opt => {
         html += `<option value="${opt.id}" ${opt.id === selectedId ? 'selected' : ''}>${opt.tag} ${opt.name}</option>`;
       });
@@ -823,11 +958,27 @@
       calcRows.push(modelId);
       saveLayouts();
       renderCalcTable();
+      setTimeout(() => {
+        const last = document.querySelector('#calcTableBody tr:last-child');
+        if (last) {
+          last.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          last.classList.add('bg-blue-50/80');
+          setTimeout(() => last.classList.remove('bg-blue-50/80'), 1200);
+        }
+      }, 50);
     }
     function addCalcEmptyRow() {
       calcRows.push('empty');
       saveLayouts();
       renderCalcTable();
+      setTimeout(() => {
+        const last = document.querySelector('#calcTableBody tr:last-child');
+        if (last) {
+          last.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          last.classList.add('bg-blue-50/80');
+          setTimeout(() => last.classList.remove('bg-blue-50/80'), 1200);
+        }
+      }, 50);
     }
     function resetCalcRows() {
       calcRows = devices.map(d => d.id);
@@ -852,12 +1003,28 @@
       saveLayouts();
       renderDailyTable();
       renderCalcTable();
+      setTimeout(() => {
+        const last = document.querySelector('#dailyTableBody tr:last-child');
+        if (last) {
+          last.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          last.classList.add('bg-blue-50/80');
+          setTimeout(() => last.classList.remove('bg-blue-50/80'), 1200);
+        }
+      }, 50);
     }
     function addDailyEmptyRow() {
       const rows = getDailyRows(activeInputCarrier);
       rows.push('empty');
       saveLayouts();
       renderDailyTable();
+      setTimeout(() => {
+        const last = document.querySelector('#dailyTableBody tr:last-child');
+        if (last) {
+          last.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          last.classList.add('bg-blue-50/80');
+          setTimeout(() => last.classList.remove('bg-blue-50/80'), 1200);
+        }
+      }, 50);
     }
     function resetDailyRows() {
       if (confirm(`[${activeInputCarrier}] 대리점 단가표를 기본 기종 전체 목록으로 초기화하시겠습니까?`)) {
@@ -900,6 +1067,14 @@
       adCarrierOrders[activeAdCarrier].push('empty');
       saveLayouts();
       renderAdSection();
+      setTimeout(() => {
+        const last = document.querySelector('#adTableBody tr:last-child');
+        if (last) {
+          last.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          last.classList.add('bg-blue-50/80');
+          setTimeout(() => last.classList.remove('bg-blue-50/80'), 1200);
+        }
+      }, 50);
     }
     function deleteAdRow(carrier, idx) {
       if (adCarrierOrders[carrier]) {
@@ -1051,9 +1226,9 @@
       ['both', 'basic', 'all'].forEach(x => {
         const btn = document.getElementById(`dispMode-${x}`);
         if (x === m) {
-          btn.className = "px-3 py-1 rounded-lg font-bold bg-slate-900 text-white shadow-xs";
+          btn.className = "px-3 py-1.5 rounded-lg font-bold bg-slate-900 text-white shadow-xs transition";
         } else {
-          btn.className = "px-3 py-1 rounded-lg font-semibold text-slate-600 hover:text-slate-900";
+          btn.className = "px-3 py-1.5 rounded-lg font-semibold text-slate-600 hover:text-slate-900 transition";
         }
       });
       render();
@@ -1066,12 +1241,12 @@
       const label = document.getElementById('adMarginBaseLabel');
 
       if (b === 'all') {
-        allBtn.className = "px-3 py-1.5 rounded-lg font-bold bg-white text-slate-900 shadow-xs";
-        basicBtn.className = "px-3 py-1.5 rounded-lg font-semibold text-slate-600 hover:text-slate-900";
+        allBtn.className = "px-3 py-1.5 rounded-lg font-bold bg-white text-slate-900 shadow-xs transition";
+        basicBtn.className = "px-3 py-1.5 rounded-lg font-semibold text-slate-600 hover:text-slate-900 transition";
         label.innerText = "올부가넷가";
       } else {
-        basicBtn.className = "px-3 py-1.5 rounded-lg font-bold bg-white text-slate-900 shadow-xs";
-        allBtn.className = "px-3 py-1.5 rounded-lg font-semibold text-slate-600 hover:text-slate-900";
+        basicBtn.className = "px-3 py-1.5 rounded-lg font-bold bg-white text-slate-900 shadow-xs transition";
+        allBtn.className = "px-3 py-1.5 rounded-lg font-semibold text-slate-600 hover:text-slate-900 transition";
         label.innerText = "기본부가넷가";
       }
       renderAdSection();
@@ -1092,7 +1267,8 @@
       let net = release - sub - rebate;
 
       if (mode === 'all') {
-        net -= ALL_ADD_DISCOUNT;
+        const discount = (allAddDiscounts && allAddDiscounts[carrier] !== undefined) ? allAddDiscounts[carrier] : 15;
+        net -= discount;
       }
 
       return Math.round(net * 100) / 100;
@@ -1258,17 +1434,23 @@
           tr.innerHTML = `
             <td class="p-2 text-left bg-slate-50 border-r border-slate-200">
               <div class="flex items-center gap-1.5">
-                <div class="drag-handle cursor-grab active:cursor-grabbing p-1 rounded hover:bg-slate-200 text-slate-400 select-none text-xs"
+                <div class="drag-handle cursor-grab active:cursor-grabbing p-1.5 rounded-lg bg-slate-50 hover:bg-blue-100 hover:text-blue-700 text-slate-400 select-none transition border border-slate-200/80 shadow-xs flex items-center justify-center"
                      title="드래그하여 순서 변경" draggable="true"
-                     ondragstart="onRowDragStart(event, ${idx}, 'calc')" ondragend="onRowDragEnd(event)">⠿</div>
+                     ondragstart="onRowDragStart(event, ${idx}, 'calc')" ondragend="onRowDragEnd(event)">
+                  <svg class="w-3.5 h-3.5 pointer-events-none" fill="currentColor" viewBox="0 0 20 20"><path d="M7 2a2 2 0 10.001 4.001A2 2 0 007 2zm0 6a2 2 0 10.001 4.001A2 2 0 007 8zm0 6a2 2 0 10.001 4.001A2 2 0 007 14zm6-12a2 2 0 10.001 4.001A2 2 0 0013 2zm0 6a2 2 0 10.001 4.001A2 2 0 0013 8zm0 6a2 2 0 10.001 4.001A2 2 0 0013 14z"></path></svg>
+                </div>
                 <select onchange="updateCalcRow(${idx}, this.value)" class="w-full px-2 py-1 bg-white border border-dashed border-slate-300 rounded-lg text-xs font-semibold text-slate-500 focus:ring-1 focus:ring-blue-500">
                   ${buildModelOptions('empty')}
                 </select>
-                <button onclick="deleteCalcRow(${idx})" class="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50 text-xs" title="행 삭제">✕</button>
+                <button onclick="deleteCalcRow(${idx})" class="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50 text-xs transition" title="행 삭제">✕</button>
               </div>
             </td>
-            <td colspan="6" class="p-2.5 bg-slate-50/40 text-slate-400 text-center select-none text-xs font-medium tracking-wider">
-              ——— ⬜ 여백 (구분선) ———
+            <td colspan="6" class="p-2.5 bg-slate-50/40 text-slate-400 text-center select-none text-xs font-medium tracking-widest">
+              <span class="inline-flex items-center gap-2 text-slate-400">
+                <span class="w-12 h-px bg-slate-200"></span>
+                <span>구분선</span>
+                <span class="w-12 h-px bg-slate-200"></span>
+              </span>
             </td>
           `;
           tbody.appendChild(tr);
@@ -1289,13 +1471,15 @@
         tr.innerHTML = `
           <td class="p-2 text-left font-bold text-slate-900 border-r border-slate-200 bg-slate-50/40 min-w-[210px]">
             <div class="flex items-center gap-1.5 mb-1">
-              <div class="drag-handle cursor-grab active:cursor-grabbing p-1 rounded hover:bg-slate-200 text-slate-400 select-none text-xs"
+              <div class="drag-handle cursor-grab active:cursor-grabbing p-1.5 rounded-lg bg-slate-50 hover:bg-blue-100 hover:text-blue-700 text-slate-400 select-none transition border border-slate-200/80 shadow-xs flex items-center justify-center"
                    title="드래그하여 순서 변경" draggable="true"
-                   ondragstart="onRowDragStart(event, ${idx}, 'calc')" ondragend="onRowDragEnd(event)">⠿</div>
+                   ondragstart="onRowDragStart(event, ${idx}, 'calc')" ondragend="onRowDragEnd(event)">
+                <svg class="w-3.5 h-3.5 pointer-events-none" fill="currentColor" viewBox="0 0 20 20"><path d="M7 2a2 2 0 10.001 4.001A2 2 0 007 2zm0 6a2 2 0 10.001 4.001A2 2 0 007 8zm0 6a2 2 0 10.001 4.001A2 2 0 007 14zm6-12a2 2 0 10.001 4.001A2 2 0 0013 2zm0 6a2 2 0 10.001 4.001A2 2 0 0013 8zm0 6a2 2 0 10.001 4.001A2 2 0 0013 14z"></path></svg>
+              </div>
               <select onchange="updateCalcRow(${idx}, this.value)" class="w-full px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none">
                 ${buildModelOptions(d.id)}
               </select>
-              <button onclick="deleteCalcRow(${idx})" class="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50 text-xs" title="행 삭제">✕</button>
+              <button onclick="deleteCalcRow(${idx})" class="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50 text-xs transition" title="행 삭제">✕</button>
             </div>
             <div class="text-[10px] text-slate-400 font-normal pl-6">출고가: ${d.coming ? '출시전' : priceSummary}</div>
           </td>
@@ -1336,7 +1520,7 @@
                     <path d="M7 2a2 2 0 10.001 4.001A2 2 0 007 2zm0 6a2 2 0 10.001 4.001A2 2 0 007 8zm0 6a2 2 0 10.001 4.001A2 2 0 007 14zm6-12a2 2 0 10.001 4.001A2 2 0 0013 2zm0 6a2 2 0 10.001 4.001A2 2 0 0013 8zm0 6a2 2 0 10.001 4.001A2 2 0 0013 14z"></path>
                   </svg>
                 </div>
-                <button onclick="deleteDailyRow(${idx})" class="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50 text-xs" title="행 삭제">✕</button>
+                <button onclick="deleteDailyRow(${idx})" class="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50 text-xs transition" title="행 삭제">✕</button>
               </div>
             </td>
             <td class="p-2">
@@ -1344,8 +1528,12 @@
                 ${buildModelOptions('empty')}
               </select>
             </td>
-            <td colspan="4" class="p-2.5 bg-slate-50/40 text-slate-400 text-center select-none text-xs font-medium tracking-wider">
-              ——— ⬜ 여백 (구분선) ———
+            <td colspan="4" class="p-2.5 bg-slate-50/40 text-slate-400 text-center select-none text-xs font-medium tracking-widest">
+              <span class="inline-flex items-center gap-2 text-slate-400">
+                <span class="w-12 h-px bg-slate-200"></span>
+                <span>구분선</span>
+                <span class="w-12 h-px bg-slate-200"></span>
+              </span>
             </td>
           `;
           dailyBody.appendChild(tr);
@@ -1481,6 +1669,7 @@
 
     // 광고표 숨김(제외) 토글 - 해당 통신사 목록에서만 최하단 이동
     function toggleAdHidden(id) {
+      if (id === 'empty') return;
       const d = devices.find(x => x.id === id);
       if (!d) return;
       if (!d.ad[activeAdCarrier]) d.ad[activeAdCarrier] = {};
@@ -1499,7 +1688,7 @@
         } else {
           // 다시 게시 시: 해당 통신사 목록에서 현재 숨김 처리된 기종들의 맨 위(게시 기종들 바로 다음)로 이동
           const carrierDevices = getCarrierDeviceList(activeAdCarrier);
-          const firstHiddenIdx = carrierDevices.findIndex((x, i) => i !== idx && x.ad[activeAdCarrier] && x.ad[activeAdCarrier].hidden);
+          const firstHiddenIdx = carrierDevices.findIndex((x, i) => i !== idx && x.ad && x.ad[activeAdCarrier] && x.ad[activeAdCarrier].hidden);
           if (firstHiddenIdx !== -1 && idx > firstHiddenIdx) {
             const [removedId] = order.splice(idx, 1);
             order.splice(firstHiddenIdx, 0, removedId);
@@ -1527,23 +1716,55 @@
 
     function renderAdSection() {
       const adBody = document.getElementById('adTableBody');
+      if (!adBody) return;
       adBody.innerHTML = '';
 
       const carrierDevices = getCarrierDeviceList(activeAdCarrier);
 
       carrierDevices.forEach((d, idx) => {
         const tr = document.createElement('tr');
+        tr.setAttribute('data-index', idx);
+        tr.setAttribute('ondragover', `onRowDragOver(event, ${idx}, 'ad')`);
+        tr.setAttribute('ondragleave', 'onRowDragLeave(event)');
+        tr.setAttribute('ondrop', `onRowDrop(event, ${idx}, 'ad')`);
+
+        if (d.id === 'empty' || d.isEmpty) {
+          tr.className = "bg-slate-50/60 border-b border-slate-100 transition";
+          tr.innerHTML = `
+            <td class="p-2 text-center text-slate-400 whitespace-nowrap overflow-hidden">
+              <div class="flex items-center justify-center gap-1.5">
+                <div class="drag-handle cursor-grab active:cursor-grabbing p-1.5 rounded-lg bg-slate-50 hover:bg-blue-100 hover:text-blue-700 text-slate-400 select-none transition border border-slate-200/80 shadow-xs flex items-center justify-center"
+                     title="마우스로 드래그하여 순서 변경" draggable="true"
+                     ondragstart="onRowDragStart(event, ${idx}, 'ad')" ondragend="onRowDragEnd(event)">
+                  <svg class="w-3.5 h-3.5 pointer-events-none" fill="currentColor" viewBox="0 0 20 20"><path d="M7 2a2 2 0 10.001 4.001A2 2 0 007 2zm0 6a2 2 0 10.001 4.001A2 2 0 007 8zm0 6a2 2 0 10.001 4.001A2 2 0 007 14zm6-12a2 2 0 10.001 4.001A2 2 0 0013 2zm0 6a2 2 0 10.001 4.001A2 2 0 0013 8zm0 6a2 2 0 10.001 4.001A2 2 0 0013 14z"></path></svg>
+                </div>
+                <div class="flex flex-col gap-0.5">
+                  <button onclick="moveDeviceAd(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} class="w-4 h-3.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[8px] flex items-center justify-center">▲</button>
+                  <button onclick="moveDeviceAd(${idx}, 1)" ${idx === carrierDevices.length - 1 ? 'disabled' : ''} class="w-4 h-3.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[8px] flex items-center justify-center">▼</button>
+                </div>
+              </div>
+            </td>
+            <td class="p-2 text-center">
+              <button onclick="deleteAdRow('${activeAdCarrier}', ${idx})" class="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50 text-xs transition" title="구분선 삭제">✕</button>
+            </td>
+            <td colspan="6" class="p-2.5 text-center text-slate-400 text-xs font-medium tracking-widest select-none">
+              <span class="inline-flex items-center gap-2 text-slate-400">
+                <span class="w-16 h-px bg-slate-200"></span>
+                <span>구분선 (복사 시 빈 줄)</span>
+                <span class="w-16 h-px bg-slate-200"></span>
+              </span>
+            </td>
+          `;
+          adBody.appendChild(tr);
+          return;
+        }
+
         const adData = d.ad[activeAdCarrier];
         const isHidden = !!adData.hidden;
 
         tr.className = isHidden 
           ? "bg-slate-50/60 opacity-60 hover:opacity-100 transition border-b border-slate-100" 
           : "hover:bg-slate-50 border-b border-slate-100 transition";
-
-        tr.setAttribute('data-index', idx);
-        tr.setAttribute('ondragover', `onRowDragOver(event, ${idx}, 'ad')`);
-        tr.setAttribute('ondragleave', 'onRowDragLeave(event)');
-        tr.setAttribute('ondrop', `onRowDrop(event, ${idx}, 'ad')`);
 
         const netMnp = calcNet(d, activeAdCarrier, 'mnp', adMarginBase);
         const netChg = calcNet(d, activeAdCarrier, 'chg', adMarginBase);
@@ -1576,8 +1797,8 @@
           <!-- 숨김 / 게시 토글 버튼 -->
           <td class="p-2 text-center overflow-hidden">
             <button onclick="toggleAdHidden('${d.id}')"
-                    class="px-2 py-1 rounded-lg text-[11px] font-bold border transition ${isHidden ? 'bg-slate-100 text-slate-400 border-slate-300' : 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100'}">
-              ${isHidden ? '🚫 숨김' : '👁️ 게시'}
+                    class="px-2.5 py-1 rounded-lg text-xs font-bold border transition ${isHidden ? 'bg-slate-100 text-slate-400 border-slate-300' : 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100'}">
+              ${isHidden ? '숨김' : '게시'}
             </button>
           </td>
 
@@ -1625,7 +1846,8 @@
       });
 
       const previewText = generateAdString(activeAdCarrier);
-      document.getElementById('adPreviewText').innerText = previewText;
+      const previewEl = document.getElementById('adPreviewText');
+      if (previewEl) previewEl.innerText = previewText;
     }
 
     function updateAdVal(id, field, val) {
@@ -1656,6 +1878,12 @@
 
       const carrierDevices = getCarrierDeviceList(carrier);
       carrierDevices.forEach(d => {
+        if (d.id === 'empty' || d.isEmpty) {
+          outputLines.push("");
+          lastGroup = null;
+          return;
+        }
+
         const adData = d.ad[carrier];
         // 숨김 처리된 기종은 광고 문구에서 완전히 제외
         if (adData && adData.hidden) return;
@@ -1687,7 +1915,7 @@
     function copyAdTextFormatted() {
       const text = generateAdString(activeAdCarrier);
       navigator.clipboard.writeText(text).then(() => {
-        alert(`✅ [${activeAdCarrier} 특가] 시세표 문구가 복사되었습니다! (숨김 처리된 기종 제외)\n\n카카오톡, 네이버 카페, 밴드 등에 바로 붙여넣기(Ctrl+V) 하세요.`);
+        alert(`[${activeAdCarrier} 특가] 시세표 문구가 복사되었습니다!\n\n카카오톡, 네이버 카페, 밴드 등에 바로 붙여넣기(Ctrl+V) 하세요.`);
       });
     }
 
@@ -1781,6 +2009,7 @@
     }
 
     loadLayouts();
+    loadDiscounts();
     loadColumnWidths('adTable');
     loadColumnWidths('dailyTable');
     updateDots();
