@@ -1402,7 +1402,9 @@
     function updateCarrierDiscount(carrier, val) {
       const oldVal = allAddDiscounts[carrier];
       const num = parseFloat(val);
-      allAddDiscounts[carrier] = isNaN(num) ? 0 : num;
+      const newNum = isNaN(num) ? 0 : num;
+      if (oldVal === newNum) return;
+      allAddDiscounts[carrier] = newNum;
       saveDiscounts('올부가 할인', `${carrier} 올부가 할인액: ${oldVal}만 → ${allAddDiscounts[carrier]}만원`);
       renderCalcTable();
       if (currentTab === 'ad') {
@@ -2419,7 +2421,11 @@
           </td>
           <!-- 번이 단가 -->
           <td class="p-2 text-center overflow-hidden">
-            <input type="text" value="${d.rate[activeInputCarrier].mnp}" onchange="updateRate('${d.id}', 'mnp', this.value)"
+            <input type="text"
+                   value="${d.rate[activeInputCarrier].mnp}"
+                   data-orig-val="${d.rate[activeInputCarrier].mnp}"
+                   onfocus="if(this.dataset.origVal===undefined) this.dataset.origVal = this.value"
+                   onchange="updateRate('${d.id}', 'mnp', this.value, this)"
                    class="w-full max-w-[80px] px-1.5 py-1 text-center font-bold bg-white border border-slate-300 rounded-lg text-slate-900 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" />
           </td>
           <!-- 번이 단가처 드롭다운 -->
@@ -2430,7 +2436,11 @@
           </td>
           <!-- 기변 단가 -->
           <td class="p-2 text-center overflow-hidden">
-            <input type="text" value="${d.rate[activeInputCarrier].chg}" onchange="updateRate('${d.id}', 'chg', this.value)"
+            <input type="text"
+                   value="${d.rate[activeInputCarrier].chg}"
+                   data-orig-val="${d.rate[activeInputCarrier].chg}"
+                   onfocus="if(this.dataset.origVal===undefined) this.dataset.origVal = this.value"
+                   onchange="updateRate('${d.id}', 'chg', this.value, this)"
                    class="w-full max-w-[80px] px-1.5 py-1 text-center font-bold bg-white border border-slate-300 rounded-lg text-slate-900 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" />
           </td>
           <!-- 기변 단가처 드롭다운 -->
@@ -2457,6 +2467,7 @@
         if (!d.loc) d.loc = { SK: { mnp: '도매', chg: '도매' }, KT: { mnp: '도매', chg: '도매' }, LG: { mnp: '도매', chg: '도매' } };
         if (!d.loc[activeInputCarrier]) d.loc[activeInputCarrier] = { mnp: '도매', chg: '도매' };
         const oldVal = d.loc[activeInputCarrier][type];
+        if (oldVal === val) return;
         d.loc[activeInputCarrier][type] = val;
         const typeKo = type === 'mnp' ? '번이' : '기변';
         scheduleStoreSave('대리점 단가 입력', `${d.name} (${activeInputCarrier} ${typeKo}) 단가처: ${oldVal || '도매'} → ${val}`);
@@ -2476,14 +2487,19 @@
       render();
     }
 
-    function updateRate(id, type, val) {
+    function updateRate(id, type, val, inputEl) {
       const d = devices.find(x => x.id === id);
       if (d) {
-        const oldVal = d.rate[activeInputCarrier][type];
+        const origVal = (inputEl && inputEl.dataset && inputEl.dataset.origVal !== undefined)
+          ? inputEl.dataset.origVal
+          : (d.rate[activeInputCarrier][type] || '');
+        if (String(origVal).trim() === String(val).trim()) return;
+
         d.rate[activeInputCarrier][type] = val;
         render();
         const typeKo = type === 'mnp' ? '번이' : '기변';
-        scheduleStoreSave('대리점 단가 입력', `${d.name} (${activeInputCarrier} ${typeKo}) 단가: ${oldVal || '-'} → ${val}만`);
+        scheduleStoreSave('대리점 단가 입력', `${d.name} (${activeInputCarrier} ${typeKo}) 단가: ${origVal || '-'} → ${val}만`);
+        if (inputEl) inputEl.dataset.origVal = val;
       }
     }
 
@@ -2554,20 +2570,39 @@
       renderAdSection();
     }
 
-    // 광고표 기종명 직접 수정 (통신사별 독립 태그 반영)
-    function updateAdTag(id, val) {
+    // 광고표 기종명 직접 수정 (실시간 미리보기 & 완료 시 저장/감사로그)
+    function updateAdTagLive(id, val) {
       const d = devices.find(x => x.id === id);
       if (d) {
         if (!d.ad[activeAdCarrier]) d.ad[activeAdCarrier] = {};
-        const oldVal = d.ad[activeAdCarrier].tag || d.tag;
         d.ad[activeAdCarrier].tag = val;
 
         const previewEl = document.getElementById('adPreviewText');
         if (previewEl) {
           previewEl.innerText = generateAdString(activeAdCarrier);
         }
-        scheduleStoreSave('성지특가 광고', `${d.name} (${activeAdCarrier}) 태그명: ${oldVal} → ${val}`);
+        // 백그라운드 데이터 저장만 수행 (감사로그 기록 X)
+        scheduleStoreSave('', '');
       }
+    }
+
+    function updateAdTagCommit(id, val, inputEl) {
+      const d = devices.find(x => x.id === id);
+      if (!d) return;
+
+      const origVal = (inputEl && inputEl.dataset && inputEl.dataset.origVal !== undefined)
+        ? inputEl.dataset.origVal
+        : (d.ad[activeAdCarrier]?.tag || d.tag || '');
+
+      if (String(origVal).trim() !== String(val).trim()) {
+        scheduleStoreSave('성지특가 광고', `${d.name} (${activeAdCarrier}) 태그명: ${origVal} → ${val}`);
+      }
+      if (inputEl) inputEl.dataset.origVal = val;
+    }
+
+    function updateAdTag(id, val) {
+      updateAdTagLive(id, val);
+      updateAdTagCommit(id, val, null);
     }
 
     function renderAdSection() {
@@ -2663,8 +2698,11 @@
             <div class="space-y-0.5">
               <input type="text"
                      value="${currentTag}"
+                     data-orig-val="${currentTag}"
                      placeholder="${d.tag}"
-                     oninput="updateAdTag('${d.id}', this.value)"
+                     onfocus="if(this.dataset.origVal===undefined) this.dataset.origVal = this.value"
+                     oninput="updateAdTagLive('${d.id}', this.value)"
+                     onchange="updateAdTagCommit('${d.id}', this.value, this)"
                      class="w-full px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
               <div class="text-[10px] text-slate-400 pl-0.5 truncate select-none">${d.name}</div>
             </div>
@@ -2677,13 +2715,23 @@
 
           <!-- 번이가 입력 -->
           <td class="p-2 text-center overflow-hidden">
-            <input type="text" value="${adData.mnp}" oninput="updateAdVal('${d.id}', 'mnp', this.value)"
+            <input type="text"
+                   value="${adData.mnp}"
+                   data-orig-val="${adData.mnp}"
+                   onfocus="if(this.dataset.origVal===undefined) this.dataset.origVal = this.value"
+                   oninput="updateAdValLive('${d.id}', 'mnp', this.value)"
+                   onchange="updateAdValCommit('${d.id}', 'mnp', this.value, this)"
                    class="w-full max-w-[70px] px-1.5 py-1 text-center font-bold bg-white border border-slate-300 rounded text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" />
           </td>
 
           <!-- 기변가 입력 -->
           <td class="p-2 text-center overflow-hidden">
-            <input type="text" value="${adData.chg}" oninput="updateAdVal('${d.id}', 'chg', this.value)"
+            <input type="text"
+                   value="${adData.chg}"
+                   data-orig-val="${adData.chg}"
+                   onfocus="if(this.dataset.origVal===undefined) this.dataset.origVal = this.value"
+                   oninput="updateAdValLive('${d.id}', 'chg', this.value)"
+                   onchange="updateAdValCommit('${d.id}', 'chg', this.value, this)"
                    class="w-full max-w-[70px] px-1.5 py-1 text-center font-bold bg-white border border-slate-300 rounded text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" />
           </td>
 
@@ -2694,7 +2742,13 @@
 
           <!-- 비고 -->
           <td class="p-2 overflow-hidden">
-            <input type="text" value="${adData.note || ''}" placeholder="비고(선택)" oninput="updateAdVal('${d.id}', 'note', this.value)"
+            <input type="text"
+                   value="${adData.note || ''}"
+                   data-orig-val="${adData.note || ''}"
+                   placeholder="비고(선택)"
+                   onfocus="if(this.dataset.origVal===undefined) this.dataset.origVal = this.value"
+                   oninput="updateAdValLive('${d.id}', 'note', this.value)"
+                   onchange="updateAdValCommit('${d.id}', 'note', this.value, this)"
                    class="w-full px-2 py-1 bg-white border border-slate-200 rounded text-xs text-slate-600 focus:ring-1 focus:ring-blue-500" />
           </td>
         `;
@@ -2706,10 +2760,10 @@
       if (previewEl) previewEl.innerText = previewText;
     }
 
-    function updateAdVal(id, field, val) {
+    // 광고표 번이가 / 기변가 / 비고 실시간 및 완료 저장
+    function updateAdValLive(id, field, val) {
       const d = devices.find(x => x.id === id);
       if (d && d.ad[activeAdCarrier]) {
-        const oldVal = d.ad[activeAdCarrier][field];
         d.ad[activeAdCarrier][field] = val;
 
         // 실시간 마진 배지 갱신 (인풋 포커스 유지)
@@ -2726,10 +2780,31 @@
           previewEl.innerText = generateAdString(activeAdCarrier);
         }
 
+        // 백그라운드 데이터 저장만 수행 (감사로그 기록 X)
+        scheduleStoreSave('', '');
+      }
+    }
+
+    function updateAdValCommit(id, field, val, inputEl) {
+      const d = devices.find(x => x.id === id);
+      if (!d || !d.ad[activeAdCarrier]) return;
+
+      const origVal = (inputEl && inputEl.dataset && inputEl.dataset.origVal !== undefined)
+        ? inputEl.dataset.origVal
+        : (d.ad[activeAdCarrier][field] || '');
+
+      if (String(origVal).trim() !== String(val).trim()) {
         const fieldMap = { mnp: '번이가', chg: '기변가', note: '비고', hidden: '게시상태' };
         const fieldKo = fieldMap[field] || field;
-        scheduleStoreSave('성지특가 광고', `${d.name} (${activeAdCarrier}) 광고 ${fieldKo}: ${oldVal || '-'} → ${val}`);
+        scheduleStoreSave('성지특가 광고', `${d.name} (${activeAdCarrier}) 광고 ${fieldKo}: ${origVal || '-'} → ${val}`);
       }
+
+      if (inputEl) inputEl.dataset.origVal = val;
+    }
+
+    function updateAdVal(id, field, val) {
+      updateAdValLive(id, field, val);
+      updateAdValCommit(id, field, val, null);
     }
 
     // 광고 문구 생성 (통신사 독자 순서 적용 및 숨김 처리된 기종 제외)
@@ -3229,6 +3304,7 @@
         if (!d.prices) d.prices = { SK: d.price, KT: d.price, LG: d.price };
         const oldVal = d.prices[carrier];
         const numVal = parseFloat(val) || 0;
+        if (oldVal === numVal) return;
         d.prices[carrier] = numVal;
         scheduleMasterSave('출고가/공시 설정', `${d.name} (${carrier}) 출고가: ${oldVal}만 → ${numVal}만원`);
       }
@@ -3239,6 +3315,7 @@
       if (d) {
         const oldVal = d.sub[carrier][type];
         const numVal = parseFloat(val) || 0;
+        if (oldVal === numVal) return;
         d.sub[carrier][type] = numVal;
         const typeKo = type === 'mnp' ? '번이' : '기변';
         scheduleMasterSave('출고가/공시 설정', `${d.name} (${carrier} ${typeKo}) 공시지원금: ${oldVal}만 → ${numVal}만원`);
