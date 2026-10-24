@@ -252,7 +252,7 @@
                 <button type="button" class="help-btn mr-0.5" onmouseenter="showHelpTip(event, this, '<b>올부가 추가 할인금</b><br>기본부가를 제외한 매장 자체 추가 부가서비스 항목이 있을 때 추가되는 지원금 금액입니다. 즉, 기본부가에 미포함된 추가 부가할인금을 적는 곳입니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>올부가 추가 할인금</b><br>기본부가를 제외한 매장 자체 추가 부가서비스 항목이 있을 때 추가되는 지원금 금액입니다. 즉, 기본부가에 미포함된 추가 부가할인금을 적는 곳입니다.')" title="올부가 할인 안내">?</button>
               </span>
               <span class="text-rose-600 font-black text-xs">-</span>
-              <input type="number" id="discount-SK" value="15" onchange="updateCarrierDiscount('SK', this.value)"
+              <input type="number" id="discount-SK" value="15" onfocus="this.select()" onchange="updateCarrierDiscount('SK', this.value)"
                      class="w-12 px-1 py-0.5 text-center font-black text-rose-700 bg-white border border-rose-300 rounded text-xs focus:ring-1 focus:ring-rose-500 focus:outline-none" />
               <span class="text-[11px] font-bold text-rose-700">만</span>
             </div>
@@ -260,37 +260,37 @@
           <div class="space-y-1.5">
             <div class="flex items-center gap-1.5">
               <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">요금제 :</span>
-              <input type="text" id="cond-SK-plan" onchange="updateCarrierCondition('SK', 'plan', this.value)"
+              <input type="text" id="cond-SK-plan" onfocus="this.select()" onchange="updateCarrierCondition('SK', 'plan', this.value)"
                      class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-rose-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
                      placeholder="예: 109,000원 6개월" />
             </div>
             <div class="flex items-center gap-1.5">
               <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">부가1 :</span>
-              <input type="text" id="cond-SK-add1" onchange="updateCarrierCondition('SK', 'add1', this.value)"
+              <input type="text" id="cond-SK-add1" onfocus="this.select()" onchange="updateCarrierCondition('SK', 'add1', this.value)"
                      class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-rose-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
                      placeholder="예: 마이스마트콜 (M+1)" />
             </div>
             <div class="flex items-center gap-1.5">
               <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">부가2 :</span>
-              <input type="text" id="cond-SK-add2" onchange="updateCarrierCondition('SK', 'add2', this.value)"
+              <input type="text" id="cond-SK-add2" onfocus="this.select()" onchange="updateCarrierCondition('SK', 'add2', this.value)"
                      class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-rose-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
                      placeholder="예: 보험 (M+1)" />
             </div>
             <div class="flex items-center gap-1.5">
               <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">부가3 :</span>
-              <input type="text" id="cond-SK-add3" onchange="updateCarrierCondition('SK', 'add3', this.value)"
+              <input type="text" id="cond-SK-add3" onfocus="this.select()" onchange="updateCarrierCondition('SK', 'add3', this.value)"
                      class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-rose-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
                      placeholder="부가서비스 3" />
             </div>
             <div class="flex items-center gap-1.5">
               <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">부가4 :</span>
-              <input type="text" id="cond-SK-add4" onchange="updateCarrierCondition('SK', 'add4', this.value)"
+              <input type="text" id="cond-SK-add4" onfocus="this.select()" onchange="updateCarrierCondition('SK', 'add4', this.value)"
                      class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-rose-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
                      placeholder="부가서비스 4" />
             </div>
             <div class="flex items-center gap-1.5 pt-0.5 border-t border-slate-100">
               <span class="text-[11px] font-extrabold text-rose-600 w-14 shrink-0">특이사항:</span>
-              <input type="text" id="cond-SK-note" onchange="updateCarrierCondition('SK', 'note', this.value)"
+              <input type="text" id="cond-SK-note" onfocus="this.select()" onchange="updateCarrierCondition('SK', 'note', this.value)"
                      class="w-full px-2 py-0.5 bg-rose-50/40 hover:bg-white focus:bg-white border border-rose-200 focus:border-rose-400 rounded-md text-xs font-semibold text-rose-800 focus:outline-none transition"
                      placeholder="예: 18프로맥스 선약단가 공시적용기준" />
             </div>
@@ -310,7 +310,7 @@
                 <button type="button" class="help-btn mr-0.5" onmouseenter="showHelpTip(event, this, '<b>올부가 추가 할인금</b><br>기본부가를 제외한 매장 자체 추가 부가서비스 항목이 있을 때 추가되는 지원금 금액입니다. 즉, 기본부가에 미포함된 추가 부가할인금을 적는 곳입니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>올부가 추가 할인금</b><br>기본부가를 제외한 매장 자체 추가 부가서비스 항목이 있을 때 추가되는 지원금 금액입니다. 즉, 기본부가에 미포함된 추가 부가할인금을 적는 곳입니다.')" title="올부가 할인 안내">?</button>
               </span>
               <span class="text-blue-600 font-black text-xs">-</span>
-              <input type="number" id="discount-KT" value="15" onchange="updateCarrierDiscount('KT', this.value)"
+              <input type="number" id="discount-KT" value="15" onfocus="this.select()" onchange="updateCarrierDiscount('KT', this.value)"
                      class="w-12 px-1 py-0.5 text-center font-black text-blue-700 bg-white border border-blue-300 rounded text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none" />
               <span class="text-[11px] font-bold text-blue-700">만</span>
             </div>
@@ -318,37 +318,37 @@
           <div class="space-y-1.5">
             <div class="flex items-center gap-1.5">
               <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">요금제 :</span>
-              <input type="text" id="cond-KT-plan" onchange="updateCarrierCondition('KT', 'plan', this.value)"
+              <input type="text" id="cond-KT-plan" onfocus="this.select()" onchange="updateCarrierCondition('KT', 'plan', this.value)"
                      class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-blue-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
                      placeholder="예: 110,000원 6개월" />
             </div>
             <div class="flex items-center gap-1.5">
               <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">부가1 :</span>
-              <input type="text" id="cond-KT-add1" onchange="updateCarrierCondition('KT', 'add1', this.value)"
+              <input type="text" id="cond-KT-add1" onfocus="this.select()" onchange="updateCarrierCondition('KT', 'add1', this.value)"
                      class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-blue-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
                      placeholder="예: 필수팩 L (M+4)" />
             </div>
             <div class="flex items-center gap-1.5">
               <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">부가2 :</span>
-              <input type="text" id="cond-KT-add2" onchange="updateCarrierCondition('KT', 'add2', this.value)"
+              <input type="text" id="cond-KT-add2" onfocus="this.select()" onchange="updateCarrierCondition('KT', 'add2', this.value)"
                      class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-blue-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
                      placeholder="예: 폰 안심보험 (M+3)" />
             </div>
             <div class="flex items-center gap-1.5">
               <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">부가3 :</span>
-              <input type="text" id="cond-KT-add3" onchange="updateCarrierCondition('KT', 'add3', this.value)"
+              <input type="text" id="cond-KT-add3" onfocus="this.select()" onchange="updateCarrierCondition('KT', 'add3', this.value)"
                      class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-blue-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
                      placeholder="부가서비스 3" />
             </div>
             <div class="flex items-center gap-1.5">
               <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">부가4 :</span>
-              <input type="text" id="cond-KT-add4" onchange="updateCarrierCondition('KT', 'add4', this.value)"
+              <input type="text" id="cond-KT-add4" onfocus="this.select()" onchange="updateCarrierCondition('KT', 'add4', this.value)"
                      class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-blue-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
                      placeholder="부가서비스 4" />
             </div>
             <div class="flex items-center gap-1.5 pt-0.5 border-t border-slate-100">
               <span class="text-[11px] font-extrabold text-blue-600 w-14 shrink-0">특이사항:</span>
-              <input type="text" id="cond-KT-note" onchange="updateCarrierCondition('KT', 'note', this.value)"
+              <input type="text" id="cond-KT-note" onfocus="this.select()" onchange="updateCarrierCondition('KT', 'note', this.value)"
                      class="w-full px-2 py-0.5 bg-blue-50/40 hover:bg-white focus:bg-white border border-blue-200 focus:border-blue-400 rounded-md text-xs font-semibold text-blue-800 focus:outline-none transition"
                      placeholder="특이사항 메모" />
             </div>
@@ -368,7 +368,7 @@
                 <button type="button" class="help-btn mr-0.5" onmouseenter="showHelpTip(event, this, '<b>올부가 추가 할인금</b><br>기본부가를 제외한 매장 자체 추가 부가서비스 항목이 있을 때 추가되는 지원금 금액입니다. 즉, 기본부가에 미포함된 추가 부가할인금을 적는 곳입니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>올부가 추가 할인금</b><br>기본부가를 제외한 매장 자체 추가 부가서비스 항목이 있을 때 추가되는 지원금 금액입니다. 즉, 기본부가에 미포함된 추가 부가할인금을 적는 곳입니다.')" title="올부가 할인 안내">?</button>
               </span>
               <span class="text-pink-600 font-black text-xs">-</span>
-              <input type="number" id="discount-LG" value="15" onchange="updateCarrierDiscount('LG', this.value)"
+              <input type="number" id="discount-LG" value="15" onfocus="this.select()" onchange="updateCarrierDiscount('LG', this.value)"
                      class="w-12 px-1 py-0.5 text-center font-black text-pink-700 bg-white border border-pink-300 rounded text-xs focus:ring-1 focus:ring-pink-500 focus:outline-none" />
               <span class="text-[11px] font-bold text-pink-700">만</span>
             </div>
@@ -376,37 +376,37 @@
           <div class="space-y-1.5">
             <div class="flex items-center gap-1.5">
               <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">요금제 :</span>
-              <input type="text" id="cond-LG-plan" onchange="updateCarrierCondition('LG', 'plan', this.value)"
+              <input type="text" id="cond-LG-plan" onfocus="this.select()" onchange="updateCarrierCondition('LG', 'plan', this.value)"
                      class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-pink-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
                      placeholder="예: 105,000원 6개월" />
             </div>
             <div class="flex items-center gap-1.5">
               <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">부가1 :</span>
-              <input type="text" id="cond-LG-add1" onchange="updateCarrierCondition('LG', 'add1', this.value)"
+              <input type="text" id="cond-LG-add1" onfocus="this.select()" onchange="updateCarrierCondition('LG', 'add1', this.value)"
                      class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-pink-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
                      placeholder="예: 교보sam+구글원 (95일)" />
             </div>
             <div class="flex items-center gap-1.5">
               <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">부가2 :</span>
-              <input type="text" id="cond-LG-add2" onchange="updateCarrierCondition('LG', 'add2', this.value)"
+              <input type="text" id="cond-LG-add2" onfocus="this.select()" onchange="updateCarrierCondition('LG', 'add2', this.value)"
                      class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-pink-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
                      placeholder="예: V컬러링 (M+1)" />
             </div>
             <div class="flex items-center gap-1.5">
               <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">부가3 :</span>
-              <input type="text" id="cond-LG-add3" onchange="updateCarrierCondition('LG', 'add3', this.value)"
+              <input type="text" id="cond-LG-add3" onfocus="this.select()" onchange="updateCarrierCondition('LG', 'add3', this.value)"
                      class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-pink-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
                      placeholder="예: 폰교체패스 (M+1)" />
             </div>
             <div class="flex items-center gap-1.5">
               <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">부가4 :</span>
-              <input type="text" id="cond-LG-add4" onchange="updateCarrierCondition('LG', 'add4', this.value)"
+              <input type="text" id="cond-LG-add4" onfocus="this.select()" onchange="updateCarrierCondition('LG', 'add4', this.value)"
                      class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-pink-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
                      placeholder="부가서비스 4" />
             </div>
             <div class="flex items-center gap-1.5 pt-0.5 border-t border-slate-100">
               <span class="text-[11px] font-extrabold text-pink-600 w-14 shrink-0">특이사항:</span>
-              <input type="text" id="cond-LG-note" onchange="updateCarrierCondition('LG', 'note', this.value)"
+              <input type="text" id="cond-LG-note" onfocus="this.select()" onchange="updateCarrierCondition('LG', 'note', this.value)"
                      class="w-full px-2 py-0.5 bg-pink-50/40 hover:bg-white focus:bg-white border border-pink-200 focus:border-pink-400 rounded-md text-xs font-semibold text-pink-800 focus:outline-none transition"
                      placeholder="특이사항 메모" />
             </div>
@@ -626,27 +626,31 @@
             </p>
           </div>
 
-          <!-- 우측: 마진 기준 토글 & 복사 버튼 -->
+          <!-- 우측: 광고 운영 모드 선택 (올부가 vs 기본부가 단가/마진 분리) & 복사 버튼 -->
           <div class="flex flex-wrap items-center gap-3">
-            <div class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs">
-              <span class="text-slate-500 font-semibold px-2 flex items-center">
-                마진 산정 기준:
-                <button type="button" class="help-btn mr-0.5" onmouseenter="showHelpTip(event, this, '<b>마진 계산 기준</b><br>• 올부가 넷가 기준: 추가 할인액까지 공제한 후 남는 순수 이익<br>• 기본부가 넷가 기준: 추가 할인을 고려하지 않은 원가 대비 이익')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>마진 계산 기준</b><br>• 올부가 넷가 기준: 추가 할인액까지 공제한 후 남는 순수 이익<br>• 기본부가 넷가 기준: 추가 할인을 고려하지 않은 원가 대비 이익')" title="마진 기준 안내">?</button>
+            <div class="flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl border border-slate-200 text-xs">
+              <span class="text-slate-600 font-bold px-2 flex items-center gap-1">
+                광고 운영 모드:
+                <button type="button" class="help-btn mr-0.5" onmouseenter="showHelpTip(event, this, '<b>광고 운영 모드 (단가/마진 분리 운영)</b><br>• <b>올부가 광고</b>: 매장 자체 추가 부가할인을 반영한 전용 광고가격과 올부가 넷가 마진으로 운영됩니다.<br>• <b>기본부가 광고</b>: 추가 부가할인 없는 순수 기본조건 전용 광고가격과 기본부가 넷가 마진으로 독립 운영됩니다.<br><br>※ 올부가와 기본부가는 각각 번이가/기변가/비고를 <b>완전히 따로 입력하고 독립 관리</b>할 수 있습니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>광고 운영 모드 (단가/마진 분리 운영)</b><br>• <b>올부가 광고</b>: 매장 자체 추가 부가할인을 반영한 전용 광고가격과 올부가 넷가 마진으로 운영됩니다.<br>• <b>기본부가 광고</b>: 추가 부가할인 없는 순수 기본조건 전용 광고가격과 기본부가 넷가 마진으로 독립 운영됩니다.<br><br>※ 올부가와 기본부가는 각각 번이가/기변가/비고를 <b>완전히 따로 입력하고 독립 관리</b>할 수 있습니다.')" title="광고 운영 모드 안내">?</button>
               </span>
-              <button onclick="setAdMarginBase('all')" id="adMarginBase-all" class="px-3 py-1.5 rounded-lg font-bold bg-white text-slate-900 shadow-xs transition">
-                올부가 넷가 기준 (부가할인 반영)
+              <button onclick="setAdMarginBase('all')" id="adMarginBase-all" class="px-3.5 py-1.5 rounded-xl font-black bg-indigo-600 text-white shadow-xs transition flex items-center gap-1">
+                🌟 올부가 광고 운영
               </button>
-              <button onclick="setAdMarginBase('basic')" id="adMarginBase-basic" class="px-3 py-1.5 rounded-lg font-semibold text-slate-600 hover:text-slate-900 transition">
-                기본부가 넷가 기준
+              <button onclick="setAdMarginBase('basic')" id="adMarginBase-basic" class="px-3.5 py-1.5 rounded-xl font-bold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition flex items-center gap-1">
+                🏷️ 기본부가 광고 운영
               </button>
             </div>
+
+            <button onclick="copyBetweenAdModes()" id="adCopyBetweenModesBtn" class="px-3 py-2 bg-white hover:bg-slate-100 text-slate-700 rounded-xl text-xs font-bold border border-slate-300 shadow-2xs transition flex items-center gap-1.5" title="다른 모드의 가격을 복사해옵니다">
+              📋 기본부가 ➔ 올부가 가격 복사
+            </button>
 
             <button onclick="copyAdTextFormatted()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2">
               <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
               </svg>
-              <span>시세표 문구 원클릭 복사</span>
-              <span class="help-btn" onmouseenter="showHelpTip(event, this, '<b>시세표 문구 원클릭 복사</b><br>클릭하면 카페/밴드/카카오톡 전용 시세표 텍스트가 클립보드에 자동 복사됩니다. 그대로 붙여넣기(Ctrl+V)하여 바로 마케팅에 활용하세요.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>시세표 문구 원클릭 복사</b><br>클릭하면 카페/밴드/카카오톡 전용 시세표 텍스트가 클립보드에 자동 복사됩니다. 그대로 붙여넣기(Ctrl+V)하여 바로 마케팅에 활용하세요.')" title="원클릭 복사 안내">?</span>
+              <span id="adCopyBtnText">시세표 문구 원클릭 복사</span>
+              <span class="help-btn" onmouseenter="showHelpTip(event, this, '<b>시세표 문구 원클릭 복사</b><br>현재 운영 중인 모드(올부가 또는 기본부가)의 완성된 광고 텍스트가 클립보드에 복사됩니다. 카페/밴드에 바로 붙여넣기 하세요.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>시세표 문구 원클릭 복사</b><br>현재 운영 중인 모드(올부가 또는 기본부가)의 완성된 광고 텍스트가 클립보드에 복사됩니다. 카페/밴드에 바로 붙여넣기 하세요.')" title="원클릭 복사 안내">?</span>
             </button>
           </div>
         </div>
@@ -667,9 +671,11 @@
                   <span>구분선(줄바꿈) 추가</span>
                 </button>
               </div>
-              <span class="text-[11px] text-slate-500">
-                마진 = <b class="text-blue-600">광고가격</b> - <b class="text-slate-700" id="adMarginBaseLabel">올부가넷가</b>
-              </span>
+              <div id="adModeActiveBadge" class="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-indigo-50 border border-indigo-200 text-xs">
+                <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+                <span class="text-indigo-900 font-extrabold">🌟 올부가 광고 운영 중</span>
+                <span class="text-[11px] text-indigo-600 font-medium ml-1">(부가할인 반영)</span>
+              </div>
             </div>
 
             <div class="overflow-x-auto border border-slate-200 rounded-xl">
@@ -696,36 +702,36 @@
                     </th>
                     <th class="relative p-2.5 text-center bg-slate-100/70" style="width: 100px;">
                       <span class="flex items-center justify-center">
-                        기준넷가
-                        <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>기준넷가</b><br>출고가 - 공시지원금 - 대리점단가 - 부가할인 = 매장의 실제 매입 원가입니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>기준넷가</b><br>출고가 - 공시지원금 - 대리점단가 - 부가할인 = 매장의 실제 매입 원가입니다.')" title="기준넷가 안내">?</button>
+                        <span id="adNetThTitle">기준넷가 (올부가)</span>
+                        <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>기준넷가</b><br>선택된 광고 모드(올부가/기본부가)에 따른 매장의 실제 매입 원가입니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>기준넷가</b><br>선택된 광고 모드(올부가/기본부가)에 따른 매장의 실제 매입 원가입니다.')" title="기준넷가 안내">?</button>
                       </span>
                       <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
                     </th>
                     <th class="relative p-2.5 text-center" style="width: 85px;">
                       <span class="flex items-center justify-center">
-                        번이가
-                        <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>성지 특가 (번호이동 판매가)</b><br>소비자에게 홍보할 최종 할인가격(만원)입니다. 마이너스(-) 숫자는 고객 페이백(차비)입니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>성지 특가 (번호이동 판매가)</b><br>소비자에게 홍보할 최종 할인가격(만원)입니다. 마이너스(-) 숫자는 고객 페이백(차비)입니다.')" title="번이가 안내">?</button>
+                        <span id="adMnpThTitle">올부가 번이가</span>
+                        <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>성지 특가 (번호이동 판매가)</b><br>소비자에게 홍보할 최종 할인가격(만원)입니다. 마이너스(-) 숫자는 고객 페이백(차비)입니다.<br>올부가/기본부가 각각 따로 저장됩니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>성지 특가 (번호이동 판매가)</b><br>소비자에게 홍보할 최종 할인가격(만원)입니다. 마이너스(-) 숫자는 고객 페이백(차비)입니다.<br>올부가/기본부가 각각 따로 저장됩니다.')" title="번이가 안내">?</button>
                       </span>
                       <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
                     </th>
                     <th class="relative p-2.5 text-center" style="width: 85px;">
                       <span class="flex items-center justify-center">
-                        기변가
-                        <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>성지 특가 (기기변경 판매가)</b><br>소비자에게 홍보할 최종 기변 할인가격(만원)입니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>성지 특가 (기기변경 판매가)</b><br>소비자에게 홍보할 최종 기변 할인가격(만원)입니다.')" title="기변가 안내">?</button>
+                        <span id="adChgThTitle">올부가 기변가</span>
+                        <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>성지 특가 (기기변경 판매가)</b><br>소비자에게 홍보할 최종 기변 할인가격(만원)입니다.<br>올부가/기본부가 각각 따로 저장됩니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>성지 특가 (기기변경 판매가)</b><br>소비자에게 홍보할 최종 기변 할인가격(만원)입니다.<br>올부가/기본부가 각각 따로 저장됩니다.')" title="기변가 안내">?</button>
                       </span>
                       <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
                     </th>
                     <th class="relative p-2.5 text-center bg-emerald-50/70 text-emerald-800" style="width: 115px;">
                       <span class="flex items-center justify-center">
-                        예상마진
+                        <span id="adMarginThTitle">예상마진 (올부가넷가)</span>
                         <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>예상 순이익 (마진)</b><br>광고가격 - 기준넷가 = 1대 개통 시 매장에 남는 순이익입니다. 녹색은 흑자 마진, 적색은 손실을 의미합니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>예상 순이익 (마진)</b><br>광고가격 - 기준넷가 = 1대 개통 시 매장에 남는 순이익입니다. 녹색은 흑자 마진, 적색은 손실을 의미합니다.')" title="예상마진 안내">?</button>
                       </span>
                       <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
                     </th>
                     <th class="relative p-2.5" style="width: 130px;">
                       <span class="flex items-center">
-                        비고
-                        <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>비고 메모</b><br>예: *인상전, 재고소량, 선약단가 등 광고 텍스트 옆에 괄호로 붙을 메모입니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>비고 메모</b><br>예: *인상전, 재고소량, 선약단가 등 광고 텍스트 옆에 괄호로 붙을 메모입니다.')" title="비고 안내">?</button>
+                        <span id="adNoteThTitle">올부가 비고</span>
+                        <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>비고 메모</b><br>예: *인상전, 재고소량, 선약단가 등 광고 텍스트 옆에 괄호로 붙을 메모입니다.<br>올부가/기본부가 각각 따로 저장됩니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>비고 메모</b><br>예: *인상전, 재고소량, 선약단가 등 광고 텍스트 옆에 괄호로 붙을 메모입니다.<br>올부가/기본부가 각각 따로 저장됩니다.')" title="비고 안내">?</button>
                       </span>
                       <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
                     </th>
@@ -746,7 +752,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                   <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                 </svg>
-                <span>최종 게시 문구 미리보기</span>
+                <span>최종 게시 문구 미리보기 (<span id="adPreviewModeTag" class="text-indigo-600 font-bold">올부가</span>)</span>
               </span>
               <span class="text-[11px] text-slate-400">카페/밴드 게시용</span>
             </div>
@@ -1297,7 +1303,13 @@
     let activeInputCarrier = "SK";
     let activeAdCarrier = "SK";
     let netDisplayMode = "both";
-    let adMarginBase = "all";
+    let adMarginBase = (function() {
+      try {
+        return localStorage.getItem('phone_ad_margin_base') || 'all';
+      } catch(e) {
+        return 'all';
+      }
+    })();
     let allAddDiscounts = { SK: 15, KT: 15, LG: 15 };
 
     // 통신사별 상세 부가조건 (요금제, 부가1~4, 특이사항)
@@ -1346,11 +1358,12 @@
     }
 
     function syncCarrierConditionInputs() {
+      const activeEl = document.activeElement;
       ['SK', 'KT', 'LG'].forEach(c => {
         const cond = carrierConditions[c] || {};
         ['plan', 'add1', 'add2', 'add3', 'add4', 'note'].forEach(field => {
           const el = document.getElementById(`cond-${c}-${field}`);
-          if (el) el.value = cond[field] || '';
+          if (el && el !== activeEl) el.value = cond[field] || '';
         });
       });
     }
@@ -1391,12 +1404,13 @@
     }
 
     function syncDiscountInputs() {
+      const activeEl = document.activeElement;
       const skInput = document.getElementById('discount-SK');
       const ktInput = document.getElementById('discount-KT');
       const lgInput = document.getElementById('discount-LG');
-      if (skInput) skInput.value = allAddDiscounts.SK;
-      if (ktInput) ktInput.value = allAddDiscounts.KT;
-      if (lgInput) lgInput.value = allAddDiscounts.LG;
+      if (skInput && skInput !== activeEl) skInput.value = allAddDiscounts.SK;
+      if (ktInput && ktInput !== activeEl) ktInput.value = allAddDiscounts.KT;
+      if (lgInput && lgInput !== activeEl) lgInput.value = allAddDiscounts.LG;
     }
 
     function updateCarrierDiscount(carrier, val) {
@@ -2030,10 +2044,12 @@
       if (switcher) switcher.classList.add('hidden');
     }
 
-    // 키보드 숫자 입력 지원 (물리 키보드로 PIN 입력 가능)
+    // 키보드 숫자 입력 지원 (물리 키보드로 PIN 입력 가능) 및 백스페이스 뒤로가기 절대 방지
     window.addEventListener('keydown', (e) => {
       const pinModal = document.getElementById('pinModal');
-      if (pinModal && !pinModal.classList.contains('hidden')) {
+      const isPinOpen = pinModal && !pinModal.classList.contains('hidden');
+
+      if (isPinOpen) {
         if (/^[0-9]$/.test(e.key)) {
           e.preventDefault();
           inputPin(e.key);
@@ -2043,6 +2059,19 @@
         } else if (e.key === 'Escape') {
           e.preventDefault();
           clearPin();
+        }
+      } else {
+        // 일반 화면에서 백스페이스 입력 시 브라우저 뒤로가기 완전 차단
+        if (e.key === 'Backspace') {
+          const target = e.target;
+          const isEditable = target && (
+            (target.tagName === 'INPUT' && !['button', 'submit', 'checkbox', 'radio', 'range', 'color'].includes(target.type)) ||
+            target.tagName === 'TEXTAREA' ||
+            target.isContentEditable
+          );
+          if (!isEditable || target.readOnly || target.disabled) {
+            e.preventDefault(); // 뒤로가기 원천 방지!
+          }
         }
       }
     });
@@ -2065,6 +2094,8 @@
       if (vfb) vfb.classList.toggle('hidden', t !== 'calc');
       if (t === 'request') {
         renderSupportRequests();
+      } else if (t === 'ad') {
+        setAdMarginBase(adMarginBase);
       } else {
         render();
       }
@@ -2085,20 +2116,66 @@
 
     function setAdMarginBase(b) {
       adMarginBase = b;
+      try {
+        localStorage.setItem('phone_ad_margin_base', b);
+      } catch(e) {}
+
       const allBtn = document.getElementById('adMarginBase-all');
       const basicBtn = document.getElementById('adMarginBase-basic');
-      const label = document.getElementById('adMarginBaseLabel');
+      const badge = document.getElementById('adModeActiveBadge');
+      const copyBtnText = document.getElementById('adCopyBtnText');
+      const copyHelperBtn = document.getElementById('adCopyBetweenModesBtn');
 
       if (b === 'all') {
-        allBtn.className = "px-3 py-1.5 rounded-lg font-bold bg-white text-slate-900 shadow-xs transition";
-        basicBtn.className = "px-3 py-1.5 rounded-lg font-semibold text-slate-600 hover:text-slate-900 transition";
-        label.innerText = "올부가넷가";
+        if (allBtn) allBtn.className = "px-3.5 py-1.5 rounded-xl font-black bg-indigo-600 text-white shadow-xs transition flex items-center gap-1";
+        if (basicBtn) basicBtn.className = "px-3.5 py-1.5 rounded-xl font-bold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition flex items-center gap-1";
+        if (badge) {
+          badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span><span class="text-indigo-900 font-extrabold">🌟 올부가 광고 운영 중</span><span class="text-[11px] text-indigo-600 font-medium ml-1">(부가할인 반영)</span>`;
+          badge.className = "flex items-center gap-1.5 px-3 py-1 rounded-xl bg-indigo-50 border border-indigo-200 text-xs";
+        }
+        if (copyBtnText) copyBtnText.innerText = "올부가 시세표 문구 원클릭 복사";
+        if (copyHelperBtn) {
+          copyHelperBtn.innerText = "📋 기본부가 ➔ 올부가 가격 복사";
+          copyHelperBtn.title = "현재 기본부가에 등록된 광고 가격을 이 올부가 광고표로 그대로 복사해옵니다.";
+        }
       } else {
-        basicBtn.className = "px-3 py-1.5 rounded-lg font-bold bg-white text-slate-900 shadow-xs transition";
-        allBtn.className = "px-3 py-1.5 rounded-lg font-semibold text-slate-600 hover:text-slate-900 transition";
-        label.innerText = "기본부가넷가";
+        if (basicBtn) basicBtn.className = "px-3.5 py-1.5 rounded-xl font-black bg-emerald-600 text-white shadow-xs transition flex items-center gap-1";
+        if (allBtn) allBtn.className = "px-3.5 py-1.5 rounded-xl font-bold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition flex items-center gap-1";
+        if (badge) {
+          badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span><span class="text-emerald-900 font-extrabold">🏷️ 기본부가 광고 운영 중</span><span class="text-[11px] text-emerald-600 font-medium ml-1">(기본조건 순수넷가)</span>`;
+          badge.className = "flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50 border border-emerald-200 text-xs";
+        }
+        if (copyBtnText) copyBtnText.innerText = "기본부가 시세표 문구 원클릭 복사";
+        if (copyHelperBtn) {
+          copyHelperBtn.innerText = "📋 올부가 ➔ 기본부가 가격 복사";
+          copyHelperBtn.title = "현재 올부가에 등록된 광고 가격을 이 기본부가 광고표로 그대로 복사해옵니다.";
+        }
       }
+
+      updateAdHeaderTitles();
       renderAdSection();
+    }
+
+    function updateAdHeaderTitles() {
+      const isAll = (adMarginBase === 'all');
+      const netTh = document.getElementById('adNetThTitle');
+      const mnpTh = document.getElementById('adMnpThTitle');
+      const chgTh = document.getElementById('adChgThTitle');
+      const marginTh = document.getElementById('adMarginThTitle');
+      const noteTh = document.getElementById('adNoteThTitle');
+      const baseLabel = document.getElementById('adMarginBaseLabel');
+      const modeTag = document.getElementById('adPreviewModeTag');
+
+      if (netTh) netTh.innerText = isAll ? '기준넷가 (올부가)' : '기준넷가 (기본부가)';
+      if (mnpTh) mnpTh.innerText = isAll ? '올부가 번이가' : '기본부가 번이가';
+      if (chgTh) chgTh.innerText = isAll ? '올부가 기변가' : '기본부가 기변가';
+      if (marginTh) marginTh.innerText = isAll ? '예상마진 (올부가넷가)' : '예상마진 (기본부가넷가)';
+      if (noteTh) noteTh.innerText = isAll ? '올부가 비고' : '기본부가 비고';
+      if (baseLabel) baseLabel.innerText = isAll ? '올부가넷가' : '기본부가넷가';
+      if (modeTag) {
+        modeTag.innerText = isAll ? '올부가' : '기본부가';
+        modeTag.className = isAll ? 'text-indigo-600 font-bold' : 'text-emerald-600 font-bold';
+      }
     }
 
     function calcNet(d, carrier, type, mode = 'basic') {
@@ -2424,7 +2501,8 @@
             <input type="text"
                    value="${d.rate[activeInputCarrier].mnp}"
                    data-orig-val="${d.rate[activeInputCarrier].mnp}"
-                   onfocus="if(this.dataset.origVal===undefined) this.dataset.origVal = this.value"
+                   onfocus="this.select(); if(this.dataset.origVal===undefined) this.dataset.origVal = this.value"
+                   onkeydown="if(event.key==='Enter') this.blur(); if(event.key==='Escape'){this.value=this.dataset.origVal||''; this.blur();}"
                    onchange="updateRate('${d.id}', 'mnp', this.value, this)"
                    class="w-full max-w-[80px] px-1.5 py-1 text-center font-bold bg-white border border-slate-300 rounded-lg text-slate-900 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" />
           </td>
@@ -2439,7 +2517,8 @@
             <input type="text"
                    value="${d.rate[activeInputCarrier].chg}"
                    data-orig-val="${d.rate[activeInputCarrier].chg}"
-                   onfocus="if(this.dataset.origVal===undefined) this.dataset.origVal = this.value"
+                   onfocus="this.select(); if(this.dataset.origVal===undefined) this.dataset.origVal = this.value"
+                   onkeydown="if(event.key==='Enter') this.blur(); if(event.key==='Escape'){this.value=this.dataset.origVal||''; this.blur();}"
                    onchange="updateRate('${d.id}', 'chg', this.value, this)"
                    class="w-full max-w-[80px] px-1.5 py-1 text-center font-bold bg-white border border-slate-300 rounded-lg text-slate-900 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" />
           </td>
@@ -2496,7 +2575,11 @@
         if (String(origVal).trim() === String(val).trim()) return;
 
         d.rate[activeInputCarrier][type] = val;
-        render();
+        // 중요: 단가 입력 중인 dailyTable의 DOM을 파괴하지 않고, 연동되는 넷가표만 실시간 갱신하여 인풋 포커스 유지!
+        renderCalcTable();
+        if (currentTab === 'ad') {
+          updateActiveAdMarginsOnly();
+        }
         const typeKo = type === 'mnp' ? '번이' : '기변';
         scheduleStoreSave('대리점 단가 입력', `${d.name} (${activeInputCarrier} ${typeKo}) 단가: ${origVal || '-'} → ${val}만`);
         if (inputEl) inputEl.dataset.origVal = val;
@@ -2518,10 +2601,90 @@
       renderAdSection();
     }
 
+    // ==================== 광고 데이터 (올부가 vs 기본부가 독립 분리) 헬퍼 ====================
+    function getAdData(d, carrier, mode = adMarginBase) {
+      if (!d.ad) d.ad = {};
+      if (!d.ad[carrier]) d.ad[carrier] = { mnp: '', chg: '', note: '', hidden: false, tag: '' };
+      const cAd = d.ad[carrier];
+      if (mode === 'basic') {
+        return {
+          mnp: (cAd.mnp_basic !== undefined) ? cAd.mnp_basic : (cAd.mnp || ''),
+          chg: (cAd.chg_basic !== undefined) ? cAd.chg_basic : (cAd.chg || ''),
+          note: (cAd.note_basic !== undefined) ? cAd.note_basic : (cAd.note || ''),
+          hidden: (cAd.hidden_basic !== undefined) ? !!cAd.hidden_basic : !!cAd.hidden,
+          tag: (cAd.tag !== undefined && cAd.tag !== '') ? cAd.tag : d.tag
+        };
+      } else {
+        return {
+          mnp: cAd.mnp || '',
+          chg: cAd.chg || '',
+          note: cAd.note || '',
+          hidden: !!cAd.hidden,
+          tag: (cAd.tag !== undefined && cAd.tag !== '') ? cAd.tag : d.tag
+        };
+      }
+    }
+
+    function setAdValue(d, carrier, field, val, mode = adMarginBase) {
+      if (!d.ad) d.ad = {};
+      if (!d.ad[carrier]) d.ad[carrier] = { mnp: '', chg: '', note: '', hidden: false, tag: '' };
+      const cAd = d.ad[carrier];
+      if (mode === 'basic') {
+        if (field === 'mnp') cAd.mnp_basic = val;
+        else if (field === 'chg') cAd.chg_basic = val;
+        else if (field === 'note') cAd.note_basic = val;
+        else if (field === 'hidden') cAd.hidden_basic = val;
+        else if (field === 'tag') cAd.tag = val;
+      } else {
+        if (field === 'mnp') cAd.mnp = val;
+        else if (field === 'chg') cAd.chg = val;
+        else if (field === 'note') cAd.note = val;
+        else if (field === 'hidden') cAd.hidden = val;
+        else if (field === 'tag') cAd.tag = val;
+      }
+    }
+
+    function updateActiveAdMarginsOnly() {
+      const carrierDevices = getCarrierDeviceList(activeAdCarrier);
+      carrierDevices.forEach(d => {
+        if (d.id === 'empty' || d.isEmpty) return;
+        const marginMnp = calcAdMargin(d, activeAdCarrier, 'mnp');
+        const marginChg = calcAdMargin(d, activeAdCarrier, 'chg');
+        const marginCell = document.getElementById(`margin-cell-${d.id}`);
+        if (marginCell) {
+          marginCell.innerHTML = `${formatMarginBadge(marginMnp)} / ${formatMarginBadge(marginChg)}`;
+        }
+      });
+    }
+
+    function copyBetweenAdModes() {
+      const fromMode = adMarginBase === 'all' ? 'basic' : 'all';
+      const toMode = adMarginBase;
+      const fromKo = fromMode === 'all' ? '올부가' : '기본부가';
+      const toKo = toMode === 'all' ? '올부가' : '기본부가';
+
+      if (!confirm(`[광고 가격 복사 확인]\n\n현재 [${fromKo}] 광고표에 입력된 [${activeAdCarrier}] 번이가/기변가/비고를\n현재 선택된 [${toKo}] 광고표로 복사하시겠습니까?\n\n(기존 ${toKo} 가격을 덮어씌웁니다)`)) {
+        return;
+      }
+
+      devices.forEach(d => {
+        if (d.id === 'empty' || !d.ad) return;
+        const src = getAdData(d, activeAdCarrier, fromMode);
+        setAdValue(d, activeAdCarrier, 'mnp', src.mnp, toMode);
+        setAdValue(d, activeAdCarrier, 'chg', src.chg, toMode);
+        setAdValue(d, activeAdCarrier, 'note', src.note, toMode);
+      });
+
+      renderAdSection();
+      scheduleStoreSave('성지특가 광고', `[${activeAdCarrier}] ${fromKo} 광고 가격을 ${toKo} 광고표로 일괄 복사 적용`);
+      alert(`✅ [복사 완료]\n\n${activeAdCarrier} 기종들의 ${fromKo} 광고 가격이 ${toKo} 광고표로 성공적으로 복사되었습니다!`);
+    }
+
     function calcAdMargin(d, carrier, type) {
       const net = calcNet(d, carrier, type, adMarginBase);
       if (net === null) return null;
-      const adVal = d.ad[carrier][type];
+      const adData = getAdData(d, carrier, adMarginBase);
+      const adVal = adData[type];
       if (adVal === '' || adVal === null || isNaN(adVal) || adVal === '품절' || adVal === '출시전') return null;
 
       const adNum = parseFloat(adVal);
@@ -2542,10 +2705,10 @@
       if (id === 'empty') return;
       const d = devices.find(x => x.id === id);
       if (!d) return;
-      if (!d.ad[activeAdCarrier]) d.ad[activeAdCarrier] = {};
 
-      const willBeHidden = !d.ad[activeAdCarrier].hidden;
-      d.ad[activeAdCarrier].hidden = willBeHidden;
+      const curAd = getAdData(d, activeAdCarrier, adMarginBase);
+      const willBeHidden = !curAd.hidden;
+      setAdValue(d, activeAdCarrier, 'hidden', willBeHidden, adMarginBase);
 
       const order = adCarrierOrders[activeAdCarrier];
       const idx = order.indexOf(id);
@@ -2558,7 +2721,10 @@
         } else {
           // 다시 게시 시: 해당 통신사 목록에서 현재 숨김 처리된 기종들의 맨 위(게시 기종들 바로 다음)로 이동
           const carrierDevices = getCarrierDeviceList(activeAdCarrier);
-          const firstHiddenIdx = carrierDevices.findIndex((x, i) => i !== idx && x.ad && x.ad[activeAdCarrier] && x.ad[activeAdCarrier].hidden);
+          const firstHiddenIdx = carrierDevices.findIndex((x, i) => {
+            if (i === idx) return false;
+            return !!getAdData(x, activeAdCarrier, adMarginBase).hidden;
+          });
           if (firstHiddenIdx !== -1 && idx > firstHiddenIdx) {
             const [removedId] = order.splice(idx, 1);
             order.splice(firstHiddenIdx, 0, removedId);
@@ -2650,7 +2816,7 @@
           return;
         }
 
-        const adData = d.ad[activeAdCarrier];
+        const adData = getAdData(d, activeAdCarrier, adMarginBase);
         const isHidden = !!adData.hidden;
 
         tr.className = isHidden 
@@ -2700,7 +2866,8 @@
                      value="${currentTag}"
                      data-orig-val="${currentTag}"
                      placeholder="${d.tag}"
-                     onfocus="if(this.dataset.origVal===undefined) this.dataset.origVal = this.value"
+                     onfocus="this.select(); if(this.dataset.origVal===undefined) this.dataset.origVal = this.value"
+                     onkeydown="if(event.key==='Enter') this.blur(); if(event.key==='Escape'){this.value=this.dataset.origVal||''; this.blur();}"
                      oninput="updateAdTagLive('${d.id}', this.value)"
                      onchange="updateAdTagCommit('${d.id}', this.value, this)"
                      class="w-full px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
@@ -2718,7 +2885,8 @@
             <input type="text"
                    value="${adData.mnp}"
                    data-orig-val="${adData.mnp}"
-                   onfocus="if(this.dataset.origVal===undefined) this.dataset.origVal = this.value"
+                   onfocus="this.select(); if(this.dataset.origVal===undefined) this.dataset.origVal = this.value"
+                   onkeydown="if(event.key==='Enter') this.blur(); if(event.key==='Escape'){this.value=this.dataset.origVal||''; this.blur();}"
                    oninput="updateAdValLive('${d.id}', 'mnp', this.value)"
                    onchange="updateAdValCommit('${d.id}', 'mnp', this.value, this)"
                    class="w-full max-w-[70px] px-1.5 py-1 text-center font-bold bg-white border border-slate-300 rounded text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" />
@@ -2729,7 +2897,8 @@
             <input type="text"
                    value="${adData.chg}"
                    data-orig-val="${adData.chg}"
-                   onfocus="if(this.dataset.origVal===undefined) this.dataset.origVal = this.value"
+                   onfocus="this.select(); if(this.dataset.origVal===undefined) this.dataset.origVal = this.value"
+                   onkeydown="if(event.key==='Enter') this.blur(); if(event.key==='Escape'){this.value=this.dataset.origVal||''; this.blur();}"
                    oninput="updateAdValLive('${d.id}', 'chg', this.value)"
                    onchange="updateAdValCommit('${d.id}', 'chg', this.value, this)"
                    class="w-full max-w-[70px] px-1.5 py-1 text-center font-bold bg-white border border-slate-300 rounded text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" />
@@ -2746,7 +2915,8 @@
                    value="${adData.note || ''}"
                    data-orig-val="${adData.note || ''}"
                    placeholder="비고(선택)"
-                   onfocus="if(this.dataset.origVal===undefined) this.dataset.origVal = this.value"
+                   onfocus="this.select(); if(this.dataset.origVal===undefined) this.dataset.origVal = this.value"
+                   onkeydown="if(event.key==='Enter') this.blur(); if(event.key==='Escape'){this.value=this.dataset.origVal||''; this.blur();}"
                    oninput="updateAdValLive('${d.id}', 'note', this.value)"
                    onchange="updateAdValCommit('${d.id}', 'note', this.value, this)"
                    class="w-full px-2 py-1 bg-white border border-slate-200 rounded text-xs text-slate-600 focus:ring-1 focus:ring-blue-500" />
@@ -2763,8 +2933,8 @@
     // 광고표 번이가 / 기변가 / 비고 실시간 및 완료 저장
     function updateAdValLive(id, field, val) {
       const d = devices.find(x => x.id === id);
-      if (d && d.ad[activeAdCarrier]) {
-        d.ad[activeAdCarrier][field] = val;
+      if (d) {
+        setAdValue(d, activeAdCarrier, field, val, adMarginBase);
 
         // 실시간 마진 배지 갱신 (인풋 포커스 유지)
         const marginMnp = calcAdMargin(d, activeAdCarrier, 'mnp');
@@ -2787,16 +2957,18 @@
 
     function updateAdValCommit(id, field, val, inputEl) {
       const d = devices.find(x => x.id === id);
-      if (!d || !d.ad[activeAdCarrier]) return;
+      if (!d) return;
 
+      const adData = getAdData(d, activeAdCarrier, adMarginBase);
       const origVal = (inputEl && inputEl.dataset && inputEl.dataset.origVal !== undefined)
         ? inputEl.dataset.origVal
-        : (d.ad[activeAdCarrier][field] || '');
+        : (adData[field] || '');
 
       if (String(origVal).trim() !== String(val).trim()) {
+        const modeKo = adMarginBase === 'all' ? '올부가' : '기본부가';
         const fieldMap = { mnp: '번이가', chg: '기변가', note: '비고', hidden: '게시상태' };
         const fieldKo = fieldMap[field] || field;
-        scheduleStoreSave('성지특가 광고', `${d.name} (${activeAdCarrier}) 광고 ${fieldKo}: ${origVal || '-'} → ${val}`);
+        scheduleStoreSave('성지특가 광고', `${d.name} (${activeAdCarrier} ${modeKo}) 광고 ${fieldKo}: ${origVal || '-'} → ${val}`);
       }
 
       if (inputEl) inputEl.dataset.origVal = val;
@@ -2820,7 +2992,7 @@
           return;
         }
 
-        const adData = d.ad[carrier];
+        const adData = getAdData(d, carrier, adMarginBase);
         // 숨김 처리된 기종은 광고 문구에서 완전히 제외
         if (adData && adData.hidden) return;
 
@@ -2849,9 +3021,18 @@
     }
 
     function copyAdTextFormatted() {
+      const modeKo = adMarginBase === 'all' ? '올부가' : '기본부가';
       const text = generateAdString(activeAdCarrier);
       navigator.clipboard.writeText(text).then(() => {
-        alert(`[${activeAdCarrier} 특가] 시세표 문구가 복사되었습니다!\n\n카카오톡, 네이버 카페, 밴드 등에 바로 붙여넣기(Ctrl+V) 하세요.`);
+        alert(`[${activeAdCarrier} ${modeKo} 특가] 시세표 문구가 복사되었습니다!\n\n카카오톡, 네이버 카페, 밴드 등에 바로 붙여넣기(Ctrl+V) 하세요.`);
+      }).catch(err => {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        alert(`[${activeAdCarrier} ${modeKo} 특가] 시세표 문구가 복사되었습니다!\n\n카카오톡, 네이버 카페, 밴드 등에 바로 붙여넣기(Ctrl+V) 하세요.`);
       });
     }
 
@@ -2900,43 +3081,43 @@
 
           <!-- SK 설정 -->
           <td class="p-1 border-r border-slate-200">
-            <input type="number" step="0.01" value="${skPrice}" onchange="updateDevicePrice('${d.id}', 'SK', this.value)"
+            <input type="number" step="0.01" value="${skPrice}" onfocus="this.select()" onkeydown="if(event.key==='Enter') this.blur()" onchange="updateDevicePrice('${d.id}', 'SK', this.value)"
                    class="w-16 px-1 py-1 text-center font-bold bg-white border border-slate-300 rounded text-xs focus:ring-1 focus:ring-rose-500" />
           </td>
           <td class="p-1 border-r border-slate-200">
-            <input type="number" value="${d.sub.SK.mnp}" onchange="updateDeviceSub('${d.id}', 'SK', 'mnp', this.value)"
+            <input type="number" value="${d.sub.SK.mnp}" onfocus="this.select()" onkeydown="if(event.key==='Enter') this.blur()" onchange="updateDeviceSub('${d.id}', 'SK', 'mnp', this.value)"
                    class="w-14 px-1 py-1 text-center font-bold text-rose-700 bg-rose-50/50 border border-rose-200 rounded text-xs focus:ring-1 focus:ring-rose-500" />
           </td>
           <td class="p-1 border-r border-slate-200">
-            <input type="number" value="${d.sub.SK.chg}" onchange="updateDeviceSub('${d.id}', 'SK', 'chg', this.value)"
+            <input type="number" value="${d.sub.SK.chg}" onfocus="this.select()" onkeydown="if(event.key==='Enter') this.blur()" onchange="updateDeviceSub('${d.id}', 'SK', 'chg', this.value)"
                    class="w-14 px-1 py-1 text-center font-bold text-rose-700 bg-rose-50/50 border border-rose-200 rounded text-xs focus:ring-1 focus:ring-rose-500" />
           </td>
 
           <!-- KT 설정 -->
           <td class="p-1 border-r border-slate-200">
-            <input type="number" step="0.01" value="${ktPrice}" onchange="updateDevicePrice('${d.id}', 'KT', this.value)"
+            <input type="number" step="0.01" value="${ktPrice}" onfocus="this.select()" onkeydown="if(event.key==='Enter') this.blur()" onchange="updateDevicePrice('${d.id}', 'KT', this.value)"
                    class="w-16 px-1 py-1 text-center font-bold bg-white border border-slate-300 rounded text-xs focus:ring-1 focus:ring-blue-500" />
           </td>
           <td class="p-1 border-r border-slate-200">
-            <input type="number" value="${d.sub.KT.mnp}" onchange="updateDeviceSub('${d.id}', 'KT', 'mnp', this.value)"
+            <input type="number" value="${d.sub.KT.mnp}" onfocus="this.select()" onkeydown="if(event.key==='Enter') this.blur()" onchange="updateDeviceSub('${d.id}', 'KT', 'mnp', this.value)"
                    class="w-14 px-1 py-1 text-center font-bold text-blue-700 bg-blue-50/50 border border-blue-200 rounded text-xs focus:ring-1 focus:ring-blue-500" />
           </td>
           <td class="p-1 border-r border-slate-200">
-            <input type="number" value="${d.sub.KT.chg}" onchange="updateDeviceSub('${d.id}', 'KT', 'chg', this.value)"
+            <input type="number" value="${d.sub.KT.chg}" onfocus="this.select()" onkeydown="if(event.key==='Enter') this.blur()" onchange="updateDeviceSub('${d.id}', 'KT', 'chg', this.value)"
                    class="w-14 px-1 py-1 text-center font-bold text-blue-700 bg-blue-50/50 border border-blue-200 rounded text-xs focus:ring-1 focus:ring-blue-500" />
           </td>
 
           <!-- LG 설정 -->
           <td class="p-1 border-r border-slate-200">
-            <input type="number" step="0.01" value="${lgPrice}" onchange="updateDevicePrice('${d.id}', 'LG', this.value)"
+            <input type="number" step="0.01" value="${lgPrice}" onfocus="this.select()" onkeydown="if(event.key==='Enter') this.blur()" onchange="updateDevicePrice('${d.id}', 'LG', this.value)"
                    class="w-16 px-1 py-1 text-center font-bold bg-white border border-slate-300 rounded text-xs focus:ring-1 focus:ring-pink-500" />
           </td>
           <td class="p-1 border-r border-slate-200">
-            <input type="number" value="${d.sub.LG.mnp}" onchange="updateDeviceSub('${d.id}', 'LG', 'mnp', this.value)"
+            <input type="number" value="${d.sub.LG.mnp}" onfocus="this.select()" onkeydown="if(event.key==='Enter') this.blur()" onchange="updateDeviceSub('${d.id}', 'LG', 'mnp', this.value)"
                    class="w-14 px-1 py-1 text-center font-bold text-pink-700 bg-pink-50/50 border border-pink-200 rounded text-xs focus:ring-1 focus:ring-pink-500" />
           </td>
           <td class="p-1">
-            <input type="number" value="${d.sub.LG.chg}" onchange="updateDeviceSub('${d.id}', 'LG', 'chg', this.value)"
+            <input type="number" value="${d.sub.LG.chg}" onfocus="this.select()" onkeydown="if(event.key==='Enter') this.blur()" onchange="updateDeviceSub('${d.id}', 'LG', 'chg', this.value)"
                    class="w-14 px-1 py-1 text-center font-bold text-pink-700 bg-pink-50/50 border border-pink-200 rounded text-xs focus:ring-1 focus:ring-pink-500" />
           </td>
         `;
@@ -3430,6 +3611,11 @@
         if (!doc.exists) {
           seedMasterDevices();
         } else {
+          // 로컬에서 방금 저장한 pending write 스냅샷은 중복 렌더링으로 인한 포커스 해제를 막기 위해 건너뜁니다
+          if (doc.metadata && doc.metadata.hasPendingWrites) {
+            return;
+          }
+
           const data = doc.data();
           if (data && Array.isArray(data.devices) && data.devices.length > 0) {
             const remoteList = data.devices;
@@ -3472,10 +3658,20 @@
                 });
               }
             });
-            render();
-            const setModal = document.getElementById('settingsModal');
-            if (setModal && !setModal.classList.contains('hidden')) {
-              renderSettingsTable();
+
+            const activeEl = document.activeElement;
+            const isTyping = activeEl && (
+              activeEl.tagName === 'INPUT' ||
+              activeEl.tagName === 'TEXTAREA' ||
+              activeEl.tagName === 'SELECT'
+            );
+
+            if (!isTyping) {
+              render();
+              const setModal = document.getElementById('settingsModal');
+              if (setModal && !setModal.classList.contains('hidden')) {
+                renderSettingsTable();
+              }
             }
           }
         }
@@ -3510,6 +3706,11 @@
         if (!doc.exists) {
           seedStoreData(currentStoreId);
         } else {
+          // 로컬에서 방금 저장한 pending write 스냅샷은 중복 렌더링으로 인한 포커스 해제를 막기 위해 건너뜁니다
+          if (doc.metadata && doc.metadata.hasPendingWrites) {
+            return;
+          }
+
           const data = doc.data();
           if (data) {
             // 올부가 할인 복원
@@ -3567,7 +3768,23 @@
               });
             }
 
-            render();
+            // 사용자가 글을 작성 중일 때 테이블 DOM이 지워져서 포커스가 풀리는 현상 완전 방지
+            const activeEl = document.activeElement;
+            const isTyping = activeEl && (
+              activeEl.tagName === 'INPUT' ||
+              activeEl.tagName === 'TEXTAREA' ||
+              activeEl.tagName === 'SELECT'
+            );
+
+            if (isTyping) {
+              if (activeEl.closest('#dailyTableBody')) {
+                renderCalcTable();
+              } else if (activeEl.closest('#adTableBody')) {
+                updateActiveAdMarginsOnly();
+              }
+            } else {
+              render();
+            }
           }
         }
         setSyncStatus('online', '클라우드 동기화 완료');
