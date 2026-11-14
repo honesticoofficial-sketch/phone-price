@@ -67,12 +67,16 @@
     @media print {
       @page {
         size: A4 portrait;
-        margin: 5mm;
+        margin: 0 !important;
       }
-      body {
+      html, body {
         background: #ffffff !important;
         padding: 0 !important;
         margin: 0 !important;
+        width: 210mm !important;
+        height: 297mm !important;
+        max-height: 297mm !important;
+        overflow: hidden !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
@@ -88,28 +92,38 @@
         display: block !important;
         margin: 0 !important;
         padding: 0 !important;
+        width: 210mm !important;
+        height: 297mm !important;
+        max-height: 297mm !important;
+        overflow: hidden !important;
       }
       #cardPreviewWrapper {
-        width: 100% !important;
-        max-width: 100% !important;
+        width: 210mm !important;
+        max-width: 210mm !important;
+        height: 297mm !important;
+        max-height: 297mm !important;
         padding: 0 !important;
         margin: 0 !important;
         border: none !important;
         box-shadow: none !important;
         background: transparent !important;
+        overflow: hidden !important;
       }
       #cardA4Sheet {
-        width: 100% !important;
-        max-width: 100% !important;
-        height: auto !important;
-        min-height: 275mm !important;
-        max-height: 286mm !important;
-        margin: 0 auto !important;
-        padding: 8mm 9mm !important;
-        border: 1px solid #cbd5e1 !important;
+        width: 210mm !important;
+        max-width: 210mm !important;
+        height: 297mm !important;
+        max-height: 297mm !important;
+        margin: 0 !important;
+        padding: 5mm 7mm !important;
+        border: none !important;
         box-shadow: none !important;
         page-break-inside: avoid !important;
         break-inside: avoid !important;
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
       }
     }
   </style>
@@ -1072,7 +1086,7 @@
           </div>
 
           <!-- 실제 A4 서식지 컨테이너 (고화질 인쇄 및 PNG 변환 기준) -->
-          <div id="cardA4Sheet" class="w-full max-w-[760px] bg-white rounded-2xl shadow-xl border border-slate-200 p-6 sm:p-8 space-y-4 text-slate-800 transition-all font-sans relative overflow-hidden theme-gold" style="min-height: 1040px; box-sizing: border-box;">
+          <div id="cardA4Sheet" class="w-full max-w-[760px] bg-white rounded-2xl shadow-xl border border-slate-200 p-4 sm:p-5 space-y-2.5 text-slate-800 transition-all font-sans relative overflow-hidden theme-gold" style="box-sizing: border-box;" spellcheck="false">
             <!-- 렌더링 함수(renderCardPreview)에 의해 시인성 극대화 레이아웃으로 동적 생성됩니다 -->
           </div>
         </div>
@@ -1832,8 +1846,8 @@
     </div>
 
     <!-- ==================== QR 코드 / 실물 카드 직접 자르기 모달 (Interactive Canvas Cropper) ==================== -->
-    <div id="qrCropperModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 hidden">
-      <div class="bg-white rounded-3xl shadow-2xl p-5 sm:p-6 max-w-4xl w-full border border-slate-200/80 space-y-3.5 max-h-[94vh] flex flex-col">
+    <div id="qrCropperModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-start justify-center p-2 sm:p-4 overflow-y-auto hidden">
+      <div class="bg-white rounded-3xl shadow-2xl p-4 sm:p-5 max-w-4xl w-full border border-slate-200/80 space-y-3 my-auto flex flex-col max-h-[96vh]">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
           <div>
             <h3 class="text-base font-black text-slate-800 flex items-center gap-1.5">
@@ -5445,6 +5459,7 @@
         installmentSub: "※ 단말기 잔여 할부원금은 아래 매월 카드 이용 실적 청구할인 혜택으로 전액 상쇄됩니다."
       },
       cardPlateImageUrl: "",
+      cardPlateOrientation: "vertical", // 'vertical' (세로형 카드 기본) | 'horizontal' (가로형 카드)
       phone: "KB국민카드 고객센터 1588-1688 / ARS 발급전화",
       qrImageUrl: SAMPLE_QR_ISSUE,
       eventQrImageUrl: SAMPLE_QR_EVENT
@@ -5466,8 +5481,14 @@
       const reader = new FileReader();
       reader.onload = function(e) {
         cardData.cardPlateImageUrl = e.target.result;
+        const testImg = new Image();
+        testImg.onload = function() {
+          cardData.cardPlateOrientation = (testImg.width > testImg.height * 1.15) ? 'horizontal' : 'vertical';
+          renderCardPreview();
+        };
+        testImg.src = e.target.result;
         renderCardPreview();
-        alert("✅ 카드 실물/디자인 이미지가 등록되어 A4 안내서 상단에 반영되었습니다!");
+        alert("✅ 카드 실물 사진이 등록되었습니다! (카드 형태에 맞춰 가로/세로가 자동 설정되었습니다)");
       };
       reader.readAsDataURL(file);
     }
@@ -5826,6 +5847,50 @@
       }
     }
 
+    // ==================== [필수 혜택 미입력 방지 검증기] ====================
+    function validateCardBeforePrintOrDownload() {
+      const promos = cardData.promotions || [];
+      const emptyPromos = [];
+
+      promos.forEach((p, idx) => {
+        // 구간별 tiers 프로모션이 아닌 보너스 캐시백 프로모션
+        if (!p.tiers || p.tiers.length === 0) {
+          const b = (p.benefit || '').trim();
+          if (!b || b === '혜택 내용 입력' || b === '내용 입력' || b === '-') {
+            emptyPromos.push(p.badge || p.title || `프로모션 ${idx + 1}`);
+          }
+        }
+      });
+
+      if (emptyPromos.length > 0) {
+        alert(`⚠️ [지급 혜택 금액 미입력 알림]\n\n다음 프로모션의 [지급 혜택] 금액이 아직 비어있습니다:\n- ${emptyPromos.join('\n- ')}\n\n화면 우측 서식지의 분홍색 [지급 혜택] 칸("혜택 내용 입력")을 직접 클릭하여 혜택 금액(예: 50,000원 캐시백)을 적어주셔야 완벽한 안내서로 출력 및 저장할 수 있습니다!\n\n(확인을 누르면 해당 입력 칸으로 바로 이동합니다.)`);
+
+        // 분홍색 혜택 입력칸으로 자동 포커스 및 강조
+        const targets = document.querySelectorAll('#cardA4Sheet [contenteditable="true"]');
+        for (const el of targets) {
+          const txt = (el.innerText || '').trim();
+          if (txt === '혜택 내용 입력' || txt === '내용 입력') {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            el.focus();
+            el.classList.add('ring-4', 'ring-rose-500', 'bg-rose-100');
+            setTimeout(() => {
+              el.classList.remove('ring-4', 'ring-rose-500', 'bg-rose-100');
+            }, 3000);
+            break;
+          }
+        }
+        return false;
+      }
+      return true;
+    }
+
+    // 카드 실물 이미지 가로/세로 방향 원클릭 토글
+    function toggleCardOrientation(e) {
+      if (e) e.stopPropagation();
+      cardData.cardPlateOrientation = (cardData.cardPlateOrientation === 'horizontal') ? 'vertical' : 'horizontal';
+      renderCardPreview();
+    }
+
     // ==================== A4 규격 시인성 극대화 및 직접 수정(WYSIWYG) 렌더링 ====================
     function renderCardPreview() {
       const container = document.getElementById('cardA4Sheet');
@@ -5871,15 +5936,15 @@
       ];
 
       const tiersHtml = tiers.map((t, idx) => `
-        <div class="bg-white rounded-xl p-3 border border-slate-200/90 shadow-2xs flex flex-col justify-between text-center relative overflow-hidden group">
+        <div class="bg-white rounded-xl p-2.5 sm:p-3 border border-slate-200/90 shadow-2xs flex flex-col justify-between text-center relative overflow-hidden group">
           <div class="absolute top-0 left-0 right-0 h-1.5 ${theme.headerBg}"></div>
-          <div class="pt-1">
-            <span class="inline-block text-[11px] font-black text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md mb-1.5 outline-none focus:ring-1 focus:ring-indigo-400" contenteditable="true" onblur="syncCardPromoTier(this, ${primaryIdx >= 0 ? primaryIdx : 0}, ${idx}, 'label')">${t.label}</span>
-            <div class="text-base sm:text-lg font-black text-rose-600 tracking-tight my-1 outline-none focus:ring-1 focus:ring-rose-400" contenteditable="true" onblur="syncCardPromoTier(this, ${primaryIdx >= 0 ? primaryIdx : 0}, ${idx}, 'amount')">${t.amount}</div>
-            <p class="text-[10px] text-slate-400 font-semibold leading-tight outline-none" contenteditable="true">${t.sub || '실적 충족 시 청구할인'}</p>
+          <div class="pt-0.5">
+            <span class="inline-block text-[10.5px] font-black text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md mb-1 outline-none focus:ring-1 focus:ring-indigo-400" contenteditable="true" spellcheck="false" onblur="syncCardPromoTier(this, ${primaryIdx >= 0 ? primaryIdx : 0}, ${idx}, 'label')">${t.label}</span>
+            <div class="text-sm sm:text-base font-black text-rose-600 tracking-tight my-0.5 outline-none focus:ring-1 focus:ring-rose-400" contenteditable="true" spellcheck="false" onblur="syncCardPromoTier(this, ${primaryIdx >= 0 ? primaryIdx : 0}, ${idx}, 'amount')">${t.amount}</div>
+            <p class="text-[9.5px] text-slate-400 font-semibold leading-tight outline-none" contenteditable="true" spellcheck="false">${t.sub || '실적 충족 시 청구할인'}</p>
           </div>
-          <div class="mt-2 pt-2 border-t border-slate-100">
-            <span class="text-[10.5px] font-black text-indigo-700 bg-indigo-50/80 px-2 py-0.5 rounded block outline-none" contenteditable="true">${t.total || '24개월 누적 할인'}</span>
+          <div class="mt-1.5 pt-1.5 border-t border-slate-100">
+            <span class="text-[10px] font-black text-indigo-700 bg-indigo-50/80 px-1.5 py-0.5 rounded block outline-none" contenteditable="true" spellcheck="false">${t.total || '24개월 누적 할인'}</span>
           </div>
         </div>
       `).join('');
@@ -5889,32 +5954,33 @@
       let bonusPromosHtml = '';
 
       if (bonusPromos.length > 0) {
-        const gridCols = bonusPromos.length === 1 ? 'grid-cols-1' : (bonusPromos.length === 2 ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-3');
+        const gridCols = bonusPromos.length === 1 ? 'grid-cols-1' : (bonusPromos.length === 2 ? 'grid-cols-2' : 'grid-cols-3');
         bonusPromosHtml = `
-          <div class="grid ${gridCols} gap-3.5">
+          <div class="grid ${gridCols} gap-2.5 sm:gap-3">
             ${bonusPromos.map((bp, bIdx) => {
               const realIdx = promos.indexOf(bp);
               const badgeText = bp.badge || ('추가 혜택 ' + (bIdx + 1));
+              const hasBenefit = bp.benefit && bp.benefit.trim() && bp.benefit !== '혜택 내용 입력' && bp.benefit !== '-';
               return `
-                <div class="p-4 rounded-2xl border ${theme.cardBorder} bg-white shadow-2xs space-y-2 flex flex-col justify-between relative group">
+                <div class="p-3 sm:p-3.5 rounded-2xl border ${theme.cardBorder} bg-white shadow-2xs space-y-2 flex flex-col justify-between relative group">
                   <div>
-                    <div class="flex items-center justify-between mb-1.5">
-                      <div class="flex items-center gap-1.5">
-                        <span class="px-2 py-0.5 rounded text-[10.5px] font-black ${theme.stepBadge} outline-none focus:ring-1 focus:ring-indigo-400" contenteditable="true" onblur="syncCardPromoField(this, ${realIdx}, 'badge')">${badgeText}</span>
-                        <span class="text-[10px] font-black text-rose-600 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-full">캐시백 프로모션</span>
+                    <div class="flex items-center justify-between mb-1">
+                      <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-black ${theme.stepBadge} outline-none focus:ring-1 focus:ring-indigo-400" contenteditable="true" spellcheck="false" onblur="syncCardPromoField(this, ${realIdx}, 'badge')">${badgeText}</span>
+                        <span class="text-[9.5px] font-black text-rose-600 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-full">캐시백 프로모션</span>
                       </div>
                       <button onclick="deleteCardPromo(${realIdx})" class="text-slate-300 hover:text-rose-500 text-xs px-1 font-bold opacity-0 group-hover:opacity-100 transition" title="이 프로모션 삭제">✕ 삭제</button>
                     </div>
-                    <h4 class="font-black text-xs sm:text-sm text-slate-900 outline-none focus:ring-1 focus:ring-indigo-400 rounded" contenteditable="true" onblur="syncCardPromoField(this, ${realIdx}, 'title')">
+                    <h4 class="font-black text-xs sm:text-sm text-slate-900 outline-none focus:ring-1 focus:ring-indigo-400 rounded leading-tight" contenteditable="true" spellcheck="false" onblur="syncCardPromoField(this, ${realIdx}, 'title')">
                       ${bp.title || '추가 캐시백 혜택'}
                     </h4>
-                    <p class="text-[11px] text-slate-600 leading-snug mt-1 outline-none" contenteditable="true" onblur="syncCardPromoField(this, ${realIdx}, 'condition')">
+                    <p class="text-[10.5px] text-slate-600 leading-snug mt-0.5 outline-none" contenteditable="true" spellcheck="false" onblur="syncCardPromoField(this, ${realIdx}, 'condition')">
                       ${bp.condition || '지정 조건 충족 시 지급'}
                     </p>
                   </div>
-                  <div class="mt-2 p-2.5 bg-rose-50/80 border border-rose-200 rounded-xl flex items-center justify-between">
+                  <div class="mt-1.5 p-2 bg-rose-50/80 border border-rose-200 rounded-xl flex items-center justify-between cursor-text" title="클릭하여 지급 혜택 금액 직접 입력">
                     <span class="text-xs font-extrabold text-rose-800">지급 혜택</span>
-                    <span class="text-sm font-black text-rose-600 outline-none focus:ring-1 focus:ring-rose-400" contenteditable="true" onblur="syncCardPromoField(this, ${realIdx}, 'benefit')">
+                    <span class="text-xs sm:text-sm font-black ${hasBenefit ? 'text-rose-600' : 'text-rose-500 italic'} outline-none focus:ring-2 focus:ring-rose-400 rounded px-1" contenteditable="true" spellcheck="false" onblur="syncCardPromoField(this, ${realIdx}, 'benefit')">
                       ${bp.benefit || '혜택 내용 입력'}
                     </span>
                   </div>
@@ -5930,42 +5996,44 @@
         "장기할부 미이용 시: 전월실적 30만원 이상 4,000원 할인",
         "생활 부가혜택: 아파트관리비 월 2천원 청구할인 / 4대보험, 도시가스, 전기요금 월 1천원 할인"
       ]).map((b, idx) => `
-        <li class="text-[11px] text-slate-700 leading-snug flex items-start gap-1.5">
+        <li class="text-[10.5px] text-slate-700 leading-snug flex items-start gap-1.5">
           <span class="text-indigo-500 font-bold shrink-0">•</span>
-          <span class="outline-none focus:ring-1 focus:ring-indigo-300 rounded px-0.5" contenteditable="true" onblur="syncCardListItem(this, 'basicBenefits', ${idx})">${b}</span>
+          <span class="outline-none focus:ring-1 focus:ring-indigo-300 rounded px-0.5" contenteditable="true" spellcheck="false" onblur="syncCardListItem(this, 'basicBenefits', ${idx})">${b}</span>
         </li>
       `).join('');
 
       const detailsHtml = (cardData.details || [
         "신규 발급 시 당월 전월실적 30만원 미만이라도 8,000원 할인 기본 제공",
         "전월실적 포함 항목: 통신비 자동이체금, 장기할부 약정금액, 일반 생활이용금액",
-        "전월실적 제외 항목: 4대보험료, 아파트관리비, 국세, 지방세, 공과금, 대학등록금, 상품권, 선불카드 등"
+        "전월실적 제외 항목: 4대보험료, 아파트관리비, 국세, 지방세, 공과금, 대학등록금, 상품권 등"
       ]).map((d, idx) => `
-        <li class="text-[10.5px] text-slate-600 leading-snug flex items-start gap-1.5">
+        <li class="text-[10px] text-slate-600 leading-snug flex items-start gap-1.5">
           <span class="text-slate-400 shrink-0">-</span>
-          <span class="outline-none focus:ring-1 focus:ring-slate-300 rounded px-0.5" contenteditable="true" onblur="syncCardListItem(this, 'details', ${idx})">${d}</span>
+          <span class="outline-none focus:ring-1 focus:ring-slate-300 rounded px-0.5" contenteditable="true" spellcheck="false" onblur="syncCardListItem(this, 'details', ${idx})">${d}</span>
         </li>
       `).join('');
 
       const phoneDisplay = [st.phone, st.mobile].filter(Boolean).join(' / ') || st.phone || '';
+      const isVertical = (cardData.cardPlateOrientation || 'vertical') === 'vertical';
 
-      // 카드 실물 이미지: 일러스트 목업 제거하고 실제 자른 사진 또는 깔끔한 자르기 슬롯 배치
+      // 카드 실물 이미지: 세로형(기본) / 가로형 지원 및 object-contain으로 찌그러짐/잘림 원천 방지
       let cardPlateHtml = '';
       if (cardData.cardPlateImageUrl) {
         cardPlateHtml = `
-          <div class="relative w-full h-full group">
-            <img src="${cardData.cardPlateImageUrl}" class="w-full h-full object-cover rounded-xl" alt="카드 실물 사진" />
-            <div onclick="openCropperModal('cardPlate')" class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-[10.5px] font-black cursor-pointer rounded-xl">
-              ✂️ 다시 자르기
+          <div class="relative w-full h-full group flex items-center justify-center">
+            <img src="${cardData.cardPlateImageUrl}" class="w-full h-full object-contain rounded-xl p-0.5" alt="카드 실물 사진" />
+            <div class="absolute inset-0 bg-black/65 opacity-0 group-hover:opacity-100 transition flex flex-col items-center justify-center gap-1 text-white text-[10px] font-black cursor-pointer rounded-xl p-1 select-none">
+              <span onclick="openCropperModal('cardPlate')" class="hover:text-amber-300">✂️ 다시 자르기</span>
+              <span onclick="toggleCardOrientation(event)" class="text-[9px] text-indigo-200 hover:text-white underline">🔄 ${isVertical ? '가로형으로' : '세로형으로'}</span>
             </div>
           </div>
         `;
       } else {
         cardPlateHtml = `
-          <div onclick="openCropperModal('cardPlate')" class="w-full h-full p-2 flex flex-col items-center justify-center text-center cursor-pointer border-2 border-dashed ${theme.isDark ? 'border-white/50 text-white/90 hover:bg-white/10' : 'border-slate-400 text-slate-700 hover:bg-black/5'} rounded-xl bg-black/10 transition group" title="원본 문서에서 카드 실물 사진을 마우스로 잘라내어 부착">
+          <div onclick="openCropperModal('cardPlate')" class="w-full h-full p-1.5 flex flex-col items-center justify-center text-center cursor-pointer border-2 border-dashed ${theme.isDark ? 'border-white/50 text-white/90 hover:bg-white/10' : 'border-slate-400 text-slate-700 hover:bg-black/5'} rounded-xl bg-black/10 transition group" title="원본 문서에서 카드 실물 사진을 마우스로 잘라내어 부착">
             <span class="text-base group-hover:scale-110 transition">💳✂️</span>
-            <span class="text-[10px] font-black leading-tight mt-1">실물 카드 자르기</span>
-            <span class="text-[8px] opacity-75">클릭하여 카드 영역 지정</span>
+            <span class="text-[9.5px] font-black leading-tight mt-0.5">실물 카드</span>
+            <span class="text-[8px] opacity-75">${isVertical ? '세로형 카드' : '가로형 카드'}</span>
           </div>
         `;
       }
@@ -5974,9 +6042,9 @@
       let qrCodeHtml = '';
       if (cardData.qrImageUrl) {
         qrCodeHtml = `
-          <div class="relative w-full h-full group">
+          <div class="relative w-full h-full group flex items-center justify-center">
             <img src="${cardData.qrImageUrl}" class="w-full h-full object-contain" alt="카드발급 원본 QR" />
-            <div onclick="openCropperModal('qr')" class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-[10.5px] font-black cursor-pointer rounded-xl">
+            <div onclick="openCropperModal('qr')" class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-[10px] font-black cursor-pointer rounded-xl">
               ✂️ 다시 자르기
             </div>
           </div>
@@ -5984,68 +6052,68 @@
       } else {
         qrCodeHtml = `
           <div onclick="openCropperModal('qr')" class="w-full h-full bg-amber-50 border-2 border-dashed border-amber-300 rounded-xl flex flex-col items-center justify-center p-1 text-center cursor-pointer hover:bg-amber-100 transition group" title="클릭하여 원본 문서에서 QR 코드 직접 자르기">
-            <span class="text-xl group-hover:scale-110 transition">⚠️</span>
-            <span class="text-[10px] font-black text-amber-800 leading-tight mt-0.5">QR 미등록</span>
-            <span class="text-[8.5px] text-amber-600 font-bold underline">클릭하여 자르기</span>
+            <span class="text-lg group-hover:scale-110 transition">⚠️</span>
+            <span class="text-[9.5px] font-black text-amber-800 leading-tight mt-0.5">QR 미등록</span>
+            <span class="text-[8px] text-amber-600 font-bold underline">클릭하여 자르기</span>
           </div>
         `;
       }
 
       container.innerHTML = `
-        <!-- 1. [상단 헤더 배너]: 좌측(정보+매장연락처) & 우측(실물 카드 사진 + 대형 발급 QR 코드) -->
-        <div class="rounded-2xl ${theme.headerBg} ${theme.headerText} p-4 sm:p-5 shadow-sm">
-          <div class="flex items-center justify-between gap-4">
+        <!-- 1. [상단 헤더 배너]: 좌측(정보+매장연락처) & 우측(세로형 실물 카드 사진 + 대형 발급 QR 코드) -->
+        <div class="rounded-2xl ${theme.headerBg} ${theme.headerText} p-3.5 sm:p-4 shadow-sm">
+          <div class="flex items-center justify-between gap-3">
             
-            <!-- 좌측: 카드 배지 & 카드 공식 명칭 & 매장명+전화번호 (카드명 바로 옆 배치) -->
-            <div class="flex-1 min-w-0 space-y-2">
+            <!-- 좌측: 카드 배지 & 카드 공식 명칭 & 매장명+전화번호 -->
+            <div class="flex-1 min-w-0 space-y-1.5">
               
               <!-- 1행 배지 -->
-              <div class="flex items-center gap-2 flex-wrap">
-                <span class="whitespace-nowrap px-2.5 py-1 rounded-md ${theme.badgeBg} ${theme.badgeText} text-xs font-black uppercase tracking-wider outline-none focus:ring-2 focus:ring-white" contenteditable="true" onblur="syncCardField(this, 'carrier')">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="whitespace-nowrap px-2 py-0.5 rounded-md ${theme.badgeBg} ${theme.badgeText} text-[11px] font-black uppercase tracking-wider outline-none focus:ring-1 focus:ring-white" contenteditable="true" spellcheck="false" onblur="syncCardField(this, 'carrier')">
                   ${cardData.carrier || 'LGU+'}
                 </span>
-                <span class="whitespace-nowrap px-2.5 py-1 rounded-md ${theme.isDark ? 'bg-white/20 text-white' : 'bg-black/10 text-slate-900'} text-xs font-black backdrop-blur-xs shadow-2xs outline-none focus:ring-2 focus:ring-white" contenteditable="true" onblur="syncCardField(this, 'cardCompany')">
+                <span class="whitespace-nowrap px-2 py-0.5 rounded-md ${theme.isDark ? 'bg-white/20 text-white' : 'bg-black/10 text-slate-900'} text-[11px] font-black backdrop-blur-xs shadow-2xs outline-none focus:ring-1 focus:ring-white" contenteditable="true" spellcheck="false" onblur="syncCardField(this, 'cardCompany')">
                   ${cardData.cardCompany || 'KB국민카드'}
                 </span>
-                <span class="whitespace-nowrap text-[11px] font-extrabold ${theme.subText} hidden sm:inline">
+                <span class="whitespace-nowrap text-[10.5px] font-extrabold ${theme.subText} hidden sm:inline">
                   통신비 라이트할부 특별 제휴 프로모션
                 </span>
               </div>
 
-              <!-- 2행: 카드 공식 명칭 + 매장명 & 전화번호 배지 (바로 옆에 연결 배치!) -->
-              <div class="flex items-center gap-2.5 flex-wrap pt-0.5">
-                <h1 class="text-xl sm:text-2xl font-black tracking-tight leading-snug break-keep ${theme.titleText} outline-none focus:ring-2 focus:ring-white/80 rounded px-1" contenteditable="true" onblur="syncCardField(this, 'cardName')">
+              <!-- 2행: 카드 공식 명칭 + 매장명 & 전화번호 배지 -->
+              <div class="flex items-center gap-2 flex-wrap pt-0.5">
+                <h1 class="text-lg sm:text-xl font-black tracking-tight leading-snug break-keep ${theme.titleText} outline-none focus:ring-1 focus:ring-white/80 rounded px-1" contenteditable="true" spellcheck="false" onblur="syncCardField(this, 'cardName')">
                   ${cardData.cardName || '국민 LGU+ 라이트할부 II KB국민카드'}
                 </h1>
                 
-                <!-- 매장명 & 전화번호 배지 (시인성 극대화) -->
-                <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl ${theme.isDark ? 'bg-black/35 text-white border border-white/20' : 'bg-black/10 text-slate-950 border border-black/10'} shadow-2xs text-xs font-black whitespace-nowrap">
+                <!-- 매장명 & 전화번호 배지 -->
+                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl ${theme.isDark ? 'bg-black/35 text-white border border-white/20' : 'bg-black/10 text-slate-950 border border-black/10'} shadow-2xs text-[11px] font-black whitespace-nowrap">
                   <span class="text-amber-300">📍</span>
-                  <span class="outline-none focus:ring-1 focus:ring-white" contenteditable="true" onblur="syncCardStoreField(this, 'name')">${st.name}</span>
+                  <span class="outline-none focus:ring-1 focus:ring-white" contenteditable="true" spellcheck="false" onblur="syncCardStoreField(this, 'name')">${st.name}</span>
                   <span class="opacity-40">|</span>
-                  <span class="outline-none focus:ring-1 focus:ring-white font-extrabold" contenteditable="true" onblur="syncCardStoreField(this, 'phone')">☎ ${phoneDisplay}</span>
+                  <span class="outline-none focus:ring-1 focus:ring-white font-extrabold" contenteditable="true" spellcheck="false" onblur="syncCardStoreField(this, 'phone')">☎ ${phoneDisplay}</span>
                 </div>
               </div>
 
             </div>
 
-            <!-- 우측: 실물 카드 사진 + 최상단 우측 대형 발급 QR 코드 (칸에 꽉 차게 확대!) -->
-            <div class="flex items-center gap-3 shrink-0">
+            <!-- 우측: 실물 카드 사진(세로형 완벽 대응) + 대형 발급 QR 코드 -->
+            <div class="flex items-center gap-2.5 shrink-0">
               
-              <!-- 실물 카드 사진 박스 (표준 신용카드 비율 ~1.58:1) -->
-              <div id="cardPlateBox" class="w-32 h-20 sm:w-36 sm:h-24 rounded-xl shadow-md border ${theme.isDark ? 'border-white/30' : 'border-slate-300'} overflow-hidden relative flex items-center justify-center shrink-0">
+              <!-- 실물 카드 사진 박스 (세로형 카드 규격 w-20~24 h-32~36 / 가로형 전환 가능) -->
+              <div id="cardPlateBox" class="${isVertical ? 'w-20 sm:w-24 h-32 sm:h-36' : 'w-32 sm:w-36 h-20 sm:h-24'} rounded-xl shadow-md border ${theme.isDark ? 'border-white/30' : 'border-slate-300'} overflow-hidden relative flex items-center justify-center shrink-0 bg-black/15 transition-all">
                 ${cardPlateHtml}
               </div>
 
-              <!-- 최상단 우측 카드 간편 발급 신청 QR 박스 (큼직하게 확대 및 여백 최소화!) -->
-              <div class="bg-white p-2 sm:p-2.5 rounded-2xl shadow-md border-2 ${theme.cardBorder} text-center shrink-0 w-32 sm:w-36 flex flex-col items-center justify-center space-y-1">
-                <div class="w-28 h-28 sm:w-32 sm:h-32 bg-white rounded-xl border border-slate-200 flex items-center justify-center overflow-hidden p-0.5">
+              <!-- 최상단 우측 카드 간편 발급 신청 QR 박스 -->
+              <div class="bg-white p-2 rounded-2xl shadow-md border-2 ${theme.cardBorder} text-center shrink-0 w-28 sm:w-32 flex flex-col items-center justify-center space-y-1">
+                <div class="w-24 h-24 sm:w-28 sm:h-28 bg-white rounded-xl border border-slate-200 flex items-center justify-center overflow-hidden p-0.5">
                   ${qrCodeHtml}
                 </div>
-                <span class="text-[10.5px] font-black text-slate-800 tracking-tight leading-none block">
+                <span class="text-[10px] font-black text-slate-800 tracking-tight leading-none block">
                   📱 발급신청 QR
                 </span>
-                <span class="text-[9px] text-slate-400 font-bold block leading-none">
+                <span class="text-[8.5px] text-slate-400 font-bold block leading-none">
                   카메라 스캔 즉시연결
                 </span>
               </div>
@@ -6055,140 +6123,133 @@
           </div>
         </div>
 
-        <!-- 2. 핵심 요약 5대 스펙 박스 (완벽 수직 중앙 정렬 & min-h 76px 고정) -->
-        <div class="grid grid-cols-5 gap-2 text-center text-xs">
-          <div class="p-2.5 rounded-xl bg-slate-50/90 border border-slate-200 flex flex-col items-center justify-between min-h-[76px] text-center">
-            <span class="block text-[10.5px] font-extrabold text-slate-400 leading-tight">전용 단말기</span>
-            <div class="flex-1 flex items-center justify-center w-full my-auto py-0.5">
-              <span class="font-black text-xs text-slate-900 leading-tight outline-none focus:ring-1 focus:ring-indigo-400 rounded px-1 block text-center" contenteditable="true" onblur="syncCardSpecField(this, 'targetDevice')">${specs.targetDevice || '전기종 (아이폰/갤럭시)'}</span>
-            </div>
+        <!-- 2. 핵심 요약 5대 스펙 박스 (수직 완전 중앙 정렬 & 글자 처짐 원천 차단) -->
+        <div class="grid grid-cols-5 gap-2 text-center">
+          <div class="p-2 rounded-xl bg-slate-50/90 border border-slate-200 flex flex-col items-center justify-center text-center min-h-[66px]">
+            <span class="text-[10px] font-extrabold text-slate-400 leading-none mb-1.5 block">전용 단말기</span>
+            <span class="font-black text-[11px] text-slate-900 leading-snug break-keep text-center outline-none focus:ring-1 focus:ring-indigo-400 rounded px-0.5" contenteditable="true" spellcheck="false" onblur="syncCardSpecField(this, 'targetDevice')">${specs.targetDevice || '전기종 (아이폰/갤럭시)'}</span>
           </div>
-          <div class="p-2.5 rounded-xl bg-slate-50/90 border border-slate-200 flex flex-col items-center justify-between min-h-[76px] text-center">
-            <span class="block text-[10.5px] font-extrabold text-slate-400 leading-tight">최소 결제금액</span>
-            <div class="flex-1 flex items-center justify-center w-full my-auto py-0.5">
-              <span class="font-black text-xs text-slate-900 leading-tight outline-none focus:ring-1 focus:ring-indigo-400 rounded px-1 block text-center" contenteditable="true" onblur="syncCardSpecField(this, 'minPayment')">${specs.minPayment || '5만원 이상'}</span>
-            </div>
+          <div class="p-2 rounded-xl bg-slate-50/90 border border-slate-200 flex flex-col items-center justify-center text-center min-h-[66px]">
+            <span class="text-[10px] font-extrabold text-slate-400 leading-none mb-1.5 block">최소 결제금액</span>
+            <span class="font-black text-[11px] text-slate-900 leading-snug break-keep text-center outline-none focus:ring-1 focus:ring-indigo-400 rounded px-0.5" contenteditable="true" spellcheck="false" onblur="syncCardSpecField(this, 'minPayment')">${specs.minPayment || '5만원 이상'}</span>
           </div>
-          <div class="p-2.5 rounded-xl bg-slate-50/90 border border-slate-200 flex flex-col items-center justify-between min-h-[76px] text-center">
-            <span class="block text-[10.5px] font-extrabold text-slate-400 leading-tight">자동이체</span>
-            <div class="flex-1 flex items-center justify-center w-full my-auto py-0.5">
-              <span class="font-black text-xs text-slate-900 leading-tight outline-none focus:ring-1 focus:ring-indigo-400 rounded px-1 block text-center" contenteditable="true" onblur="syncCardSpecField(this, 'autoTransfer')">${specs.autoTransfer || '미필수 (자유)'}</span>
-            </div>
+          <div class="p-2 rounded-xl bg-slate-50/90 border border-slate-200 flex flex-col items-center justify-center text-center min-h-[66px]">
+            <span class="text-[10px] font-extrabold text-slate-400 leading-none mb-1.5 block">자동이체</span>
+            <span class="font-black text-[11px] text-slate-900 leading-snug break-keep text-center outline-none focus:ring-1 focus:ring-indigo-400 rounded px-0.5" contenteditable="true" spellcheck="false" onblur="syncCardSpecField(this, 'autoTransfer')">${specs.autoTransfer || '미필수 (자유)'}</span>
           </div>
-          <div class="p-2.5 rounded-xl bg-slate-50/90 border border-slate-200 flex flex-col items-center justify-between min-h-[76px] text-center">
-            <span class="block text-[10.5px] font-extrabold text-slate-400 leading-tight">연회비</span>
-            <div class="flex-1 flex items-center justify-center w-full my-auto py-0.5">
-              <span class="font-black text-xs text-slate-900 leading-tight outline-none focus:ring-1 focus:ring-indigo-400 rounded px-1 block text-center" contenteditable="true" onblur="syncCardSpecField(this, 'annualFee')">${specs.annualFee || '국내 2만 / Master 2만'}</span>
-            </div>
+          <div class="p-2 rounded-xl bg-slate-50/90 border border-slate-200 flex flex-col items-center justify-center text-center min-h-[66px]">
+            <span class="text-[10px] font-extrabold text-slate-400 leading-none mb-1.5 block">연회비</span>
+            <span class="font-black text-[11px] text-slate-900 leading-snug break-keep text-center outline-none focus:ring-1 focus:ring-indigo-400 rounded px-0.5" contenteditable="true" spellcheck="false" onblur="syncCardSpecField(this, 'annualFee')">${specs.annualFee || '국내 2만 / Master 2만'}</span>
           </div>
-          <div class="p-2.5 rounded-xl bg-slate-50/90 border border-slate-200 flex flex-col items-center justify-between min-h-[76px] text-center">
-            <span class="block text-[10.5px] font-extrabold text-slate-400 leading-tight">할부이자</span>
-            <div class="flex-1 flex items-center justify-center w-full my-auto py-0.5">
-              <span class="font-black text-xs text-slate-900 leading-tight outline-none focus:ring-1 focus:ring-indigo-400 rounded px-1 block text-center" contenteditable="true" onblur="syncCardSpecField(this, 'installmentInterest')">${specs.installmentInterest || '24개월 5.9% / 36개월 7%'}</span>
-            </div>
+          <div class="p-2 rounded-xl bg-slate-50/90 border border-slate-200 flex flex-col items-center justify-center text-center min-h-[66px]">
+            <span class="text-[10px] font-extrabold text-slate-400 leading-none mb-1.5 block">할부이자</span>
+            <span class="font-black text-[11px] text-slate-900 leading-snug break-keep text-center outline-none focus:ring-1 focus:ring-indigo-400 rounded px-0.5" contenteditable="true" spellcheck="false" onblur="syncCardSpecField(this, 'installmentInterest')">${specs.installmentInterest || '24개월 5.9% / 36개월 7%'}</span>
           </div>
         </div>
 
         <!-- 3. [단말기 라이트할부 약정 결제 안내 배너] -->
-        <div class="rounded-2xl p-3 sm:p-3.5 shadow-2xs ${theme.highlightBg} text-center space-y-1">
-          <span class="text-[10.5px] font-black uppercase tracking-wider inline-block ${theme.isDark ? 'bg-white/20 text-white' : 'bg-black/15 text-slate-950'} px-3 py-0.5 rounded-full">
+        <div class="rounded-2xl p-2.5 sm:p-3 shadow-2xs ${theme.highlightBg} text-center space-y-1">
+          <span class="text-[10px] font-black uppercase tracking-wider inline-block ${theme.isDark ? 'bg-white/20 text-white' : 'bg-black/15 text-slate-950'} px-2.5 py-0.5 rounded-full">
             💳 단말기 대금 카드사 24개월 라이트할부 승인 안내
           </span>
-          <h2 class="text-base sm:text-xl font-black tracking-tight leading-tight outline-none focus:ring-2 focus:ring-white rounded px-2" contenteditable="true" onblur="syncCardSummaryField(this, 'installmentPlan')">
+          <h2 class="text-sm sm:text-base font-black tracking-tight leading-tight outline-none focus:ring-1 focus:ring-white rounded px-2" contenteditable="true" spellcheck="false" onblur="syncCardSummaryField(this, 'installmentPlan')">
             ${summary.installmentPlan || '총 480,000원을 카드사로 24개월 라이트 할부 결제 예정 (월 20,000원)'}
           </h2>
-          <p class="text-[11px] font-bold opacity-90 outline-none" contenteditable="true" onblur="syncCardSummaryField(this, 'installmentSub')">
+          <p class="text-[10.5px] font-bold opacity-90 outline-none" contenteditable="true" spellcheck="false" onblur="syncCardSummaryField(this, 'installmentSub')">
             ${summary.installmentSub || '※ 단말기 잔여 할부원금은 아래 매월 카드 이용 실적 청구할인 혜택으로 전액 상쇄됩니다.'}
           </p>
         </div>
 
         <!-- 4. [시인성 극대화] 주 프로모션: 매월 통신요금 청구할인 (3구간 대형 카드) -->
-        <div class="p-4 rounded-2xl border-2 ${theme.cardBorder} bg-slate-50/60 space-y-3">
-          <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+        <div class="p-3 sm:p-3.5 rounded-2xl border-2 ${theme.cardBorder} bg-slate-50/60 space-y-2.5">
+          <div class="flex items-center justify-between border-b border-slate-200 pb-1.5">
             <div class="flex items-center gap-2">
-              <span class="px-2.5 py-1 rounded-lg text-xs font-black ${theme.stepBadge} outline-none focus:ring-1 focus:ring-indigo-400" contenteditable="true" onblur="syncCardPromoField(this, ${primaryIdx >= 0 ? primaryIdx : 0}, 'badge')">
+              <span class="px-2 py-0.5 rounded-lg text-[11px] font-black ${theme.stepBadge} outline-none focus:ring-1 focus:ring-indigo-400" contenteditable="true" spellcheck="false" onblur="syncCardPromoField(this, ${primaryIdx >= 0 ? primaryIdx : 0}, 'badge')">
                 ${primaryPromo.badge || '매월 청구할인'}
               </span>
               <div>
-                <h3 class="font-black text-sm text-slate-900 outline-none focus:ring-1 focus:ring-indigo-400 rounded" contenteditable="true" onblur="syncCardPromoField(this, ${primaryIdx >= 0 ? primaryIdx : 0}, 'title')">
+                <h3 class="font-black text-xs sm:text-sm text-slate-900 outline-none focus:ring-1 focus:ring-indigo-400 rounded leading-tight" contenteditable="true" spellcheck="false" onblur="syncCardPromoField(this, ${primaryIdx >= 0 ? primaryIdx : 0}, 'title')">
                   ${primaryPromo.title || '매월 통신요금 자동 청구할인 (24개월 동안 매월 할인)'}
                 </h3>
-                <p class="text-[11px] text-slate-500 font-semibold outline-none" contenteditable="true" onblur="syncCardPromoField(this, ${primaryIdx >= 0 ? primaryIdx : 0}, 'condition')">
+                <p class="text-[10px] text-slate-500 font-semibold outline-none" contenteditable="true" spellcheck="false" onblur="syncCardPromoField(this, ${primaryIdx >= 0 ? primaryIdx : 0}, 'condition')">
                   ${primaryPromo.condition || '전월 카드 이용 실적 구간에 따라 매월 통신비에서 즉시 차감됩니다.'}
                 </p>
               </div>
             </div>
-            <span class="text-xs font-black text-rose-600 bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-200 hidden sm:inline">
+            <span class="text-[11px] font-black text-rose-600 bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-200 hidden sm:inline">
               ${primaryPromo.highlight || '매월 최대 27,000원'}
             </span>
           </div>
 
-          <!-- 3열 대형 카드 배치 -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <!-- 3열 대형 카드 배치 (grid-cols-3 고정) -->
+          <div class="grid grid-cols-3 gap-2 sm:gap-2.5">
             ${tiersHtml}
           </div>
         </div>
 
-        <!-- 5. 추가 보너스 프로모션들 (동적 렌더링: 프로모션이 1개면 표시 안함, 2개면 1개만, 3개면 2개 표시) -->
+        <!-- 5. 추가 보너스 프로모션들 (동적 렌더링) -->
         ${bonusPromosHtml}
 
-        <!-- 6. [전폭 12열 활용] 하단 2열 상세 정보 -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 items-stretch">
+        <!-- 6. [전폭 12열 활용] 하단 2열 상세 정보 (grid-cols-2 고정) -->
+        <div class="grid grid-cols-2 gap-2.5 sm:gap-3 items-stretch">
           
           <!-- 좌측: 생활 부가혜택 -->
-          <div class="p-4 rounded-2xl border border-slate-200 bg-white shadow-2xs space-y-2.5 flex flex-col justify-between">
-            <div class="space-y-2">
+          <div class="p-3 sm:p-3.5 rounded-2xl border border-slate-200 bg-white shadow-2xs space-y-1.5 flex flex-col justify-between">
+            <div class="space-y-1.5">
               <span class="font-black text-xs text-slate-900 flex items-center gap-1.5 pb-1 border-b border-slate-100">
                 <span>🎁</span> 카드 기본 & 생활요금 부가 할인 혜택
               </span>
-              <ul class="space-y-2">
+              <ul class="space-y-1">
                 ${basicBenefitsHtml}
               </ul>
             </div>
           </div>
 
           <!-- 우측: 전월실적 산정 기준 및 필수 유의사항 -->
-          <div class="p-4 rounded-2xl border border-slate-200 bg-slate-50/80 shadow-2xs space-y-2.5 flex flex-col justify-between">
-            <div class="space-y-2">
+          <div class="p-3 sm:p-3.5 rounded-2xl border border-slate-200 bg-slate-50/80 shadow-2xs space-y-1.5 flex flex-col justify-between">
+            <div class="space-y-1">
               <span class="font-black text-xs text-slate-800 flex items-center gap-1.5 pb-1 border-b border-slate-200">
                 <span>⚠️</span> 전월실적 산정 기준 및 필수 유의사항
               </span>
-              <ul class="space-y-1.5">
+              <ul class="space-y-1">
                 ${detailsHtml}
               </ul>
             </div>
             
-            <div class="pt-2 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-600 font-extrabold">
+            <div class="pt-1.5 border-t border-slate-200 flex items-center justify-between text-[10px] text-slate-600 font-extrabold">
               <span class="flex items-center gap-1"><span>☎</span> 카드사 고객센터 발급 문의:</span>
-              <span class="text-indigo-700 font-black outline-none" contenteditable="true" onblur="syncCardField(this, 'phone')">${cardData.phone || '1588-1688'}</span>
+              <span class="text-indigo-700 font-black outline-none" contenteditable="true" spellcheck="false" onblur="syncCardField(this, 'phone')">${cardData.phone || '1588-1688'}</span>
             </div>
           </div>
 
         </div>
 
         <!-- 7. 하단 푸터: 매장 약속 & 매장 직통 안내 -->
-        <div class="pt-3 border-t-2 border-slate-200 flex items-center justify-between gap-2 text-[10.5px] text-slate-600">
-          <div class="space-y-1 w-full">
+        <div class="pt-2 border-t border-slate-200 flex items-center justify-between gap-2 text-[10px] text-slate-600">
+          <div class="space-y-0.5 w-full">
             <p class="font-black text-slate-900 flex items-center gap-1">
               <span>💡</span>
               <strong class="text-indigo-900">매장 약속</strong>: 
-              <span class="outline-none focus:ring-1 focus:ring-indigo-300 rounded px-1" contenteditable="true">
+              <span class="outline-none focus:ring-1 focus:ring-indigo-300 rounded px-1" contenteditable="true" spellcheck="false">
                 본 안내서는 고객님의 통신비 절감을 돕기 위한 자율 제휴 프로모션이며, 제휴카드 가입을 절대 강요하지 않습니다.
               </span>
             </p>
             <p class="text-slate-500 font-semibold">
-              📍 <strong class="text-slate-800 outline-none" contenteditable="true" onblur="syncCardStoreField(this, 'name')">${st.name}</strong>: 
-              <span class="outline-none" contenteditable="true" onblur="syncCardStoreField(this, 'address')">${st.address}</span> 
-              | ☎ <span class="outline-none" contenteditable="true" onblur="syncCardStoreField(this, 'phone')">${st.phone}</span>
-              ${st.mobile ? ' | 📱 <span class="outline-none" contenteditable="true" onblur="syncCardStoreField(this, \'mobile\')">' + st.mobile + '</span>' : ''}
+              📍 <strong class="text-slate-800 outline-none" contenteditable="true" spellcheck="false" onblur="syncCardStoreField(this, 'name')">${st.name}</strong>: 
+              <span class="outline-none" contenteditable="true" spellcheck="false" onblur="syncCardStoreField(this, 'address')">${st.address}</span> 
+              | ☎ <span class="outline-none" contenteditable="true" spellcheck="false" onblur="syncCardStoreField(this, 'phone')">${st.phone}</span>
+              ${st.mobile ? ' | 📱 <span class="outline-none" contenteditable="true" spellcheck="false" onblur="syncCardStoreField(this, \'mobile\')">' + st.mobile + '</span>' : ''}
             </p>
           </div>
         </div>
       `;
     }
 
-    // ==================== [원천 화면 UI 잔상 제거 & 디자인 100% 보존] 격리된 iframe A4 바로 인쇄 ====================
+    // ==================== [원천 1장 인쇄 보장 & UI 격리] A4 1페이지 맞춤 인쇄 ====================
     function printCardA4() {
+      // 1. 필수 지급 혜택 입력 여부 사전 검증
+      if (!validateCardBeforePrintOrDownload()) return;
+
       const sheet = document.getElementById('cardA4Sheet');
       if (!sheet) return;
 
@@ -6197,11 +6258,12 @@
         printIframe = document.createElement('iframe');
         printIframe.id = 'cardPrintIframe';
         printIframe.style.position = 'fixed';
-        printIframe.style.right = '100%';
-        printIframe.style.bottom = '100%';
-        printIframe.style.width = '0';
-        printIframe.style.height = '0';
+        printIframe.style.left = '-9999px';
+        printIframe.style.top = '0';
+        printIframe.style.width = '210mm';
+        printIframe.style.height = '297mm';
         printIframe.style.border = '0';
+        printIframe.style.visibility = 'hidden';
         document.body.appendChild(printIframe);
       }
 
@@ -6210,13 +6272,13 @@
       // 인쇄 시 contenteditable 아티팩트 및 포커스 링, 인터랙티브 오버레이 제거
       clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
       clone.querySelectorAll('button').forEach(el => el.remove());
-      clone.querySelectorAll('div').forEach(el => {
-        if (el.innerText && (el.innerText.includes('다시 자르기') || el.innerText.includes('✕ 삭제'))) {
+      clone.querySelectorAll('div, span').forEach(el => {
+        if (el.innerText && (el.innerText.includes('다시 자르기') || el.innerText.includes('✕ 삭제') || el.innerText.includes('가로형으로') || el.innerText.includes('세로형으로'))) {
           el.remove();
         }
       });
 
-      // 부모 창의 모든 스타일 태그 및 외부 스타일시트 복사 (Tailwind 포함 100% 동기화)
+      // 부모 창의 모든 스타일 태그 및 외부 스타일시트 복사
       const parentStyles = Array.from(document.querySelectorAll('style')).map(s => s.outerHTML).join('\n');
       const parentLinks = Array.from(document.querySelectorAll('link[rel="stylesheet"]')).map(l => l.outerHTML).join('\n');
 
@@ -6230,10 +6292,34 @@
   ${parentLinks}
   ${parentStyles}
   <style>
-    @page { size: A4 portrait; margin: 6mm 7mm; }
+    @page { size: A4 portrait; margin: 0 !important; }
     * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-    body { font-family: "Pretendard Variable", Pretendard, sans-serif; margin: 0; padding: 0; background: #ffffff; width: 100%; }
-    #printContainer { width: 100%; max-width: 100%; margin: 0 auto; box-shadow: none !important; border: 1px solid #cbd5e1; border-radius: 16px; padding: 16px 18px !important; }
+    html, body {
+      font-family: "Pretendard Variable", Pretendard, sans-serif;
+      margin: 0 !important;
+      padding: 0 !important;
+      background: #ffffff !important;
+      width: 210mm !important;
+      height: 297mm !important;
+      max-height: 297mm !important;
+      overflow: hidden !important;
+    }
+    #printContainer {
+      width: 210mm !important;
+      max-width: 210mm !important;
+      height: 297mm !important;
+      max-height: 297mm !important;
+      margin: 0 auto !important;
+      box-shadow: none !important;
+      border: none !important;
+      padding: 5mm 7mm !important;
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+      page-break-after: avoid !important;
+      break-after: avoid !important;
+      overflow: hidden !important;
+      box-sizing: border-box !important;
+    }
     img { max-width: 100%; }
   </style>
 </head>
@@ -6246,27 +6332,49 @@
       iframeDoc.close();
 
       setTimeout(function() {
+        const pCont = iframeDoc.getElementById('printContainer');
+        if (pCont) {
+          // A4 세로 규격 297mm - 10mm(상하여백) = 287mm (약 1080px at 96DPI)
+          // 1장 출력 안전 가용 높이 1030px 기준 자동 스케일링
+          const safeMaxH = 1030;
+          const actualH = pCont.scrollHeight;
+          if (actualH > safeMaxH) {
+            const fitScale = (safeMaxH / actualH).toFixed(3);
+            pCont.style.zoom = fitScale;
+            pCont.style.transform = `scale(${fitScale})`;
+            pCont.style.transformOrigin = 'top center';
+            console.log(`A4 1장 출력 자동 스케일 적용: ${actualH}px -> ${safeMaxH}px (scale: ${fitScale})`);
+          }
+        }
         printIframe.contentWindow.focus();
         printIframe.contentWindow.print();
       }, 450);
     }
 
-    // ==================== [글자 밀림/폰트 어긋남 원천 방지] 794px 오프스크린 클론 PNG 저장 ====================
-    function downloadCardPng() {
+    // ==================== [글자 처짐/컬럼 찌그러짐 원천 방지] 794px 고화질 PNG 저장 ====================
+    async function downloadCardPng() {
+      // 1. 필수 지급 혜택 입력 여부 사전 검증
+      if (!validateCardBeforePrintOrDownload()) return;
+
       const sheet = document.getElementById('cardA4Sheet');
       if (!sheet) return;
       if (typeof html2canvas === 'undefined') {
         alert("이미지 변환 라이브러리가 로드되지 않았습니다. 잠시 후 다시 시도해 주세요.");
         return;
       }
+
+      if (document.fonts && document.fonts.ready) {
+        await document.fonts.ready;
+      }
+
       const st = storeContacts[cardStoreId] || storeContacts['myeongji'];
 
       // A4 96DPI 표준 규격(794px)의 오프스크린 클론 생성
       const clone = sheet.cloneNode(true);
       clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
       clone.querySelectorAll('button').forEach(el => el.remove());
-      clone.querySelectorAll('div').forEach(el => {
-        if (el.innerText && (el.innerText.includes('다시 자르기') || el.innerText.includes('✕ 삭제'))) {
+      clone.querySelectorAll('div, span').forEach(el => {
+        if (el.innerText && (el.innerText.includes('다시 자르기') || el.innerText.includes('✕ 삭제') || el.innerText.includes('가로형으로') || el.innerText.includes('세로형으로'))) {
           el.remove();
         }
       });
@@ -6276,30 +6384,35 @@
       offscreen.style.left = '-9999px';
       offscreen.style.top = '0';
       offscreen.style.width = '794px';
-      offscreen.style.padding = '20px';
+      offscreen.style.padding = '0'; // 여백으로 인한 컬럼 찌그러짐 및 글자 줄바꿈 처짐 원천 방지!
       offscreen.style.backgroundColor = '#ffffff';
       offscreen.style.zIndex = '-9999';
+      clone.style.width = '794px';
+      clone.style.maxWidth = '794px';
+      clone.style.margin = '0 auto';
       offscreen.appendChild(clone);
       document.body.appendChild(offscreen);
 
-      html2canvas(clone, {
-        scale: 2,
-        width: 794,
-        useCORS: true,
-        backgroundColor: '#ffffff',
-        logging: false
-      }).then(canvas => {
+      try {
+        const canvas = await html2canvas(clone, {
+          scale: 2,
+          width: 794,
+          useCORS: true,
+          backgroundColor: '#ffffff',
+          logging: false
+        });
+
         if (offscreen.parentNode) document.body.removeChild(offscreen);
         const link = document.createElement('a');
         const safeCardName = (cardData.cardName || '제휴카드안내서').replace(/[^a-zA-Z0-9가-힣_-]/g, '_');
         link.download = `제휴카드안내서_${safeCardName}_${st.name}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
-      }).catch(err => {
+      } catch (err) {
         if (offscreen.parentNode) document.body.removeChild(offscreen);
         console.error("PNG 저장 에러:", err);
         alert("이미지 저장 중 오류가 발생했습니다: " + err.message);
-      });
+      }
     }
 
     function loadCardSample() {
@@ -6393,6 +6506,7 @@
       // 새 파일 로드 시 이전 카드의 QR, 실물카드 이미지, 프로모션 완전 초기화 (다른 카드 잔여물 방지!)
       cardData.qrImageUrl = "";
       cardData.cardPlateImageUrl = "";
+      cardData.cardPlateOrientation = "vertical";
       cardData.promotions = [];
       renderCardEditor();
       renderCardPreview();
@@ -6460,6 +6574,7 @@
       cardUploadedImage = null;
       cardData.qrImageUrl = "";
       cardData.cardPlateImageUrl = "";
+      cardData.cardPlateOrientation = "vertical";
       cardData.promotions = [];
       document.getElementById('cardFileInput').value = '';
       document.getElementById('cardDropEmpty').classList.remove('hidden');
@@ -6705,6 +6820,7 @@
       // 마우스 / 터치 좌표를 캔버스 비트맵 내부 좌표로 100% 정밀 보정 변환
       function getCanvasCoords(clientX, clientY) {
         const rect = canvas.getBoundingClientRect();
+        if (rect.width <= 0 || rect.height <= 0) return { x: 0, y: 0 };
         const scaleX = canvas.width / rect.width;
         const scaleY = canvas.height / rect.height;
         return {
@@ -6713,54 +6829,63 @@
         };
       }
 
-      canvas.onmousedown = function(e) {
-        e.preventDefault();
-        const coords = getCanvasCoords(e.clientX, e.clientY);
+      function handleDragStart(clientX, clientY) {
+        const coords = getCanvasCoords(clientX, clientY);
         cropperState.startX = coords.x;
         cropperState.startY = coords.y;
         cropperState.endX = coords.x;
         cropperState.endY = coords.y;
         cropperState.isDragging = true;
-      };
+        drawCropper();
+      }
 
-      canvas.onmousemove = function(e) {
+      function handleDragMove(clientX, clientY) {
         if (!cropperState.isDragging) return;
-        const coords = getCanvasCoords(e.clientX, e.clientY);
+        const coords = getCanvasCoords(clientX, clientY);
         cropperState.endX = coords.x;
         cropperState.endY = coords.y;
         drawCropper();
-      };
+        updateCropperInfo();
+      }
 
-      canvas.onmouseup = function() {
+      function handleDragEnd() {
         if (!cropperState.isDragging) return;
         cropperState.isDragging = false;
+        drawCropper();
         updateCropperInfo();
+      }
+
+      canvas.onmousedown = function(e) {
+        e.preventDefault();
+        handleDragStart(e.clientX, e.clientY);
+
+        function onMouseMove(ev) {
+          handleDragMove(ev.clientX, ev.clientY);
+        }
+        function onMouseUp() {
+          handleDragEnd();
+          window.removeEventListener('mousemove', onMouseMove);
+          window.removeEventListener('mouseup', onMouseUp);
+        }
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
       };
 
       // 터치 이벤트 지원 (모바일/태블릿)
       canvas.ontouchstart = function(e) {
         if (!e.touches || !e.touches[0]) return;
         e.preventDefault();
-        const coords = getCanvasCoords(e.touches[0].clientX, e.touches[0].clientY);
-        cropperState.startX = coords.x;
-        cropperState.startY = coords.y;
-        cropperState.endX = coords.x;
-        cropperState.endY = coords.y;
-        cropperState.isDragging = true;
+        handleDragStart(e.touches[0].clientX, e.touches[0].clientY);
       };
 
       canvas.ontouchmove = function(e) {
         if (!cropperState.isDragging || !e.touches || !e.touches[0]) return;
         e.preventDefault();
-        const coords = getCanvasCoords(e.touches[0].clientX, e.touches[0].clientY);
-        cropperState.endX = coords.x;
-        cropperState.endY = coords.y;
-        drawCropper();
+        handleDragMove(e.touches[0].clientX, e.touches[0].clientY);
       };
 
       canvas.ontouchend = function() {
-        cropperState.isDragging = false;
-        updateCropperInfo();
+        handleDragEnd();
       };
     }
 
@@ -6927,9 +7052,11 @@
 
       if (cropperTarget === 'cardPlate') {
         cardData.cardPlateImageUrl = croppedUrl;
+        cardData.cardPlateOrientation = (rawW > rawH * 1.15) ? 'horizontal' : 'vertical';
+        renderCardEditor();
         renderCardPreview();
         closeCropperModal();
-        alert("✅ 원본 문서에서 잘라낸 실물 카드 사진이 상단에 성공적으로 부착되었습니다!");
+        alert(`✅ 원본 문서에서 잘라낸 실물 카드 사진이 부착되었습니다! (${cardData.cardPlateOrientation === 'vertical' ? '세로형 카드' : '가로형 카드'}로 자동 인식됨)`);
       } else {
         cardData.qrImageUrl = croppedUrl;
         renderCardEditor();
@@ -7120,9 +7247,10 @@
 
 ★ 필수 분석 및 위치 탐지 지침:
 1. "qrBox": 업로드된 이미지 안에 스마트폰 카메라로 스캔하여 카드를 발급신청하는 [신청 QR 코드]가 위치한 영역의 상대좌표 [ymin, xmin, ymax, xmax] (0부터 1000 사이의 정수. 예: [120, 720, 280, 890]). 만약 문서 내에 발급 QR 코드가 없다면 null로 반환하세요.
-2. "cardPlateBox": 업로드된 이미지 안에 인쇄된 [실물 신용카드(또는 체크카드) 사진, 카드 플레이트 디자인 그래픽]이 위치한 영역의 상대좌표 [ymin, xmin, ymax, xmax] (0부터 1000 사이의 정수, 가로 직사각형 형태. 예: [140, 420, 310, 680]). 만약 문서 내에 실물 카드 사진/디자인이 없다면 null로 반환하세요.
+2. "cardPlateBox": 업로드된 이미지 안에 인쇄된 [실물 신용카드(또는 체크카드) 사진, 카드 플레이트 디자인 그래픽]이 위치한 영역의 상대좌표 [ymin, xmin, ymax, xmax] (0부터 1000 사이의 정수. 현대/신한/토스 등 세로형 직사각형 카드이든 가로형 카드이든 카드 플레이트 전체를 정확하게 잡아주세요. 예: [120, 400, 350, 600]). 만약 문서 내에 실물 카드 사진/디자인이 없다면 null로 반환하세요.
 3. "promotions" 배열에는 업로드된 안내서 이미지에 실제로 기재된 프로모션만 반환하세요. (1개면 1개, 2개면 2개만 반환. 문서에 없는 유령 프로모션 3번을 절대 지어내지 마세요!)
-4. "badge"에는 안내서에 적힌 실제 소분류 명칭(예: [24/36개월 매월 추가 할인 프로모션], [단말기 캐시백], [간편결제 캐시백], [통신비 청구할인] 등)을 정확하게 추출하세요. "STEP 1, 2, 3" 같은 임의의 번호는 넣지 마세요.
+특히 추가 캐시백 프로모션(예: 해외결제 JCB 브랜드 발급 시 추가 혜택, 단말기 개통 추가 캐시백 등)이 있을 경우, 지급 혜택 금액(예: "50,000원 캐시백", "80,000원 1회 제공", "월 12,000원 캐시백" 등)을 반드시 "benefit" 항목에 정확하게 기재해 주세요.
+4. "badge"에는 안내서에 적힌 실제 소분류 명칭(예: [24/36개월 매월 추가 할인 프로모션], [단말기 캐시백], [간편결제 캐시백], [해외결제(JCB) 브랜드 카드 추가 혜택] 등)을 정확하게 추출하세요. "STEP 1, 2, 3" 같은 임의의 번호는 넣지 마세요.
 5. 실물 카드의 카드사명(KB국민, 삼성, 신한, 현대 등), 통신사(LGU+, SKT, KT), 정식 카드 상품명을 정확히 식별하세요.
 
 JSON 키 구조:
@@ -7141,9 +7269,10 @@ JSON 키 구조:
   },
   "promotions": [
     {
-      "badge": "안내서의 실제 소분류명 (예: 매월 추가 할인 프로모션)",
+      "badge": "안내서의 실제 소분류명 (예: 매월 추가 할인 프로모션, 해외결제 브랜드 추가 혜택 등)",
       "title": "프로모션 제목",
       "condition": "신규 발급 및 실적 조건",
+      "benefit": "지급 혜택 및 캐시백 금액 (예: 50,000원 캐시백 1회 제공, 80,000원 캐시백 등)",
       "tiers": [
         { "label": "전월 30만원 이상", "amount": "월 OO원 할인", "sub": "세부내용", "total": "24개월 OOO원 할인" },
         { "label": "전월 70만원 이상", "amount": "월 OO원 할인", "sub": "세부내용", "total": "24개월 OOO원 할인" },
@@ -7198,7 +7327,10 @@ JSON 키 구조:
           const autoCardImg = cropFromNormalizedBox(cardUploadedCanvas, parsed.cardPlateBox, 0.015);
           if (autoCardImg) {
             cardData.cardPlateImageUrl = autoCardImg;
-            console.log("AI: 실물 카드 이미지 자동 감지 및 크롭 성공");
+            const boxH = Math.abs(parsed.cardPlateBox[2] - parsed.cardPlateBox[0]);
+            const boxW = Math.abs(parsed.cardPlateBox[3] - parsed.cardPlateBox[1]);
+            cardData.cardPlateOrientation = (boxW > boxH * 1.15) ? 'horizontal' : 'vertical';
+            console.log("AI: 실물 카드 이미지 자동 감지 및 크롭 성공, 형태:", cardData.cardPlateOrientation);
           }
         }
 
