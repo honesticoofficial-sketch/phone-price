@@ -457,3 +457,13 @@ Write-Host "Pushed Commit: $($res.commit.sha)"
    - 상단 `TOTAL 24 MONTHS BENEFITS` 대형 배너(최대 700,000원 절감).
    - 프로모션 1: 30만 / 70만 / 100만 실적별 월 할인액(월 25,000원 / 26,000원 / 27,000원) 및 24개월 누적 할인액을 3열 대형 카드로 눈에 확 들어오게 재구성.
    - 프로모션 2(단말기 8만 캐시백) 및 프로모션 3(간편결제 2만 캐시백) 하이라이트 박스 배치.
+
+### [2026-11-14 제미나이 API 모델 변경 대응 업데이트] - Gemini API ListModels 동적 감지 & 다중 모델 폴백(Fallback) 캐스케이드 탑재
+1. **발생 원인**:
+   - 구글 Generative Language API 정책 업데이트로 특정 API 키나 신규 계정 환경에서 기존 주소인 `/v1beta/models/gemini-1.5-flash`를 단독 호출할 경우 `models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent` 404 오류가 발생하는 현상 확인.
+2. **해결 및 탑재 내용**:
+   - **ListModels API 동적 모델 자동 조회**: 사용자가 등록한 API 키로 구글의 `ListModels` 엔드포인트를 먼저 조회하여 해당 키에서 현재 활성화된 최신 모델(`gemini-2.0-flash`, `gemini-1.5-flash`, `gemini-2.5-flash` 등)을 실시간으로 감지하고 우선순위대로 자동 배치.
+   - **다중 모델 자동 폴백 캐스케이드(Auto-Fallback)**: `gemini-2.0-flash`, `v1/gemini-1.5-flash`, `gemini-1.5-flash-latest`, `v1beta/gemini-2.0-flash`, `gemini-1.5-pro` 등 다양한 구글 모델 및 v1/v1beta API 버전을 순차적으로 자동 시도하여 단 한 번의 클릭으로 100% 정상 분석되도록 엔진 일원화 (`executeGeminiGenerateContent`).
+   - **마크다운 JSON 자동 정제기 (`extractJsonFromGeminiResponse`)**: 모델에 따라 응답에 ```json ... ``` 마크다운 블록이 포함되어도 안전하게 순수 JSON만 추출하여 파싱 오류 원천 방지.
+   - **제휴카드 분석(`runCardAiAnalysis`) & 경쟁사 분석(`runCompareAiAnalysis`) 전면 적용**.
+
