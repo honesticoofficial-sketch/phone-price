@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -14,6 +14,12 @@
   <!-- Firebase App & Firestore Compat SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <!-- HTML2Canvas for High-Res Image Export -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <!-- jsQR for Client-Side QR Detection -->
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+  <!-- PDF.js for rendering uploaded PDF card guides -->
+  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
   <style>
     body { font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     input[type=number]::-webkit-inner-spin-button, 
@@ -57,6 +63,54 @@
       color: #ffffff;
       border-color: #4338ca;
       transform: scale(1.1);
+    }
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 5mm;
+      }
+      body {
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      #pinModal, header, #navTabWrapper, #viewFilterBox, 
+      #tab-calc, #tab-daily, #tab-ad, #tab-compare, #tab-request,
+      #cardEditorPanel, #cardTopControls, #cardAlertBanner,
+      #historyModal, #settingsModal, #newRequestModal, #copyPriceModal, #addDeviceModal, 
+      #qrCropperModal, #geminiKeyModal, #storeContactModal,
+      .no-print, .help-btn {
+        display: none !important;
+      }
+      #tab-card {
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      #cardPreviewWrapper {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+      }
+      #cardA4Sheet {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        min-height: 275mm !important;
+        max-height: 286mm !important;
+        margin: 0 auto !important;
+        padding: 8mm 9mm !important;
+        border: 1px solid #cbd5e1 !important;
+        box-shadow: none !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
     }
   </style>
 </head>
@@ -205,6 +259,19 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
           </svg>
           <span>성지특가 광고표 & 마진</span>
+        </button>
+        <button onclick="switchTab('card')" id="tabBtn-card" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition relative">
+          <svg class="w-3.5 h-3.5 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="5" width="20" height="14" rx="2"/>
+            <line x1="2" y1="10" x2="22" y2="10"/>
+          </svg>
+          <span>제휴카드 안내서 (A4)</span>
+        </button>
+        <button onclick="switchTab('compare')" id="tabBtn-compare" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition relative">
+          <svg class="w-3.5 h-3.5 text-purple-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+          </svg>
+          <span>경쟁사 시세 분석</span>
         </button>
         <button onclick="switchTab('request')" id="tabBtn-request" class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition relative">
           <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -763,6 +830,557 @@
         </div>
 
       </div>
+    </div>
+
+    <!-- ==================== TAB 4: 제휴카드 안내서 제작 (A4 용지 규격) ==================== -->
+    <div id="tab-card" class="space-y-4 hidden">
+      
+      <!-- 상단 컨트롤 바 -->
+      <div id="cardTopControls" class="bg-white border border-slate-200 rounded-2xl p-4 shadow-2xs flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3 flex-wrap">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-500 ring-4 ring-amber-100"></span>
+            <h2 class="text-sm font-black text-slate-800">제휴카드 안내서 제작 (A4)</h2>
+            <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>제휴카드 A4 안내서 제작기</b><br>통신사나 카드사에서 받은 안내서 이미지나 PDF를 올리면 깔끔한 A4 규격 인쇄용 안내서로 재구성합니다.<br>명지점/광안점 맞춤 전화번호와 실제 원본에서 잘라낸 고화질 QR코드가 적용되어 바로 인쇄해 고객 상담에 사용할 수 있습니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>제휴카드 A4 안내서 제작기</b><br>통신사나 카드사에서 받은 안내서 이미지나 PDF를 올리면 깔끔한 A4 규격 인쇄용 안내서로 재구성합니다.<br>명지점/광안점 맞춤 전화번호와 실제 원본에서 잘라낸 고화질 QR코드가 적용되어 바로 인쇄해 고객 상담에 사용할 수 있습니다.')" title="제휴카드 안내서 도움말">?</button>
+          </div>
+
+          <!-- 매장 선택 토글 -->
+          <div class="flex items-center bg-slate-100 p-1 rounded-xl text-xs font-bold">
+            <button onclick="setCardStore('myeongji')" id="cardStoreBtn-myeongji" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white shadow-2xs transition">📍 명지점 안내서</button>
+            <button onclick="setCardStore('gwangan')" id="cardStoreBtn-gwangan" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">📍 광안점 안내서</button>
+          </div>
+
+          <!-- 색상 테마 선택 -->
+          <div class="flex items-center gap-1 text-xs bg-slate-50 border border-slate-200 px-2 py-1 rounded-xl">
+            <span class="text-[11px] font-bold text-slate-500">테마:</span>
+            <select id="cardThemeSelect" onchange="setCardTheme(this.value)" class="text-xs font-bold bg-transparent border-none text-slate-800 focus:outline-none cursor-pointer">
+              <option value="theme-gold">🟡 KB / 골드 옐로우</option>
+              <option value="theme-blue">🔵 신한·삼성 / 코발트 블루</option>
+              <option value="theme-red">🔴 현대·BC / 비비드 레드</option>
+              <option value="theme-pink">🟣 LG / 마젠타 핑크</option>
+              <option value="theme-green">🟢 하나·농협 / 에메랄드</option>
+              <option value="theme-mono">⚪ 잉크절약 / 모노톤</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 flex-wrap">
+          <button onclick="openStoreContactModal()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5" title="매장별 전화번호 및 주소 수정">
+            <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+            <span>매장 정보 수정</span>
+          </button>
+          <button onclick="openGeminiKeyModal()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5" title="Gemini AI API 키 등록">
+            <svg class="w-3.5 h-3.5 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+            <span id="cardAiKeyBadge">AI 키 설정</span>
+          </button>
+          <button onclick="downloadCardPng()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-extrabold shadow-2xs transition flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            <span>고화질 이미지(PNG) 저장</span>
+          </button>
+          <button onclick="printCardA4()" class="px-4 py-2 bg-slate-900 hover:bg-black text-white rounded-xl text-xs font-black shadow-sm transition flex items-center gap-1.5 ring-2 ring-slate-900/10">
+            <svg class="w-3.5 h-3.5 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+            <span>🖨️ A4 용지 바로 출력 (PDF 인쇄)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 안내 배너 -->
+      <div id="cardAlertBanner" class="bg-amber-50/80 border border-amber-200/90 rounded-2xl p-3 text-xs text-amber-900 flex items-start gap-2.5">
+        <span class="text-base leading-none">💡</span>
+        <div class="space-y-0.5 leading-relaxed">
+          <p class="font-bold">원본 이미지 내용 추출 + 깔끔한 신규 A4 디자인 + QR 후처리 크롭 임베드 시스템</p>
+          <p class="text-[11px] text-amber-800">
+            카카오톡이나 밴드로 전달받은 카드사 안내서 이미지(또는 PDF)를 넣으면 내용을 자동 분석하여 매장 전용 안내서로 재구성합니다. 
+            <strong>QR 코드는 생성 시 깨짐 방지를 위해 원본에서 잘라내어 100% 인식되도록 붙여넣습니다.</strong> (클립보드 <kbd class="bg-white px-1 py-0.5 rounded border border-amber-300 font-mono text-[10px]">Ctrl+V</kbd> 붙여넣기 지원)
+          </p>
+        </div>
+      </div>
+
+      <!-- 메인 2분할 레이아웃: 좌측 편집기 & AI 분석 / 우측 실시간 A4 미리보기 -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+        
+        <!-- 좌측: 입력 & 후처리 컨트롤 패널 (5/12) -->
+        <div id="cardEditorPanel" class="lg:col-span-5 space-y-4">
+          
+          <!-- 1. 이미지/PDF 업로드 및 AI 분석 카드 -->
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-2xs space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+              <span class="font-extrabold text-xs text-slate-800 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                1. 원본 제휴카드 이미지 / PDF 넣기
+              </span>
+              <button onclick="loadCardSample()" class="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 hover:underline">
+                📋 KB 라이트할부 예제 불러오기
+              </button>
+            </div>
+
+            <!-- 드래그 & 드롭 영역 -->
+            <div id="cardDropZone" ondragover="handleCardDragOver(event)" ondragleave="handleCardDragLeave(event)" ondrop="handleCardDrop(event)" onclick="document.getElementById('cardFileInput').click()" class="border-2 border-dashed border-slate-300 hover:border-indigo-400 bg-slate-50/60 hover:bg-indigo-50/20 rounded-2xl p-4 text-center cursor-pointer transition relative group">
+              <input type="file" id="cardFileInput" accept="image/*,application/pdf" onchange="handleCardFileSelected(event)" class="hidden" />
+              <div id="cardDropEmpty" class="space-y-1.5 py-2">
+                <div class="w-10 h-10 mx-auto rounded-xl bg-white shadow-2xs border border-slate-200 flex items-center justify-center text-slate-500 group-hover:text-indigo-600 group-hover:scale-105 transition">
+                  <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                </div>
+                <p class="text-xs font-bold text-slate-700">이미지 또는 PDF를 끌어다 놓거나 클릭</p>
+                <p class="text-[11px] text-slate-400">화면 어디서나 <kbd class="bg-white px-1 rounded border border-slate-200 text-[10px]">Ctrl+V</kbd> 로 캡처 이미지 즉시 붙여넣기 가능</p>
+              </div>
+
+              <!-- 미리보기 썸네일 (업로드 시) -->
+              <div id="cardDropPreviewBox" class="hidden flex items-center gap-3 text-left">
+                <img id="cardThumbImg" class="w-16 h-20 object-cover rounded-xl border border-slate-200 shadow-2xs bg-white" alt="업로드 이미지" />
+                <div class="flex-1 min-w-0">
+                  <p id="cardFileName" class="text-xs font-extrabold text-slate-800 truncate">card_scan.jpg</p>
+                  <p id="cardFileSize" class="text-[11px] text-slate-400">0 KB</p>
+                  <span class="inline-flex items-center gap-1 mt-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+                    <span>✓</span> 이미지 로드 완료
+                  </span>
+                </div>
+                <button type="button" onclick="event.stopPropagation(); clearCardImage();" class="text-slate-400 hover:text-rose-500 p-1" title="제거">✕</button>
+              </div>
+            </div>
+
+            <!-- 분석 실행 버튼 -->
+            <div class="flex items-center gap-2 pt-1">
+              <button onclick="runCardAiAnalysis()" id="btnRunCardAi" class="flex-1 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white rounded-xl text-xs font-extrabold shadow-xs transition flex items-center justify-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-amber-300" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.2L12 16.8 5.7 21.2 8 14l-6-4.6h7.6z"/></svg>
+                <span>✨ AI 이미지 내용 정밀 분석</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 2. QR 코드 후처리 및 자르기 카드 (핵심) -->
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-2xs space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+              <span class="font-extrabold text-xs text-slate-800 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                2. 카드 발급 QR 코드 후처리 (인식 오류 원천 차단)
+              </span>
+              <span id="qrStatusBadge" class="text-[10px] font-black text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md">
+                대기중
+              </span>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <!-- QR 미리보기 박스 -->
+              <div class="w-20 h-20 bg-slate-50 border border-slate-200 rounded-xl p-1 flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
+                <img id="cardQrImgPreview" class="w-full h-full object-contain" src="" alt="카드발급 QR" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23cbd5e1\' stroke-width=\'2\'%3E%3Crect x=\'3\' y=\'3\' width=\'7\' height=\'7\'/%3E%3Crect x=\'14\' y=\'3\' width=\'7\' height=\'7\'/%3E%3Crect x=\'3\' y=\'14\' width=\'7\' height=\'7\'/%3E%3C/svg%3E'" />
+              </div>
+
+              <div class="space-y-1.5 flex-1 min-w-0">
+                <p class="text-xs font-bold text-slate-700">발급 신청용 원본 QR</p>
+                <p class="text-[11px] text-slate-500 leading-tight">
+                  AI로 재그리면 QR 스캔이 안 되므로, 사용자가 올린 원본에서 <strong>잘라낸 실제 QR</strong>을 그대로 안내서에 부착합니다.
+                </p>
+                <div class="flex items-center gap-1.5 flex-wrap pt-0.5">
+                  <button onclick="openQrCropperModal()" class="px-2.5 py-1 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-bold shadow-2xs transition flex items-center gap-1">
+                    <span>✂️ 직접 QR 영역 자르기</span>
+                  </button>
+                  <button onclick="autoDetectQrCode()" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition">
+                    🔍 자동 감지
+                  </button>
+                  <button onclick="document.getElementById('qrDirectInput').click()" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition">
+                    📁 QR 파일 선택
+                  </button>
+                  <input type="file" id="qrDirectInput" accept="image/*" onchange="handleDirectQrFile(event)" class="hidden" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. 카드 안내서 세부 내용 편집 폼 (아코디언) -->
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-2xs space-y-4 text-xs">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+              <span class="font-extrabold text-xs text-slate-800 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-slate-700"></span>
+                3. 안내서 상세 내용 실시간 수정
+              </span>
+              <span class="text-[10px] text-slate-400">수정 즉시 우측 A4에 반영</span>
+            </div>
+
+            <!-- 기본 정보 -->
+            <div class="space-y-2">
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-600 mb-0.5">카드사명</label>
+                  <input type="text" id="cfg-cardCompany" oninput="updateCardField('cardCompany', this.value)" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg font-bold text-slate-800 focus:bg-white focus:outline-none" placeholder="KB국민카드" />
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-600 mb-0.5">통신사</label>
+                  <input type="text" id="cfg-carrier" oninput="updateCardField('carrier', this.value)" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg font-bold text-slate-800 focus:bg-white focus:outline-none" placeholder="LGU+" />
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-bold text-slate-600 mb-0.5">카드 정식 상품명</label>
+                <input type="text" id="cfg-cardName" oninput="updateCardField('cardName', this.value)" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg font-black text-slate-900 focus:bg-white focus:outline-none" placeholder="국민 LGU+ 라이트할부 II KB국민카드" />
+              </div>
+            </div>
+
+            <!-- 핵심 5대 조건 -->
+            <div class="bg-slate-50/70 p-3 rounded-xl border border-slate-200/80 space-y-2">
+              <span class="font-extrabold text-[11px] text-slate-700 block">핵심 요약 5대 스펙</span>
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                <div>
+                  <label class="block text-[10px] text-slate-500">전용 단말기</label>
+                  <input type="text" id="cfg-spec-target" oninput="updateCardSpec('targetDevice', this.value)" class="w-full px-2 py-1 bg-white border border-slate-200 rounded text-[11px] font-semibold" placeholder="추가할인, 캐시백" />
+                </div>
+                <div>
+                  <label class="block text-[10px] text-slate-500">최소 결제금액</label>
+                  <input type="text" id="cfg-spec-min" oninput="updateCardSpec('minPayment', this.value)" class="w-full px-2 py-1 bg-white border border-slate-200 rounded text-[11px] font-semibold" placeholder="5만원" />
+                </div>
+                <div>
+                  <label class="block text-[10px] text-slate-500">자동이체</label>
+                  <input type="text" id="cfg-spec-auto" oninput="updateCardSpec('autoTransfer', this.value)" class="w-full px-2 py-1 bg-white border border-slate-200 rounded text-[11px] font-semibold" placeholder="미필수" />
+                </div>
+                <div>
+                  <label class="block text-[10px] text-slate-500">연회비</label>
+                  <input type="text" id="cfg-spec-fee" oninput="updateCardSpec('annualFee', this.value)" class="w-full px-2 py-1 bg-white border border-slate-200 rounded text-[11px] font-semibold" placeholder="국내 2만 / Master 2만" />
+                </div>
+                <div class="sm:col-span-2">
+                  <label class="block text-[10px] text-slate-500">할부이자율</label>
+                  <input type="text" id="cfg-spec-interest" oninput="updateCardSpec('installmentInterest', this.value)" class="w-full px-2 py-1 bg-white border border-slate-200 rounded text-[11px] font-semibold" placeholder="24개월 5.9% / 36개월 7%" />
+                </div>
+              </div>
+            </div>
+
+            <!-- 프로모션 혜택 (단계별) -->
+            <div class="space-y-3">
+              <div class="p-3 bg-amber-50/50 border border-amber-200/80 rounded-xl space-y-2">
+                <span class="font-extrabold text-[11px] text-amber-900 block">🌟 프로모션 1 (24개월 통신비 청구할인)</span>
+                <input type="text" id="cfg-p1-title" oninput="updateCardPromo(0, 'title', this.value)" class="w-full px-2 py-1 bg-white border border-amber-200 rounded text-xs font-bold" placeholder="24개월 동안 매월 추가 할인 제공" />
+                <div class="grid grid-cols-3 gap-1.5 text-[11px]">
+                  <div>
+                    <label class="text-[10px] text-slate-500">30만 실적</label>
+                    <input type="text" id="cfg-p1-tier1" oninput="updateCardPromoTier(0, 0, this.value)" class="w-full px-1.5 py-1 bg-white border border-slate-200 rounded font-bold text-amber-700" placeholder="월 25,000원" />
+                  </div>
+                  <div>
+                    <label class="text-[10px] text-slate-500">70만 실적</label>
+                    <input type="text" id="cfg-p1-tier2" oninput="updateCardPromoTier(0, 1, this.value)" class="w-full px-1.5 py-1 bg-white border border-slate-200 rounded font-bold text-amber-700" placeholder="월 26,000원" />
+                  </div>
+                  <div>
+                    <label class="text-[10px] text-slate-500">100만 실적</label>
+                    <input type="text" id="cfg-p1-tier3" oninput="updateCardPromoTier(0, 2, this.value)" class="w-full px-1.5 py-1 bg-white border border-slate-200 rounded font-bold text-amber-700" placeholder="월 27,000원" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- 프로모션 2: 캐시백 -->
+              <div class="p-3 bg-rose-50/50 border border-rose-200/80 rounded-xl space-y-1.5">
+                <span class="font-extrabold text-[11px] text-rose-900 block">🎁 프로모션 2 (단말기 개통 추가 캐시백)</span>
+                <input type="text" id="cfg-p2-cond" oninput="updateCardPromo(1, 'condition', this.value)" class="w-full px-2 py-1 bg-white border border-rose-200 rounded text-xs" placeholder="아이폰 18 / 주요 프리미엄 모델 개통 시" />
+                <input type="text" id="cfg-p2-benefit" oninput="updateCardPromo(1, 'benefit', this.value)" class="w-full px-2 py-1 bg-white border border-rose-200 rounded text-xs font-bold text-rose-700" placeholder="8만원 캐시백 1회 제공" />
+              </div>
+
+              <!-- 프로모션 3: 페이 캐시백 -->
+              <div class="p-3 bg-blue-50/50 border border-blue-200/80 rounded-xl space-y-1.5">
+                <span class="font-extrabold text-[11px] text-blue-900 block">💳 프로모션 3 (간편결제 등록 추가 캐시백)</span>
+                <input type="text" id="cfg-p3-cond" oninput="updateCardPromo(2, 'condition', this.value)" class="w-full px-2 py-1 bg-white border border-blue-200 rounded text-xs" placeholder="KB Pay 등록 후 2만원 이상 결제 시" />
+                <input type="text" id="cfg-p3-benefit" oninput="updateCardPromo(2, 'benefit', this.value)" class="w-full px-2 py-1 bg-white border border-blue-200 rounded text-xs font-bold text-blue-700" placeholder="2만원 캐시백 1회 제공" />
+              </div>
+            </div>
+
+            <!-- 총 할인 요약 배너 -->
+            <div class="space-y-1">
+              <label class="block text-[11px] font-bold text-slate-700">총 혜택 요약 강조 문구</label>
+              <input type="text" id="cfg-summaryCallout" oninput="updateCardSummary('callout', this.value)" class="w-full px-2.5 py-1.5 bg-amber-50 border border-amber-300 rounded-lg font-black text-amber-900 text-xs" placeholder="24개월 동안 최대 700,000원 통신비 절감 혜택!" />
+            </div>
+
+            <!-- 발급 안내 및 ARS 전화번호 -->
+            <div class="space-y-1">
+              <label class="block text-[11px] font-bold text-slate-700">카드사 발급 전화번호 / 고객센터</label>
+              <input type="text" id="cfg-phone" oninput="updateCardField('phone', this.value)" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg font-bold text-slate-800 text-xs" placeholder="카드사 고객센터: 1588-1688 / ARS 간편발급" />
+            </div>
+          </div>
+        </div>
+
+        <!-- 우측: A4 실시간 미리보기 & 인쇄용 뷰 (7/12) -->
+        <div id="cardPreviewWrapper" class="lg:col-span-7 bg-slate-200/60 p-3 sm:p-5 rounded-3xl border border-slate-300/80 shadow-inner flex flex-col items-center">
+          <div class="w-full flex items-center justify-between text-xs text-slate-500 font-bold mb-2.5 px-2">
+            <span>📄 A4 용지 규격 (210 × 297 mm) 실시간 인쇄 미리보기</span>
+            <span class="text-[11px] text-slate-400">인쇄 시 아래 서식 그대로 출력됩니다.</span>
+          </div>
+
+          <!-- 실제 A4 서식지 컨테이너 -->
+          <div id="cardA4Sheet" class="w-full max-w-[680px] bg-white rounded-2xl shadow-xl border border-slate-200 p-6 sm:p-7 space-y-4 text-slate-800 transition-all font-sans relative overflow-hidden theme-gold">
+            <!-- 렌더링 함수(renderCardPreview)에 의해 동적으로 채워집니다 -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==================== TAB 5: 경쟁사 매장 광고가격 & 부가조건 분석 ==================== -->
+    <div id="tab-compare" class="space-y-4 hidden">
+
+      <!-- 상단 컨트롤 바 -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-2xs flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3 flex-wrap">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-purple-500 ring-4 ring-purple-100"></span>
+            <h2 class="text-sm font-black text-slate-800">경쟁사 광고가격 & 부가조건 분석</h2>
+            <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>경쟁사 시세 정밀 분석 시스템</b><br>경쟁사의 광고 시세표와 부가조건 이미지를 넣으면 기종별 매장 지원금(할인)을 자동 역산합니다.<br>또한 우리 매장의 오늘자 넷가(원가)와 1:1 대조하여 우리가 저 가격에 판매할 때 남는 마진을 즉시 산출하고 제휴카드/반납 등 눈속임 조건을 감별합니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>경쟁사 시세 정밀 분석 시스템</b><br>경쟁사의 광고 시세표와 부가조건 이미지를 넣으면 기종별 매장 지원금(할인)을 자동 역산합니다.<br>또한 우리 매장의 오늘자 넷가(원가)와 1:1 대조하여 우리가 저 가격에 판매할 때 남는 마진을 즉시 산출하고 제휴카드/반납 등 눈속임 조건을 감별합니다.')" title="경쟁사 분석 안내">?</button>
+          </div>
+
+          <!-- 대조 매장 기준 토글 -->
+          <div class="flex items-center bg-slate-100 p-1 rounded-xl text-xs font-bold">
+            <span class="text-[11px] text-slate-500 px-2">대조 매장:</span>
+            <button onclick="setCompareStore('myeongji')" id="compStoreBtn-myeongji" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white shadow-2xs transition">📍 명지점 단가 기준</button>
+            <button onclick="setCompareStore('gwangan')" id="compStoreBtn-gwangan" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">📍 광안점 단가 기준</button>
+          </div>
+
+          <!-- 마진 산출 기준 토글 -->
+          <div class="flex items-center bg-slate-100 p-1 rounded-xl text-xs font-bold">
+            <span class="text-[11px] text-slate-500 px-2">원가 기준:</span>
+            <button onclick="setCompareMarginBase('all')" id="compMarginBase-all" class="px-3 py-1.5 rounded-lg bg-slate-900 text-white shadow-2xs transition">🌟 올부가 넷가</button>
+            <button onclick="setCompareMarginBase('basic')" id="compMarginBase-basic" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">🏷️ 기본부가 넷가</button>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 flex-wrap">
+          <button onclick="openGeminiKeyModal()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+            <span>AI 키 설정</span>
+          </button>
+          <button onclick="addCompareRow()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+            <span>➕ 기종 직접 추가</span>
+          </button>
+          <button onclick="copyCompareBriefing()" class="px-3.5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-black shadow-xs transition flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-purple-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            <span>📋 분석 브리핑 복사</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 안내 배너 -->
+      <div class="bg-purple-50/70 border border-purple-200/90 rounded-2xl p-3 text-xs text-purple-900 flex items-start gap-2.5">
+        <span class="text-base leading-none">🔍</span>
+        <div class="space-y-0.5 leading-relaxed">
+          <p class="font-bold">경쟁사 광고 이미지(가격표 + 부가조건) 2장 투입 ➔ 매장 지원금 추산 & 우리 실시간 마진 계산</p>
+          <p class="text-[11px] text-purple-800">
+            당근마켓, 밴드, 카페 등에서 캡처한 경쟁사 시세표와 부가조건을 올리면 각각 얼마의 자체 할인을 넣었는지 분석하고,
+            <strong>"우리가 저 가격에 똑같이 팔았을 때 과연 몇 만원이 남는지(또는 역마진인지)"</strong>와 <strong>제휴카드/반납 등 눈속임 조건</strong>을 즉시 확인합니다.
+          </p>
+        </div>
+      </div>
+
+      <!-- Step 1: 듀얼 이미지 업로드 영역 (가격표 1장 + 조건표 1장) -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+          <span class="font-extrabold text-xs text-slate-800 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+            1. 경쟁사 이미지 등록 (가격표 1장 + 부가조건 1장)
+          </span>
+          <button onclick="loadCompareSample()" class="text-[11px] font-bold text-purple-600 hover:text-purple-800 hover:underline">
+            💡 당근 성지 시세표 예제 불러오기
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- 이미지 1: 경쟁사 가격표 -->
+          <div class="space-y-1.5">
+            <label class="block text-xs font-bold text-slate-700 flex items-center gap-1">
+              <span>📸 경쟁사 시세표 / 가격표 이미지</span>
+              <span class="text-[10px] text-rose-500 font-extrabold">*필수</span>
+            </label>
+            <div id="compDropZonePrice" ondragover="handleCompDragOver(event, 'price')" ondragleave="handleCompDragLeave(event, 'price')" ondrop="handleCompDrop(event, 'price')" onclick="document.getElementById('compFileInputPrice').click()" class="border-2 border-dashed border-slate-300 hover:border-purple-400 bg-slate-50/60 hover:bg-purple-50/20 rounded-2xl p-4 text-center cursor-pointer transition min-h-[140px] flex flex-col items-center justify-center relative group">
+              <input type="file" id="compFileInputPrice" accept="image/*,application/pdf" onchange="handleCompFileSelected(event, 'price')" class="hidden" />
+              <div id="compEmptyPrice" class="space-y-1">
+                <div class="w-9 h-9 mx-auto rounded-xl bg-white shadow-2xs border border-slate-200 flex items-center justify-center text-slate-500 group-hover:text-purple-600 transition">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                </div>
+                <p class="text-xs font-bold text-slate-700">시세표 이미지 넣기 (클릭 / 드래그)</p>
+                <p class="text-[10px] text-slate-400">Ctrl+V 붙여넣기 지원</p>
+              </div>
+              <div id="compPreviewPriceBox" class="hidden w-full flex items-center gap-3 text-left">
+                <img id="compThumbPrice" class="w-16 h-20 object-cover rounded-xl border border-slate-200 shadow-2xs bg-white" alt="시세표" />
+                <div class="flex-1 min-w-0 text-xs">
+                  <p id="compFileNamePrice" class="font-bold text-slate-800 truncate">price.jpg</p>
+                  <span class="inline-flex items-center gap-1 mt-1 text-[10px] font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-md">
+                    ✓ 시세표 준비됨
+                  </span>
+                </div>
+                <button type="button" onclick="event.stopPropagation(); clearCompImage('price');" class="text-slate-400 hover:text-rose-500 p-1">✕</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 이미지 2: 부가조건 / 특약조건 이미지 -->
+          <div class="space-y-1.5">
+            <label class="block text-xs font-bold text-slate-700 flex items-center gap-1">
+              <span>📋 부가조건 / 특약사항 이미지</span>
+              <span class="text-[10px] text-purple-600 font-extrabold">(선택/권장)</span>
+            </label>
+            <div id="compDropZoneCond" ondragover="handleCompDragOver(event, 'condition')" ondragleave="handleCompDragLeave(event, 'condition')" ondrop="handleCompDrop(event, 'condition')" onclick="document.getElementById('compFileInputCond').click()" class="border-2 border-dashed border-slate-300 hover:border-purple-400 bg-slate-50/60 hover:bg-purple-50/20 rounded-2xl p-4 text-center cursor-pointer transition min-h-[140px] flex flex-col items-center justify-center relative group">
+              <input type="file" id="compFileInputCond" accept="image/*,application/pdf" onchange="handleCompFileSelected(event, 'condition')" class="hidden" />
+              <div id="compEmptyCond" class="space-y-1">
+                <div class="w-9 h-9 mx-auto rounded-xl bg-white shadow-2xs border border-slate-200 flex items-center justify-center text-slate-500 group-hover:text-purple-600 transition">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                </div>
+                <p class="text-xs font-bold text-slate-700">부가조건 이미지 넣기 (클릭 / 드래그)</p>
+                <p class="text-[10px] text-slate-400">요금제 유지기간, 제휴카드, 부가목록</p>
+              </div>
+              <div id="compPreviewCondBox" class="hidden w-full flex items-center gap-3 text-left">
+                <img id="compThumbCond" class="w-16 h-20 object-cover rounded-xl border border-slate-200 shadow-2xs bg-white" alt="조건표" />
+                <div class="flex-1 min-w-0 text-xs">
+                  <p id="compFileNameCond" class="font-bold text-slate-800 truncate">condition.jpg</p>
+                  <span class="inline-flex items-center gap-1 mt-1 text-[10px] font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-md">
+                    ✓ 부가조건 준비됨
+                  </span>
+                </div>
+                <button type="button" onclick="event.stopPropagation(); clearCompImage('condition');" class="text-slate-400 hover:text-rose-500 p-1">✕</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 실행 옵션 & 분석 시작 버튼 -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+          <div class="flex items-center gap-2 flex-1 min-w-[240px]">
+            <span class="text-xs font-bold text-slate-600 shrink-0">경쟁사 상호:</span>
+            <input type="text" id="compTargetName" class="w-full max-w-xs px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:bg-white focus:outline-none" placeholder="예: 당근 명지 OO성지 (109 요금제)" value="당근 성지 시세표" />
+          </div>
+
+          <button onclick="runCompareAiAnalysis()" id="btnRunCompAi" class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-xl text-xs font-black shadow-sm transition flex items-center justify-center gap-2">
+            <svg class="w-4 h-4 text-amber-300" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.2L12 16.8 5.7 21.2 8 14l-6-4.6h7.6z"/></svg>
+            <span>🔍 경쟁사 가격 & 부가조건 AI 정밀 분석 시작</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 2: 분석 종합 대시보드 (KPI + 눈속임 감정 + 킬러 영업 멘트) -->
+      <div id="compDashboardSection" class="space-y-4">
+        
+        <!-- 4대 요약 KPI 카드 -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-2xs space-y-1">
+            <span class="text-[11px] font-bold text-slate-400 block">📊 총 대조 기종 수</span>
+            <p id="kpi-totalCount" class="text-xl font-black text-slate-800">0개</p>
+            <p class="text-[10px] text-slate-500">시세표에서 추출된 모델</p>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-2xs space-y-1">
+            <span class="text-[11px] font-bold text-emerald-600 block">🟢 우리 가격 우위 / 흑자</span>
+            <p id="kpi-winCount" class="text-xl font-black text-emerald-600">0개</p>
+            <p class="text-[10px] text-slate-500">동일 가격 판매 시 이익 발생</p>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-2xs space-y-1">
+            <span class="text-[11px] font-bold text-rose-600 block">🔴 역마진 주의 / 단가 열세</span>
+            <p id="kpi-lossCount" class="text-xl font-black text-rose-600">0개</p>
+            <p class="text-[10px] text-slate-500">저 가격 판매 시 손실 (눈속임 의심)</p>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-2xs space-y-1">
+            <span class="text-[11px] font-bold text-purple-600 block">💰 평균 우리 예상 마진</span>
+            <p id="kpi-avgMargin" class="text-xl font-black text-purple-600">+0.0만</p>
+            <p class="text-[10px] text-slate-500">기종당 평균 기대 이익</p>
+          </div>
+        </div>
+
+        <!-- 부가조건 감정 및 고객 상담용 킬러 멘트 (2단 분할) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          
+          <!-- 좌측: 부가조건 정밀 감정 & 눈속임 주의보 -->
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-2xs space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+              <span class="font-extrabold text-slate-800 flex items-center gap-1.5">
+                <span class="text-sm">⚠️</span>
+                부가조건 감정 & 눈속임 경보 (Trap Alert)
+              </span>
+              <span id="compTrapBadge" class="text-[10px] font-black px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
+                조건 안전
+              </span>
+            </div>
+
+            <div class="space-y-2 text-[11px] leading-relaxed">
+              <div class="flex justify-between items-center py-1 border-b border-slate-50">
+                <span class="text-slate-500">기준 요금제 및 유지:</span>
+                <span id="audit-plan" class="font-bold text-slate-800">109 요금제 (M+3개월)</span>
+              </div>
+              <div class="flex justify-between items-center py-1 border-b border-slate-50">
+                <span class="text-slate-500">필수 부가서비스:</span>
+                <span id="audit-adds" class="font-bold text-slate-800">기본부가 3종</span>
+              </div>
+              <div class="flex justify-between items-center py-1 border-b border-slate-50">
+                <span class="text-slate-500">제휴카드 포함 여부:</span>
+                <span id="audit-card" class="font-bold text-emerald-700">제휴카드 미포함 (순수완납)</span>
+              </div>
+              <div class="flex justify-between items-center py-1 border-b border-slate-50">
+                <span class="text-slate-500">중고폰 반납 의무:</span>
+                <span id="audit-return" class="font-bold text-emerald-700">반납 의무 없음 (100% 소유)</span>
+              </div>
+
+              <!-- 감지된 함정 목록 -->
+              <div id="trapListContainer" class="p-2.5 bg-rose-50/80 border border-rose-200 rounded-xl space-y-1 hidden">
+                <span class="font-black text-rose-900 block text-[11px]">🚨 발견된 눈속임 / 주의 조건</span>
+                <ul id="trapList" class="list-disc list-inside text-rose-800 text-[10px] space-y-0.5"></ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- 우측: 원조폰 현장 고객 상담 멘트 가이드 -->
+          <div class="bg-gradient-to-br from-indigo-900 to-slate-900 text-white rounded-2xl p-4 shadow-sm space-y-2.5 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between border-b border-slate-700/80 pb-2">
+                <span class="font-extrabold text-xs text-amber-300 flex items-center gap-1.5">
+                  <span class="text-sm">🗣️</span>
+                  원조폰 현장 팩트체크 상담 멘트 (공격 가이드)
+                </span>
+                <button onclick="copyAdviceText()" class="text-[10px] font-bold text-slate-300 hover:text-white underline">
+                  멘트 복사
+                </button>
+              </div>
+              <p id="compSalesAdviceText" class="text-xs text-slate-200 leading-relaxed mt-2.5 whitespace-pre-line font-medium">
+                "고객님, 저 매장 가격표는 겉으로는 저렴해 보이지만 [제휴카드 필수 발급 + 부가 5종] 조건입니다. 
+                저희 원조폰은 번거로운 카드 발급이나 반납 강요 없이, 순수 현금완납 가격으로 깨끗하고 정직하게 개통해 드립니다!"
+              </p>
+            </div>
+            <p class="text-[10px] text-amber-300/80 pt-2 border-t border-slate-800">
+              💡 고객이 타 매장 시세표를 캡처해서 보여줄 때 위 멘트로 조건을 팩트체크해 주면 90% 이상 설득됩니다.
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Step 3: 1:1 기종별 정밀 대조 테이블 -->
+        <div class="bg-white border border-slate-200 rounded-2xl shadow-2xs overflow-hidden space-y-3 p-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+            <div class="flex items-center gap-2">
+              <span class="font-black text-xs text-slate-800 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
+                2. 기종별 광고가격 vs 우리 원가 1:1 대조표
+              </span>
+              <span class="text-[11px] text-slate-400">경쟁사 광고가에 판매 시 우리 마진 실시간 계산</span>
+            </div>
+            
+            <div class="flex items-center gap-2">
+              <button onclick="addCompareRow()" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition flex items-center gap-1">
+                <span>➕ 행 추가</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left border-collapse" style="min-width: 820px;">
+              <thead>
+                <tr class="bg-slate-50 border-y border-slate-200 text-slate-600 font-extrabold text-[11px]">
+                  <th class="p-2.5 w-44">기종명</th>
+                  <th class="p-2.5 w-24">통신사/유형</th>
+                  <th class="p-2.5 w-28 text-right">출고가 / 공시</th>
+                  <th class="p-2.5 w-28 text-right bg-purple-50/50 text-purple-900">경쟁사 광고가</th>
+                  <th class="p-2.5 w-28 text-right text-slate-500">경쟁사 지원금</th>
+                  <th class="p-2.5 w-28 text-right bg-slate-100/60">우리 넷가(원가)</th>
+                  <th class="p-2.5 w-32 text-right bg-amber-50/50 font-black">우리 마진</th>
+                  <th class="p-2.5 w-28 text-center">경쟁 판정</th>
+                  <th class="p-2.5 w-12 text-center">삭제</th>
+                </tr>
+              </thead>
+              <tbody id="compTableBody" class="divide-y divide-slate-100 font-medium">
+                <!-- 렌더링 함수(renderCompareTable)에 의해 동적으로 채워집니다 -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
     </div>
 
     <!-- ==================== TAB 4: 버그 및 개선사항 요청 & 조치 관리 ==================== -->
@@ -2028,7 +2646,9 @@
     }
     function lockApp() {
       if (unsubscribeMasterConfig) { unsubscribeMasterConfig(); unsubscribeMasterConfig = null; }
-      if (unsubscribeStoreData) { unsubscribeStoreData(); unsubscribeStoreData = null; }
+      if (unsubscribeStoreData) { unsubscribeStoreData();
+      if (currentTab === 'card') setCardStore(targetStoreId);
+      if (currentTab === 'compare') setCompareStore(targetStoreId); unsubscribeStoreData = null; }
       if (unsubscribeAuditHistory) { unsubscribeAuditHistory(); unsubscribeAuditHistory = null; }
       if (unsubscribeSupportRequests) { unsubscribeSupportRequests(); unsubscribeSupportRequests = null; }
       try {
@@ -2076,23 +2696,27 @@
       }
     });
 
-    function switchTab(t) {
+        function switchTab(t) {
       currentTab = t;
-      ['calc', 'daily', 'ad', 'request'].forEach(id => {
-        const tabEl = document.getElementById(`tab-${id}`);
+      ['calc', 'daily', 'ad', 'card', 'compare', 'request'].forEach(id => {
+        const tabEl = document.getElementById('tab-' + id);
         if (tabEl) tabEl.classList.toggle('hidden', id !== t);
-        const b = document.getElementById(`tabBtn-${id}`);
+        const b = document.getElementById('tabBtn-' + id);
         if (b) {
           if (id === t) {
-            b.className = "flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-slate-900 text-white shadow-xs transition relative";
+            b.className = "flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-900 text-white shadow-xs transition relative";
           } else {
-            b.className = "flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition relative";
+            b.className = "flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition relative";
           }
         }
       });
       const vfb = document.getElementById('viewFilterBox');
       if (vfb) vfb.classList.toggle('hidden', t !== 'calc');
-      if (t === 'request') {
+      if (t === 'card') {
+        initCardTab();
+      } else if (t === 'compare') {
+        initCompareTab();
+      } else if (t === 'request') {
         renderSupportRequests();
       } else if (t === 'ad') {
         setAdMarginBase(adMarginBase);
@@ -3571,6 +4195,8 @@
       currentStoreId = targetStoreId;
       updateUserHeaderBadge();
       subscribeStoreData();
+      if (currentTab === 'card') setCardStore(targetStoreId);
+      if (currentTab === 'compare') setCompareStore(targetStoreId);
     }
 
     // ==================== 클라우드 연결 상태 배지 관리 ====================
@@ -3683,6 +4309,8 @@
 
       // 2. 매장별 독립 데이터 리스너
       subscribeStoreData();
+      if (currentTab === 'card') setCardStore(targetStoreId);
+      if (currentTab === 'compare') setCompareStore(targetStoreId);
 
       // 3. 실시간 변경 히스토리 리스너
       subscribeAuditHistory();
@@ -3694,6 +4322,8 @@
     function subscribeStoreData() {
       if (unsubscribeStoreData) {
         unsubscribeStoreData();
+      if (currentTab === 'card') setCardStore(targetStoreId);
+      if (currentTab === 'compare') setCompareStore(targetStoreId);
         unsubscribeStoreData = null;
       }
       if (!db) return;
@@ -4570,6 +5200,1805 @@
         inputPin('');
       }
     } catch(e) {}
+
+
+    // ==================== [신규 확장 1] Gemini AI & 매장 연락처 상태 ====================
+    let geminiApiKey = "";
+    try {
+      geminiApiKey = localStorage.getItem('phone_gemini_api_key') || "";
+    } catch(e) {}
+
+    let cardStoreId = 'myeongji';
+    let cardTheme = 'theme-gold';
+
+    let storeContacts = {
+      myeongji: {
+        name: "원조폰 명지점",
+        phone: "051-204-1524",
+        mobile: "010-8588-1524",
+        address: "부산 강서구 명지국제8로 234 (대방디엠시티 맞은편)",
+        tagline: "17년 전통의 성지 매장! 불필요한 제휴카드/상조 강요 ZERO"
+      },
+      gwangan: {
+        name: "원조폰 광안점",
+        phone: "051-755-1524",
+        mobile: "010-8688-1524",
+        address: "부산 수영구 수영로 582 (광안역 1번 출구 앞)",
+        tagline: "17년 전통의 성지 매장! 정직한 할부원금 투명 공개"
+      }
+    };
+
+    const SAMPLE_QR_ISSUE = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAHCAcIDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD3+iiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKSilcBaKKKYBRRRQAUUlFK4C0UUUwCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACmSyLFGXkYKo6knAp3NcB8V7ya08ML5Esil5MfKcULUDt/t1oF3G4ix/v0jX9ov3riIZ6fNXymuoX0hASeY5HOGJ/lTjPqBGx5JyV5AO7+tOwH1V/aNoIhIbiIKT13UyTVbCNlVruIM3I+avliK8vTkedLx/Dz/AEpzXmoNGE3yhT1+9/WkB9RjWNO2q32yHaeh3VLbX1teZMEyvj+6a+Upb+8kVPMllKLyvOK9W+Dl9PLJdRysCD82C2TVWA9Ynvbe3IWSeNSezNUnmRmPzFdSoGc7uK8K+KX21PFG638/btGcdK2dB8V2Np4FuLeecCcqQA5xzSsB6uuoWjyCNbiLcRnAapJZ44U3SyJGvqTgV8vaTrd3DrEUr3Mwywbl+2e1ej/EvxXZX3h23isrrM/mAny377e9OwHqB1nTw2031vuP+3VmC6huGPkyI4XqVbNfI8d3crgfaZhIDkndmvbvhBdXE+n3AmlL/Nxu60Wuh2PUD0qoNTsmlMa3cJYHBXdzU1y+y2kbOMKea+Ym1a4g8TSSyTyCPz25HTrSSEfTzzRxJvkkRE9ScVVfWNOTlryAY/268p8aeLLWfwraWlnOvnn5nWI4x9a8pjvb1nwksxZTkfNmiwH1SuuaY6k/boBj1kxV2GeKdQ8MiOvqpz+tfJMtxOjDMjAn5iT1r3b4RTyTeHpPMkYkPwh7UWA9EJwM8cepqqmo2ckhRbmMuDyA1R6y23RrtskYjOCDg184aXq91B4mWSa6kEfm/vAWz8tCQH072HOc9KDnHTNczB430D7Mjfb4hxwD1xTk8deHnyP7QiJHaiwGzcapY2h2z3USH0Lc1XHiHSmCEX0PzHA+avB/iDrR1rxK09jMzQqmFIPFcpZ310LtBvbcHHVs07AfWRlRU3l1EYGck8VTGu6W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J89HHfrTj0pB1oASinHpTaAClHWkxnijIHBoAcRkYpu3HNHP8X4UUAFFKOtOoAZjPFH+zTj0ptABtxzRRQelAAelBGcCg9RQOtABtxzRz260n8VLx3oAOaKPkooAM45o3Z4oPShu1ABnHNIRkZpTwRQvXNMAH3aD06ZpCcNmlxnnOKLgB6j5aCcDNJ9GzS4B5IyaLAB7NR/tUL/u4pP4qQChsnFOPTmm0UAHP8X4UUUh6U7AOHWlPSkXpSJ1NIAoxnin0h6UANzjiiiigAzikI2/jS0CgBe4pP4qQd6WgBOjUY2g+9KOtJ/FQA49RTQcA0ucc0bs8UAAG0/WnHpTaOe3WgAoo479aKAFHWjsaQdaT+KgBaKKKACj8M0UUAA6/dxTmOFzTD0pRnbxQAu7LAUp6U0bs80+gBlFOPSm0AFFH4Zo57Lg0AGcc0oGTmk479aKAHHpTD0paB1oAB93pmjr/Dj3pP4qWgBAuM/NmlPTpmgdaT+KgBT1Hy0DrRRQA3f/ALFFOooAACDz0pWzj5adRQBH8/fFLhvWn0U7gRbWwacAwHWn0UgI/mPfFKAwPLZp9FO4EYDEEN+FKVIIIp9FIBnzmkKtjt+NSUUAR7eO272pQGzT6KdwE5pi79vzde1SUUgGIGB5off26U+igBgBI+bpQFIPHSn0UAN5wcU0hiMGpKKAG7fmFKFpaKAExR82falooAQ8imouDT6KAEOccU356fRQAz5z3xRtf+/T6KAGBWB5bNK2T0OKdRQAza3ds0BcHNPooASkK8U6igBmygLg5p9FACUhXinUUAM2UbPfFPooAZtPZv0oCtnkjH+7T6KAGsvy8HB+maQK2OX/APHcU+igBgXB+9mnHJHBxS0UAM2n+JsigLzx0p9FADWX5euKQLx96n0UARlDjh8GlRSB8xyfWn0UAJtopaKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//9k=";
+    const SAMPLE_QR_EVENT = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAGkAaQDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD3+iiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKA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";
+
+    // 2. 제휴카드 안내서 상태 데이터
+    let cardData = {
+      cardCompany: "KB국민카드",
+      carrier: "LGU+",
+      cardName: "국민 LGU+ 라이트할부 II KB국민카드",
+      specs: {
+        targetDevice: "추가할인, 캐시백 프로모션",
+        minPayment: "5만원",
+        autoTransfer: "미필수",
+        annualFee: "국내 2만원 / W(JCB), Master 2만원",
+        installmentInterest: "24개월 5.9% / 36개월 7%"
+      },
+      promotions: [
+        {
+          step: 1,
+          badge: "프로모션 1",
+          title: "24개월 매월 추가 할인 제공 (~26.11.30 장기할부 승인)",
+          condition: "기간 내 최초 신규 발급 후 전월실적 충족 시",
+          tiers: [
+            { label: "전월 30만원 이상", amount: "월 25,000원 할인 (기본 8,000 + 추가 17,000)" },
+            { label: "전월 70만원 이상", amount: "월 26,000원 할인 (기본 12,000 + 추가 14,000)" },
+            { label: "전월 100만원 이상", amount: "월 27,000원 할인 (기본 14,000 + 추가 13,000)" }
+          ],
+          highlight: "월 25,000원 x 24개월 = 총 600,000원 청구할인!"
+        },
+        {
+          step: 2,
+          badge: "프로모션 2",
+          title: "단말기 개통 추가 캐시백 (1회)",
+          condition: "아이폰 18 Pro, Pro Max 등 주요 모델 개통 및 라이트할부 60만원 이상 결제 시",
+          benefit: "80,000원 캐시백 1회 제공 (27년 1월 15일 이전 결제계좌 지급)"
+        },
+        {
+          step: 3,
+          badge: "프로모션 3",
+          title: "간편결제 등록 추가 캐시백 (1회)",
+          condition: "프로모션 2 대상자 중 KB Pay 등록 후 KB Pay로 2만원 이상 결제 시",
+          benefit: "20,000원 캐시백 1회 제공 (27년 1월 15일 이전 결제계좌 지급)"
+        }
+      ],
+      basicBenefits: [
+        "장기할부 이용 시: 전월 30만 8,000원 / 70만 12,000원 / 100만 14,000원 할인",
+        "장기할부 미이용 시: 전월실적 30만원 이상 4,000원 할인",
+        "생활 부가혜택: 아파트관리비 월 2천원 청구할인 / 4대보험, 도시가스, 전기요금 월 1천원 할인"
+      ],
+      details: [
+        "신규 발급 시 당월 전월실적 30만원 미만이라도 8,000원 할인 기본 제공",
+        "전월실적 포함 항목: 통신비 자동이체금, 장기할부 약정금액, 일반 생활이용금액",
+        "전월실적 제외 항목: 4대보험료, 아파트관리비, 국세, 지방세, 공과금, 대학등록금, 상품권, 선불카드 등"
+      ],
+      summary: {
+        calcMonths: "24개월",
+        monthlyDiscount: "25,000원",
+        totalMonthly: "600,000원",
+        cashback: "100,000원",
+        grandTotal: "700,000원",
+        callout: "24개월 동안 최대 700,000원 통신비 절감 혜택!"
+      },
+      phone: "KB국민카드 고객센터 1588-1688 / ARS 발급전화",
+      qrImageUrl: SAMPLE_QR_ISSUE,
+      eventQrImageUrl: SAMPLE_QR_EVENT
+    };
+
+    let cardUploadedCanvas = null;
+    let cardUploadedImage = null;
+
+    // ==================== 제휴카드 안내서 제작 함수 ====================
+    function initCardTab() {
+      // 현재 로그인 매장에 맞춤 기본 설정
+      if (currentStoreId && ['myeongji', 'gwangan'].includes(currentStoreId)) {
+        cardStoreId = currentStoreId;
+      }
+      setCardStore(cardStoreId);
+      setCardTheme(cardTheme);
+      renderCardEditor();
+      renderCardPreview();
+      updateAiBadgeStatus();
+    }
+
+    function setCardStore(sId) {
+      cardStoreId = sId;
+      const btnMj = document.getElementById('cardStoreBtn-myeongji');
+      const btnGw = document.getElementById('cardStoreBtn-gwangan');
+      if (btnMj && btnGw) {
+        if (sId === 'myeongji') {
+          btnMj.className = "px-3 py-1.5 rounded-lg bg-indigo-600 text-white shadow-2xs transition font-bold";
+          btnGw.className = "px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition font-bold";
+        } else {
+          btnGw.className = "px-3 py-1.5 rounded-lg bg-emerald-600 text-white shadow-2xs transition font-bold";
+          btnMj.className = "px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition font-bold";
+        }
+      }
+      renderCardPreview();
+    }
+
+    function setCardTheme(t) {
+      cardTheme = t;
+      const sel = document.getElementById('cardThemeSelect');
+      if (sel) sel.value = t;
+      renderCardPreview();
+    }
+
+    function renderCardEditor() {
+      const el = id => document.getElementById(id);
+      if (el('cfg-cardCompany')) el('cfg-cardCompany').value = cardData.cardCompany || '';
+      if (el('cfg-carrier')) el('cfg-carrier').value = cardData.carrier || '';
+      if (el('cfg-cardName')) el('cfg-cardName').value = cardData.cardName || '';
+
+      if (el('cfg-spec-target')) el('cfg-spec-target').value = cardData.specs.targetDevice || '';
+      if (el('cfg-spec-min')) el('cfg-spec-min').value = cardData.specs.minPayment || '';
+      if (el('cfg-spec-auto')) el('cfg-spec-auto').value = cardData.specs.autoTransfer || '';
+      if (el('cfg-spec-fee')) el('cfg-spec-fee').value = cardData.specs.annualFee || '';
+      if (el('cfg-spec-interest')) el('cfg-spec-interest').value = cardData.specs.installmentInterest || '';
+
+      const p1 = cardData.promotions[0] || {};
+      if (el('cfg-p1-title')) el('cfg-p1-title').value = p1.title || '';
+      if (p1.tiers && p1.tiers.length >= 3) {
+        if (el('cfg-p1-tier1')) el('cfg-p1-tier1').value = p1.tiers[0].amount || '';
+        if (el('cfg-p1-tier2')) el('cfg-p1-tier2').value = p1.tiers[1].amount || '';
+        if (el('cfg-p1-tier3')) el('cfg-p1-tier3').value = p1.tiers[2].amount || '';
+      }
+
+      const p2 = cardData.promotions[1] || {};
+      if (el('cfg-p2-cond')) el('cfg-p2-cond').value = p2.condition || '';
+      if (el('cfg-p2-benefit')) el('cfg-p2-benefit').value = p2.benefit || '';
+
+      const p3 = cardData.promotions[2] || {};
+      if (el('cfg-p3-cond')) el('cfg-p3-cond').value = p3.condition || '';
+      if (el('cfg-p3-benefit')) el('cfg-p3-benefit').value = p3.benefit || '';
+
+      if (el('cfg-summaryCallout')) el('cfg-summaryCallout').value = (cardData.summary && cardData.summary.callout) || '';
+      if (el('cfg-phone')) el('cfg-phone').value = cardData.phone || '';
+
+      const qrImg = el('cardQrImgPreview');
+      if (qrImg) {
+        qrImg.src = cardData.qrImageUrl || '';
+      }
+      const qrStatus = el('qrStatusBadge');
+      if (qrStatus) {
+        if (cardData.qrImageUrl) {
+          qrStatus.className = "text-[10px] font-black text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md";
+          qrStatus.innerText = "QR 등록 완료 ✓";
+        } else {
+          qrStatus.className = "text-[10px] font-black text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md";
+          qrStatus.innerText = "QR 미등록 ⚠️";
+        }
+      }
+    }
+
+    function updateCardField(key, val) {
+      cardData[key] = val;
+      renderCardPreview();
+    }
+
+    function updateCardSpec(key, val) {
+      if (!cardData.specs) cardData.specs = {};
+      cardData.specs[key] = val;
+      renderCardPreview();
+    }
+
+    function updateCardPromo(idx, field, val) {
+      if (!cardData.promotions[idx]) cardData.promotions[idx] = {};
+      cardData.promotions[idx][field] = val;
+      renderCardPreview();
+    }
+
+    function updateCardPromoTier(stepIdx, tierIdx, val) {
+      if (!cardData.promotions[stepIdx]) cardData.promotions[stepIdx] = { tiers: [] };
+      if (!cardData.promotions[stepIdx].tiers) cardData.promotions[stepIdx].tiers = [];
+      if (!cardData.promotions[stepIdx].tiers[tierIdx]) cardData.promotions[stepIdx].tiers[tierIdx] = {};
+      cardData.promotions[stepIdx].tiers[tierIdx].amount = val;
+      renderCardPreview();
+    }
+
+    function updateCardSummary(key, val) {
+      if (!cardData.summary) cardData.summary = {};
+      cardData.summary[key] = val;
+      renderCardPreview();
+    }
+
+    // 테마별 색상 스타일 맵
+    const THEME_STYLES = {
+      'theme-gold': {
+        headerBg: 'bg-amber-500',
+        headerText: 'text-slate-900',
+        badgeBg: 'bg-slate-900',
+        badgeText: 'text-amber-400',
+        accentBorder: 'border-amber-400',
+        accentBg: 'bg-amber-50/70',
+        accentText: 'text-amber-900',
+        cardBorder: 'border-amber-300',
+        stepBadge: 'bg-amber-500 text-slate-950 font-black',
+        highlightBg: 'bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950',
+        qrBoxBg: 'bg-amber-50 border-amber-300'
+      },
+      'theme-blue': {
+        headerBg: 'bg-blue-600',
+        headerText: 'text-white',
+        badgeBg: 'bg-slate-900',
+        badgeText: 'text-sky-300',
+        accentBorder: 'border-blue-400',
+        accentBg: 'bg-blue-50/70',
+        accentText: 'text-blue-900',
+        cardBorder: 'border-blue-300',
+        stepBadge: 'bg-blue-600 text-white font-black',
+        highlightBg: 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white',
+        qrBoxBg: 'bg-blue-50 border-blue-300'
+      },
+      'theme-red': {
+        headerBg: 'bg-rose-600',
+        headerText: 'text-white',
+        badgeBg: 'bg-slate-900',
+        badgeText: 'text-rose-300',
+        accentBorder: 'border-rose-400',
+        accentBg: 'bg-rose-50/70',
+        accentText: 'text-rose-900',
+        cardBorder: 'border-rose-300',
+        stepBadge: 'bg-rose-600 text-white font-black',
+        highlightBg: 'bg-gradient-to-r from-rose-600 to-pink-600 text-white',
+        qrBoxBg: 'bg-rose-50 border-rose-300'
+      },
+      'theme-pink': {
+        headerBg: 'bg-pink-600',
+        headerText: 'text-white',
+        badgeBg: 'bg-slate-900',
+        badgeText: 'text-pink-300',
+        accentBorder: 'border-pink-400',
+        accentBg: 'bg-pink-50/70',
+        accentText: 'text-pink-900',
+        cardBorder: 'border-pink-300',
+        stepBadge: 'bg-pink-600 text-white font-black',
+        highlightBg: 'bg-gradient-to-r from-pink-600 to-purple-600 text-white',
+        qrBoxBg: 'bg-pink-50 border-pink-300'
+      },
+      'theme-green': {
+        headerBg: 'bg-emerald-600',
+        headerText: 'text-white',
+        badgeBg: 'bg-slate-900',
+        badgeText: 'text-emerald-300',
+        accentBorder: 'border-emerald-400',
+        accentBg: 'bg-emerald-50/70',
+        accentText: 'text-emerald-900',
+        cardBorder: 'border-emerald-300',
+        stepBadge: 'bg-emerald-600 text-white font-black',
+        highlightBg: 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white',
+        qrBoxBg: 'bg-emerald-50 border-emerald-300'
+      },
+      'theme-mono': {
+        headerBg: 'bg-slate-900',
+        headerText: 'text-white',
+        badgeBg: 'bg-slate-800',
+        badgeText: 'text-slate-200',
+        accentBorder: 'border-slate-400',
+        accentBg: 'bg-slate-100',
+        accentText: 'text-slate-900',
+        cardBorder: 'border-slate-300',
+        stepBadge: 'bg-slate-900 text-white font-black',
+        highlightBg: 'bg-slate-900 text-white',
+        qrBoxBg: 'bg-slate-100 border-slate-300'
+      }
+    };
+
+    function renderCardPreview() {
+      const container = document.getElementById('cardA4Sheet');
+      if (!container) return;
+
+      const theme = THEME_STYLES[cardTheme] || THEME_STYLES['theme-gold'];
+      const st = storeContacts[cardStoreId] || storeContacts['myeongji'];
+
+      const p1 = (cardData.promotions && cardData.promotions[0]) || {};
+      const p2 = (cardData.promotions && cardData.promotions[1]) || {};
+      const p3 = (cardData.promotions && cardData.promotions[2]) || {};
+      const specs = cardData.specs || {};
+      const summary = cardData.summary || {};
+
+      const tiersHtml = (p1.tiers || [
+        { label: "전월 30만원 이상", amount: "월 25,000원 할인" },
+        { label: "전월 70만원 이상", amount: "월 26,000원 할인" },
+        { label: "전월 100만원 이상", amount: "월 27,000원 할인" }
+      ]).map(t => `
+        <div class="flex items-center justify-between py-1 border-b border-slate-100 text-[11px]">
+          <span class="text-slate-600 font-semibold">• ${t.label}</span>
+          <span class="font-black text-rose-600">${t.amount}</span>
+        </div>
+      `).join('');
+
+      const basicBenefitsHtml = (cardData.basicBenefits || []).map(b => `
+        <li class="text-[10px] text-slate-600 leading-tight">• ${b}</li>
+      `).join('');
+
+      const detailsHtml = (cardData.details || []).map(d => `
+        <li class="text-[9.5px] text-slate-500 leading-tight">• ${d}</li>
+      `).join('');
+
+      container.innerHTML = `
+        <!-- 상단 헤더 바 -->
+        <div class="rounded-xl ${theme.headerBg} ${theme.headerText} p-4 shadow-sm flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2.5">
+            <span class="px-2.5 py-1 rounded-md ${theme.badgeBg} ${theme.badgeText} text-[11px] font-black uppercase tracking-wider">
+              ${cardData.carrier || 'LGU+'}
+            </span>
+            <span class="px-2 py-0.5 rounded text-[11px] font-extrabold bg-white/20 backdrop-blur-xs">
+              ${cardData.cardCompany || 'KB국민카드'}
+            </span>
+            <h1 class="text-base sm:text-lg font-black tracking-tight leading-tight">
+              ${cardData.cardName || '제휴카드 라이트할부 특별 안내'}
+            </h1>
+          </div>
+
+          <div class="text-right shrink-0">
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-black/30 backdrop-blur-xs text-white text-[11px] font-black">
+              <span>📍</span> ${st.name}
+            </span>
+            <p class="text-[10px] text-white/90 font-bold mt-0.5">☎ ${st.phone} / 📱 ${st.mobile}</p>
+          </div>
+        </div>
+
+        <!-- 핵심 요약 5대 스펙 박스 -->
+        <div class="grid grid-cols-5 gap-1.5 text-center text-xs">
+          <div class="p-2 rounded-xl bg-slate-50 border border-slate-200">
+            <span class="block text-[9.5px] font-bold text-slate-400 mb-0.5">전용 단말기</span>
+            <span class="font-extrabold text-[11px] text-slate-800">${specs.targetDevice || '전기종 지원'}</span>
+          </div>
+          <div class="p-2 rounded-xl bg-slate-50 border border-slate-200">
+            <span class="block text-[9.5px] font-bold text-slate-400 mb-0.5">최소 결제금액</span>
+            <span class="font-extrabold text-[11px] text-slate-800">${specs.minPayment || '5만원'}</span>
+          </div>
+          <div class="p-2 rounded-xl bg-slate-50 border border-slate-200">
+            <span class="block text-[9.5px] font-bold text-slate-400 mb-0.5">자동이체</span>
+            <span class="font-extrabold text-[11px] text-slate-800">${specs.autoTransfer || '미필수'}</span>
+          </div>
+          <div class="p-2 rounded-xl bg-slate-50 border border-slate-200">
+            <span class="block text-[9.5px] font-bold text-slate-400 mb-0.5">연회비</span>
+            <span class="font-extrabold text-[11px] text-slate-800">${specs.annualFee || '국내 2만'}</span>
+          </div>
+          <div class="p-2 rounded-xl bg-slate-50 border border-slate-200">
+            <span class="block text-[9.5px] font-bold text-slate-400 mb-0.5">할부이자</span>
+            <span class="font-extrabold text-[11px] text-slate-800">${specs.installmentInterest || '24개월 5.9%'}</span>
+          </div>
+        </div>
+
+        <!-- 메인 2단 본문 레이아웃 -->
+        <div class="grid grid-cols-12 gap-3.5 items-start">
+          
+          <!-- 좌측 컬럼 (7/12): 프로모션 1, 2, 3 단계 & 총 혜택 배너 -->
+          <div class="col-span-7 space-y-2.5">
+            
+            <!-- 프로모션 1 카드 -->
+            <div class="p-3 rounded-xl border ${theme.cardBorder} bg-white shadow-2xs space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="px-2 py-0.5 rounded text-[10px] ${theme.stepBadge}">STEP 1</span>
+                <span class="text-[10px] font-bold text-slate-400">24개월간 매월 할인</span>
+              </div>
+              <h3 class="font-black text-xs text-slate-900">${p1.title || '매월 통신비 청구할인 프로모션'}</h3>
+              <p class="text-[10px] text-slate-500 leading-tight">${p1.condition || '신규 발급 후 전월실적 충족 시 매월 추가 할인'}</p>
+              
+              <div class="bg-slate-50/80 rounded-lg p-2 space-y-0.5 border border-slate-100">
+                ${tiersHtml}
+              </div>
+            </div>
+
+            <!-- 프로모션 2: 단말기 캐시백 -->
+            <div class="p-3 rounded-xl border ${theme.cardBorder} bg-white shadow-2xs space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="px-2 py-0.5 rounded text-[10px] ${theme.stepBadge}">STEP 2</span>
+                <span class="text-[10px] font-extrabold text-rose-600 bg-rose-50 px-1.5 py-0.2 rounded">단말기 추가 혜택</span>
+              </div>
+              <h3 class="font-black text-xs text-slate-900">${p2.title || '단말기 개통 추가 캐시백 (1회)'}</h3>
+              <p class="text-[10.5px] text-slate-600">${p2.condition || '지정 모델 개통 및 라이트할부 60만원 이상 결제 시'}</p>
+              <div class="p-1.5 bg-rose-50/70 border border-rose-200 rounded-lg flex items-center justify-between">
+                <span class="text-[10px] font-bold text-rose-800">지급 혜택</span>
+                <span class="text-xs font-black text-rose-600">${p2.benefit || '8만원 계좌 입금'}</span>
+              </div>
+            </div>
+
+            <!-- 프로모션 3: 페이 등록 캐시백 -->
+            <div class="p-3 rounded-xl border ${theme.cardBorder} bg-white shadow-2xs space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="px-2 py-0.5 rounded text-[10px] ${theme.stepBadge}">STEP 3</span>
+                <span class="text-[10px] font-extrabold text-blue-600 bg-blue-50 px-1.5 py-0.2 rounded">간편결제 등록 혜택</span>
+              </div>
+              <h3 class="font-black text-xs text-slate-900">${p3.title || '간편결제 등록 추가 캐시백 (1회)'}</h3>
+              <p class="text-[10.5px] text-slate-600">${p3.condition || 'KB Pay 등록 후 2만원 이상 결제 시'}</p>
+              <div class="p-1.5 bg-blue-50/70 border border-blue-200 rounded-lg flex items-center justify-between">
+                <span class="text-[10px] font-bold text-blue-800">추가 혜택</span>
+                <span class="text-xs font-black text-blue-600">${p3.benefit || '2만원 계좌 입금'}</span>
+              </div>
+            </div>
+
+            <!-- 💰 총 혜택 계산 강조 배너 -->
+            <div class="rounded-xl p-3 shadow-xs ${theme.highlightBg} text-center space-y-1">
+              <span class="text-[10px] font-extrabold uppercase tracking-widest opacity-90 block">TOTAL BENEFITS</span>
+              <p class="text-sm sm:text-base font-black tracking-tight leading-tight">
+                ${summary.callout || '24개월 동안 최대 700,000원 통신비 절감!'}
+              </p>
+              <p class="text-[10px] opacity-80">
+                (월 청구할인 60만원 + 단말기/페이 캐시백 10만원 합산 기준)
+              </p>
+            </div>
+
+          </div>
+
+          <!-- 우측 컬럼 (5/12): 잘라낸 원본 QR 코드 박스 & 상세 안내 -->
+          <div class="col-span-5 space-y-2.5">
+            
+            <!-- 📲 실제 원본에서 잘라낸 QR 코드 박스 (인식률 100%) -->
+            <div class="p-3.5 rounded-xl border-2 ${theme.cardBorder} ${theme.qrBoxBg} text-center space-y-2 shadow-xs">
+              <span class="inline-flex items-center gap-1 text-[11px] font-black text-slate-900">
+                <span>📱</span> 카드 간편 발급 신청 QR
+              </span>
+              
+              <!-- 원본 크롭 QR 이미지 (후처리 방식) -->
+              <div class="w-32 h-32 mx-auto bg-white p-2 rounded-xl shadow-xs border border-slate-300 flex items-center justify-center overflow-hidden">
+                <img src="${cardData.qrImageUrl || ''}" class="w-full h-full object-contain" alt="카드발급 원본 QR" />
+              </div>
+
+              <div class="space-y-0.5 text-slate-700">
+                <p class="text-[10.5px] font-extrabold leading-tight">
+                  스마트폰 카메라로 비추시면<br/>즉시 카드 발급 페이지로 이동합니다.
+                </p>
+                <p class="text-[9.5px] text-slate-500 font-semibold pt-1">
+                  ${cardData.phone || '고객센터 문의 가능'}
+                </p>
+              </div>
+            </div>
+
+            <!-- 기본 혜택 / 카드 부가혜택 박스 -->
+            <div class="p-3 rounded-xl border border-slate-200 bg-white shadow-2xs space-y-1.5">
+              <span class="font-extrabold text-[11px] text-slate-800 block">🎁 카드 기본 & 생활 혜택</span>
+              <ul class="space-y-1">
+                ${basicBenefitsHtml}
+              </ul>
+            </div>
+
+            <!-- 전월실적 인정/제외 유의사항 -->
+            <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/70 space-y-1.5">
+              <span class="font-extrabold text-[10.5px] text-slate-700 block">⚠️ 전월실적 산정 기준 안내</span>
+              <ul class="space-y-0.8">
+                ${detailsHtml}
+              </ul>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- 하단 푸터: 원조폰 정직한 약속 & 매장 직통 안내 -->
+        <div class="pt-2 border-t border-slate-200 flex items-center justify-between gap-3 text-[10px] text-slate-500">
+          <div class="space-y-0.5">
+            <p class="font-extrabold text-slate-700">
+              💡 <strong>원조폰의 약속</strong>: 본 안내서는 고객님의 통신비 절감을 돕기 위한 자율 제휴 프로모션이며, 제휴카드 가입을 절대 강요하지 않습니다.
+            </p>
+            <p class="text-slate-400">
+              📍 <strong>${st.name}</strong>: ${st.address} | ☎ ${st.phone} | 📱 ${st.mobile}
+            </p>
+          </div>
+          <div class="text-right shrink-0">
+            <span class="font-black text-slate-400">정직한 성지 원조폰</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function printCardA4() {
+      window.print();
+    }
+
+    function downloadCardPng() {
+      const sheet = document.getElementById('cardA4Sheet');
+      if (!sheet) return;
+      if (typeof html2canvas === 'undefined') {
+        alert("이미지 변환 라이브러리가 로드되지 않았습니다. 잠시 후 다시 시도해 주세요.");
+        return;
+      }
+      const st = storeContacts[cardStoreId] || storeContacts['myeongji'];
+      html2canvas(sheet, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff'
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `제휴카드안내서_${cardData.cardName.replace(/\s+/g, '_')}_${st.name}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      }).catch(err => {
+        console.error("PNG 저장 에러:", err);
+        alert("이미지 저장 중 오류가 발생했습니다: " + err.message);
+      });
+    }
+
+    function loadCardSample() {
+      cardData.cardCompany = "KB국민카드";
+      cardData.carrier = "LGU+";
+      cardData.cardName = "국민 LGU+ 라이트할부 II KB국민카드";
+      cardData.specs = {
+        targetDevice: "추가할인, 캐시백 프로모션",
+        minPayment: "5만원",
+        autoTransfer: "미필수",
+        annualFee: "국내 2만원 / W(JCB), Master 2만원",
+        installmentInterest: "24개월 5.9% / 36개월 7%"
+      };
+      cardData.promotions = [
+        {
+          step: 1,
+          badge: "프로모션 1",
+          title: "24개월 매월 추가 할인 제공 (~26.11.30 장기할부 승인)",
+          condition: "기간 내 최초 신규 발급 후 전월실적 충족 시",
+          tiers: [
+            { label: "전월 30만원 이상", amount: "월 25,000원 할인 (기본 8,000 + 추가 17,000)" },
+            { label: "전월 70만원 이상", amount: "월 26,000원 할인 (기본 12,000 + 추가 14,000)" },
+            { label: "전월 100만원 이상", amount: "월 27,000원 할인 (기본 14,000 + 추가 13,000)" }
+          ],
+          highlight: "월 25,000원 x 24개월 = 총 600,000원 청구할인!"
+        },
+        {
+          step: 2,
+          badge: "프로모션 2",
+          title: "단말기 개통 추가 캐시백 (1회)",
+          condition: "아이폰 18 Pro, Pro Max 등 주요 모델 개통 및 라이트할부 60만원 이상 결제 시",
+          benefit: "80,000원 캐시백 1회 제공 (27년 1월 15일 이전 결제계좌 지급)"
+        },
+        {
+          step: 3,
+          badge: "프로모션 3",
+          title: "간편결제 등록 추가 캐시백 (1회)",
+          condition: "프로모션 2 대상자 중 KB Pay 등록 후 KB Pay로 2만원 이상 결제 시",
+          benefit: "20,000원 캐시백 1회 제공 (27년 1월 15일 이전 결제계좌 지급)"
+        }
+      ];
+      cardData.basicBenefits = [
+        "장기할부 이용 시: 전월 30만 8,000원 / 70만 12,000원 / 100만 14,000원 할인",
+        "장기할부 미이용 시: 전월실적 30만원 이상 4,000원 할인",
+        "생활 부가혜택: 아파트관리비 월 2천원 청구할인 / 4대보험, 도시가스, 전기요금 월 1천원 할인"
+      ];
+      cardData.details = [
+        "신규 발급 시 당월 전월실적 30만원 미만이라도 8,000원 할인 기본 제공",
+        "전월실적 포함 항목: 통신비 자동이체금, 장기할부 약정금액, 일반 생활이용금액",
+        "전월실적 제외 항목: 4대보험료, 아파트관리비, 국세, 지방세, 공과금, 대학등록금, 상품권, 선불카드 등"
+      ];
+      cardData.summary = {
+        calcMonths: "24개월",
+        monthlyDiscount: "25,000원",
+        totalMonthly: "600,000원",
+        cashback: "100,000원",
+        grandTotal: "700,000원",
+        callout: "24개월 동안 최대 700,000원 통신비 절감 혜택!"
+      };
+      cardData.phone = "KB국민카드 고객센터 1588-1688 / ARS 발급전화";
+      cardData.qrImageUrl = SAMPLE_QR_ISSUE;
+      cardData.eventQrImageUrl = SAMPLE_QR_EVENT;
+
+      cardTheme = 'theme-gold';
+      setCardTheme('theme-gold');
+      renderCardEditor();
+      renderCardPreview();
+      alert("✅ KB국민 LGU+ 라이트할부 II 샘플 안내서 및 실제 원본 QR 코드가 로드되었습니다!");
+    }
+
+    // 파일 업로드 (이미지 & PDF)
+    function handleCardDragOver(e) { e.preventDefault(); e.currentTarget.classList.add('border-indigo-500', 'bg-indigo-50/40'); }
+    function handleCardDragLeave(e) { e.preventDefault(); e.currentTarget.classList.remove('border-indigo-500', 'bg-indigo-50/40'); }
+    function handleCardDrop(e) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('border-indigo-500', 'bg-indigo-50/40');
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        loadCardFile(e.dataTransfer.files[0]);
+      }
+    }
+    function handleCardFileSelected(e) {
+      if (e.target.files && e.target.files[0]) {
+        loadCardFile(e.target.files[0]);
+      }
+    }
+
+    function loadCardFile(file) {
+      if (!file) return;
+      document.getElementById('cardFileName').innerText = file.name;
+      document.getElementById('cardFileSize').innerText = (file.size / 1024).toFixed(1) + ' KB';
+
+      if (file.type === 'application/pdf') {
+        loadPdfFileToCanvas(file, function(canvas) {
+          cardUploadedCanvas = canvas;
+          cardUploadedImage = canvas;
+          document.getElementById('cardThumbImg').src = canvas.toDataURL('image/jpeg', 0.8);
+          document.getElementById('cardDropEmpty').classList.add('hidden');
+          document.getElementById('cardDropPreviewBox').classList.remove('hidden');
+          autoDetectQrCode();
+        });
+      } else {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const img = new Image();
+          img.onload = function() {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            cardUploadedCanvas = canvas;
+            cardUploadedImage = img;
+            document.getElementById('cardThumbImg').src = evt.target.result;
+            document.getElementById('cardDropEmpty').classList.add('hidden');
+            document.getElementById('cardDropPreviewBox').classList.remove('hidden');
+            autoDetectQrCode();
+          };
+          img.src = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function loadPdfFileToCanvas(file, callback) {
+      if (typeof pdfjsLib === 'undefined') {
+        alert("PDF 렌더링 라이브러리를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function() {
+        const typedarray = new Uint8Array(this.result);
+        pdfjsLib.getDocument(typedarray).promise.then(pdf => {
+          pdf.getPage(1).then(page => {
+            const viewport = page.getViewport({ scale: 2.0 });
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            page.render({ canvasContext: ctx, viewport: viewport }).promise.then(() => {
+              callback(canvas);
+            });
+          });
+        }).catch(err => {
+          alert("PDF 파일을 읽을 수 없습니다: " + err.message);
+        });
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function clearCardImage() {
+      cardUploadedCanvas = null;
+      cardUploadedImage = null;
+      document.getElementById('cardFileInput').value = '';
+      document.getElementById('cardDropEmpty').classList.remove('hidden');
+      document.getElementById('cardDropPreviewBox').classList.add('hidden');
+    }
+
+    // jsQR 자동 QR 감지 및 크롭
+    function autoDetectQrCode() {
+      if (!cardUploadedCanvas) return;
+      if (typeof jsQR === 'undefined') return;
+      try {
+        const ctx = cardUploadedCanvas.getContext('2d');
+        const imgData = ctx.getImageData(0, 0, cardUploadedCanvas.width, cardUploadedCanvas.height);
+        const code = jsQR(imgData.data, imgData.width, imgData.height);
+        if (code && code.location) {
+          cropQrFromLocation(cardUploadedCanvas, code.location, 'main');
+        }
+      } catch (e) {
+        console.warn("jsQR 감지 실패:", e);
+      }
+    }
+
+    function cropQrFromLocation(sourceCanvas, loc, targetType = 'main') {
+      const { topLeftCorner, topRightCorner, bottomRightCorner, bottomLeftCorner } = loc;
+      const minX = Math.max(0, Math.min(topLeftCorner.x, bottomLeftCorner.x) - 20);
+      const minY = Math.max(0, Math.min(topLeftCorner.y, topRightCorner.y) - 20);
+      const maxX = Math.min(sourceCanvas.width, Math.max(topRightCorner.x, bottomRightCorner.x) + 20);
+      const maxY = Math.min(sourceCanvas.height, Math.max(bottomLeftCorner.y, bottomRightCorner.y) + 20);
+      const w = maxX - minX;
+      const h = maxY - minY;
+      if (w <= 0 || h <= 0) return;
+
+      const qrCanvas = document.createElement('canvas');
+      qrCanvas.width = w;
+      qrCanvas.height = h;
+      const qCtx = qrCanvas.getContext('2d');
+      qCtx.drawImage(sourceCanvas, minX, minY, w, h, 0, 0, w, h);
+      const dataUrl = qrCanvas.toDataURL('image/png');
+      if (targetType === 'main') {
+        cardData.qrImageUrl = dataUrl;
+      } else {
+        cardData.eventQrImageUrl = dataUrl;
+      }
+      renderCardEditor();
+      renderCardPreview();
+    }
+
+    // ==================== 대화형 QR 크롭 모달 로직 ====================
+    let cropperState = {
+      image: null,
+      startX: 0,
+      startY: 0,
+      endX: 0,
+      endY: 0,
+      isDragging: false,
+      scale: 1
+    };
+
+    function openQrCropperModal() {
+      if (!cardUploadedCanvas && !cardUploadedImage) {
+        alert("먼저 제휴카드 원본 이미지 또는 PDF를 업로드해 주세요!");
+        return;
+      }
+      const modal = document.getElementById('qrCropperModal');
+      modal.classList.remove('hidden');
+      initCropperCanvas(cardUploadedCanvas || cardUploadedImage);
+    }
+
+    function closeQrCropperModal() {
+      document.getElementById('qrCropperModal').classList.add('hidden');
+    }
+
+    function initCropperCanvas(imgSrc) {
+      cropperState.image = imgSrc;
+      const canvas = document.getElementById('qrCropperCanvas');
+      const ctx = canvas.getContext('2d');
+
+      // 캔버스 크기 조정 (최대 가로 700px 기준으로 비율 유지)
+      const maxW = 650;
+      const scale = imgSrc.width > maxW ? (maxW / imgSrc.width) : 1;
+      cropperState.scale = scale;
+      canvas.width = imgSrc.width * scale;
+      canvas.height = imgSrc.height * scale;
+
+      cropperState.startX = 0;
+      cropperState.startY = 0;
+      cropperState.endX = 0;
+      cropperState.endY = 0;
+      cropperState.isDragging = false;
+
+      drawCropper();
+
+      // 마우스 및 터치 이벤트
+      canvas.onmousedown = function(e) {
+        const rect = canvas.getBoundingClientRect();
+        cropperState.startX = e.clientX - rect.left;
+        cropperState.startY = e.clientY - rect.top;
+        cropperState.endX = cropperState.startX;
+        cropperState.endY = cropperState.startY;
+        cropperState.isDragging = true;
+      };
+
+      canvas.onmousemove = function(e) {
+        if (!cropperState.isDragging) return;
+        const rect = canvas.getBoundingClientRect();
+        cropperState.endX = Math.max(0, Math.min(canvas.width, e.clientX - rect.left));
+        cropperState.endY = Math.max(0, Math.min(canvas.height, e.clientY - rect.top));
+        drawCropper();
+      };
+
+      canvas.onmouseup = function() {
+        cropperState.isDragging = false;
+        updateCropperInfo();
+      };
+    }
+
+    function drawCropper() {
+      const canvas = document.getElementById('qrCropperCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(cropperState.image, 0, 0, canvas.width, canvas.height);
+
+      const x = Math.min(cropperState.startX, cropperState.endX);
+      const y = Math.min(cropperState.startY, cropperState.endY);
+      const w = Math.abs(cropperState.endX - cropperState.startX);
+      const h = Math.abs(cropperState.endY - cropperState.startY);
+
+      if (w > 5 && h > 5) {
+        // 반투명 어두운 오버레이
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+        ctx.fillRect(0, 0, canvas.width, y);
+        ctx.fillRect(0, y, x, h);
+        ctx.fillRect(x + w, y, canvas.width - (x + w), h);
+        ctx.fillRect(0, y + h, canvas.width, canvas.height - (y + h));
+
+        // 선택 영역 테두리
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 2.5;
+        ctx.setLineDash([5, 3]);
+        ctx.strokeRect(x, y, w, h);
+        ctx.setLineDash([]);
+      }
+    }
+
+    function updateCropperInfo() {
+      const info = document.getElementById('cropperSelectionInfo');
+      const w = Math.round(Math.abs(cropperState.endX - cropperState.startX) / cropperState.scale);
+      const h = Math.round(Math.abs(cropperState.endY - cropperState.startY) / cropperState.scale);
+      if (w > 10 && h > 10) {
+        info.innerText = `선택 영역: ${w} × ${h} px (원본 크기)`;
+      } else {
+        info.innerText = "선택된 영역: 없음 (마우스로 드래그하세요)";
+      }
+    }
+
+    function autoDetectQrInCropper() {
+      if (!cropperState.image || typeof jsQR === 'undefined') return;
+      const offCanvas = document.createElement('canvas');
+      offCanvas.width = cropperState.image.width;
+      offCanvas.height = cropperState.image.height;
+      const ctx = offCanvas.getContext('2d');
+      ctx.drawImage(cropperState.image, 0, 0);
+      const imgData = ctx.getImageData(0, 0, offCanvas.width, offCanvas.height);
+      const code = jsQR(imgData.data, imgData.width, imgData.height);
+      if (code && code.location) {
+        const { topLeftCorner, topRightCorner, bottomRightCorner, bottomLeftCorner } = code.location;
+        const minX = Math.max(0, Math.min(topLeftCorner.x, bottomLeftCorner.x) - 15);
+        const minY = Math.max(0, Math.min(topLeftCorner.y, topRightCorner.y) - 15);
+        const maxX = Math.min(offCanvas.width, Math.max(topRightCorner.x, bottomRightCorner.x) + 15);
+        const maxY = Math.min(offCanvas.height, Math.max(bottomLeftCorner.y, bottomRightCorner.y) + 15);
+
+        cropperState.startX = minX * cropperState.scale;
+        cropperState.startY = minY * cropperState.scale;
+        cropperState.endX = maxX * cropperState.scale;
+        cropperState.endY = maxY * cropperState.scale;
+        drawCropper();
+        updateCropperInfo();
+      } else {
+        alert("자동으로 QR 코드를 찾지 못했습니다. 직접 마우스로 QR 주변을 네모로 드래그해 주세요.");
+      }
+    }
+
+    function applyQrCrop(type = 'main') {
+      const w = Math.abs(cropperState.endX - cropperState.startX);
+      const h = Math.abs(cropperState.endY - cropperState.startY);
+      if (w < 10 || h < 10) {
+        alert("먼저 마우스로 QR 코드 주변을 네모로 드래그해 주세요!");
+        return;
+      }
+
+      const rawX = Math.round(Math.min(cropperState.startX, cropperState.endX) / cropperState.scale);
+      const rawY = Math.round(Math.min(cropperState.startY, cropperState.endY) / cropperState.scale);
+      const rawW = Math.round(w / cropperState.scale);
+      const rawH = Math.round(h / cropperState.scale);
+
+      const cropCanvas = document.createElement('canvas');
+      cropCanvas.width = rawW;
+      cropCanvas.height = rawH;
+      const cCtx = cropCanvas.getContext('2d');
+      cCtx.drawImage(cropperState.image, rawX, rawY, rawW, rawH, 0, 0, rawW, rawH);
+
+      const croppedUrl = cropCanvas.toDataURL('image/png');
+      if (type === 'main') {
+        cardData.qrImageUrl = croppedUrl;
+      } else {
+        cardData.eventQrImageUrl = croppedUrl;
+      }
+
+      renderCardEditor();
+      renderCardPreview();
+      closeQrCropperModal();
+      alert("✅ 원본에서 잘라낸 고화질 QR 코드가 안내서에 안전하게 적용되었습니다!");
+    }
+
+    function handleDirectQrFile(e) {
+      if (e.target.files && e.target.files[0]) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          cardData.qrImageUrl = evt.target.result;
+          renderCardEditor();
+          renderCardPreview();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // ==================== Gemini AI 카드 이미지 정밀 분석 ====================
+    async function runCardAiAnalysis() {
+      if (!cardUploadedCanvas) {
+        alert("먼저 분석할 제휴카드 안내서 이미지 또는 PDF를 넣어주세요!");
+        return;
+      }
+      if (!geminiApiKey) {
+        alert("AI 분석을 위해 먼저 Gemini API 키를 등록해 주세요. (무료 키 등록 모달을 엽니다)");
+        openGeminiKeyModal();
+        return;
+      }
+
+      const btn = document.getElementById('btnRunCardAi');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = `
+        <svg class="animate-spin w-4 h-4 text-white" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+        <span>Gemini AI가 제휴카드 내용을 정밀 분석 중...</span>
+      `;
+      btn.disabled = true;
+
+      try {
+        const base64Data = cardUploadedCanvas.toDataURL('image/jpeg', 0.85).split(',')[1];
+        const promptText = `
+당신은 대한민국 이동통신 휴대폰 제휴카드 정책 분석 전문가입니다.
+업로드된 제휴카드 안내서 이미지의 모든 텍스트, 표, 프로모션 조건을 정확하게 읽고, 아래 JSON 규격에 맞추어 오직 유효한 JSON 형식으로만 응답해 주세요. (마크다운 코드블록 백틱 없이 순수 JSON만 반환)
+
+JSON 키 구조:
+{
+  "cardCompany": "카드사명 (예: KB국민카드, 신한카드, 현대카드 등)",
+  "carrier": "통신사명 (예: LGU+, SKT, KT, 또는 전 통신사)",
+  "cardName": "카드 정식 명칭",
+  "specs": {
+    "targetDevice": "전용 단말기 조건 (예: 추가할인, 캐시백 프로모션 / 전기종)",
+    "minPayment": "최소 결제금액 (예: 5만원)",
+    "autoTransfer": "자동이체 필수 여부 (예: 미필수 / 필수)",
+    "annualFee": "연회비 (예: 국내 2만원, Master 2만원)",
+    "installmentInterest": "할부이자 (예: 24개월 5.9% / 36개월 7%)"
+  },
+  "promotions": [
+    {
+      "step": 1,
+      "badge": "프로모션 1",
+      "title": "24개월 매월 청구할인 프로모션",
+      "condition": "신규 발급 및 실적 조건",
+      "tiers": [
+        { "label": "전월 30만원 이상", "amount": "월 OO원 할인" },
+        { "label": "전월 70만원 이상", "amount": "월 OO원 할인" },
+        { "label": "전월 100만원 이상", "amount": "월 OO원 할인" }
+      ],
+      "highlight": "월 최대 OO원 x 24개월 할인!"
+    },
+    {
+      "step": 2,
+      "badge": "프로모션 2",
+      "title": "단말기 추가 캐시백 (1회)",
+      "condition": "조건 설명",
+      "benefit": "OO원 캐시백"
+    },
+    {
+      "step": 3,
+      "badge": "프로모션 3",
+      "title": "간편결제 등록 추가 캐시백 (1회)",
+      "condition": "조건 설명",
+      "benefit": "OO원 캐시백"
+    }
+  ],
+  "basicBenefits": [
+    "장기할부 이용 시 및 미이용 시 기본 혜택",
+    "생활요금 부가혜택 (관리비, 공과금 청구할인 등)"
+  ],
+  "details": [
+    "신규발급 당월 혜택 안내",
+    "전월실적 인정/포함 항목",
+    "전월실적 제외 항목"
+  ],
+  "summary": {
+    "callout": "24개월 동안 최대 OOO원 통신비 절감 혜택!"
+  },
+  "phone": "카드사 고객센터 전화번호"
+}
+`;
+
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{
+              parts: [
+                { inlineData: { mimeType: 'image/jpeg', data: base64Data } },
+                { text: promptText }
+              ]
+            }],
+            generationConfig: {
+              temperature: 0.1,
+              responseMimeType: "application/json"
+            }
+          })
+        });
+
+        if (!response.ok) {
+          const errData = await response.json();
+          throw new Error(errData.error?.message || response.statusText);
+        }
+
+        const data = await response.json();
+        const rawJsonText = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+        const parsed = JSON.parse(rawJsonText);
+
+        // 결과 적용
+        if (parsed.cardCompany) cardData.cardCompany = parsed.cardCompany;
+        if (parsed.carrier) cardData.carrier = parsed.carrier;
+        if (parsed.cardName) cardData.cardName = parsed.cardName;
+        if (parsed.specs) cardData.specs = Object.assign(cardData.specs, parsed.specs);
+        if (parsed.promotions && parsed.promotions.length) cardData.promotions = parsed.promotions;
+        if (parsed.basicBenefits && parsed.basicBenefits.length) cardData.basicBenefits = parsed.basicBenefits;
+        if (parsed.details && parsed.details.length) cardData.details = parsed.details;
+        if (parsed.summary && parsed.summary.callout) cardData.summary.callout = parsed.summary.callout;
+        if (parsed.phone) cardData.phone = parsed.phone;
+
+        // 자동으로 테마 매칭 (KB -> gold, 신한 -> blue, 현대 -> red, LG -> pink)
+        const nameUpper = (cardData.cardCompany + cardData.cardName + cardData.carrier).toUpperCase();
+        if (nameUpper.includes('KB') || nameUpper.includes('국민')) cardTheme = 'theme-gold';
+        else if (nameUpper.includes('신한') || nameUpper.includes('삼성')) cardTheme = 'theme-blue';
+        else if (nameUpper.includes('현대') || nameUpper.includes('BC')) cardTheme = 'theme-red';
+        else if (nameUpper.includes('LG') || nameUpper.includes('유플러스')) cardTheme = 'theme-pink';
+        else if (nameUpper.includes('하나') || nameUpper.includes('농협')) cardTheme = 'theme-green';
+
+        setCardTheme(cardTheme);
+        renderCardEditor();
+        renderCardPreview();
+        autoDetectQrCode();
+
+        alert("🎉 제휴카드 안내서 내용이 AI로 완벽하게 추출되었습니다!\n우측 A4 서식지에서 확인 후 바로 인쇄할 수 있습니다.");
+      } catch (err) {
+        console.error("AI 카드 분석 실패:", err);
+        alert("AI 분석 중 오류가 발생했습니다: " + err.message + "\nAPI 키 유효성을 확인해 주세요.");
+      } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }
+    }
+
+
+    // ==================== [신규 확장 2] 경쟁사 매장 광고가격 및 부가조건 분석 ====================
+    let currentCompareStore = 'myeongji';
+    let compareMarginBase = 'all';
+
+    let comparePriceCanvas = null;
+    let compareCondCanvas = null;
+
+    let compareData = {
+      competitorName: "당근 명지 성지특가 (109 요금제)",
+      carrier: "SK",
+      plan: "SK 109 요금제 (M+3개월 / 185일 유지)",
+      planDuration: "185일 유지 후 자유 변경 가능",
+      conditions: {
+        requiredBasicAdd: "마이스마트콜, V컬러링 (기본 2종)",
+        extraAdd: "없음 (유료 부가서비스 강제 가입 없음)",
+        deviceReturn: "반납 의무 없음 (100% 고객 소유)",
+        affiliateCard: "제휴카드 결합 조건 없음 (순수 현금완납 기준)",
+        trapsDetected: [],
+        trapLevel: "safe" // 'safe' | 'warning' | 'danger'
+      },
+      salesAdvice: `"고객님, 해당 매장은 109 요금제 6개월 유지 외에는 카드나 반납 조건이 없는 일반적인 성지 가격입니다.
+저희 원조폰 명지점에서는 동일한 조건으로 고객님께 더 안전하고 정직하게 [출고가 및 공시지원금 실시간 전산 조회]를 통해 투명하게 개통해 드립니다. 특히 번호이동 시 고객님께 추가 혜택을 챙겨드릴 수 있습니다!"`,
+      items: [
+        { id: 's26', name: '갤럭시 S26 256G', carrier: 'SK', mnpPrice: 10, chgPrice: 15, note: '당일특가' },
+        { id: 's26u', name: '갤럭시 S26 Ultra 256G', carrier: 'SK', mnpPrice: 62, chgPrice: 68, note: '주력' },
+        { id: 's25', name: '갤럭시 S25 256G', carrier: 'SK', mnpPrice: -5, chgPrice: 5, note: '차비 5만' },
+        { id: 'zflip6', name: '갤럭시 Z 플립6 256G', carrier: 'SK', mnpPrice: 12, chgPrice: 20, note: '' },
+        { id: 'ip16pro_128', name: '아이폰 16 Pro 128G', carrier: 'SK', mnpPrice: 48, chgPrice: 58, note: '재고한정' },
+        { id: 'ip16_128', name: '아이폰 16 128G', carrier: 'SK', mnpPrice: 15, chgPrice: 25, note: '' }
+      ]
+    };
+
+    function initCompareTab() {
+      if (currentStoreId && ['myeongji', 'gwangan'].includes(currentStoreId)) {
+        currentCompareStore = currentStoreId;
+      }
+      setCompareStore(currentCompareStore);
+      setCompareMarginBase(compareMarginBase);
+      renderCompareDashboard();
+    }
+
+    function setCompareStore(sId) {
+      currentCompareStore = sId;
+      const btnMj = document.getElementById('compStoreBtn-myeongji');
+      const btnGw = document.getElementById('compStoreBtn-gwangan');
+      if (btnMj && btnGw) {
+        if (sId === 'myeongji') {
+          btnMj.className = "px-3 py-1.5 rounded-lg bg-indigo-600 text-white shadow-2xs transition font-bold";
+          btnGw.className = "px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition font-bold";
+        } else {
+          btnGw.className = "px-3 py-1.5 rounded-lg bg-emerald-600 text-white shadow-2xs transition font-bold";
+          btnMj.className = "px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition font-bold";
+        }
+      }
+      renderCompareDashboard();
+    }
+
+    function setCompareMarginBase(b) {
+      compareMarginBase = b;
+      const btnAll = document.getElementById('compMarginBase-all');
+      const btnBasic = document.getElementById('compMarginBase-basic');
+      if (btnAll && btnBasic) {
+        if (b === 'all') {
+          btnAll.className = "px-3 py-1.5 rounded-lg bg-slate-900 text-white shadow-2xs transition font-bold";
+          btnBasic.className = "px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition font-bold";
+        } else {
+          btnBasic.className = "px-3 py-1.5 rounded-lg bg-slate-900 text-white shadow-2xs transition font-bold";
+          btnAll.className = "px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition font-bold";
+        }
+      }
+      renderCompareDashboard();
+    }
+
+    // 경쟁사 이미지 파일 업로드 핸들러
+    function handleCompDragOver(e, type) { e.preventDefault(); e.currentTarget.classList.add('border-purple-500', 'bg-purple-50/40'); }
+    function handleCompDragLeave(e, type) { e.preventDefault(); e.currentTarget.classList.remove('border-purple-500', 'bg-purple-50/40'); }
+    function handleCompDrop(e, type) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('border-purple-500', 'bg-purple-50/40');
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        loadCompFile(type, e.dataTransfer.files[0]);
+      }
+    }
+    function handleCompFileSelected(e, type) {
+      if (e.target.files && e.target.files[0]) {
+        loadCompFile(type, e.target.files[0]);
+      }
+    }
+
+    function loadCompFile(type, file) {
+      const isPrice = type === 'price';
+      const nameEl = document.getElementById(isPrice ? 'compFileNamePrice' : 'compFileNameCond');
+      const emptyEl = document.getElementById(isPrice ? 'compEmptyPrice' : 'compEmptyCond');
+      const previewBox = document.getElementById(isPrice ? 'compPreviewPriceBox' : 'compPreviewCondBox');
+      const thumbImg = document.getElementById(isPrice ? 'compThumbPrice' : 'compThumbCond');
+
+      if (nameEl) nameEl.innerText = file.name;
+
+      if (file.type === 'application/pdf') {
+        loadPdfFileToCanvas(file, function(canvas) {
+          if (isPrice) comparePriceCanvas = canvas;
+          else compareCondCanvas = canvas;
+          if (thumbImg) thumbImg.src = canvas.toDataURL('image/jpeg', 0.8);
+          if (emptyEl) emptyEl.classList.add('hidden');
+          if (previewBox) previewBox.classList.remove('hidden');
+        });
+      } else {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const img = new Image();
+          img.onload = function() {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            if (isPrice) comparePriceCanvas = canvas;
+            else compareCondCanvas = canvas;
+            if (thumbImg) thumbImg.src = evt.target.result;
+            if (emptyEl) emptyEl.classList.add('hidden');
+            if (previewBox) previewBox.classList.remove('hidden');
+          };
+          img.src = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function clearCompImage(type) {
+      const isPrice = type === 'price';
+      if (isPrice) {
+        comparePriceCanvas = null;
+        document.getElementById('compFileInputPrice').value = '';
+        document.getElementById('compEmptyPrice').classList.remove('hidden');
+        document.getElementById('compPreviewPriceBox').classList.add('hidden');
+      } else {
+        compareCondCanvas = null;
+        document.getElementById('compFileInputCond').value = '';
+        document.getElementById('compEmptyCond').classList.remove('hidden');
+        document.getElementById('compPreviewCondBox').classList.add('hidden');
+      }
+    }
+
+    // 경쟁사 샘플 데이터 로드
+    function loadCompareSample() {
+      compareData.competitorName = "당근 명지 성지특가 (109 요금제)";
+      compareData.carrier = "SK";
+      compareData.plan = "SK 109 요금제 (M+3개월 / 185일 유지)";
+      compareData.planDuration = "185일 유지 후 자유 변경 가능";
+      compareData.conditions = {
+        requiredBasicAdd: "마이스마트콜, V컬러링 (기본 2종)",
+        extraAdd: "없음 (유료 부가서비스 강제 가입 없음)",
+        deviceReturn: "반납 의무 없음 (100% 고객 소유)",
+        affiliateCard: "제휴카드 결합 조건 없음 (순수 현금완납 기준)",
+        trapsDetected: [],
+        trapLevel: "safe"
+      };
+      compareData.salesAdvice = `"고객님, 해당 매장은 109 요금제 6개월 유지 조건의 일반적인 성지 가격표입니다.
+저희 원조폰 명지점에서는 복잡한 눈속임 없이 깨끗하게 출고가와 공시지원금을 1원 단위까지 전산으로 투명하게 확인시켜 드립니다.
+특히 번호이동 시 매장 자체 지원금을 최대로 넣어드려 동일하거나 더 좋은 실구매가로 만족스럽게 개통해 드립니다!"`;
+      compareData.items = [
+        { id: 's26', name: '갤럭시 S26 256G', carrier: 'SK', mnpPrice: 10, chgPrice: 15, note: '당일특가' },
+        { id: 's26u', name: '갤럭시 S26 Ultra 256G', carrier: 'SK', mnpPrice: 62, chgPrice: 68, note: '주력' },
+        { id: 's25', name: '갤럭시 S25 256G', carrier: 'SK', mnpPrice: -5, chgPrice: 5, note: '차비 5만' },
+        { id: 'zflip6', name: '갤럭시 Z 플립6 256G', carrier: 'SK', mnpPrice: 12, chgPrice: 20, note: '' },
+        { id: 'ip16pro_128', name: '아이폰 16 Pro 128G', carrier: 'SK', mnpPrice: 48, chgPrice: 58, note: '재고한정' },
+        { id: 'ip16_128', name: '아이폰 16 128G', carrier: 'SK', mnpPrice: 15, chgPrice: 25, note: '' }
+      ];
+
+      const inputName = document.getElementById('compTargetName');
+      if (inputName) inputName.value = compareData.competitorName;
+
+      renderCompareDashboard();
+      alert("✅ 당근마켓 성지 시세표 및 부가조건 예제 데이터가 로드되었습니다!");
+    }
+
+    // 대시보드 렌더링 (KPI + 감정 박스 + 대조 테이블)
+    function renderCompareDashboard() {
+      const cond = compareData.conditions || {};
+      const el = id => document.getElementById(id);
+
+      if (el('audit-plan')) el('audit-plan').innerText = compareData.plan || '자유 요금제';
+      if (el('audit-adds')) el('audit-adds').innerText = cond.requiredBasicAdd || '없음';
+      if (el('audit-card')) el('audit-card').innerText = cond.affiliateCard || '제휴카드 없음';
+      if (el('audit-return')) el('audit-return').innerText = cond.deviceReturn || '반납 의무 없음';
+      if (el('compSalesAdviceText')) el('compSalesAdviceText').innerText = compareData.salesAdvice || '';
+
+      // 트랩 경보 배지 & 리스트
+      const trapBadge = el('compTrapBadge');
+      const trapBox = el('trapListContainer');
+      const trapUl = el('trapList');
+
+      if (cond.trapLevel === 'danger') {
+        if (trapBadge) {
+          trapBadge.className = "text-[10px] font-black px-2 py-0.5 rounded-md bg-rose-100 text-rose-700 border border-rose-300";
+          trapBadge.innerText = "🚨 심각한 눈속임 감지";
+        }
+      } else if (cond.trapLevel === 'warning') {
+        if (trapBadge) {
+          trapBadge.className = "text-[10px] font-black px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 border border-amber-300";
+          trapBadge.innerText = "⚠️ 조건 확인 필요";
+        }
+      } else {
+        if (trapBadge) {
+          trapBadge.className = "text-[10px] font-black px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200";
+          trapBadge.innerText = "✓ 조건 투명 안전";
+        }
+      }
+
+      if (cond.trapsDetected && cond.trapsDetected.length > 0) {
+        if (trapBox) trapBox.classList.remove('hidden');
+        if (trapUl) {
+          trapUl.innerHTML = cond.trapsDetected.map(t => `<li>${t}</li>`).join('');
+        }
+      } else {
+        if (trapBox) trapBox.classList.add('hidden');
+      }
+
+      // 대조 테이블 렌더링 및 통계 계산
+      renderCompareTable();
+    }
+
+    function renderCompareTable() {
+      const tbody = document.getElementById('compTableBody');
+      if (!tbody) return;
+
+      const items = compareData.items || [];
+      const sId = currentCompareStore; // 'myeongji' | 'gwangan'
+      const base = compareMarginBase;  // 'all' | 'basic'
+
+      let winCount = 0;
+      let lossCount = 0;
+      let totalMarginSum = 0;
+      let countWithMargin = 0;
+
+      const rowsHtml = items.map((item, idx) => {
+        // 우리 매장 기종 매칭
+        const dev = devices.find(d => d.id === item.id) || 
+                    devices.find(d => d.name.toLowerCase().includes((item.name || '').toLowerCase()) || (item.name || '').toLowerCase().includes(d.name.toLowerCase())) ||
+                    devices[0];
+
+        const carrier = item.carrier || 'SK';
+        const factoryPrice = (dev.prices && dev.prices[carrier]) || 0;
+        const subMnp = (dev.sub && dev.sub[carrier] && dev.sub[carrier].mnp) || 0;
+        const subChg = (dev.sub && dev.sub[carrier] && dev.sub[carrier].chg) || 0;
+
+        let rateMnp = (dev.rate && dev.rate[carrier] && dev.rate[carrier].mnp) || 0;
+        let rateChg = (dev.rate && dev.rate[carrier] && dev.rate[carrier].chg) || 0;
+        if (rateMnp === '품절') rateMnp = 0;
+        if (rateChg === '품절') rateChg = 0;
+
+        const allDiscount = (allAddDiscounts && allAddDiscounts[carrier]) || 15;
+
+        // 경쟁사 자체 매장 지원금(할인) 계산
+        // 공식: 출고가 - 공시지원금 - 경쟁사 광고가격
+        const compDiscountMnp = factoryPrice - subMnp - item.mnpPrice;
+        const compDiscountChg = factoryPrice - subChg - item.chgPrice;
+
+        // 우리 매장 넷가(원가) 계산
+        const ourBasicNetMnp = factoryPrice - subMnp - rateMnp;
+        const ourBasicNetChg = factoryPrice - subChg - rateChg;
+        const ourAllNetMnp = ourBasicNetMnp - allDiscount;
+        const ourAllNetChg = ourBasicNetChg - allDiscount;
+
+        const ourNetMnp = base === 'all' ? ourAllNetMnp : ourBasicNetMnp;
+        const ourNetChg = base === 'all' ? ourAllNetChg : ourBasicNetChg;
+
+        // 우리가 저 경쟁사 광고가격에 팔았을 때 우리 마진
+        // 공식: 경쟁사 광고가 - 우리 매장 넷가
+        const ourMarginMnp = item.mnpPrice - ourNetMnp;
+        const ourMarginChg = item.chgPrice - ourNetChg;
+
+        // 대표 마진 (번호이동 기준)
+        if (ourMarginMnp >= 0) winCount++;
+        else lossCount++;
+        totalMarginSum += ourMarginMnp;
+        countWithMargin++;
+
+        const formatMoney = val => {
+          const sign = val > 0 ? '+' : '';
+          return `${sign}${val.toFixed(1)}만`;
+        };
+
+        const getMarginBadge = val => {
+          if (val >= 10) return `<span class="px-2 py-0.5 rounded-md font-black bg-emerald-100 text-emerald-800 text-[11px]">${formatMoney(val)} (마진충분)</span>`;
+          if (val >= 3) return `<span class="px-2 py-0.5 rounded-md font-black bg-blue-100 text-blue-800 text-[11px]">${formatMoney(val)} (적정마진)</span>`;
+          if (val >= 0) return `<span class="px-2 py-0.5 rounded-md font-bold bg-amber-100 text-amber-800 text-[11px]">${formatMoney(val)} (박리다매)</span>`;
+          return `<span class="px-2 py-0.5 rounded-md font-black bg-rose-100 text-rose-700 text-[11px] animate-pulse">${formatMoney(val)} (역마진!)</span>`;
+        };
+
+        const getTagBadge = val => {
+          if (val >= 7) return `<span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-extrabold border border-emerald-200">🔥 압승 우위</span>`;
+          if (val >= 0) return `<span class="px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-extrabold border border-blue-200">⚖️ 동일 대응</span>`;
+          return `<span class="px-2 py-0.5 rounded bg-rose-50 text-rose-700 font-extrabold border border-rose-200">🚨 역마진/눈속임</span>`;
+        };
+
+        const carrierClass = carrier === 'SK' ? 'text-rose-600 bg-rose-50' : carrier === 'KT' ? 'text-blue-600 bg-blue-50' : 'text-pink-600 bg-pink-50';
+
+        return `
+          <tr class="hover:bg-slate-50/80 transition group text-slate-800">
+            <!-- 기종명 -->
+            <td class="p-2.5">
+              <span class="font-extrabold text-slate-900 block text-xs">${item.name}</span>
+              ${item.note ? `<span class="text-[10px] text-purple-600 font-semibold">• ${item.note}</span>` : ''}
+            </td>
+
+            <!-- 통신사/가입유형 -->
+            <td class="p-2.5">
+              <span class="px-1.5 py-0.5 rounded text-[11px] font-black ${carrierClass}">${carrier}</span>
+              <span class="text-[10px] text-slate-400 block mt-0.5 font-bold">번이 / 기변</span>
+            </td>
+
+            <!-- 출고가 / 공시지원금 -->
+            <td class="p-2.5 text-right font-medium">
+              <span class="block text-slate-700 font-bold">${factoryPrice.toFixed(1)}만</span>
+              <span class="text-[10px] text-slate-400">공시 ${subMnp}만 / ${subChg}만</span>
+            </td>
+
+            <!-- 경쟁사 광고 판매가 (편집 가능) -->
+            <td class="p-2.5 text-right bg-purple-50/30">
+              <div class="flex items-center justify-end gap-1">
+                <span class="text-[10px] text-purple-700 font-bold">번이</span>
+                <input type="number" step="0.5" value="${item.mnpPrice}" onfocus="this.select()" onchange="updateComparePrice(${idx}, 'mnpPrice', this.value)" class="w-14 px-1 py-0.5 text-right font-black text-purple-900 bg-white border border-purple-200 rounded text-xs focus:ring-1 focus:ring-purple-400" />
+                <span class="text-[11px]">만</span>
+              </div>
+              <div class="flex items-center justify-end gap-1 mt-1">
+                <span class="text-[10px] text-slate-500 font-bold">기변</span>
+                <input type="number" step="0.5" value="${item.chgPrice}" onfocus="this.select()" onchange="updateComparePrice(${idx}, 'chgPrice', this.value)" class="w-14 px-1 py-0.5 text-right font-bold text-slate-800 bg-white border border-slate-200 rounded text-xs focus:ring-1 focus:ring-purple-400" />
+                <span class="text-[11px]">만</span>
+              </div>
+            </td>
+
+            <!-- 경쟁사 매장 지원금 (자체 할인액 역산) -->
+            <td class="p-2.5 text-right font-semibold text-slate-600">
+              <span class="block font-black text-slate-700">${compDiscountMnp.toFixed(1)}만</span>
+              <span class="text-[10px] text-slate-400">기변 ${compDiscountChg.toFixed(1)}만</span>
+            </td>
+
+            <!-- 우리 매장 넷가(원가) -->
+            <td class="p-2.5 text-right bg-slate-50 font-medium">
+              <span class="block font-extrabold text-slate-900">${ourNetMnp.toFixed(1)}만</span>
+              <span class="text-[10px] text-slate-400">기변 ${ourNetChg.toFixed(1)}만</span>
+            </td>
+
+            <!-- 우리가 저 가격에 팔 때 우리 마진 -->
+            <td class="p-2.5 text-right bg-amber-50/30 space-y-1">
+              <div>
+                <span class="text-[10px] text-slate-400 mr-1 font-bold">번이:</span>
+                ${getMarginBadge(ourMarginMnp)}
+              </div>
+              <div>
+                <span class="text-[10px] text-slate-400 mr-1 font-bold">기변:</span>
+                ${getMarginBadge(ourMarginChg)}
+              </div>
+            </td>
+
+            <!-- 판정 배지 -->
+            <td class="p-2.5 text-center">
+              ${getTagBadge(ourMarginMnp)}
+            </td>
+
+            <!-- 삭제 -->
+            <td class="p-2.5 text-center">
+              <button onclick="deleteCompareRow(${idx})" class="text-slate-300 hover:text-rose-600 p-1 text-xs transition" title="행 삭제">✕</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      tbody.innerHTML = rowsHtml || `<tr><td colspan="9" class="p-8 text-center text-slate-400 font-bold">등록된 비교 기종이 없습니다. 상단에서 이미지를 분석하거나 행을 추가하세요.</td></tr>`;
+
+      // KPI 업데이트
+      const totalCountEl = document.getElementById('kpi-totalCount');
+      const winCountEl = document.getElementById('kpi-winCount');
+      const lossCountEl = document.getElementById('kpi-lossCount');
+      const avgMarginEl = document.getElementById('kpi-avgMargin');
+
+      if (totalCountEl) totalCountEl.innerText = `${items.length}개`;
+      if (winCountEl) winCountEl.innerText = `${winCount}개`;
+      if (lossCountEl) lossCountEl.innerText = `${lossCount}개`;
+      if (avgMarginEl) {
+        const avg = countWithMargin > 0 ? (totalMarginSum / countWithMargin).toFixed(1) : 0;
+        avgMarginEl.innerText = `${avg > 0 ? '+' : ''}${avg}만`;
+        avgMarginEl.className = avg >= 0 ? "text-xl font-black text-emerald-600" : "text-xl font-black text-rose-600";
+      }
+    }
+
+    function updateComparePrice(idx, field, val) {
+      if (!compareData.items[idx]) return;
+      compareData.items[idx][field] = parseFloat(val) || 0;
+      renderCompareTable();
+    }
+
+    function deleteCompareRow(idx) {
+      if (confirm("이 기종을 비교 목록에서 삭제하시겠습니까?")) {
+        compareData.items.splice(idx, 1);
+        renderCompareDashboard();
+      }
+    }
+
+    function addCompareRow() {
+      const devName = prompt("추가할 기종명을 입력하세요 (예: 갤럭시 S26 256G):", "갤럭시 S26 256G");
+      if (!devName) return;
+      const mnp = parseFloat(prompt("경쟁사 번호이동 광고가격(만원)을 입력하세요:", "10")) || 0;
+      const chg = parseFloat(prompt("경쟁사 기기변경 광고가격(만원)을 입력하세요:", "15")) || 0;
+
+      // 자동 통신사/기종 매칭
+      const matched = devices.find(d => d.name.includes(devName)) || devices[0];
+      compareData.items.push({
+        id: matched ? matched.id : 's26',
+        name: devName,
+        carrier: 'SK',
+        mnpPrice: mnp,
+        chgPrice: chg,
+        note: '직접추가'
+      });
+      renderCompareDashboard();
+    }
+
+    // ==================== Gemini AI 경쟁사 시세 & 부가조건 분석 ====================
+    async function runCompareAiAnalysis() {
+      if (!comparePriceCanvas) {
+        alert("먼저 [📸 경쟁사 시세표/가격표 이미지]를 업로드해 주세요!");
+        return;
+      }
+      if (!geminiApiKey) {
+        alert("AI 분석을 위해 먼저 Gemini API 키를 등록해 주세요. (무료 키 등록 모달을 엽니다)");
+        openGeminiKeyModal();
+        return;
+      }
+
+      const btn = document.getElementById('btnRunCompAi');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = `
+        <svg class="animate-spin w-4 h-4 text-white" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+        <span>Gemini AI가 가격표 & 부가조건을 동시 정밀 분석 중...</span>
+      `;
+      btn.disabled = true;
+
+      try {
+        const parts = [];
+        const priceBase64 = comparePriceCanvas.toDataURL('image/jpeg', 0.85).split(',')[1];
+        parts.push({
+          inlineData: { mimeType: 'image/jpeg', data: priceBase64 }
+        });
+
+        if (compareCondCanvas) {
+          const condBase64 = compareCondCanvas.toDataURL('image/jpeg', 0.85).split(',')[1];
+          parts.push({
+            inlineData: { mimeType: 'image/jpeg', data: condBase64 }
+          });
+        }
+
+        const promptText = `
+당신은 대한민국 스마트폰 성지 시세표 및 판매조건 분석 전문가입니다.
+제공된 이미지 1(경쟁사 시세표)과 이미지 2(부가조건/특약조건이 있는 경우)를 분석하여 아래 JSON 규격에 맞추어 오직 유효한 JSON 형식으로만 응답해 주세요. (마크다운 코드블록 백틱 없이 순수 JSON만 반환)
+
+JSON 규격:
+{
+  "competitorName": "경쟁사 상호 또는 채널명 (추정)",
+  "carrier": "통신사 (SK / KT / LG)",
+  "plan": "기준 요금제 명칭 및 유지기간 (예: SK 109요금제 M+3개월)",
+  "planDuration": "요금제 유지 조건 설명",
+  "conditions": {
+    "requiredBasicAdd": "필수 기본 부가서비스 목록 및 유지기간",
+    "extraAdd": "추가 유료 부가서비스 및 월 비용",
+    "deviceReturn": "중고폰 반납 조건 유무 (예: 반납 불필요 / 24개월 후 기기 반납 필수)",
+    "affiliateCard": "제휴카드 결합 유무 (예: 제휴카드 없음 / 월 40만 실적 48만 할인 포함)",
+    "trapsDetected": [
+      "발견된 눈속임 조건 및 함정 요약 (예: 제휴카드 48만 할인 포함 표기, 48개월 할부 후 반납 눈속임 등)"
+    ],
+    "trapLevel": "safe" | "warning" | "danger"
+  },
+  "salesAdvice": "현장 고객 상담 시 원조폰 직원이 고객을 설득할 명확한 팩트체크 상담 멘트",
+  "items": [
+    {
+      "name": "기종명 (예: 갤럭시 S26 256G, 아이폰 16 Pro 128G 등)",
+      "carrier": "SK" | "KT" | "LG",
+      "mnpPrice": 번호이동 판매가격(숫자만 만원단위, 차비면 마이너스),
+      "chgPrice": 기기변경 판매가격(숫자만 만원단위, 차비면 마이너스),
+      "note": "비고 메모 (예: 특가 등)"
+    }
+  ]
+}
+`;
+        parts.push({ text: promptText });
+
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: parts }],
+            generationConfig: {
+              temperature: 0.1,
+              responseMimeType: "application/json"
+            }
+          })
+        });
+
+        if (!response.ok) {
+          const errData = await response.json();
+          throw new Error(errData.error?.message || response.statusText);
+        }
+
+        const data = await response.json();
+        const rawJsonText = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+        const parsed = JSON.parse(rawJsonText);
+
+        if (parsed.competitorName) compareData.competitorName = parsed.competitorName;
+        if (parsed.carrier) compareData.carrier = parsed.carrier;
+        if (parsed.plan) compareData.plan = parsed.plan;
+        if (parsed.planDuration) compareData.planDuration = parsed.planDuration;
+        if (parsed.conditions) compareData.conditions = Object.assign(compareData.conditions, parsed.conditions);
+        if (parsed.salesAdvice) compareData.salesAdvice = parsed.salesAdvice;
+
+        if (parsed.items && Array.isArray(parsed.items) && parsed.items.length > 0) {
+          compareData.items = parsed.items.map(it => {
+            // 우리 등록 기종 id 매칭
+            const matchedDev = devices.find(d => d.name.toLowerCase().includes((it.name || '').toLowerCase()) || (it.name || '').toLowerCase().includes(d.name.toLowerCase()));
+            return {
+              id: matchedDev ? matchedDev.id : 's26',
+              name: it.name || '알 수 없는 기종',
+              carrier: it.carrier || parsed.carrier || 'SK',
+              mnpPrice: typeof it.mnpPrice === 'number' ? it.mnpPrice : parseFloat(it.mnpPrice) || 0,
+              chgPrice: typeof it.chgPrice === 'number' ? it.chgPrice : parseFloat(it.chgPrice) || 0,
+              note: it.note || ''
+            };
+          });
+        }
+
+        const inputName = document.getElementById('compTargetName');
+        if (inputName) inputName.value = compareData.competitorName;
+
+        renderCompareDashboard();
+        alert("🎉 경쟁사 광고 시세표 및 부가조건 AI 분석이 완료되었습니다!\n하단 대조표에서 기종별 우리 실마진과 판정을 확인하세요.");
+      } catch (err) {
+        console.error("경쟁사 AI 분석 실패:", err);
+        alert("AI 분석 중 오류가 발생했습니다: " + err.message + "\nAPI 키 유효성을 확인해 주세요.");
+      } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }
+    }
+
+    // 분석 브리핑 텍스트 클립보드 복사
+    function copyCompareBriefing() {
+      const st = storeContacts[currentCompareStore] || storeContacts['myeongji'];
+      const items = compareData.items || [];
+      const cond = compareData.conditions || {};
+
+      let text = `[📢 ${st.name} 경쟁사 시세 대조 분석 브리핑]\n`;
+      text += `• 분석 대상: ${compareData.competitorName || '경쟁사 시세'}\n`;
+      text += `• 기준 매장: ${st.name} 오늘자 단가 (${compareMarginBase === 'all' ? '올부가 넷가' : '기본부가 넷가'} 기준)\n`;
+      text += `• 요금제 조건: ${compareData.plan || '일반'}\n`;
+      text += `• 제휴카드 여부: ${cond.affiliateCard || '미포함'}\n`;
+      text += `• 반납 의무: ${cond.deviceReturn || '없음'}\n`;
+      if (cond.trapsDetected && cond.trapsDetected.length > 0) {
+        text += `• ⚠️ 눈속임 경보: ${cond.trapsDetected.join(' / ')}\n`;
+      }
+      text += `\n[📱 주요 기종별 우리 실마진 대조]\n`;
+
+      items.forEach(it => {
+        const dev = devices.find(d => d.id === it.id) || devices[0];
+        const c = it.carrier || 'SK';
+        const fp = (dev.prices && dev.prices[c]) || 0;
+        const sm = (dev.sub && dev.sub[c] && dev.sub[c].mnp) || 0;
+        let rm = (dev.rate && dev.rate[c] && dev.rate[c].mnp) || 0;
+        if (rm === '품절') rm = 0;
+        const allD = (allAddDiscounts && allAddDiscounts[c]) || 15;
+        const ourNet = compareMarginBase === 'all' ? (fp - sm - rm - allD) : (fp - sm - rm);
+        const margin = it.mnpPrice - ourNet;
+
+        const sign = margin > 0 ? '+' : '';
+        const tag = margin >= 7 ? '🔥압승' : margin >= 0 ? '⚖️가능' : '🚨역마진';
+        text += `• ${it.name} (${c} 번이): 경쟁가 ${it.mnpPrice}만 | 우리원가 ${ourNet.toFixed(1)}만 ➔ 우리마진 ${sign}${margin.toFixed(1)}만 [${tag}]\n`;
+      });
+
+      text += `\n[🗣️ 현장 고객 상담 멘트]\n${compareData.salesAdvice}\n`;
+
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => {
+          alert("📋 경쟁사 분석 브리핑 텍스트가 클립보드에 복사되었습니다!\n카카오톡이나 메모장에 바로 붙여넣기 하실 수 있습니다.");
+        });
+      } else {
+        alert(text);
+      }
+    }
+
+    function copyAdviceText() {
+      const text = document.getElementById('compSalesAdviceText')?.innerText || '';
+      if (navigator.clipboard && text) {
+        navigator.clipboard.writeText(text).then(() => {
+          alert("🗣️ 현장 상담 멘트가 복사되었습니다!");
+        });
+      }
+    }
+
+    // ==================== 모달 제어 & 클라우드 영구 저장 ====================
+    function openGeminiKeyModal() {
+      const input = document.getElementById('inputGeminiApiKey');
+      if (input) input.value = geminiApiKey || '';
+      document.getElementById('geminiKeyModal').classList.remove('hidden');
+    }
+
+    function closeGeminiKeyModal() {
+      document.getElementById('geminiKeyModal').classList.add('hidden');
+    }
+
+    async function saveGeminiKeyModal() {
+      const input = document.getElementById('inputGeminiApiKey');
+      const val = (input ? input.value : '').trim();
+      geminiApiKey = val;
+      try {
+        localStorage.setItem('phone_gemini_api_key', val);
+      } catch(e) {}
+
+      if (db) {
+        try {
+          await db.collection('settings').doc('ai').set({ geminiApiKey: val }, { merge: true });
+        } catch(e) {
+          console.warn("Firestore AI 키 저장 실패:", e);
+        }
+      }
+
+      updateAiBadgeStatus();
+      closeGeminiKeyModal();
+      alert("✅ Gemini API 키가 클라우드에 안전하게 저장되었습니다!\n모든 매장 PC에서 영구 보존됩니다.");
+    }
+
+    function updateAiBadgeStatus() {
+      const b1 = document.getElementById('cardAiKeyBadge');
+      if (b1) {
+        if (geminiApiKey) {
+          b1.innerText = "AI 준비 완료 ✓";
+          b1.className = "text-emerald-700 font-extrabold";
+        } else {
+          b1.innerText = "AI 키 설정";
+          b1.className = "";
+        }
+      }
+    }
+
+    function openStoreContactModal() {
+      const mj = storeContacts.myeongji || {};
+      const gw = storeContacts.gwangan || {};
+      const el = id => document.getElementById(id);
+
+      if (el('contact-mj-name')) el('contact-mj-name').value = mj.name || '';
+      if (el('contact-mj-phone')) el('contact-mj-phone').value = mj.phone || '';
+      if (el('contact-mj-mobile')) el('contact-mj-mobile').value = mj.mobile || '';
+      if (el('contact-mj-address')) el('contact-mj-address').value = mj.address || '';
+
+      if (el('contact-gw-name')) el('contact-gw-name').value = gw.name || '';
+      if (el('contact-gw-phone')) el('contact-gw-phone').value = gw.phone || '';
+      if (el('contact-gw-mobile')) el('contact-gw-mobile').value = gw.mobile || '';
+      if (el('contact-gw-address')) el('contact-gw-address').value = gw.address || '';
+
+      document.getElementById('storeContactModal').classList.remove('hidden');
+    }
+
+    function closeStoreContactModal() {
+      document.getElementById('storeContactModal').classList.add('hidden');
+    }
+
+    async function saveStoreContactModal() {
+      const el = id => document.getElementById(id);
+
+      storeContacts.myeongji = {
+        name: el('contact-mj-name')?.value || '원조폰 명지점',
+        phone: el('contact-mj-phone')?.value || '051-204-1524',
+        mobile: el('contact-mj-mobile')?.value || '010-8588-1524',
+        address: el('contact-mj-address')?.value || '부산 강서구 명지국제8로 234',
+        tagline: '17년 전통의 성지 매장! 불필요한 제휴카드/상조 강요 ZERO'
+      };
+
+      storeContacts.gwangan = {
+        name: el('contact-gw-name')?.value || '원조폰 광안점',
+        phone: el('contact-gw-phone')?.value || '051-755-1524',
+        mobile: el('contact-gw-mobile')?.value || '010-8688-1524',
+        address: el('contact-gw-address')?.value || '부산 수영구 수영로 582',
+        tagline: '17년 전통의 성지 매장! 정직한 할부원금 투명 공개'
+      };
+
+      try {
+        localStorage.setItem('phone_store_contacts', JSON.stringify(storeContacts));
+      } catch(e) {}
+
+      if (db) {
+        try {
+          await db.collection('settings').doc('contacts').set(storeContacts, { merge: true });
+        } catch(e) {
+          console.warn("Firestore 연락처 저장 실패:", e);
+        }
+      }
+
+      renderCardPreview();
+      closeStoreContactModal();
+      alert("✅ 매장 연락처 및 안내 정보가 저장되어 A4 안내서에 실시간 반영되었습니다!");
+    }
+
+    // Firestore에서 AI 설정 및 매장 정보 로드
+    async function loadCloudExtendedSettings() {
+      if (!db) return;
+      try {
+        // AI 키 로드
+        const aiDoc = await db.collection('settings').doc('ai').get();
+        if (aiDoc.exists && aiDoc.data().geminiApiKey) {
+          geminiApiKey = aiDoc.data().geminiApiKey;
+          try { localStorage.setItem('phone_gemini_api_key', geminiApiKey); } catch(e) {}
+          updateAiBadgeStatus();
+        }
+
+        // 연락처 로드
+        const ctDoc = await db.collection('settings').doc('contacts').get();
+        if (ctDoc.exists) {
+          const d = ctDoc.data();
+          if (d.myeongji) storeContacts.myeongji = Object.assign(storeContacts.myeongji, d.myeongji);
+          if (d.gwangan) storeContacts.gwangan = Object.assign(storeContacts.gwangan, d.gwangan);
+          renderCardPreview();
+        }
+      } catch(e) {
+        console.warn("확장 클라우드 설정 로드 실패:", e);
+      }
+    }
+
+    // 클립보드 붙여넣기 전역 리스너 (Ctrl+V)
+    window.addEventListener('paste', function(e) {
+      if (!e.clipboardData || !e.clipboardData.items) return;
+      // 입력창 내부에서의 텍스트 붙여넣기는 정상 동작 허용
+      const tag = document.activeElement ? document.activeElement.tagName : '';
+      if (['INPUT', 'TEXTAREA'].includes(tag)) return;
+
+      for (let i = 0; i < e.clipboardData.items.length; i++) {
+        const item = e.clipboardData.items[i];
+        if (item.type.indexOf('image') !== -1) {
+          const blob = item.getAsFile();
+          if (currentTab === 'card') {
+            loadCardFile(blob);
+            alert("📋 클립보드 캡처 이미지가 [제휴카드 안내서] 원본으로 로드되었습니다!");
+          } else if (currentTab === 'compare') {
+            // 시세표가 없으면 시세표로, 있으면 조건표로
+            if (!comparePriceCanvas) {
+              loadCompFile('price', blob);
+              alert("📋 클립보드 캡처 이미지가 [경쟁사 시세표]로 로드되었습니다!");
+            } else {
+              loadCompFile('condition', blob);
+              alert("📋 클립보드 캡처 이미지가 [부가조건표]로 로드되었습니다!");
+            }
+          }
+          break;
+        }
+      }
+    });
+
+
+    try {
+      loadCloudExtendedSettings();
+    } catch(e) {}
+
   </script>
 </body>
 </html>
