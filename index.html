@@ -995,11 +995,16 @@
 
             <!-- 카드 실물 이미지 등록/업로드 슬롯 -->
             <div class="pt-2 flex items-center justify-between border-t border-slate-100">
-              <span class="text-[11px] font-bold text-slate-500">💳 카드 실물/디자인 이미지</span>
-              <button type="button" onclick="triggerCardPlateUpload()" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold rounded-lg text-[11px] transition flex items-center gap-1 shadow-2xs">
-                <span>📷 이미지 등록/변경</span>
-              </button>
-              <input type="file" id="cardPlateFileInput" accept="image/*" class="hidden" onchange="handleCardPlateFile(event)" />
+              <span class="text-[11px] font-bold text-slate-500">💳 실물 카드 사진</span>
+              <div class="flex items-center gap-1.5">
+                <button type="button" onclick="openCropperModal('cardPlate')" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-extrabold rounded-lg text-[11px] transition flex items-center gap-1 shadow-2xs border border-indigo-200">
+                  <span>✂️ 원본에서 자르기</span>
+                </button>
+                <button type="button" onclick="document.getElementById('cardPlateFileInput').click()" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg text-[11px] transition shadow-2xs">
+                  <span>📁 파일</span>
+                </button>
+                <input type="file" id="cardPlateFileInput" accept="image/*" class="hidden" onchange="handleCardPlateFile(event)" />
+              </div>
             </div>
           </div>
 
@@ -1026,7 +1031,7 @@
                   업로드한 원본 문서에서 <strong>진짜 QR 코드</strong>를 잘라내어 붙이므로 인식이 절대 실패하지 않습니다.
                 </p>
                 <div class="flex items-center gap-1.5 flex-wrap pt-0.5">
-                  <button onclick="openQrCropperModal()" class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-lg text-xs shadow-2xs transition flex items-center gap-1">
+                  <button onclick="openCropperModal('qr')" class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-lg text-xs shadow-2xs transition flex items-center gap-1">
                     <span>✂️ 직접 QR 영역 자르기</span>
                   </button>
                   <button onclick="autoDetectQrCode()" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg text-xs transition">
@@ -1823,19 +1828,19 @@
       </div>
     </div>
 
-    <!-- ==================== QR 코드 직접 자르기 모달 (Interactive Canvas Cropper) ==================== -->
+    <!-- ==================== QR 코드 / 실물 카드 직접 자르기 모달 (Interactive Canvas Cropper) ==================== -->
     <div id="qrCropperModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-4 hidden">
       <div class="bg-white rounded-3xl shadow-2xl p-6 max-w-2xl w-full border border-slate-200/80 space-y-4 max-h-[92vh] flex flex-col">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
           <div>
             <h3 class="text-base font-black text-slate-800 flex items-center gap-1.5">
-              <span>✂️</span> 원본 이미지에서 QR 코드 직접 자르기
+              <span>✂️</span> <span id="cropperModalTitleText">원본 문서에서 영역 직접 자르기</span>
             </h3>
-            <p class="text-xs text-slate-500 mt-0.5">
-              마우스나 터치로 이미지 위의 <strong>QR 코드 주변을 드래그</strong>하여 네모 박스를 지정하세요.
+            <p id="cropperModalDesc" class="text-xs text-slate-500 mt-0.5">
+              마우스나 터치로 이미지 위의 <strong>원하는 영역을 드래그</strong>하여 네모 박스를 지정하세요.
             </p>
           </div>
-          <button onclick="closeQrCropperModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-sm font-bold transition">✕</button>
+          <button onclick="closeCropperModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-sm font-bold transition">✕</button>
         </div>
 
         <!-- 캔버스 컨테이너 (스크롤 가능) -->
@@ -1849,18 +1854,15 @@
         <!-- 하단 액션 버튼 바 -->
         <div class="flex flex-wrap items-center justify-between gap-3 pt-1 border-t border-slate-100">
           <div class="flex items-center gap-2">
-            <button onclick="autoDetectQrInCropper()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1">
+            <button id="btnCropperAutoQr" onclick="autoDetectQrInCropper()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1">
               <span>🔍 자동 QR 찾기</span>
             </button>
             <span id="cropperSelectionInfo" class="text-xs text-slate-400 font-medium">선택된 영역: 없음</span>
           </div>
 
           <div class="flex items-center gap-2">
-            <button onclick="applyQrCrop('main')" id="btnApplyMainQr" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-black shadow-2xs transition">
-              📌 선택 영역을 [카드 발급 QR]로 저장
-            </button>
-            <button onclick="applyQrCrop('event')" id="btnApplyEventQr" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition">
-              📌 [이벤트 QR]로 저장
+            <button onclick="applyCrop()" id="btnApplyCrop" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-black shadow-2xs transition">
+              📌 선택 영역 적용
             </button>
           </div>
         </div>
@@ -5378,7 +5380,7 @@
       promotions: [
         {
           step: 1,
-          badge: "프로모션 1",
+          badge: "매월 청구할인",
           title: "24개월 매월 추가 할인 제공 (~26.11.30 장기할부 승인)",
           condition: "기간 내 최초 신규 발급 후 전월실적 충족 시",
           tiers: [
@@ -5390,14 +5392,14 @@
         },
         {
           step: 2,
-          badge: "프로모션 2",
+          badge: "단말기 캐시백",
           title: "단말기 개통 추가 캐시백 (1회)",
           condition: "아이폰 18 Pro, Pro Max 등 주요 모델 개통 및 라이트할부 60만원 이상 결제 시",
           benefit: "80,000원 캐시백 1회 제공 (27년 1월 15일 이전 결제계좌 지급)"
         },
         {
           step: 3,
-          badge: "프로모션 3",
+          badge: "간편결제 캐시백",
           title: "간편결제 등록 추가 캐시백 (1회)",
           condition: "프로모션 2 대상자 중 KB Pay 등록 후 KB Pay로 2만원 이상 결제 시",
           benefit: "20,000원 캐시백 1회 제공 (27년 1월 15일 이전 결제계좌 지급)"
@@ -5424,10 +5426,14 @@
       eventQrImageUrl: SAMPLE_QR_EVENT
     };
 
-    // 카드 실물 이미지 업로드 제어
+    // 카드 실물 이미지 업로드 / 크롭 제어
     function triggerCardPlateUpload() {
-      const inp = document.getElementById('cardPlateFileInput');
-      if (inp) inp.click();
+      if (cardUploadedCanvas || cardUploadedImage) {
+        openCropperModal('cardPlate');
+      } else {
+        const inp = document.getElementById('cardPlateFileInput');
+        if (inp) inp.click();
+      }
     }
 
     function handleCardPlateFile(event) {
@@ -5734,10 +5740,10 @@
       cardData.specs[specKey] = el.innerText.trim();
     }
 
-    function syncCardPromoTier(el, tierIdx, field) {
-      if (!cardData.promotions || !cardData.promotions[0] || !cardData.promotions[0].tiers) return;
-      if (cardData.promotions[0].tiers[tierIdx]) {
-        cardData.promotions[0].tiers[tierIdx][field] = el.innerText.trim();
+    function syncCardPromoTier(el, promoIdx, tierIdx, field) {
+      if (!cardData.promotions || !cardData.promotions[promoIdx] || !cardData.promotions[promoIdx].tiers) return;
+      if (cardData.promotions[promoIdx].tiers[tierIdx]) {
+        cardData.promotions[promoIdx].tiers[tierIdx][field] = el.innerText.trim();
       }
     }
 
@@ -5745,6 +5751,14 @@
       if (!cardData.promotions) cardData.promotions = [];
       if (!cardData.promotions[promoIdx]) cardData.promotions[promoIdx] = {};
       cardData.promotions[promoIdx][field] = el.innerText.trim();
+    }
+
+    function deleteCardPromo(promoIdx) {
+      if (!cardData.promotions || !cardData.promotions[promoIdx]) return;
+      if (confirm("이 프로모션 혜택 항목을 삭제하시겠습니까?")) {
+        cardData.promotions.splice(promoIdx, 1);
+        renderCardPreview();
+      }
     }
 
     function syncCardSummaryField(el, field) {
@@ -5795,14 +5809,38 @@
 
       const theme = THEME_STYLES[cardTheme] || THEME_STYLES['theme-gold'];
       const st = storeContacts[cardStoreId] || storeContacts['myeongji'];
-
-      const p1 = (cardData.promotions && cardData.promotions[0]) || {};
-      const p2 = (cardData.promotions && cardData.promotions[1]) || {};
-      const p3 = (cardData.promotions && cardData.promotions[2]) || {};
       const specs = cardData.specs || {};
       const summary = cardData.summary || {};
 
-      const tiers = p1.tiers || [
+      // 1. 프로모션 데이터 동적 구성 (없는 프로모션 3 유령 혜택 원천 차단)
+      const promos = (cardData.promotions && cardData.promotions.length > 0) 
+        ? cardData.promotions 
+        : [
+            {
+              badge: "매월 청구할인",
+              title: "매월 통신요금 자동 청구할인 (24개월 동안 매월 할인)",
+              condition: "신규 발급 및 실적 충족 시",
+              highlight: "매월 최대 27,000원",
+              tiers: [
+                { label: "전월 30만원 이상", amount: "월 25,000원 할인", sub: "기본 8,000 + 추가 17,000", total: "24개월 600,000원 절감" },
+                { label: "전월 70만원 이상", amount: "월 26,000원 할인", sub: "기본 12,000 + 추가 14,000", total: "24개월 624,000원 절감" },
+                { label: "전월 100만원 이상", amount: "월 27,000원 할인", sub: "기본 14,000 + 추가 13,000", total: "24개월 648,000원 절감" }
+              ]
+            },
+            {
+              badge: "단말기 캐시백",
+              title: "단말기 개통 추가 캐시백 (1회)",
+              condition: "아이폰 / 갤럭시 등 주요 모델 개통 및 라이트할부 60만원 이상 결제 시",
+              benefit: "80,000원 캐시백 1회 제공 (결제계좌 지급)"
+            }
+          ];
+
+      // 주 프로모션 (구간별 청구할인이 있는 프로모션 우선, 없으면 첫 번째)
+      const tieredPromos = promos.filter(p => p.tiers && p.tiers.length > 0);
+      const primaryPromo = tieredPromos[0] || promos[0] || {};
+      const primaryIdx = promos.indexOf(primaryPromo);
+
+      const tiers = primaryPromo.tiers || [
         { label: "전월 30만원 이상", amount: "월 25,000원 할인", sub: "기본 8,000 + 프로모션 17,000", total: "24개월 600,000원 할인" },
         { label: "전월 70만원 이상", amount: "월 26,000원 할인", sub: "기본 12,000 + 프로모션 14,000", total: "24개월 624,000원 할인" },
         { label: "전월 100만원 이상", amount: "월 27,000원 할인", sub: "기본 14,000 + 프로모션 13,000", total: "24개월 648,000원 할인" }
@@ -5812,8 +5850,8 @@
         <div class="bg-white rounded-xl p-3 border border-slate-200/90 shadow-2xs flex flex-col justify-between text-center relative overflow-hidden group">
           <div class="absolute top-0 left-0 right-0 h-1.5 ${theme.headerBg}"></div>
           <div class="pt-1">
-            <span class="inline-block text-[11px] font-black text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md mb-1.5 outline-none focus:ring-1 focus:ring-indigo-400" contenteditable="true" onblur="syncCardPromoTier(this, ${idx}, 'label')">${t.label}</span>
-            <div class="text-base sm:text-lg font-black text-rose-600 tracking-tight my-1 outline-none focus:ring-1 focus:ring-rose-400" contenteditable="true" onblur="syncCardPromoTier(this, ${idx}, 'amount')">${t.amount}</div>
+            <span class="inline-block text-[11px] font-black text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md mb-1.5 outline-none focus:ring-1 focus:ring-indigo-400" contenteditable="true" onblur="syncCardPromoTier(this, ${primaryIdx >= 0 ? primaryIdx : 0}, ${idx}, 'label')">${t.label}</span>
+            <div class="text-base sm:text-lg font-black text-rose-600 tracking-tight my-1 outline-none focus:ring-1 focus:ring-rose-400" contenteditable="true" onblur="syncCardPromoTier(this, ${primaryIdx >= 0 ? primaryIdx : 0}, ${idx}, 'amount')">${t.amount}</div>
             <p class="text-[10px] text-slate-400 font-semibold leading-tight outline-none" contenteditable="true">${t.sub || '실적 충족 시 청구할인'}</p>
           </div>
           <div class="mt-2 pt-2 border-t border-slate-100">
@@ -5821,6 +5859,47 @@
           </div>
         </div>
       `).join('');
+
+      // 추가 보너스 프로모션들 (STEP 1, 2, 3 대신 실제 소분류 이름 표시, 없으면 렌더링 안 함)
+      const bonusPromos = promos.filter((p, i) => p !== primaryPromo);
+      let bonusPromosHtml = '';
+
+      if (bonusPromos.length > 0) {
+        const gridCols = bonusPromos.length === 1 ? 'grid-cols-1' : (bonusPromos.length === 2 ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-3');
+        bonusPromosHtml = `
+          <div class="grid ${gridCols} gap-3.5">
+            ${bonusPromos.map((bp, bIdx) => {
+              const realIdx = promos.indexOf(bp);
+              const badgeText = bp.badge || ('추가 혜택 ' + (bIdx + 1));
+              return `
+                <div class="p-4 rounded-2xl border ${theme.cardBorder} bg-white shadow-2xs space-y-2 flex flex-col justify-between relative group">
+                  <div>
+                    <div class="flex items-center justify-between mb-1.5">
+                      <div class="flex items-center gap-1.5">
+                        <span class="px-2 py-0.5 rounded text-[10.5px] font-black ${theme.stepBadge} outline-none focus:ring-1 focus:ring-indigo-400" contenteditable="true" onblur="syncCardPromoField(this, ${realIdx}, 'badge')">${badgeText}</span>
+                        <span class="text-[10px] font-black text-rose-600 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-full">캐시백 프로모션</span>
+                      </div>
+                      <button onclick="deleteCardPromo(${realIdx})" class="text-slate-300 hover:text-rose-500 text-xs px-1 font-bold opacity-0 group-hover:opacity-100 transition" title="이 프로모션 삭제">✕ 삭제</button>
+                    </div>
+                    <h4 class="font-black text-xs sm:text-sm text-slate-900 outline-none focus:ring-1 focus:ring-indigo-400 rounded" contenteditable="true" onblur="syncCardPromoField(this, ${realIdx}, 'title')">
+                      ${bp.title || '추가 캐시백 혜택'}
+                    </h4>
+                    <p class="text-[11px] text-slate-600 leading-snug mt-1 outline-none" contenteditable="true" onblur="syncCardPromoField(this, ${realIdx}, 'condition')">
+                      ${bp.condition || '지정 조건 충족 시 지급'}
+                    </p>
+                  </div>
+                  <div class="mt-2 p-2.5 bg-rose-50/80 border border-rose-200 rounded-xl flex items-center justify-between">
+                    <span class="text-xs font-extrabold text-rose-800">지급 혜택</span>
+                    <span class="text-sm font-black text-rose-600 outline-none focus:ring-1 focus:ring-rose-400" contenteditable="true" onblur="syncCardPromoField(this, ${realIdx}, 'benefit')">
+                      ${bp.benefit || '혜택 내용 입력'}
+                    </span>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+      }
 
       const basicBenefitsHtml = (cardData.basicBenefits || [
         "장기할부 이용 시: 전월 30만 8,000원 / 70만 12,000원 / 100만 14,000원 할인",
@@ -5846,33 +5925,50 @@
 
       const phoneDisplay = [st.phone, st.mobile].filter(Boolean).join(' / ') || st.phone || '';
 
-      // 카드 실물 이미지 또는 멋진 플레이트 목업 그래픽
+      // 카드 실물 이미지: 일러스트 목업 제거하고 실제 자른 사진 또는 깔끔한 자르기 슬롯 배치
       let cardPlateHtml = '';
       if (cardData.cardPlateImageUrl) {
-        cardPlateHtml = `<img src="${cardData.cardPlateImageUrl}" class="w-full h-full object-cover rounded-xl" alt="카드 실물" />`;
-      } else {
-        const bgGrad = theme.isDark 
-          ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 text-white' 
-          : 'bg-gradient-to-br from-amber-600 via-amber-700 to-amber-800 text-white';
         cardPlateHtml = `
-          <div class="w-full h-full p-2 flex flex-col justify-between ${bgGrad} rounded-xl relative select-none">
-            <div class="flex items-center justify-between">
-              <span class="text-[9px] font-black tracking-wider opacity-90">${cardData.carrier || 'LGU+'}</span>
-              <!-- Shiny IC Chip -->
-              <div class="w-5 h-3.5 rounded-xs bg-gradient-to-r from-amber-200 to-yellow-400 border border-amber-600 shadow-2xs flex items-center justify-center">
-                <div class="w-2.5 h-1.5 border border-amber-800/40"></div>
-              </div>
+          <div class="relative w-full h-full group">
+            <img src="${cardData.cardPlateImageUrl}" class="w-full h-full object-cover rounded-xl" alt="카드 실물 사진" />
+            <div onclick="openCropperModal('cardPlate')" class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-[10.5px] font-black cursor-pointer rounded-xl">
+              ✂️ 다시 자르기
             </div>
-            <div class="space-y-0.5 pt-1">
-              <div class="text-[9px] font-extrabold truncate tracking-tight">${cardData.cardCompany || 'KB국민카드'}</div>
-              <div class="text-[7.5px] font-mono tracking-widest opacity-80">•••• •••• 1234</div>
+          </div>
+        `;
+      } else {
+        cardPlateHtml = `
+          <div onclick="openCropperModal('cardPlate')" class="w-full h-full p-2 flex flex-col items-center justify-center text-center cursor-pointer border-2 border-dashed ${theme.isDark ? 'border-white/50 text-white/90 hover:bg-white/10' : 'border-slate-400 text-slate-700 hover:bg-black/5'} rounded-xl bg-black/10 transition group" title="원본 문서에서 카드 실물 사진을 마우스로 잘라내어 부착">
+            <span class="text-base group-hover:scale-110 transition">💳✂️</span>
+            <span class="text-[10px] font-black leading-tight mt-1">실물 카드 자르기</span>
+            <span class="text-[8px] opacity-75">클릭하여 카드 영역 지정</span>
+          </div>
+        `;
+      }
+
+      // 최상단 우측 발급 QR 박스: 크기 확대 및 칸에 꽉 차게 렌더링
+      let qrCodeHtml = '';
+      if (cardData.qrImageUrl) {
+        qrCodeHtml = `
+          <div class="relative w-full h-full group">
+            <img src="${cardData.qrImageUrl}" class="w-full h-full object-contain" alt="카드발급 원본 QR" />
+            <div onclick="openCropperModal('qr')" class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-[10.5px] font-black cursor-pointer rounded-xl">
+              ✂️ 다시 자르기
             </div>
+          </div>
+        `;
+      } else {
+        qrCodeHtml = `
+          <div onclick="openCropperModal('qr')" class="w-full h-full bg-amber-50 border-2 border-dashed border-amber-300 rounded-xl flex flex-col items-center justify-center p-1 text-center cursor-pointer hover:bg-amber-100 transition group" title="클릭하여 원본 문서에서 QR 코드 직접 자르기">
+            <span class="text-xl group-hover:scale-110 transition">⚠️</span>
+            <span class="text-[10px] font-black text-amber-800 leading-tight mt-0.5">QR 미등록</span>
+            <span class="text-[8.5px] text-amber-600 font-bold underline">클릭하여 자르기</span>
           </div>
         `;
       }
 
       container.innerHTML = `
-        <!-- 1. [상단 헤더 배너]: 좌측(정보+매장연락처) & 우측(카드이미지 + 최상단 발급 QR 코드) -->
+        <!-- 1. [상단 헤더 배너]: 좌측(정보+매장연락처) & 우측(실물 카드 사진 + 대형 발급 QR 코드) -->
         <div class="rounded-2xl ${theme.headerBg} ${theme.headerText} p-4 sm:p-5 shadow-sm">
           <div class="flex items-center justify-between gap-4">
             
@@ -5909,23 +6005,23 @@
 
             </div>
 
-            <!-- 우측: 카드 실물 그래픽 + 최상단 우측 발급 QR 코드 (공간 대폭 절약) -->
+            <!-- 우측: 실물 카드 사진 + 최상단 우측 대형 발급 QR 코드 (칸에 꽉 차게 확대!) -->
             <div class="flex items-center gap-3 shrink-0">
               
-              <!-- 카드 실물 플레이트 이미지 (클릭 시 이미지 변경 가능) -->
-              <div id="cardPlateBox" class="w-24 h-16 sm:w-28 sm:h-18 rounded-xl shadow-md border ${theme.isDark ? 'border-white/30' : 'border-slate-300'} overflow-hidden relative flex items-center justify-center shrink-0 cursor-pointer hover:scale-105 transition" onclick="triggerCardPlateUpload()" title="클릭하여 카드 실물 이미지 업로드/변경">
+              <!-- 실물 카드 사진 박스 (표준 신용카드 비율 ~1.58:1) -->
+              <div id="cardPlateBox" class="w-32 h-20 sm:w-36 sm:h-24 rounded-xl shadow-md border ${theme.isDark ? 'border-white/30' : 'border-slate-300'} overflow-hidden relative flex items-center justify-center shrink-0">
                 ${cardPlateHtml}
               </div>
 
-              <!-- 최상단 우측 카드 간편 발급 신청 QR 박스 -->
-              <div class="bg-white p-2 rounded-2xl shadow-md border-2 ${theme.cardBorder} text-center shrink-0 w-28 sm:w-32 flex flex-col items-center justify-center space-y-1">
-                <div class="w-20 h-20 sm:w-22 sm:h-22 bg-slate-50 p-1 rounded-xl border border-slate-200 flex items-center justify-center overflow-hidden">
-                  <img src="${cardData.qrImageUrl || ''}" class="w-full h-full object-contain" alt="카드발급 원본 QR" />
+              <!-- 최상단 우측 카드 간편 발급 신청 QR 박스 (큼직하게 확대 및 여백 최소화!) -->
+              <div class="bg-white p-2 sm:p-2.5 rounded-2xl shadow-md border-2 ${theme.cardBorder} text-center shrink-0 w-32 sm:w-36 flex flex-col items-center justify-center space-y-1">
+                <div class="w-28 h-28 sm:w-32 sm:h-32 bg-white rounded-xl border border-slate-200 flex items-center justify-center overflow-hidden p-0.5">
+                  ${qrCodeHtml}
                 </div>
-                <span class="text-[10px] font-black text-slate-800 tracking-tight leading-none block">
+                <span class="text-[10.5px] font-black text-slate-800 tracking-tight leading-none block">
                   📱 발급신청 QR
                 </span>
-                <span class="text-[8.5px] text-slate-400 font-bold block leading-none">
+                <span class="text-[9px] text-slate-400 font-bold block leading-none">
                   카메라 스캔 즉시연결
                 </span>
               </div>
@@ -5935,31 +6031,41 @@
           </div>
         </div>
 
-        <!-- 2. 핵심 요약 5대 스펙 박스 (직접 클릭 수정 지원) -->
+        <!-- 2. 핵심 요약 5대 스펙 박스 (완벽 수직 중앙 정렬 & min-h 76px 고정) -->
         <div class="grid grid-cols-5 gap-2 text-center text-xs">
-          <div class="p-2 rounded-xl bg-slate-50 border border-slate-200">
-            <span class="block text-[10px] font-extrabold text-slate-400 mb-0.5">전용 단말기</span>
-            <span class="font-black text-xs text-slate-900 outline-none focus:ring-1 focus:ring-indigo-400 rounded block" contenteditable="true" onblur="syncCardSpecField(this, 'targetDevice')">${specs.targetDevice || '전기종 (아이폰/갤럭시)'}</span>
+          <div class="p-2.5 rounded-xl bg-slate-50/90 border border-slate-200 flex flex-col items-center justify-between min-h-[76px] text-center">
+            <span class="block text-[10.5px] font-extrabold text-slate-400 leading-tight">전용 단말기</span>
+            <div class="flex-1 flex items-center justify-center w-full my-auto py-0.5">
+              <span class="font-black text-xs text-slate-900 leading-tight outline-none focus:ring-1 focus:ring-indigo-400 rounded px-1 block text-center" contenteditable="true" onblur="syncCardSpecField(this, 'targetDevice')">${specs.targetDevice || '전기종 (아이폰/갤럭시)'}</span>
+            </div>
           </div>
-          <div class="p-2 rounded-xl bg-slate-50 border border-slate-200">
-            <span class="block text-[10px] font-extrabold text-slate-400 mb-0.5">최소 결제금액</span>
-            <span class="font-black text-xs text-slate-900 outline-none focus:ring-1 focus:ring-indigo-400 rounded block" contenteditable="true" onblur="syncCardSpecField(this, 'minPayment')">${specs.minPayment || '5만원 이상'}</span>
+          <div class="p-2.5 rounded-xl bg-slate-50/90 border border-slate-200 flex flex-col items-center justify-between min-h-[76px] text-center">
+            <span class="block text-[10.5px] font-extrabold text-slate-400 leading-tight">최소 결제금액</span>
+            <div class="flex-1 flex items-center justify-center w-full my-auto py-0.5">
+              <span class="font-black text-xs text-slate-900 leading-tight outline-none focus:ring-1 focus:ring-indigo-400 rounded px-1 block text-center" contenteditable="true" onblur="syncCardSpecField(this, 'minPayment')">${specs.minPayment || '5만원 이상'}</span>
+            </div>
           </div>
-          <div class="p-2 rounded-xl bg-slate-50 border border-slate-200">
-            <span class="block text-[10px] font-extrabold text-slate-400 mb-0.5">자동이체</span>
-            <span class="font-black text-xs text-slate-900 outline-none focus:ring-1 focus:ring-indigo-400 rounded block" contenteditable="true" onblur="syncCardSpecField(this, 'autoTransfer')">${specs.autoTransfer || '미필수 (자유)'}</span>
+          <div class="p-2.5 rounded-xl bg-slate-50/90 border border-slate-200 flex flex-col items-center justify-between min-h-[76px] text-center">
+            <span class="block text-[10.5px] font-extrabold text-slate-400 leading-tight">자동이체</span>
+            <div class="flex-1 flex items-center justify-center w-full my-auto py-0.5">
+              <span class="font-black text-xs text-slate-900 leading-tight outline-none focus:ring-1 focus:ring-indigo-400 rounded px-1 block text-center" contenteditable="true" onblur="syncCardSpecField(this, 'autoTransfer')">${specs.autoTransfer || '미필수 (자유)'}</span>
+            </div>
           </div>
-          <div class="p-2 rounded-xl bg-slate-50 border border-slate-200">
-            <span class="block text-[10px] font-extrabold text-slate-400 mb-0.5">연회비</span>
-            <span class="font-black text-xs text-slate-900 outline-none focus:ring-1 focus:ring-indigo-400 rounded block" contenteditable="true" onblur="syncCardSpecField(this, 'annualFee')">${specs.annualFee || '국내 2만 / Master 2만'}</span>
+          <div class="p-2.5 rounded-xl bg-slate-50/90 border border-slate-200 flex flex-col items-center justify-between min-h-[76px] text-center">
+            <span class="block text-[10.5px] font-extrabold text-slate-400 leading-tight">연회비</span>
+            <div class="flex-1 flex items-center justify-center w-full my-auto py-0.5">
+              <span class="font-black text-xs text-slate-900 leading-tight outline-none focus:ring-1 focus:ring-indigo-400 rounded px-1 block text-center" contenteditable="true" onblur="syncCardSpecField(this, 'annualFee')">${specs.annualFee || '국내 2만 / Master 2만'}</span>
+            </div>
           </div>
-          <div class="p-2 rounded-xl bg-slate-50 border border-slate-200">
-            <span class="block text-[10px] font-extrabold text-slate-400 mb-0.5">할부이자</span>
-            <span class="font-black text-xs text-slate-900 outline-none focus:ring-1 focus:ring-indigo-400 rounded block" contenteditable="true" onblur="syncCardSpecField(this, 'installmentInterest')">${specs.installmentInterest || '24개월 5.9% / 36개월 7%'}</span>
+          <div class="p-2.5 rounded-xl bg-slate-50/90 border border-slate-200 flex flex-col items-center justify-between min-h-[76px] text-center">
+            <span class="block text-[10.5px] font-extrabold text-slate-400 leading-tight">할부이자</span>
+            <div class="flex-1 flex items-center justify-center w-full my-auto py-0.5">
+              <span class="font-black text-xs text-slate-900 leading-tight outline-none focus:ring-1 focus:ring-indigo-400 rounded px-1 block text-center" contenteditable="true" onblur="syncCardSpecField(this, 'installmentInterest')">${specs.installmentInterest || '24개월 5.9% / 36개월 7%'}</span>
+            </div>
           </div>
         </div>
 
-        <!-- 3. [단말기 라이트할부 약정 결제 안내 배너] (토탈 베네핏 대신 매장 실무에 맞춘 할부 약정 결제 안내) -->
+        <!-- 3. [단말기 라이트할부 약정 결제 안내 배너] -->
         <div class="rounded-2xl p-3 sm:p-3.5 shadow-2xs ${theme.highlightBg} text-center space-y-1">
           <span class="text-[10.5px] font-black uppercase tracking-wider inline-block ${theme.isDark ? 'bg-white/20 text-white' : 'bg-black/15 text-slate-950'} px-3 py-0.5 rounded-full">
             💳 단말기 대금 카드사 24개월 라이트할부 승인 안내
@@ -5972,22 +6078,24 @@
           </p>
         </div>
 
-        <!-- 4. [시인성 극대화] 프로모션 1: 3구간 매월 청구할인 (대형 3열 그리드 카드) -->
+        <!-- 4. [시인성 극대화] 주 프로모션: 매월 통신요금 청구할인 (3구간 대형 카드) -->
         <div class="p-4 rounded-2xl border-2 ${theme.cardBorder} bg-slate-50/60 space-y-3">
           <div class="flex items-center justify-between border-b border-slate-200 pb-2">
             <div class="flex items-center gap-2">
-              <span class="px-2.5 py-1 rounded-lg text-xs ${theme.stepBadge}">STEP 1</span>
+              <span class="px-2.5 py-1 rounded-lg text-xs font-black ${theme.stepBadge} outline-none focus:ring-1 focus:ring-indigo-400" contenteditable="true" onblur="syncCardPromoField(this, ${primaryIdx >= 0 ? primaryIdx : 0}, 'badge')">
+                ${primaryPromo.badge || '매월 청구할인'}
+              </span>
               <div>
-                <h3 class="font-black text-sm text-slate-900 outline-none focus:ring-1 focus:ring-indigo-400 rounded" contenteditable="true" onblur="syncCardPromoField(this, 0, 'title')">
-                  ${p1.title || '매월 통신요금 자동 청구할인 (24개월 동안 매월 할인)'}
+                <h3 class="font-black text-sm text-slate-900 outline-none focus:ring-1 focus:ring-indigo-400 rounded" contenteditable="true" onblur="syncCardPromoField(this, ${primaryIdx >= 0 ? primaryIdx : 0}, 'title')">
+                  ${primaryPromo.title || '매월 통신요금 자동 청구할인 (24개월 동안 매월 할인)'}
                 </h3>
-                <p class="text-[11px] text-slate-500 font-semibold outline-none" contenteditable="true" onblur="syncCardPromoField(this, 0, 'condition')">
-                  ${p1.condition || '전월 카드 이용 실적 구간에 따라 매월 통신비에서 즉시 차감됩니다.'}
+                <p class="text-[11px] text-slate-500 font-semibold outline-none" contenteditable="true" onblur="syncCardPromoField(this, ${primaryIdx >= 0 ? primaryIdx : 0}, 'condition')">
+                  ${primaryPromo.condition || '전월 카드 이용 실적 구간에 따라 매월 통신비에서 즉시 차감됩니다.'}
                 </p>
               </div>
             </div>
             <span class="text-xs font-black text-rose-600 bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-200 hidden sm:inline">
-              매월 최대 27,000원
+              ${primaryPromo.highlight || '매월 최대 27,000원'}
             </span>
           </div>
 
@@ -5997,59 +6105,13 @@
           </div>
         </div>
 
-        <!-- 5. 프로모션 2 & 프로모션 3: 캐시백 보너스 혜택 (2열 배치) -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-          
-          <!-- 프로모션 2: 단말기 캐시백 -->
-          <div class="p-4 rounded-2xl border ${theme.cardBorder} bg-white shadow-2xs space-y-2 flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between mb-1.5">
-                <span class="px-2 py-0.5 rounded text-[10.5px] ${theme.stepBadge}">STEP 2</span>
-                <span class="text-[10px] font-black text-rose-600 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-full">단말기 혜택</span>
-              </div>
-              <h4 class="font-black text-xs sm:text-sm text-slate-900 outline-none focus:ring-1 focus:ring-indigo-400 rounded" contenteditable="true" onblur="syncCardPromoField(this, 1, 'title')">
-                ${p2.title || '단말기 개통 추가 캐시백 (1회)'}
-              </h4>
-              <p class="text-[11px] text-slate-600 leading-snug mt-1 outline-none" contenteditable="true" onblur="syncCardPromoField(this, 1, 'condition')">
-                ${p2.condition || '지정 플래그십 모델 개통 및 라이트할부 60만원 이상 승인 시'}
-              </p>
-            </div>
-            <div class="mt-2 p-2.5 bg-rose-50/80 border border-rose-200 rounded-xl flex items-center justify-between">
-              <span class="text-xs font-extrabold text-rose-800">지급 혜택</span>
-              <span class="text-sm font-black text-rose-600 outline-none focus:ring-1 focus:ring-rose-400" contenteditable="true" onblur="syncCardPromoField(this, 1, 'benefit')">
-                ${p2.benefit || '80,000원 계좌 입금'}
-              </span>
-            </div>
-          </div>
+        <!-- 5. 추가 보너스 프로모션들 (동적 렌더링: 프로모션이 1개면 표시 안함, 2개면 1개만, 3개면 2개 표시) -->
+        ${bonusPromosHtml}
 
-          <!-- 프로모션 3: 페이 등록 캐시백 -->
-          <div class="p-4 rounded-2xl border ${theme.cardBorder} bg-white shadow-2xs space-y-2 flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between mb-1.5">
-                <span class="px-2 py-0.5 rounded text-[10.5px] ${theme.stepBadge}">STEP 3</span>
-                <span class="text-[10px] font-black text-blue-600 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full">간편결제 혜택</span>
-              </div>
-              <h4 class="font-black text-xs sm:text-sm text-slate-900 outline-none focus:ring-1 focus:ring-indigo-400 rounded" contenteditable="true" onblur="syncCardPromoField(this, 2, 'title')">
-                ${p3.title || '간편결제 등록 추가 캐시백 (1회)'}
-              </h4>
-              <p class="text-[11px] text-slate-600 leading-snug mt-1 outline-none" contenteditable="true" onblur="syncCardPromoField(this, 2, 'condition')">
-                ${p3.condition || '간편결제(KB Pay 등) 등록 후 2만원 이상 결제 시'}
-              </p>
-            </div>
-            <div class="mt-2 p-2.5 bg-blue-50/80 border border-blue-200 rounded-xl flex items-center justify-between">
-              <span class="text-xs font-extrabold text-blue-800">추가 혜택</span>
-              <span class="text-sm font-black text-blue-600 outline-none focus:ring-1 focus:ring-blue-400" contenteditable="true" onblur="syncCardPromoField(this, 2, 'benefit')">
-                ${p3.benefit || '20,000원 계좌 입금'}
-              </span>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- 6. [전폭 12열 활용] 하단 2열 상세 정보 (QR 코드가 상단으로 이동하여 넓고 쾌적한 6/12 + 6/12 배치) -->
+        <!-- 6. [전폭 12열 활용] 하단 2열 상세 정보 -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 items-stretch">
           
-          <!-- 좌측: 생활 부가혜택 (전폭 6/12) -->
+          <!-- 좌측: 생활 부가혜택 -->
           <div class="p-4 rounded-2xl border border-slate-200 bg-white shadow-2xs space-y-2.5 flex flex-col justify-between">
             <div class="space-y-2">
               <span class="font-black text-xs text-slate-900 flex items-center gap-1.5 pb-1 border-b border-slate-100">
@@ -6061,7 +6123,7 @@
             </div>
           </div>
 
-          <!-- 우측: 전월실적 산정 기준 및 필수 유의사항 (전폭 6/12) -->
+          <!-- 우측: 전월실적 산정 기준 및 필수 유의사항 -->
           <div class="p-4 rounded-2xl border border-slate-200 bg-slate-50/80 shadow-2xs space-y-2.5 flex flex-col justify-between">
             <div class="space-y-2">
               <span class="font-black text-xs text-slate-800 flex items-center gap-1.5 pb-1 border-b border-slate-200">
@@ -6101,7 +6163,7 @@
       `;
     }
 
-    // ==================== [원천 화면 UI 잔상 제거] 격리된 iframe A4 바로 인쇄 ====================
+    // ==================== [원천 화면 UI 잔상 제거 & 디자인 100% 보존] 격리된 iframe A4 바로 인쇄 ====================
     function printCardA4() {
       const sheet = document.getElementById('cardA4Sheet');
       if (!sheet) return;
@@ -6121,8 +6183,18 @@
 
       const iframeDoc = printIframe.contentDocument || printIframe.contentWindow.document;
       const clone = sheet.cloneNode(true);
-      // 인쇄 시 contenteditable 아티팩트 및 포커스 링 제거
+      // 인쇄 시 contenteditable 아티팩트 및 포커스 링, 인터랙티브 오버레이 제거
       clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+      clone.querySelectorAll('button').forEach(el => el.remove());
+      clone.querySelectorAll('div').forEach(el => {
+        if (el.innerText && (el.innerText.includes('다시 자르기') || el.innerText.includes('✕ 삭제'))) {
+          el.remove();
+        }
+      });
+
+      // 부모 창의 모든 스타일 태그 및 외부 스타일시트 복사 (Tailwind 포함 100% 동기화)
+      const parentStyles = Array.from(document.querySelectorAll('style')).map(s => s.outerHTML).join('\n');
+      const parentLinks = Array.from(document.querySelectorAll('link[rel="stylesheet"]')).map(l => l.outerHTML).join('\n');
 
       iframeDoc.open();
       iframeDoc.write(`<!DOCTYPE html>
@@ -6130,17 +6202,20 @@
 <head>
   <meta charset="UTF-8">
   <title>제휴카드 안내서 인쇄</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <script src="https://cdn.tailwindcss.com"><\/script>
+  ${parentLinks}
+  ${parentStyles}
   <style>
     @page { size: A4 portrait; margin: 6mm 7mm; }
     * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     body { font-family: "Pretendard Variable", Pretendard, sans-serif; margin: 0; padding: 0; background: #ffffff; width: 100%; }
     #printContainer { width: 100%; max-width: 100%; margin: 0 auto; box-shadow: none !important; border: 1px solid #cbd5e1; border-radius: 16px; padding: 16px 18px !important; }
+    img { max-width: 100%; }
   </style>
 </head>
 <body>
   <div id="printContainer" class="${sheet.className}">
-    ${sheet.innerHTML}
+    ${clone.innerHTML}
   </div>
 </body>
 </html>`);
@@ -6149,7 +6224,7 @@
       setTimeout(function() {
         printIframe.contentWindow.focus();
         printIframe.contentWindow.print();
-      }, 350);
+      }, 450);
     }
 
     // ==================== [글자 밀림/폰트 어긋남 원천 방지] 794px 오프스크린 클론 PNG 저장 ====================
@@ -6165,6 +6240,12 @@
       // A4 96DPI 표준 규격(794px)의 오프스크린 클론 생성
       const clone = sheet.cloneNode(true);
       clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+      clone.querySelectorAll('button').forEach(el => el.remove());
+      clone.querySelectorAll('div').forEach(el => {
+        if (el.innerText && (el.innerText.includes('다시 자르기') || el.innerText.includes('✕ 삭제'))) {
+          el.remove();
+        }
+      });
 
       const offscreen = document.createElement('div');
       offscreen.style.position = 'fixed';
@@ -6211,7 +6292,7 @@
       cardData.promotions = [
         {
           step: 1,
-          badge: "프로모션 1",
+          badge: "매월 청구할인",
           title: "매월 통신요금 자동 청구할인 (24개월 동안 매월 할인)",
           condition: "기간 내 최초 신규 발급 후 전월실적 충족 시",
           tiers: [
@@ -6223,14 +6304,14 @@
         },
         {
           step: 2,
-          badge: "프로모션 2",
+          badge: "단말기 캐시백",
           title: "단말기 개통 추가 캐시백 (1회)",
           condition: "아이폰 18 / 갤럭시 S25 등 주요 모델 개통 및 라이트할부 60만원 이상 결제 시",
           benefit: "80,000원 캐시백 1회 제공 (결제계좌 지급)"
         },
         {
           step: 3,
-          badge: "프로모션 3",
+          badge: "간편결제 캐시백",
           title: "간편결제 등록 추가 캐시백 (1회)",
           condition: "프로모션 2 대상자 중 KB Pay 등록 후 KB Pay로 2만원 이상 결제 시",
           benefit: "20,000원 캐시백 1회 제공 (결제계좌 지급)"
@@ -6284,6 +6365,13 @@
       document.getElementById('cardFileName').innerText = file.name;
       document.getElementById('cardFileSize').innerText = (file.size / 1024).toFixed(1) + ' KB';
       autoDetectCardTheme(file.name);
+
+      // 새 파일 로드 시 이전 카드의 QR, 실물카드 이미지, 프로모션 완전 초기화 (다른 카드 잔여물 방지!)
+      cardData.qrImageUrl = "";
+      cardData.cardPlateImageUrl = "";
+      cardData.promotions = [];
+      renderCardEditor();
+      renderCardPreview();
 
       if (file.type === 'application/pdf') {
         loadPdfFileToCanvas(file, function(canvas) {
@@ -6346,9 +6434,14 @@
     function clearCardImage() {
       cardUploadedCanvas = null;
       cardUploadedImage = null;
+      cardData.qrImageUrl = "";
+      cardData.cardPlateImageUrl = "";
+      cardData.promotions = [];
       document.getElementById('cardFileInput').value = '';
       document.getElementById('cardDropEmpty').classList.remove('hidden');
       document.getElementById('cardDropPreviewBox').classList.add('hidden');
+      renderCardEditor();
+      renderCardPreview();
     }
 
     // jsQR 자동 QR 감지 및 크롭
@@ -6361,6 +6454,11 @@
         const code = jsQR(imgData.data, imgData.width, imgData.height);
         if (code && code.location) {
           cropQrFromLocation(cardUploadedCanvas, code.location, 'main');
+        } else {
+          console.warn("jsQR: QR 코드 자동 감지 실패. 수동 자르기 유도");
+          cardData.qrImageUrl = "";
+          renderCardEditor();
+          renderCardPreview();
         }
       } catch (e) {
         console.warn("jsQR 감지 실패:", e);
@@ -6369,10 +6467,10 @@
 
     function cropQrFromLocation(sourceCanvas, loc, targetType = 'main') {
       const { topLeftCorner, topRightCorner, bottomRightCorner, bottomLeftCorner } = loc;
-      const minX = Math.max(0, Math.min(topLeftCorner.x, bottomLeftCorner.x) - 20);
-      const minY = Math.max(0, Math.min(topLeftCorner.y, topRightCorner.y) - 20);
-      const maxX = Math.min(sourceCanvas.width, Math.max(topRightCorner.x, bottomRightCorner.x) + 20);
-      const maxY = Math.min(sourceCanvas.height, Math.max(bottomLeftCorner.y, bottomRightCorner.y) + 20);
+      const minX = Math.max(0, Math.min(topLeftCorner.x, bottomLeftCorner.x) - 10);
+      const minY = Math.max(0, Math.min(topLeftCorner.y, topRightCorner.y) - 10);
+      const maxX = Math.min(sourceCanvas.width, Math.max(topRightCorner.x, bottomRightCorner.x) + 10);
+      const maxY = Math.min(sourceCanvas.height, Math.max(bottomLeftCorner.y, bottomRightCorner.y) + 10);
       const w = maxX - minX;
       const h = maxY - minY;
       if (w <= 0 || h <= 0) return;
@@ -6392,7 +6490,8 @@
       renderCardPreview();
     }
 
-    // ==================== 대화형 QR 크롭 모달 로직 ====================
+    // ==================== 대화형 QR / 실물카드 크롭 모달 로직 ====================
+    let cropperTarget = 'qr'; // 'qr' or 'cardPlate'
     let cropperState = {
       image: null,
       startX: 0,
@@ -6403,18 +6502,50 @@
       scale: 1
     };
 
-    function openQrCropperModal() {
+    function openCropperModal(target = 'qr') {
       if (!cardUploadedCanvas && !cardUploadedImage) {
-        alert("먼저 제휴카드 원본 이미지 또는 PDF를 업로드해 주세요!");
+        alert("먼저 제휴카드 원본 파일(이미지 또는 PDF)을 업로드해 주세요!");
         return;
       }
+      cropperTarget = target;
       const modal = document.getElementById('qrCropperModal');
+      const titleText = document.getElementById('cropperModalTitleText');
+      const descText = document.getElementById('cropperModalDesc');
+      const autoBtn = document.getElementById('btnCropperAutoQr');
+      const applyBtn = document.getElementById('btnApplyCrop');
+
+      if (target === 'cardPlate') {
+        if (titleText) titleText.innerText = "원본 문서에서 실물 카드 모양 자르기";
+        if (descText) descText.innerHTML = "마우스나 터치로 원본 문서 위의 <strong>실물 카드 모양(가로 직사각형)을 드래그</strong>하여 지정하세요.";
+        if (autoBtn) autoBtn.classList.add('hidden');
+        if (applyBtn) {
+          applyBtn.innerText = "💳 선택 영역을 [실물 카드 이미지]로 적용";
+          applyBtn.className = "px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black shadow-2xs transition";
+        }
+      } else {
+        if (titleText) titleText.innerText = "원본 이미지에서 QR 코드 직접 자르기";
+        if (descText) descText.innerHTML = "마우스나 터치로 원본 문서 위의 <strong>QR 코드 주변을 드래그</strong>하여 네모 박스를 지정하세요.";
+        if (autoBtn) autoBtn.classList.remove('hidden');
+        if (applyBtn) {
+          applyBtn.innerText = "📱 선택 영역을 [카드 발급 QR]로 적용";
+          applyBtn.className = "px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-black shadow-2xs transition";
+        }
+      }
+
       modal.classList.remove('hidden');
       initCropperCanvas(cardUploadedCanvas || cardUploadedImage);
     }
 
-    function closeQrCropperModal() {
+    function openQrCropperModal() {
+      openCropperModal('qr');
+    }
+
+    function closeCropperModal() {
       document.getElementById('qrCropperModal').classList.add('hidden');
+    }
+
+    function closeQrCropperModal() {
+      closeCropperModal();
     }
 
     function initCropperCanvas(imgSrc) {
@@ -6422,12 +6553,11 @@
       const canvas = document.getElementById('qrCropperCanvas');
       const ctx = canvas.getContext('2d');
 
-      // 캔버스 크기 조정 (최대 가로 700px 기준으로 비율 유지)
-      const maxW = 650;
+      const maxW = 800;
       const scale = imgSrc.width > maxW ? (maxW / imgSrc.width) : 1;
       cropperState.scale = scale;
-      canvas.width = imgSrc.width * scale;
-      canvas.height = imgSrc.height * scale;
+      canvas.width = Math.round(imgSrc.width * scale);
+      canvas.height = Math.round(imgSrc.height * scale);
 
       cropperState.startX = 0;
       cropperState.startY = 0;
@@ -6437,25 +6567,63 @@
 
       drawCropper();
 
-      // 마우스 및 터치 이벤트
-      canvas.onmousedown = function(e) {
+      // 마우스 / 터치 좌표를 캔버스 비트맵 내부 좌표로 100% 정밀 보정 변환 (드래그 좌표 불일치 완전 해결!)
+      function getCanvasCoords(clientX, clientY) {
         const rect = canvas.getBoundingClientRect();
-        cropperState.startX = e.clientX - rect.left;
-        cropperState.startY = e.clientY - rect.top;
-        cropperState.endX = cropperState.startX;
-        cropperState.endY = cropperState.startY;
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        return {
+          x: Math.max(0, Math.min(canvas.width, (clientX - rect.left) * scaleX)),
+          y: Math.max(0, Math.min(canvas.height, (clientY - rect.top) * scaleY))
+        };
+      }
+
+      canvas.onmousedown = function(e) {
+        e.preventDefault();
+        const coords = getCanvasCoords(e.clientX, e.clientY);
+        cropperState.startX = coords.x;
+        cropperState.startY = coords.y;
+        cropperState.endX = coords.x;
+        cropperState.endY = coords.y;
         cropperState.isDragging = true;
       };
 
       canvas.onmousemove = function(e) {
         if (!cropperState.isDragging) return;
-        const rect = canvas.getBoundingClientRect();
-        cropperState.endX = Math.max(0, Math.min(canvas.width, e.clientX - rect.left));
-        cropperState.endY = Math.max(0, Math.min(canvas.height, e.clientY - rect.top));
+        const coords = getCanvasCoords(e.clientX, e.clientY);
+        cropperState.endX = coords.x;
+        cropperState.endY = coords.y;
         drawCropper();
       };
 
       canvas.onmouseup = function() {
+        if (!cropperState.isDragging) return;
+        cropperState.isDragging = false;
+        updateCropperInfo();
+      };
+
+      // 터치 이벤트 지원 (모바일/태블릿)
+      canvas.ontouchstart = function(e) {
+        if (!e.touches || !e.touches[0]) return;
+        e.preventDefault();
+        const coords = getCanvasCoords(e.touches[0].clientX, e.touches[0].clientY);
+        cropperState.startX = coords.x;
+        cropperState.startY = coords.y;
+        cropperState.endX = coords.x;
+        cropperState.endY = coords.y;
+        cropperState.isDragging = true;
+      };
+
+      canvas.ontouchmove = function(e) {
+        if (!cropperState.isDragging || !e.touches || !e.touches[0]) return;
+        e.preventDefault();
+        const coords = getCanvasCoords(e.touches[0].clientX, e.touches[0].clientY);
+        cropperState.endX = coords.x;
+        cropperState.endY = coords.y;
+        drawCropper();
+      };
+
+      canvas.ontouchend = function() {
         cropperState.isDragging = false;
         updateCropperInfo();
       };
@@ -6463,6 +6631,7 @@
 
     function drawCropper() {
       const canvas = document.getElementById('qrCropperCanvas');
+      if (!canvas || !cropperState.image) return;
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(cropperState.image, 0, 0, canvas.width, canvas.height);
@@ -6481,7 +6650,7 @@
         ctx.fillRect(0, y + h, canvas.width, canvas.height - (y + h));
 
         // 선택 영역 테두리
-        ctx.strokeStyle = '#38bdf8';
+        ctx.strokeStyle = cropperTarget === 'cardPlate' ? '#818cf8' : '#38bdf8';
         ctx.lineWidth = 2.5;
         ctx.setLineDash([5, 3]);
         ctx.strokeRect(x, y, w, h);
@@ -6491,10 +6660,12 @@
 
     function updateCropperInfo() {
       const info = document.getElementById('cropperSelectionInfo');
+      if (!info) return;
       const w = Math.round(Math.abs(cropperState.endX - cropperState.startX) / cropperState.scale);
       const h = Math.round(Math.abs(cropperState.endY - cropperState.startY) / cropperState.scale);
       if (w > 10 && h > 10) {
-        info.innerText = `선택 영역: ${w} × ${h} px (원본 크기)`;
+        const targetLabel = cropperTarget === 'cardPlate' ? '실물 카드 영역' : 'QR 코드 영역';
+        info.innerText = `${targetLabel}: ${w} × ${h} px (원본 크기)`;
       } else {
         info.innerText = "선택된 영역: 없음 (마우스로 드래그하세요)";
       }
@@ -6511,10 +6682,10 @@
       const code = jsQR(imgData.data, imgData.width, imgData.height);
       if (code && code.location) {
         const { topLeftCorner, topRightCorner, bottomRightCorner, bottomLeftCorner } = code.location;
-        const minX = Math.max(0, Math.min(topLeftCorner.x, bottomLeftCorner.x) - 15);
-        const minY = Math.max(0, Math.min(topLeftCorner.y, topRightCorner.y) - 15);
-        const maxX = Math.min(offCanvas.width, Math.max(topRightCorner.x, bottomRightCorner.x) + 15);
-        const maxY = Math.min(offCanvas.height, Math.max(bottomLeftCorner.y, bottomRightCorner.y) + 15);
+        const minX = Math.max(0, Math.min(topLeftCorner.x, bottomLeftCorner.x) - 10);
+        const minY = Math.max(0, Math.min(topLeftCorner.y, topRightCorner.y) - 10);
+        const maxX = Math.min(offCanvas.width, Math.max(topRightCorner.x, bottomRightCorner.x) + 10);
+        const maxY = Math.min(offCanvas.height, Math.max(bottomLeftCorner.y, bottomRightCorner.y) + 10);
 
         cropperState.startX = minX * cropperState.scale;
         cropperState.startY = minY * cropperState.scale;
@@ -6527,11 +6698,11 @@
       }
     }
 
-    function applyQrCrop(type = 'main') {
+    function applyCrop() {
       const w = Math.abs(cropperState.endX - cropperState.startX);
       const h = Math.abs(cropperState.endY - cropperState.startY);
       if (w < 10 || h < 10) {
-        alert("먼저 마우스로 QR 코드 주변을 네모로 드래그해 주세요!");
+        alert("먼저 마우스나 터치로 원하는 영역을 네모로 드래그해 주세요!");
         return;
       }
 
@@ -6547,16 +6718,23 @@
       cCtx.drawImage(cropperState.image, rawX, rawY, rawW, rawH, 0, 0, rawW, rawH);
 
       const croppedUrl = cropCanvas.toDataURL('image/png');
-      if (type === 'main') {
-        cardData.qrImageUrl = croppedUrl;
-      } else {
-        cardData.eventQrImageUrl = croppedUrl;
-      }
 
-      renderCardEditor();
-      renderCardPreview();
-      closeQrCropperModal();
-      alert("✅ 원본에서 잘라낸 고화질 QR 코드가 안내서에 안전하게 적용되었습니다!");
+      if (cropperTarget === 'cardPlate') {
+        cardData.cardPlateImageUrl = croppedUrl;
+        renderCardPreview();
+        closeCropperModal();
+        alert("✅ 원본 문서에서 잘라낸 실물 카드 사진이 상단에 성공적으로 부착되었습니다!");
+      } else {
+        cardData.qrImageUrl = croppedUrl;
+        renderCardEditor();
+        renderCardPreview();
+        closeCropperModal();
+        alert("✅ 원본 문서에서 잘라낸 고화질 QR 코드가 안내서에 안전하게 적용되었습니다!");
+      }
+    }
+
+    function applyQrCrop(type = 'main') {
+      applyCrop();
     }
 
     function handleDirectQrFile(e) {
@@ -6734,44 +6912,34 @@
 당신은 대한민국 이동통신 휴대폰 제휴카드 정책 분석 전문가입니다.
 업로드된 제휴카드 안내서 이미지의 모든 텍스트, 표, 프로모션 조건을 정확하게 읽고, 아래 JSON 규격에 맞추어 오직 유효한 JSON 형식으로만 응답해 주세요. (마크다운 코드블록 백틱 없이 순수 JSON만 반환)
 
+★ 필수 분석 지침:
+1. "promotions" 배열에는 업로드된 안내서 이미지에 실제로 기재된 프로모션만 반환하세요. (1개면 1개, 2개면 2개만 반환. 문서에 없는 유령 프로모션 3번을 절대 지어내지 마세요!)
+2. "badge"에는 안내서에 적힌 실제 소분류 명칭(예: [24/36개월 매월 추가 할인 프로모션], [단말기 캐시백], [간편결제 캐시백], [통신비 청구할인] 등)을 정확하게 추출하세요. "STEP 1, 2, 3" 같은 임의의 번호는 넣지 마세요.
+3. 실물 카드의 카드사명(KB국민, 삼성, 신한, 현대 등), 통신사(LGU+, SKT, KT), 정식 카드 상품명을 정확히 식별하세요.
+
 JSON 키 구조:
 {
-  "cardCompany": "카드사명 (예: KB국민카드, 신한카드, 현대카드 등)",
+  "cardCompany": "카드사명 (예: KB국민카드, 삼성카드, 신한카드, 현대카드 등)",
   "carrier": "통신사명 (예: LGU+, SKT, KT, 또는 전 통신사)",
   "cardName": "카드 정식 명칭",
   "specs": {
-    "targetDevice": "전용 단말기 조건 (예: 추가할인, 캐시백 프로모션 / 전기종)",
-    "minPayment": "최소 결제금액 (예: 5만원)",
+    "targetDevice": "전용 단말기 조건 (예: - 또는 전기종, 갤럭시/아이폰)",
+    "minPayment": "최소 결제금액 (예: 10만원 또는 5만원)",
     "autoTransfer": "자동이체 필수 여부 (예: 미필수 / 필수)",
-    "annualFee": "연회비 (예: 국내 2만원, Master 2만원)",
+    "annualFee": "연회비 (예: 국내 2만 5천원 / Master, JCB 2만 5천원)",
     "installmentInterest": "할부이자 (예: 24개월 5.9% / 36개월 7%)"
   },
   "promotions": [
     {
-      "step": 1,
-      "badge": "프로모션 1",
-      "title": "24개월 매월 청구할인 프로모션",
+      "badge": "안내서의 실제 소분류명 (예: 매월 추가 할인 프로모션)",
+      "title": "프로모션 제목",
       "condition": "신규 발급 및 실적 조건",
       "tiers": [
-        { "label": "전월 30만원 이상", "amount": "월 OO원 할인" },
-        { "label": "전월 70만원 이상", "amount": "월 OO원 할인" },
-        { "label": "전월 100만원 이상", "amount": "월 OO원 할인" }
+        { "label": "전월 30만원 이상", "amount": "월 OO원 할인", "sub": "세부내용", "total": "24개월 OOO원 할인" },
+        { "label": "전월 70만원 이상", "amount": "월 OO원 할인", "sub": "세부내용", "total": "24개월 OOO원 할인" },
+        { "label": "전월 100만원 이상", "amount": "월 OO원 할인", "sub": "세부내용", "total": "24개월 OOO원 할인" }
       ],
       "highlight": "월 최대 OO원 x 24개월 할인!"
-    },
-    {
-      "step": 2,
-      "badge": "프로모션 2",
-      "title": "단말기 추가 캐시백 (1회)",
-      "condition": "조건 설명",
-      "benefit": "OO원 캐시백"
-    },
-    {
-      "step": 3,
-      "badge": "프로모션 3",
-      "title": "간편결제 등록 추가 캐시백 (1회)",
-      "condition": "조건 설명",
-      "benefit": "OO원 캐시백"
     }
   ],
   "basicBenefits": [
@@ -6804,7 +6972,9 @@ JSON 키 구조:
         if (parsed.carrier) cardData.carrier = parsed.carrier;
         if (parsed.cardName) cardData.cardName = parsed.cardName;
         if (parsed.specs) cardData.specs = Object.assign(cardData.specs, parsed.specs);
-        if (parsed.promotions && parsed.promotions.length) cardData.promotions = parsed.promotions;
+        if (parsed.promotions && Array.isArray(parsed.promotions)) {
+          cardData.promotions = parsed.promotions; // 새 프로모션 목록으로 완전 교체 (이전 유령 프로모션 잔존 방지!)
+        }
         if (parsed.basicBenefits && parsed.basicBenefits.length) cardData.basicBenefits = parsed.basicBenefits;
         if (parsed.details && parsed.details.length) cardData.details = parsed.details;
         if (parsed.summary) {
