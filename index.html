@@ -2277,6 +2277,7 @@ LG - 플러스플랜 115 (월정 115,000원)</div>
     let currentStoreName = '';       // '명지점' | '광안점' | '본사 (마스터)'
     let enteredPin = "";
     let isUnlocked = false;
+    var currentPosterThemeColor = '#e60012';
 
     // 실시간 리스너 구독 해제 핸들
     let unsubscribeMasterConfig = null;
@@ -11080,7 +11081,7 @@ JSON 규격:
       alert("✅ 광고가격(문구) 탭에 등록된 최신 시세표 가격을 성공적으로 다시 불러왔습니다!");
     }
 
-    let currentPosterThemeColor = '#e60012';
+    currentPosterThemeColor = currentPosterThemeColor || '#e60012';
 
     function applyPosterThemeColor(color) {
       if (!color || !/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(color)) return;
