@@ -23,6 +23,24 @@
   <!-- PDF.js for rendering uploaded PDF card guides -->
   <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
   <style>
+        /* Responsive Zoom & Stable Table Proportion (항목 6 & 7) */
+    .table-nowrap th, .table-nowrap td {
+      white-space: nowrap !important;
+    }
+    .overflow-x-auto::-webkit-scrollbar {
+      height: 8px;
+    }
+    .overflow-x-auto::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 4px;
+    }
+    .overflow-x-auto::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
     body { font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     input[type=number]::-webkit-inner-spin-button, 
     input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
@@ -216,16 +234,17 @@
         <!-- 본사 마스터 전용 매장 전환기 -->
         <div id="masterStoreSwitcher" class="hidden items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-bold gap-1">
           <span class="text-[11px] text-slate-500 px-1 font-medium">매장 보기:</span>
-          <button id="switchBtn-myeongji" onclick="masterSwitchStore('myeongji')" class="px-2.5 py-1 rounded-lg bg-white text-slate-900 shadow-2xs font-extrabold transition">📍 명지점</button>
-          <button id="switchBtn-gwangan" onclick="masterSwitchStore('gwangan')" class="px-2.5 py-1 rounded-lg text-slate-500 hover:text-slate-900 transition">📍 광안점</button>
+          <button id="switchBtn-myeongji" onclick="masterSwitchStore('myeongji')" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white text-slate-900 shadow-2xs font-extrabold transition">
+            <svg class="w-3.5 h-3.5 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span>명지점</span>
+          </button>
+          <button id="switchBtn-gwangan" onclick="masterSwitchStore('gwangan')" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-slate-500 hover:text-slate-900 transition font-bold">
+            <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span>광안점</span>
+          </button>
         </div>
 
-        <!-- 클라우드 실시간 상태 표시 -->
-        <div id="syncStatusBadge" class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-200">
-          <span id="syncStatusDot" class="w-2 h-2 rounded-full bg-emerald-500"></span>
-          <span id="syncStatusText">클라우드 연결 중...</span>
-          <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>실시간 클라우드 동기화</b><br>구글 파이어베이스 클라우드에 1초 단위로 자동 저장되며 명지점, 광안점, 본사가 항상 실시간으로 동일한 최신 데이터를 공유합니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>실시간 클라우드 동기화</b><br>구글 파이어베이스 클라우드에 1초 단위로 자동 저장되며 명지점, 광안점, 본사가 항상 실시간으로 동일한 최신 데이터를 공유합니다.')" title="동기화 안내">?</button>
-        </div>
+
 
         <!-- 변경 히스토리 모달 버튼 -->
         <button onclick="openHistoryModal()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 transition">
@@ -278,43 +297,49 @@
     <!-- ==================== 네비게이션 탭 & 보기 필터 ==================== -->
     <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3">
       <div class="flex gap-2 flex-wrap">
-        <button onclick="switchTab('calc')" id="tabBtn-calc" class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-slate-900 text-white shadow-xs transition">
-          <svg class="w-3.5 h-3.5 text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <button onclick="switchTab('calc')" id="tabBtn-calc" class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-extrabold bg-slate-900 text-white shadow-xs transition">
+          <svg class="w-4 h-4 text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
           </svg>
-          <span>넷가 산출표</span>
+          <span>넷가표</span>
         </button>
-        <button onclick="switchTab('daily')" id="tabBtn-daily" class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition">
-          <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <button onclick="switchTab('daily')" id="tabBtn-daily" class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-extrabold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition">
+          <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
           </svg>
-          <span>대리점 단가 입력</span>
+          <span>리베이트입력</span>
         </button>
-        <button onclick="switchTab('ad')" id="tabBtn-ad" class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition">
-          <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <button onclick="switchTab('ad')" id="tabBtn-ad" class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-extrabold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition">
+          <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
           </svg>
-          <span>성지특가 광고표 & 마진</span>
+          <span>광고가격(문구)</span>
         </button>
-        <button onclick="switchTab('card')" id="tabBtn-card" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition relative">
-          <svg class="w-3.5 h-3.5 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <button onclick="switchTab('adtable')" id="tabBtn-adtable" class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-extrabold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition">
+          <svg class="w-4 h-4 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          <span>광고가격(시세표)</span>
+        </button>
+        <button onclick="switchTab('card')" id="tabBtn-card" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-extrabold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition relative">
+          <svg class="w-4 h-4 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="2" y="5" width="20" height="14" rx="2"/>
             <line x1="2" y1="10" x2="22" y2="10"/>
           </svg>
-          <span>제휴카드 안내서 (A4)</span>
+          <span>제휴카드안내서</span>
         </button>
-        <button onclick="switchTab('compare')" id="tabBtn-compare" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition relative">
-          <svg class="w-3.5 h-3.5 text-purple-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <button onclick="switchTab('compare')" id="tabBtn-compare" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-extrabold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition relative">
+          <svg class="w-4 h-4 text-purple-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
           </svg>
-          <span>경쟁사 시세 분석</span>
+          <span>경쟁사시세비교</span>
         </button>
-        <button onclick="switchTab('request')" id="tabBtn-request" class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition relative">
-          <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <button onclick="switchTab('request')" id="tabBtn-request" class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-extrabold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition relative">
+          <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
             <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
           </svg>
-          <span id="tabBtnRequestText">버그/개선 요청</span>
+          <span id="tabBtnRequestText">버그&개선요청</span>
           <span id="tabRequestPendingBadge" class="hidden ml-1 px-1.5 py-0.2 text-[10px] rounded-full bg-rose-500 text-white font-black">0</span>
         </button>
       </div>
@@ -519,33 +544,37 @@
 
       <!-- 넷가표 기종 편집 바 -->
       <div class="flex flex-wrap items-center justify-between gap-2 px-1 pb-1">
-        <div class="flex items-center gap-2">
-          <span class="text-xs font-bold text-slate-700 flex items-center">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="text-xs sm:text-sm font-bold text-slate-700 flex items-center">
             기종 목록:
             <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>기종 행 편집</b><br>• 행 추가: 원하는 기종을 골라 새 행을 아래에 추가합니다.<br>• 구분선 추가: 기종 간 카테고리(예: S시리즈/폴더블/아이폰)를 시각적으로 분리하는 여백 줄을 만듭니다.<br>• 좌측 핸들 아이콘을 드래그하여 순서를 위아래로 자유롭게 변경할 수 있습니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>기종 행 편집</b><br>• 행 추가: 원하는 기종을 골라 새 행을 아래에 추가합니다.<br>• 구분선 추가: 기종 간 카테고리(예: S시리즈/폴더블/아이폰)를 시각적으로 분리하는 여백 줄을 만듭니다.<br>• 좌측 핸들 아이콘을 드래그하여 순서를 위아래로 자유롭게 변경할 수 있습니다.')" title="기종 행 편집 안내">?</button>
           </span>
-          <button onclick="addCalcRow('empty')" class="px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold text-slate-700 shadow-2xs flex items-center gap-1.5 transition">
+          <button onclick="addCalcRow('empty')" class="px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm font-bold text-slate-700 shadow-2xs flex items-center gap-1.5 transition">
             <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
             <span>기종 행 추가</span>
           </button>
-          <button onclick="addCalcEmptyRow()" class="px-3 py-1.5 bg-white hover:bg-slate-50 border border-dashed border-slate-300 rounded-lg text-xs font-bold text-slate-600 shadow-2xs flex items-center gap-1.5 transition">
+          <button onclick="addCalcEmptyRow()" class="px-3 py-1.5 bg-white hover:bg-slate-50 border border-dashed border-slate-300 rounded-lg text-xs sm:text-sm font-bold text-slate-600 shadow-2xs flex items-center gap-1.5 transition">
             <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"/></svg>
             <span>구분선(여백) 추가</span>
           </button>
-          <button onclick="resetCalcRows()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition">
+          <button onclick="resetCalcRows()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition">
             <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
             <span>전체 기종 초기화</span>
           </button>
+          <button onclick="captureNetTableImage()" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs sm:text-sm font-extrabold shadow-sm flex items-center gap-1.5 transition">
+            <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
+            <span>📸 넷가표 이미지 캡처/저장</span>
+          </button>
         </div>
-        <span class="text-[11px] text-slate-400">
+        <span class="text-xs text-slate-400">
           💡 각 행 드롭다운에서 원하는 기종을 변경하거나 <b>구분선</b>으로 그룹을 깔끔하게 나눌 수 있습니다.
         </span>
       </div>
 
       <!-- 메인 넷가 비교 테이블 -->
-      <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
+      <div id="calcTableContainer" class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
         <div class="overflow-x-auto">
-          <table class="w-full text-xs text-left border-collapse">
+          <table id="calcTable" class="w-full text-xs text-left border-collapse table-nowrap" style="min-width: 940px;">
             <thead>
               <tr class="bg-slate-100 text-slate-800 font-extrabold border-b border-slate-200 text-center">
                 <th rowspan="2" class="p-3 text-left min-w-[210px] border-r border-slate-200 bg-slate-100 text-slate-700">
@@ -744,9 +773,7 @@
               </button>
             </div>
 
-            <button onclick="copyBetweenAdModes()" id="adCopyBetweenModesBtn" class="px-3 py-2 bg-white hover:bg-slate-100 text-slate-700 rounded-xl text-xs font-bold border border-slate-300 shadow-2xs transition flex items-center gap-1.5" title="다른 모드의 가격을 복사해옵니다">
-              📋 기본부가 ➔ 올부가 가격 복사
-            </button>
+
 
             <button onclick="copyAdTextFormatted()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2">
               <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -774,11 +801,7 @@
                   <span>구분선(줄바꿈) 추가</span>
                 </button>
               </div>
-              <div id="adModeActiveBadge" class="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-indigo-50 border border-indigo-200 text-xs">
-                <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
-                <span class="text-indigo-900 font-extrabold">🌟 올부가 광고 운영 중</span>
-                <span class="text-[11px] text-indigo-600 font-medium ml-1">(부가할인 반영)</span>
-              </div>
+
             </div>
 
             <div class="overflow-x-auto border border-slate-200 rounded-xl">
@@ -868,7 +891,160 @@
       </div>
     </div>
 
-        <!-- ==================== TAB 4: 제휴카드 안내서 제작 (A4 용지 규격) ==================== -->
+        <!-- ==================== TAB 4: 광고가격(시세표) 통신 3사 성지특가 통합 시세표 포스터 ==================== -->
+    <div id="tab-adtable" class="space-y-4 hidden">
+      <!-- 시세표 툴바 -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-2xs flex flex-wrap items-center justify-between gap-3">
+        <div class="space-y-0.5">
+          <div class="flex items-center gap-2">
+            <h2 class="text-base sm:text-lg font-black text-slate-900 flex items-center gap-1.5">
+              <span>🖼️</span> 통신 3사 성지특가 통합 시세표
+            </h2>
+            <span id="posterAdModeBadge" class="px-2.5 py-0.5 rounded-full text-xs font-black bg-indigo-50 text-indigo-700 border border-indigo-200">
+              올부가 광고가 연동 중
+            </span>
+          </div>
+          <p class="text-xs text-slate-500">
+            [광고가격(문구)] 탭에 등록된 3사 번이/기변 시세가 실시간으로 자동 연동됩니다. 시세표를 직접 수정하거나 이미지로 캡처할 수 있습니다.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2 flex-wrap">
+          <button onclick="syncAdPosterPrices()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            <span>가격 다시 불러오기</span>
+          </button>
+          <button onclick="saveAdPosterSettings(true)" class="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-xl text-xs sm:text-sm font-bold shadow-2xs transition flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+            <span>문구/조건 저장</span>
+          </button>
+          <button onclick="captureAdPosterImage('copy')" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs sm:text-sm font-extrabold shadow-sm transition flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            <span>📋 이미지 클립보드 복사</span>
+          </button>
+          <button onclick="captureAdPosterImage('download')" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs sm:text-sm font-extrabold shadow-sm transition flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
+            <span>📸 시세표 PNG 저장</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 포스터 시트 래퍼 (중앙 배치) -->
+      <div class="flex justify-center overflow-x-auto py-2">
+        <div id="adPosterSheet" class="w-full max-w-[720px] bg-[#e60012] p-5 sm:p-7 rounded-2xl shadow-xl space-y-4 text-slate-900 select-text" style="font-family: 'Pretendard Variable', Pretendard, sans-serif;">
+          
+          <!-- 1. 최상단 물결 타이틀 배지 -->
+          <div class="flex justify-center">
+            <div class="relative bg-white px-8 sm:px-12 py-3 rounded-full border-4 border-slate-950 shadow-[0_6px_0px_#0f172a] transform -rotate-0.5">
+              <h1 id="posterStoreTitle" contenteditable="true" onblur="saveAdPosterSettings(false)" class="text-2xl sm:text-4xl font-black text-slate-950 tracking-tight text-center focus:outline-none focus:ring-2 focus:ring-rose-500 rounded px-2" title="클릭하여 상호명을 수정할 수 있습니다">
+                원조폰 특가 시세표
+              </h1>
+            </div>
+          </div>
+
+          <!-- 2. 메인 시세표 테이블 -->
+          <div class="bg-white rounded-xl border-4 border-slate-950 overflow-hidden shadow-[0_6px_0px_#0f172a]">
+            <table class="w-full text-center border-collapse" style="table-layout: fixed;">
+              <thead>
+                <!-- 헤더 1열: 날짜 + 통신 3사 로고명 -->
+                <tr class="border-b-4 border-slate-950">
+                  <th class="w-[28%] p-2.5 sm:p-3 bg-white border-r-4 border-slate-950">
+                    <div id="posterDateText" contenteditable="true" onblur="saveAdPosterSettings(false)" class="text-xl sm:text-3xl font-black text-slate-950 tracking-tight focus:outline-none focus:ring-1 focus:ring-rose-500 rounded" title="클릭하여 날짜를 수정할 수 있습니다">
+                      11월 15일
+                    </div>
+                  </th>
+                  <th colspan="2" class="w-[24%] p-2 sm:p-2.5 bg-white border-r-4 border-slate-950">
+                    <span class="text-2xl sm:text-4xl font-black tracking-tight" style="color: #ff6b00;">SK</span>
+                  </th>
+                  <th colspan="2" class="w-[24%] p-2 sm:p-2.5 bg-white border-r-4 border-slate-950">
+                    <span class="text-2xl sm:text-4xl font-black tracking-tight" style="color: #e60012;">KT</span>
+                  </th>
+                  <th colspan="2" class="w-[24%] p-2 sm:p-2.5 bg-white">
+                    <span class="text-2xl sm:text-4xl font-black tracking-tight" style="color: #d90077;">LG</span>
+                  </th>
+                </tr>
+                <!-- 헤더 2열: 이동 / 기변 구분 -->
+                <tr class="bg-white text-xs sm:text-sm font-extrabold text-slate-900 border-b-2 border-slate-400">
+                  <th class="p-1.5 sm:p-2 border-r-2 border-slate-400 font-black text-slate-700">기종</th>
+                  <th class="p-1.5 sm:p-2 border-r border-slate-300">이동</th>
+                  <th class="p-1.5 sm:p-2 border-r-2 border-slate-400">기변</th>
+                  <th class="p-1.5 sm:p-2 border-r border-slate-300">이동</th>
+                  <th class="p-1.5 sm:p-2 border-r-2 border-slate-400">기변</th>
+                  <th class="p-1.5 sm:p-2 border-r border-slate-300">이동</th>
+                  <th class="p-1.5 sm:p-2">기변</th>
+                </tr>
+              </thead>
+              <tbody id="adPosterTableBody" class="divide-y divide-slate-300 text-sm sm:text-base font-black">
+                <!-- 동적으로 채워짐 -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- 3. 리본 장식 구분선 -->
+          <div class="flex items-center justify-between px-2 py-1">
+            <div class="flex items-center gap-1">
+              <span class="w-4 h-6 bg-white rounded-sm border-2 border-slate-950"></span>
+              <span class="w-8 h-3 bg-white border-2 border-slate-950"></span>
+              <span class="w-4 h-6 bg-white rounded-sm border-2 border-slate-950"></span>
+            </div>
+            <div class="h-1 flex-1 bg-white mx-3 rounded-full opacity-80"></div>
+            <div class="flex items-center gap-1">
+              <span class="w-4 h-6 bg-white rounded-sm border-2 border-slate-950"></span>
+              <span class="w-8 h-3 bg-white border-2 border-slate-950"></span>
+              <span class="w-4 h-6 bg-white rounded-sm border-2 border-slate-950"></span>
+            </div>
+          </div>
+
+          <!-- 4. 하단 부가내용: 사용요금제 & 부가서비스 (2열 박스) -->
+          <div class="bg-white rounded-xl border-4 border-slate-950 p-4 sm:p-5 shadow-[0_6px_0px_#0f172a] space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 divide-y sm:divide-y-0 sm:divide-x-2 divide-slate-200">
+              <!-- 좌측: 사용요금제 -->
+              <div class="sm:pr-4 space-y-2">
+                <div class="text-center">
+                  <h3 class="text-lg sm:text-xl font-black text-[#e60012] tracking-tight">사용요금제</h3>
+                  <p class="text-xs sm:text-sm font-extrabold text-[#e60012]">-유지기간 186일-</p>
+                </div>
+                <div id="posterPlanText" contenteditable="true" onblur="saveAdPosterSettings(false)" class="text-xs sm:text-sm font-black text-slate-800 leading-relaxed whitespace-pre-wrap focus:outline-none focus:ring-1 focus:ring-rose-500 rounded p-1" title="클릭하여 요금제 내용을 직접 수정할 수 있습니다">SKT - 베스트 109 (월정 109,000원)
+KT - 초이스 120 (월정 120,000원)
+LG - 플러스플랜 115 (월정 115,000원)</div>
+              </div>
+
+              <!-- 우측: 부가서비스 -->
+              <div class="pt-3 sm:pt-0 sm:pl-4 space-y-2">
+                <div class="text-center">
+                  <h3 class="text-lg sm:text-xl font-black text-[#e60012] tracking-tight">부가서비스</h3>
+                  <p class="text-xs sm:text-sm font-extrabold text-[#e60012]">-유지기간 통신사별 상이(필수확인)-</p>
+                </div>
+                <div id="posterVasText" contenteditable="true" onblur="saveAdPosterSettings(false)" class="text-xs sm:text-sm font-bold text-slate-800 leading-relaxed whitespace-pre-wrap focus:outline-none focus:ring-1 focus:ring-rose-500 rounded p-1" title="클릭하여 부가서비스 내용을 직접 수정할 수 있습니다">[SK] 마이스마트콜3(3,500원)/미가입시+3(M+1개월유지)
+[KT] 필수팩L(9,900원)/미가입시+6(M+4개월유지)
+[LG] 교보문고sam+구글원(16,500원)/미가입시+5(M+3개월유지)
+     V컬+콘텐츠팩(15,400원)/미가입시+5(M+3개월유지)</div>
+              </div>
+            </div>
+
+            <!-- 하단 [필수확인] 2열 유의사항 -->
+            <div class="pt-3 border-t-2 border-slate-300 space-y-2">
+              <div class="text-center font-black text-sm sm:text-base text-slate-900 tracking-tight">[필수확인]</div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-[11px] sm:text-xs text-slate-700 font-bold leading-normal">
+                <div id="posterNoticeLeft" contenteditable="true" onblur="saveAdPosterSettings(false)" class="whitespace-pre-wrap focus:outline-none focus:ring-1 focus:ring-rose-500 rounded p-1" title="클릭하여 수정 가능">- 부가서비스 및 결합은 필수 의무사항이 아니며 고객님 의사로 변경 가능합니다.
+- 부가서비스 혜택 기간은 기종 통신사별로 상이합니다 문의 부탁드립니다.
+- 휴대폰+인터넷+TV 결합기준 동시가입 지원금 포함된 가격입니다
+- 공통지원금 기준으로 안내드린 금액이나 선택약정으로 고객님 선택 가능합니다
+- 요금제는 필수조건이 아니시며 고객님 의사에 따라 변경가능합니다</div>
+                <div id="posterNoticeRight" contenteditable="true" onblur="saveAdPosterSettings(false)" class="whitespace-pre-wrap focus:outline-none focus:ring-1 focus:ring-rose-500 rounded p-1" title="클릭하여 수정 가능">- 현금개통 및 할부개통 선택가능 합니다
+- 할부 개통시 할부이자 5.9% 발생됩니다(24개월 할부기준)
+- 선택약정은 공통지원금이 포함되지 않습니다
+- 휴대폰 보험 미가입시 추가금 5만원 (3사 공통 6개월 사용조건)
+  (sk=M+1개월 kt=M+3개월 LG=99일 유지조건)</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 4: 제휴카드 안내서 제작 (A4 용지 규격) ==================== -->
     <div id="tab-card" class="space-y-4 hidden">
       
       <!-- 1. [필수] 매장 기본정보 설정 바 (상호 / 전화번호 / 주소) -->
@@ -887,8 +1063,8 @@
 
           <!-- 매장 선택 스위처 -->
           <div class="flex items-center bg-slate-100 p-1 rounded-xl text-xs font-bold">
-            <button onclick="setCardStore('myeongji')" id="cardStoreBtn-myeongji" class="px-3.5 py-1.5 rounded-lg bg-indigo-600 text-white shadow-2xs transition font-black">📍 명지점 설정</button>
-            <button onclick="setCardStore('gwangan')" id="cardStoreBtn-gwangan" class="px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition font-black">📍 광안점 설정</button>
+            <button onclick="setCardStore('myeongji')" id="cardStoreBtn-myeongji" class="px-3.5 py-1.5 rounded-lg bg-indigo-600 text-white shadow-2xs transition font-black">명지점 설정</button>
+            <button onclick="setCardStore('gwangan')" id="cardStoreBtn-gwangan" class="px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition font-black">광안점 설정</button>
           </div>
         </div>
 
@@ -1095,8 +1271,8 @@
           <!-- 대조 매장 기준 토글 -->
           <div class="flex items-center bg-slate-100 p-1 rounded-xl text-xs font-bold">
             <span class="text-[11px] text-slate-500 px-2">대조 매장:</span>
-            <button onclick="setCompareStore('myeongji')" id="compStoreBtn-myeongji" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white shadow-2xs transition">📍 명지점 단가 기준</button>
-            <button onclick="setCompareStore('gwangan')" id="compStoreBtn-gwangan" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">📍 광안점 단가 기준</button>
+            <button onclick="setCompareStore('myeongji')" id="compStoreBtn-myeongji" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white shadow-2xs transition">명지점 단가 기준</button>
+            <button onclick="setCompareStore('gwangan')" id="compStoreBtn-gwangan" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">광안점 단가 기준</button>
           </div>
 
           <!-- 마진 산출 기준 토글 -->
@@ -1399,8 +1575,8 @@
           <div class="flex items-center gap-1.5">
             <span class="text-slate-500 font-bold px-1">매장:</span>
             <button onclick="filterRequestStore('all')" id="reqFilterStore-all" class="px-2.5 py-1 rounded-lg font-bold bg-white text-slate-900 shadow-2xs border border-slate-200">전체</button>
-            <button onclick="filterRequestStore('myeongji')" id="reqFilterStore-myeongji" class="px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition">📍 명지점</button>
-            <button onclick="filterRequestStore('gwangan')" id="reqFilterStore-gwangan" class="px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition">📍 광안점</button>
+            <button onclick="filterRequestStore('myeongji')" id="reqFilterStore-myeongji" class="px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition">명지점</button>
+            <button onclick="filterRequestStore('gwangan')" id="reqFilterStore-gwangan" class="px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition">광안점</button>
             <button onclick="filterRequestStore('master')" id="reqFilterStore-master" class="px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition">👑 본사</button>
           </div>
         </div>
@@ -1506,8 +1682,8 @@
         <div class="flex items-center justify-between gap-2 flex-wrap text-xs">
           <div id="historyFilterContainer" class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
             <button onclick="filterHistory('all')" id="histFilter-all" class="px-3 py-1 rounded-lg font-bold bg-white text-slate-900 shadow-2xs">전체 내역</button>
-            <button onclick="filterHistory('myeongji')" id="histFilter-myeongji" class="px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900">📍 명지점</button>
-            <button onclick="filterHistory('gwangan')" id="histFilter-gwangan" class="px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900">📍 광안점</button>
+            <button onclick="filterHistory('myeongji')" id="histFilter-myeongji" class="px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900">명지점</button>
+            <button onclick="filterHistory('gwangan')" id="histFilter-gwangan" class="px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900">광안점</button>
             <button onclick="filterHistory('master')" id="histFilter-master" class="px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900">👑 본사</button>
           </div>
           <div id="historyStoreTitleBadge" class="hidden items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black bg-indigo-50 text-indigo-700 border border-indigo-200">
@@ -1571,15 +1747,15 @@
             <div>
               <label class="block font-bold text-slate-700 mb-1">보내는 매장 (복사 원본)</label>
               <select id="copySrcStore" onchange="onCopySrcChanged()" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl font-bold text-slate-900 focus:ring-2 focus:ring-purple-500">
-                <option value="myeongji">📍 명지점</option>
-                <option value="gwangan">📍 광안점</option>
+                <option value="myeongji">명지점</option>
+                <option value="gwangan">광안점</option>
               </select>
             </div>
             <div>
               <label class="block font-bold text-slate-700 mb-1">받는 매장 (붙여넣기 대상)</label>
               <select id="copyTgtStore" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl font-bold text-slate-900 focus:ring-2 focus:ring-purple-500">
-                <option value="gwangan">📍 광안점</option>
-                <option value="myeongji">📍 명지점</option>
+                <option value="gwangan">광안점</option>
+                <option value="myeongji">명지점</option>
               </select>
             </div>
           </div>
@@ -1779,7 +1955,7 @@
           <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
             <span class="font-bold text-slate-600">작성 매장 / 작성자</span>
             <span id="newReqStoreBadge" class="px-2.5 py-1 rounded-lg font-black text-xs bg-indigo-50 text-indigo-700 border border-indigo-200">
-              📍 명지점
+              명지점
             </span>
           </div>
 
@@ -2781,21 +2957,23 @@
         return;
       }
       currentTab = t;
-      ['calc', 'daily', 'ad', 'card', 'compare', 'request'].forEach(id => {
+      ['calc', 'daily', 'ad', 'adtable', 'card', 'compare', 'request'].forEach(id => {
         const tabEl = document.getElementById('tab-' + id);
         if (tabEl) tabEl.classList.toggle('hidden', id !== t);
         const b = document.getElementById('tabBtn-' + id);
         if (b) {
           if (id === t) {
-            b.className = "flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-900 text-white shadow-xs transition relative";
+            b.className = "flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-extrabold bg-slate-900 text-white shadow-xs transition relative";
           } else {
-            b.className = "flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition relative";
+            b.className = "flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-extrabold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition relative";
           }
         }
       });
       const vfb = document.getElementById('viewFilterBox');
       if (vfb) vfb.classList.toggle('hidden', t !== 'calc');
-      if (t === 'card') {
+      if (t === 'adtable') {
+        renderAdPosterTable();
+      } else if (t === 'card') {
         initCardTab();
       } else if (t === 'compare') {
         initCompareTab();
@@ -2934,13 +3112,13 @@
         return `<div class="py-1.5">${formatNetSimple(allNet, true)}</div>`;
       } else {
         return `
-          <div class="py-1 space-y-1">
+          <div class="py-1 space-y-1 whitespace-nowrap">
             <div class="flex items-center justify-between text-xs px-1">
-              <span class="text-slate-400 font-medium text-[11px]">기본</span>
+              <span class="text-slate-500 font-bold text-xs">기본</span>
               ${formatNetSimple(basicNet, false)}
             </div>
             <div class="flex items-center justify-between text-xs px-1 pt-1 border-t border-slate-100">
-              <span class="text-blue-600 font-bold text-[11px]">올부가</span>
+              <span class="text-blue-600 font-black text-xs">올부가</span>
               ${formatNetSimple(allNet, false)}
             </div>
           </div>
@@ -3116,12 +3294,12 @@
             </div>
             <div class="text-[10px] text-slate-400 font-normal pl-6">출고가: ${d.coming ? '출시전' : priceSummary}</div>
           </td>
-          <td class="p-2 border-r border-slate-200 bg-rose-50/10">${renderCell(d, 'SK', 'mnp')}</td>
-          <td class="p-2 border-r border-slate-200 bg-rose-50/10">${renderCell(d, 'SK', 'chg')}</td>
-          <td class="p-2 border-r border-slate-200 bg-blue-50/10">${renderCell(d, 'KT', 'mnp')}</td>
-          <td class="p-2 border-r border-slate-200 bg-blue-50/10">${renderCell(d, 'KT', 'chg')}</td>
-          <td class="p-2 border-r border-slate-200 bg-pink-50/10">${renderCell(d, 'LG', 'mnp')}</td>
-          <td class="p-2 bg-pink-50/10">${renderCell(d, 'LG', 'chg')}</td>
+          <td class="p-2 border-r border-slate-200 bg-rose-50/10 min-w-[110px] whitespace-nowrap">${renderCell(d, 'SK', 'mnp')}</td>
+          <td class="p-2 border-r border-slate-200 bg-rose-50/10 min-w-[110px] whitespace-nowrap">${renderCell(d, 'SK', 'chg')}</td>
+          <td class="p-2 border-r border-slate-200 bg-blue-50/10 min-w-[110px] whitespace-nowrap">${renderCell(d, 'KT', 'mnp')}</td>
+          <td class="p-2 border-r border-slate-200 bg-blue-50/10 min-w-[110px] whitespace-nowrap">${renderCell(d, 'KT', 'chg')}</td>
+          <td class="p-2 border-r border-slate-200 bg-pink-50/10 min-w-[110px] whitespace-nowrap">${renderCell(d, 'LG', 'mnp')}</td>
+          <td class="p-2 bg-pink-50/10 min-w-[110px] whitespace-nowrap">${renderCell(d, 'LG', 'chg')}</td>
         `;
         tbody.appendChild(tr);
       });
@@ -3211,7 +3389,7 @@
                    onfocus="this.select(); if(this.dataset.origVal===undefined) this.dataset.origVal = this.value"
                    onkeydown="if(event.key==='Enter') this.blur(); if(event.key==='Escape'){this.value=this.dataset.origVal||''; this.blur();}"
                    onchange="updateRate('${d.id}', 'mnp', this.value, this)"
-                   class="w-full max-w-[80px] px-1.5 py-1 text-center font-bold bg-white border border-slate-300 rounded-lg text-slate-900 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+                   class="w-full max-w-[85px] px-2 py-1 text-center font-black bg-white border border-slate-300 rounded-lg text-slate-900 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
           </td>
           <!-- 번이 단가처 드롭다운 -->
           <td class="p-2 text-center overflow-hidden">
@@ -3227,7 +3405,7 @@
                    onfocus="this.select(); if(this.dataset.origVal===undefined) this.dataset.origVal = this.value"
                    onkeydown="if(event.key==='Enter') this.blur(); if(event.key==='Escape'){this.value=this.dataset.origVal||''; this.blur();}"
                    onchange="updateRate('${d.id}', 'chg', this.value, this)"
-                   class="w-full max-w-[80px] px-1.5 py-1 text-center font-bold bg-white border border-slate-300 rounded-lg text-slate-900 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+                   class="w-full max-w-[85px] px-2 py-1 text-center font-black bg-white border border-slate-300 rounded-lg text-slate-900 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
           </td>
           <!-- 기변 단가처 드롭다운 -->
           <td class="p-2 text-center overflow-hidden">
@@ -3596,7 +3774,7 @@
                    onkeydown="if(event.key==='Enter') this.blur(); if(event.key==='Escape'){this.value=this.dataset.origVal||''; this.blur();}"
                    oninput="updateAdValLive('${d.id}', 'mnp', this.value)"
                    onchange="updateAdValCommit('${d.id}', 'mnp', this.value, this)"
-                   class="w-full max-w-[70px] px-1.5 py-1 text-center font-bold bg-white border border-slate-300 rounded text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+                   class="w-full max-w-[80px] px-2 py-1 text-center font-black bg-white border border-slate-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
           </td>
 
           <!-- 기변가 입력 -->
@@ -3608,7 +3786,7 @@
                    onkeydown="if(event.key==='Enter') this.blur(); if(event.key==='Escape'){this.value=this.dataset.origVal||''; this.blur();}"
                    oninput="updateAdValLive('${d.id}', 'chg', this.value)"
                    onchange="updateAdValCommit('${d.id}', 'chg', this.value, this)"
-                   class="w-full max-w-[70px] px-1.5 py-1 text-center font-bold bg-white border border-slate-300 rounded text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+                   class="w-full max-w-[80px] px-2 py-1 text-center font-black bg-white border border-slate-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
           </td>
 
           <!-- 예상 마진 (번/기) 실시간 노출 -->
@@ -4814,9 +4992,9 @@
           const storeSub = item.storeId === 'myeongji' ? ' (명지)' : item.storeId === 'gwangan' ? ' (광안)' : '';
           roleBadge = `<span class="px-2 py-0.5 rounded-md text-[11px] font-extrabold bg-purple-50 text-purple-700 border border-purple-200">👑 본사 관리자${storeSub}</span>`;
         } else if (item.storeId === 'myeongji' || (item.storeName && item.storeName.includes('명지'))) {
-          roleBadge = `<span class="px-2 py-0.5 rounded-md text-[11px] font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-200">📍 명지점</span>`;
+          roleBadge = `<span class="px-2 py-0.5 rounded-md text-[11px] font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-200">명지점</span>`;
         } else {
-          roleBadge = `<span class="px-2 py-0.5 rounded-md text-[11px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200">📍 광안점</span>`;
+          roleBadge = `<span class="px-2 py-0.5 rounded-md text-[11px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200">광안점</span>`;
         }
 
         let catBadge = '';
@@ -4896,10 +5074,10 @@
           badge.innerText = '👑 본사 관리자';
           badge.className = 'px-2.5 py-1 rounded-lg font-black text-xs bg-purple-50 text-purple-700 border border-purple-200';
         } else if (currentStoreId === 'myeongji') {
-          badge.innerText = '📍 명지점';
+          badge.innerText = '명지점';
           badge.className = 'px-2.5 py-1 rounded-lg font-black text-xs bg-indigo-50 text-indigo-700 border border-indigo-200';
         } else {
-          badge.innerText = '📍 광안점';
+          badge.innerText = '광안점';
           badge.className = 'px-2.5 py-1 rounded-lg font-black text-xs bg-emerald-50 text-emerald-700 border border-emerald-200';
         }
       }
@@ -5071,9 +5249,9 @@
 
         let storeBadge = '';
         if (req.storeId === 'myeongji' || (req.storeName && req.storeName.includes('명지'))) {
-          storeBadge = '<span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">📍 명지점</span>';
+          storeBadge = '<span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">명지점</span>';
         } else if (req.storeId === 'gwangan' || (req.storeName && req.storeName.includes('광안'))) {
-          storeBadge = '<span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">📍 광안점</span>';
+          storeBadge = '<span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">광안점</span>';
         } else {
           storeBadge = '<span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-purple-50 text-purple-700 border border-purple-200">👑 본사</span>';
         }
@@ -5317,6 +5495,7 @@
 
     loadLayouts();
     loadDiscounts();
+      loadAdPosterSettings();
     loadCarrierConditions();
     loadColumnWidths('adTable');
     loadColumnWidths('dailyTable');
@@ -8657,6 +8836,11 @@ function handleSelectAffiliateCard(cardId) {
   <div id="printContainer" class="${sheet.className}">
     ${clone.innerHTML}
   </div>
+  <!-- 클라우드 실시간 상태 표시 (우측 하단 미니멀 배지) -->
+  <div id="syncStatusBadge" class="fixed bottom-3 right-3 z-30 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/90 backdrop-blur border border-slate-200 text-slate-500 opacity-40 hover:opacity-100 transition shadow-xs cursor-default select-none" title="구글 파이어베이스 클라우드 실시간 동기화 상태">
+    <span id="syncStatusDot" class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+    <span id="syncStatusText">동기화 완료</span>
+  </div>
 </body>
 </html>`);
       iframeDoc.close();
@@ -10468,7 +10652,303 @@ JSON 규격:
       loadCloudExtendedSettings();
     } catch(e) {}
 
-  </script>
+  
+    // ==================== 넷가표 이미지 캡처/저장 기능 (항목 2) ====================
+    async function captureNetTableImage() {
+      const modeKo = (netDisplayMode === 'both') 
+        ? '전체보기 (기본 + 올부가)' 
+        : (netDisplayMode === 'basic') 
+          ? '기본조건 넷가' 
+          : '올부가 최종 넷가';
+
+      const todayStr = new Date().toLocaleDateString('ko-KR', {
+        year: 'numeric', month: 'long', day: 'numeric', weekday: 'short'
+      });
+
+      // 캡처용 전용 오프스크린 컨테이너 생성
+      const wrap = document.createElement('div');
+      wrap.style.position = 'fixed';
+      wrap.style.left = '-9999px';
+      wrap.style.top = '0';
+      wrap.style.width = '1000px';
+      wrap.style.backgroundColor = '#ffffff';
+      wrap.style.padding = '28px';
+      wrap.style.fontFamily = '"Pretendard Variable", Pretendard, sans-serif';
+
+      // 상단 헤더: 매장명, 넷가표 타이틀, 보기 모드, 기준일시
+      wrap.innerHTML = 
+        <div style="background: linear-gradient(135deg, #0f172a, #1e293b); color: white; padding: 22px 26px; border-radius: 16px; margin-bottom: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.12);">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="background: #3b82f6; color: white; padding: 4px 12px; border-radius: 8px; font-weight: 900; font-size: 14px; letter-spacing: -0.3px;"> + (currentStoreName || '원조폰') + </span>
+                <h2 style="font-size: 24px; font-weight: 900; margin: 0; letter-spacing: -0.5px;">실시간 넷가 산출표</h2>
+              </div>
+              <p style="margin: 8px 0 0 0; font-size: 13px; color: #94a3b8; font-weight: 600;">
+                적용 기준: <b style="color: #38bdf8;"> + modeKo + </b> · 실시간 단가 및 공시지원금 연동
+              </p>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 12px; color: #94a3b8; font-weight: 600;">산출 기준일시</div>
+              <div style="font-size: 15px; font-weight: 800; color: #ffffff; margin-top: 2px;"> + todayStr + </div>
+            </div>
+          </div>
+        </div>
+        <div id="netCaptureTableSlot"></div>
+        <div style="margin-top: 16px; display: flex; justify-content: space-between; font-size: 12px; color: #64748b; font-weight: 600; padding: 0 4px;">
+          <span>* 본 넷가표는 당일 대리점 정책 단가 및 공시지원금 기준 넷가 계산 결과입니다.</span>
+          <span> + (currentStoreName || '원조폰') +  NET PRICE SYSTEM</span>
+        </div>
+      ;
+
+      // 넷가 테이블 복제 및 불필요한 컨트롤 제거 (순수 기종명 및 가격만 보존)
+      const origTable = document.querySelector('#calcTableContainer table');
+      if (!origTable) {
+        alert("넷가 산출표를 찾을 수 없습니다.");
+        return;
+      }
+      const clonedTable = origTable.cloneNode(true);
+
+      // 드래그 핸들 ⠿ 및 삭제 ✕ 버튼 제거
+      clonedTable.querySelectorAll('.drag-handle').forEach(el => el.remove());
+      clonedTable.querySelectorAll('button').forEach(el => el.remove());
+
+      // 드롭다운 select 요소를 순수 기종 텍스트 span으로 치환
+      clonedTable.querySelectorAll('select').forEach(sel => {
+        const text = sel.options[sel.selectedIndex]?.text || '';
+        const span = document.createElement('span');
+        span.style.fontWeight = '900';
+        span.style.fontSize = '15px';
+        span.style.color = '#0f172a';
+        span.innerText = text;
+        sel.parentNode.replaceChild(span, sel);
+      });
+
+      // 캡처 전용 스타일 보정
+      clonedTable.style.width = '100%';
+      clonedTable.style.borderCollapse = 'collapse';
+      clonedTable.style.borderRadius = '12px';
+      clonedTable.style.overflow = 'hidden';
+      clonedTable.style.border = '1px solid #cbd5e1';
+
+      wrap.querySelector('#netCaptureTableSlot').appendChild(clonedTable);
+      document.body.appendChild(wrap);
+
+      try {
+        const canvas = await html2canvas(wrap, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#ffffff',
+          logging: false
+        });
+
+        // PNG 파일 자동 다운로드
+        const cleanStore = (currentStoreName || '매장').replace(/[^가-힣a-zA-Z0-9]/g, '');
+        const cleanMode = modeKo.replace(/[^가-힣a-zA-Z0-9]/g, '');
+        const filename = 넷가표___.png;
+
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+
+        // 클립보드 복사 시도
+        canvas.toBlob(blob => {
+          if (blob && navigator.clipboard && navigator.clipboard.write) {
+            navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).catch(() => {});
+          }
+        });
+
+        alert(✅ [넷가표 캡처 완료]\n\n [] 넷가표 이미지가 고해상도 PNG 파일로 저장되었습니다!\n(카카오톡이나 카페에 바로 Ctrl+V 붙여넣기도 가능합니다));
+      } catch (err) {
+        console.error("Net table capture error:", err);
+        alert("넷가표 캡처 중 오류가 발생했습니다: " + err.message);
+      } finally {
+        document.body.removeChild(wrap);
+      }
+    }
+
+    // ==================== 통신 3사 성지특가 통합 시세표 포스터 기능 (항목 4) ====================
+    function renderAdPosterTable() {
+      const tbody = document.getElementById('adPosterTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      // 날짜 기본값 세팅 (비어있을 때만 오늘 날짜 자동 기입)
+      const dateEl = document.getElementById('posterDateText');
+      if (dateEl && (!dateEl.innerText || dateEl.innerText.trim() === '')) {
+        const now = new Date();
+        dateEl.innerText = ${now.getMonth() + 1}월 일;
+      }
+
+      // 모드 배지 갱신
+      const modeBadge = document.getElementById('posterAdModeBadge');
+      if (modeBadge) {
+        if (adMarginBase === 'all') {
+          modeBadge.innerText = '🌟 올부가 광고가 연동 중';
+          modeBadge.className = 'px-2.5 py-0.5 rounded-full text-xs font-black bg-indigo-50 text-indigo-700 border border-indigo-200';
+        } else {
+          modeBadge.innerText = '🏷️ 기본부가 광고가 연동 중';
+          modeBadge.className = 'px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-50 text-emerald-700 border border-emerald-200';
+        }
+      }
+
+      // calcRows에 등록된 순서대로 기종 목록 순회
+      const activeDeviceIds = (calcRows && calcRows.length > 0) ? calcRows : devices.map(d => d.id);
+
+      activeDeviceIds.forEach(devId => {
+        if (devId === 'empty' || !devId) return;
+        const d = devices.find(x => x.id === devId);
+        if (!d) return;
+
+        const skAd = getAdData(d, 'SK', adMarginBase);
+        const ktAd = getAdData(d, 'KT', adMarginBase);
+        const lgAd = getAdData(d, 'LG', adMarginBase);
+
+        // 표시할 기종명 (광고 태그 또는 깔끔한 이름)
+        const displayName = (d.tag || d.name || '').replace(/^#/, '');
+
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-amber-50/40 transition";
+        tr.innerHTML = 
+          <td class="p-2 sm:p-2.5 text-center font-black border-r-2 border-slate-400 bg-slate-50/60 text-slate-900 truncate">
+             + displayName + 
+          </td>
+          <!-- SK 번이 / 기변 -->
+          <td class="p-2 sm:p-2.5 text-center border-r border-slate-300 font-black cursor-pointer hover:bg-orange-50 focus:bg-orange-100" contenteditable="true" onblur="handlePosterCellPriceChange('', 'SK', 'mnp', this.innerText)" title="클릭하여 가격 직접 수정">
+             + (skAd.mnp !== '' && skAd.mnp !== null && skAd.mnp !== undefined ? skAd.mnp : '-') + 
+          </td>
+          <td class="p-2 sm:p-2.5 text-center border-r-2 border-slate-400 font-black cursor-pointer hover:bg-orange-50 focus:bg-orange-100" contenteditable="true" onblur="handlePosterCellPriceChange('', 'SK', 'chg', this.innerText)" title="클릭하여 가격 직접 수정">
+             + (skAd.chg !== '' && skAd.chg !== null && skAd.chg !== undefined ? skAd.chg : '-') + 
+          </td>
+          <!-- KT 번이 / 기변 -->
+          <td class="p-2 sm:p-2.5 text-center border-r border-slate-300 font-black cursor-pointer hover:bg-rose-50 focus:bg-rose-100" contenteditable="true" onblur="handlePosterCellPriceChange('', 'KT', 'mnp', this.innerText)" title="클릭하여 가격 직접 수정">
+             + (ktAd.mnp !== '' && ktAd.mnp !== null && ktAd.mnp !== undefined ? ktAd.mnp : '-') + 
+          </td>
+          <td class="p-2 sm:p-2.5 text-center border-r-2 border-slate-400 font-black cursor-pointer hover:bg-rose-50 focus:bg-rose-100" contenteditable="true" onblur="handlePosterCellPriceChange('', 'KT', 'chg', this.innerText)" title="클릭하여 가격 직접 수정">
+             + (ktAd.chg !== '' && ktAd.chg !== null && ktAd.chg !== undefined ? ktAd.chg : '-') + 
+          </td>
+          <!-- LG 번이 / 기변 -->
+          <td class="p-2 sm:p-2.5 text-center border-r border-slate-300 font-black cursor-pointer hover:bg-pink-50 focus:bg-pink-100" contenteditable="true" onblur="handlePosterCellPriceChange('', 'LG', 'mnp', this.innerText)" title="클릭하여 가격 직접 수정">
+             + (lgAd.mnp !== '' && lgAd.mnp !== null && lgAd.mnp !== undefined ? lgAd.mnp : '-') + 
+          </td>
+          <td class="p-2 sm:p-2.5 text-center font-black cursor-pointer hover:bg-pink-50 focus:bg-pink-100" contenteditable="true" onblur="handlePosterCellPriceChange('', 'LG', 'chg', this.innerText)" title="클릭하여 가격 직접 수정">
+             + (lgAd.chg !== '' && lgAd.chg !== null && lgAd.chg !== undefined ? lgAd.chg : '-') + 
+          </td>
+        ;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function handlePosterCellPriceChange(deviceId, carrier, type, newVal) {
+      const d = devices.find(x => x.id === deviceId);
+      if (!d) return;
+      const cleanVal = newVal.trim();
+      setAdValue(d, carrier, type, cleanVal, adMarginBase);
+      scheduleStoreSave('성지특가 광고', [시세표 직접수정]  ( ): );
+    }
+
+    function syncAdPosterPrices() {
+      renderAdPosterTable();
+      alert("✅ 광고가격(문구) 탭에 등록된 최신 시세표 가격을 성공적으로 다시 불러왔습니다!");
+    }
+
+    function saveAdPosterSettings(showAlert = true) {
+      try {
+        const settings = {
+          title: document.getElementById('posterStoreTitle')?.innerText || '',
+          date: document.getElementById('posterDateText')?.innerText || '',
+          plan: document.getElementById('posterPlanText')?.innerText || '',
+          vas: document.getElementById('posterVasText')?.innerText || '',
+          noticeLeft: document.getElementById('posterNoticeLeft')?.innerText || '',
+          noticeRight: document.getElementById('posterNoticeRight')?.innerText || ''
+        };
+        localStorage.setItem('phone_ad_poster_custom', JSON.stringify(settings));
+        if (showAlert) {
+          alert("✅ 시세표 문구 및 필수확인 조건이 저장되었습니다!\n새로고침을 하거나 재접속해도 유지됩니다.");
+        }
+      } catch (e) {
+        console.error("Save poster settings error:", e);
+      }
+    }
+
+    function loadAdPosterSettings() {
+      try {
+        const saved = localStorage.getItem('phone_ad_poster_custom');
+        if (!saved) return;
+        const s = JSON.parse(saved);
+        if (s.title && document.getElementById('posterStoreTitle')) document.getElementById('posterStoreTitle').innerText = s.title;
+        if (s.date && document.getElementById('posterDateText')) document.getElementById('posterDateText').innerText = s.date;
+        if (s.plan && document.getElementById('posterPlanText')) document.getElementById('posterPlanText').innerText = s.plan;
+        if (s.vas && document.getElementById('posterVasText')) document.getElementById('posterVasText').innerText = s.vas;
+        if (s.noticeLeft && document.getElementById('posterNoticeLeft')) document.getElementById('posterNoticeLeft').innerText = s.noticeLeft;
+        if (s.noticeRight && document.getElementById('posterNoticeRight')) document.getElementById('posterNoticeRight').innerText = s.noticeRight;
+      } catch (e) {
+        console.error("Load poster settings error:", e);
+      }
+    }
+
+    async function captureAdPosterImage(action = 'download') {
+      const sheet = document.getElementById('adPosterSheet');
+      if (!sheet) {
+        alert("시세표 요소를 찾을 수 없습니다.");
+        return;
+      }
+
+      try {
+        const canvas = await html2canvas(sheet, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#e60012',
+          logging: false
+        });
+
+        const storeName = (document.getElementById('posterStoreTitle')?.innerText || currentStoreName || '성지특가').replace(/[^가-힣a-zA-Z0-9]/g, '');
+        const dateStr = (document.getElementById('posterDateText')?.innerText || '').replace(/[^0-9가-힣]/g, '');
+        const filename = 성지특가_시세표__.png;
+
+        if (action === 'download') {
+          const link = document.createElement('a');
+          link.download = filename;
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+          alert("✅ 통신 3사 성지특가 시세표 이미지가 고해상도 PNG 파일로 저장되었습니다!");
+        } else if (action === 'copy') {
+          canvas.toBlob(blob => {
+            if (!blob) throw new Error("Blob 생성 실패");
+            if (navigator.clipboard && navigator.clipboard.write) {
+              navigator.clipboard.write([
+                new ClipboardItem({ 'image/png': blob })
+              ]).then(() => {
+                alert("✅ 시세표 이미지가 클립보드에 복사되었습니다!\n\n카카오톡 대화방이나 네이버 카페/밴드에 바로 Ctrl+V (붙여넣기) 하세요.");
+              }).catch(err => {
+                // 보안 정책으로 클립보드 거부 시 다운로드로 대체
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                alert("브라우저 클립보드 접근 권한으로 인해 고화질 PNG 이미지 파일로 저장되었습니다.");
+              });
+            } else {
+              const link = document.createElement('a');
+              link.download = filename;
+              link.href = canvas.toDataURL('image/png');
+              link.click();
+              alert("PNG 이미지 파일로 저장되었습니다.");
+            }
+          });
+        }
+      } catch (err) {
+        console.error("Poster capture error:", err);
+        alert("시세표 이미지 캡처 중 오류가 발생했습니다: " + err.message);
+      }
+    }
+</script>
+  <!-- 클라우드 실시간 상태 표시 (우측 하단 미니멀 배지) -->
+  <div id="syncStatusBadge" class="fixed bottom-3 right-3 z-30 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/90 backdrop-blur border border-slate-200 text-slate-500 opacity-40 hover:opacity-100 transition shadow-xs cursor-default select-none" title="구글 파이어베이스 클라우드 실시간 동기화 상태">
+    <span id="syncStatusDot" class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+    <span id="syncStatusText">동기화 완료</span>
+  </div>
 </body>
 </html>
 
