@@ -985,14 +985,19 @@
                   <span>SKT</span>
                   <span class="text-[10px] bg-white/20 px-1.5 py-0.2 rounded font-extrabold">15종</span>
                 </button>
-                <button type="button" onclick="setAffiliateCarrier('KT')" id="affCarrierBtn-KT" class="py-2.5 px-2 rounded-xl bg-slate-50 text-slate-400 border border-slate-200 hover:text-slate-600 transition flex items-center justify-center gap-1.5" title="KT 엑셀 취합 후 오픈 예정">
+                <button type="button" onclick="setAffiliateCarrier('KT')" id="affCarrierBtn-KT" class="py-2.5 px-2 rounded-xl bg-slate-50 text-slate-700 border border-slate-200 hover:text-slate-900 hover:bg-slate-100 transition flex items-center justify-center gap-1.5" title="세이브드림 공식 정책 연동">
                   <span>KT</span>
-                  <span class="text-[9.5px] bg-slate-200 text-slate-500 px-1 py-0.2 rounded font-medium">준비중</span>
+                  <span class="text-[10px] bg-slate-200 text-slate-700 px-1.5 py-0.2 rounded font-extrabold" id="ktCarrierCountBadge">15종</span>
                 </button>
-                <button type="button" onclick="setAffiliateCarrier('LGU+')" id="affCarrierBtn-LGU" class="py-2.5 px-2 rounded-xl bg-slate-50 text-slate-400 border border-slate-200 hover:text-slate-600 transition flex items-center justify-center gap-1.5" title="LGU+ 엑셀 취합 후 오픈 예정">
+                <button type="button" onclick="setAffiliateCarrier('LGU')" id="affCarrierBtn-LGU" class="py-2.5 px-2 rounded-xl bg-slate-50 text-slate-700 border border-slate-200 hover:text-slate-900 hover:bg-slate-100 transition flex items-center justify-center gap-1.5" title="LG U+ 공식 정책">
                   <span>LG U+</span>
-                  <span class="text-[9.5px] bg-slate-200 text-slate-500 px-1 py-0.2 rounded font-medium">준비중</span>
+                  <span class="text-[10px] bg-slate-200 text-slate-700 px-1.5 py-0.2 rounded font-extrabold" id="lguCarrierCountBadge">12종</span>
                 </button>
+              </div>
+              <!-- KT 정기 최신화 안내 배너 (KT 선택 시 자동 표시) -->
+              <div id="ktScheduleBanner" class="hidden text-[11px] font-bold text-sky-800 bg-sky-50 border border-sky-200/90 rounded-xl p-2.5 flex items-center justify-between">
+                <span class="flex items-center gap-1.5"><span>📅</span><span>세이브드림 KT 공식 정책</span></span>
+                <span class="text-[10px] text-sky-600 bg-sky-100 px-2 py-0.5 rounded-full font-extrabold">매달 1·3·5·15일 최신화</span>
               </div>
             </div>
 
@@ -1000,9 +1005,9 @@
             <div class="space-y-1.5">
               <label class="block text-xs font-bold text-slate-700">카드 종류</label>
               <div class="grid grid-cols-3 gap-2 text-xs font-bold">
-                <button type="button" onclick="filterAffiliateCardType('all')" id="affTypeBtn-all" class="py-2 rounded-xl bg-slate-900 text-white font-black transition">전체 (15)</button>
-                <button type="button" onclick="filterAffiliateCardType('light')" id="affTypeBtn-light" class="py-2 rounded-xl bg-slate-100 text-slate-600 hover:text-slate-900 transition">라이트할부 (10)</button>
-                <button type="button" onclick="filterAffiliateCardType('bill')" id="affTypeBtn-bill" class="py-2 rounded-xl bg-slate-100 text-slate-600 hover:text-slate-900 transition">요금할인 (5)</button>
+                <button type="button" onclick="filterAffiliateCards('all')" id="affTypeBtn-all" class="py-2 rounded-xl bg-slate-900 text-white font-black transition">전체 (15)</button>
+                <button type="button" onclick="filterAffiliateCards('light')" id="affTypeBtn-light" class="py-2 rounded-xl bg-slate-100 text-slate-600 hover:text-slate-900 transition">라이트할부 (10)</button>
+                <button type="button" onclick="filterAffiliateCards('bill')" id="affTypeBtn-bill" class="py-2 rounded-xl bg-slate-100 text-slate-600 hover:text-slate-900 transition">요금할인 (5)</button>
               </div>
             </div>
 
@@ -5430,10 +5435,10 @@ const SKT_AFFILIATE_CARDS = [
     cardCompany: "신한카드",
     cardName: "신한카드 T라이트",
     theme: "theme-blue",
-    highlightBadge: "최대 35,000원 압도적 할인율 & Master 추가 혜택",
+    highlightBadge: "30만 실적 22,000원 할인 & 24/36개월 자유할부",
     phone: "신한카드 고객센터 1544-7000",
     applyUrl: "http://m.site.naver.com/18fKz",
-    eventTarget: "신한카드 신규 또는 직전 6개월 무실적 고객 (신한 T라이트 최초 발급 고객 / 5만원 이상 결제)",
+    eventTarget: "신한카드 신규 또는 직전 6개월 무실적 고객 (라이트할부 승인일 기준)",
     cardPlateImageUrl: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALwAAAB3CAYAAAC5ZircAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RDhDOTBCMDA4OTE0MTFFQUE4NkNCREIxNTdCRTVBM0EiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RDhDOTBCMDE4OTE0MTFFQUE4NkNCREIxNTdCRTVBM0EiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpEOEM5MEFGRTg5MTQxMUVBQTg2Q0JEQjE1N0JFNUEzQSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpEOEM5MEFGRjg5MTQxMUVBQTg2Q0JEQjE1N0JFNUEzQSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pq/ziVAAAC4ESURBVHja7H0L0GTHVd45dx7/e9/at7Srt4z8kPxQCQtXZAenCmO7lBA7ToID5YqIC0zihCI4BieGkASoVKoCoULsKsAFsTEBTMkYEwzBMbYVbGxswHru6mGtdqV9/vu/53VPTt++M3On7+nTfWf+f71I/2zNzvx37rP7O6e/8/Xp7nq3swREBButFFqrJ7HW+sybZ/Ar/6SRXHotAR2G/osg/KIJf5f2uaqOwSt0LxHXcQ+h0IYrV24UU+9U9YEq3e+z/H6wi/MfWa29/FPpztfTjoN3QqNRB+y0L8PqWg9o5RP7dyUf/hhA7Q1j3eAVBTxNDpgxKpuuJsDTNuDj6gz+D3+841Lzu8/N3/xuwKWlS9BZ/tyRPfifPw/QOc6Ah23AbwP+BQR483qc3/csz771XNJaX8Q99U/9OlDvuP8wUwEpH92C7df262/g62Z+f3xh7QFMaumzb2HPfm/QrHHafu2e5u/17SLcfjk+kZlB9xK/F3MHiVfbHb6e329KZpor3weU6rv2+CGSHQCHHgDY/SP8UGfYBtb4vc4/JvZNXW4ELuftTPFhzW8bhX0rhWLm4rZ1iSt1u2+6PHofWfnj8A353wnaNq/OBlznCktTu818N68a3y8HOtk+xeMRtwHu1pOp/7mXA0wdBVh/jDFy8Wp0jP8wqdfar9b34UpP5gA2vgSw9CEGxSq/jQHs4geay6lOx+7TuBWyGCADaf/Fv+MMv2fjgWu8hTmnaU16bETd563RYSNwoDk/F3Jtf25cqQVrwt+bfOxU04KZAUudrrWE6Smg1TV+s0HOTGf7pktr2XbocDC/vGqBnxkEn6vHz9ZL4zjyiwbvXBatZwEP/xAkL/ktSI7/ey7vIxb4WZ0kV8ud3lsn6h3S92FgEHvMXezZG7dYoM++ma35uyy4T/89BsM+gIV3AOx4N8D5H+OH/4r9DflBUwbPwY/Z7898JxfETbz/dXzaU/zbiqVKdfYKveft3yZgq+3m7QzOfVxwU6+0BrD4YTa4jw6by/ph60E63+Rj+Nw1vq/OSd7/Dm6JfgHgeb6PLv82tQs6TzwD3bPLkNQp89j1Q/v4tlrQO7cEjesPQu/CJb5EHRq7d0Lr6w9Dup5C49CuzDC6Zy/A9F2vgPZfPsKXaUIy02BjSaG2byc3egt8je424Pv1vH6CMXAP4MH7IZl/JdBTH2Ai8Ndc5kdsfUa31Fv2OsjubLlhPbLHY6XcNDXvsIBv/yXA2ictncF59oh/B2Dvj7M3fA3/9ij/9hk+1VneznRp73/gh7+f98tpyfTrGMA/zZ93WyDO/12APe9j42Ej6J22wN73U3wdNpreEm/nc+z4XoBlNpaNv7C0qHk77/NvAXZ+vy3kHnPGXf8UYP9PsgEcZLr1Hv6dgd44wPu3IaNq3R7UDu3nxgG5kVhmWzsMtZ07oHaQQb+0zJd+HnCKvXy7Db1nTjPzasHMq27NgJ4ur7Ah1DIP1r10mYHe4pa7y+/OgBVtv/qgZxhtPGG/t57OHFDy0t8HPPRuhssjtv7gW94qslsj9rTYsgAaoSKFB+mdtwCaeQPACnvZ9T9mwL7Nev6Fd7G3vw/g0s/Y3ze+AHDgl9kAHrJen5gSbPw5A/0u3u+7bQzw1M3WS8+9lQH7w+yN323BbqjLwi02Xug8YY3n0n+3+xqOOP8mNoyX8jH/DODiHkut9n2Qvf+vAFzDrcEMs7O1P+PtLXu/5jimIMnuHVA/sAu6bAC1G49C76GT0D5xirfvgcYNh6F77iI/4hIXQcKXZmq2a4GNoMn2klo6Y5DNhpOutrJ9TOtAO7kC95hWZdvDW5yY1vacZThc/og2DkqufT/XAZfX6f/GZTnPvqPLkNpnW+SMFl5ZI0gAOQBN2pY2ZPzbuYFkn/XIz97D3vYj7Ll/xnpvA8B19ujn7rdcvrbTWnHtsAXaGTaCld+yNMhQlhZ76dMM8A4b2PzbbatgqI8B5vQd9tpn2ECWP86gvi03wL4cyvvU+D7m+fg2G0KHPUidvfjsvQzwL7IBvcte5zIb45P3WPnU0KK+G2ZQEvPxLChlHt597jxXShemXnUTEAO7d3ERGscPQf2IpTftv3gsOyaZmeHH7GX8f/r2m6Fx9BDUrtnDlOgAJDsXbIVtc/kh4A2tMV+njnG5LQ8hdPgHIXnZpyG5+ZcgOfovbd1sPMOGsJrj7sq96pl3r7MXJw4qu2swpDd5e228aJMBOPePAVZ/xwaRBpwmMDQ3Wz+Ug8soHUfscThlt5u/O89kls1k2YLUAHnmtQxe5v4rn7Dczqgqtb35MUdtnNB+nLddw170X/OxN/B5DD/8B1xQbCTJtDU4U8j1Y9mloceGO8+xxRHm+o1jlu70jZe9sglSU6Yr0OnwbR1gG+pB+2uPMjObsd57owX1/XsZ+NdC98wiTN1+I6RMY3qLS9B79jmmP3ysKaZ1q9h0nz3Lj7OHj5/f5vE5E6DeikVNwvVfm7Pe/ixT0unrAXfcbXfbw7Hf3rdC+uwvAV14wIogzcNWpLgSnOYD/+buD9bqaS4hGY/VKzQ1aA3A/D11l+Xf7b/i4PHDFnCdh633N5SnwzytyxSkw1w+vcD7fcNKkQaoXfbIHQZw5yl7vpXftQA111zlmGDtTyz1MTGCCVy7bCSrf2BbDENhEgbV2v+1BmK+m3jBBLBcwNl1TLBqtmUGwFz+8q+zYXyN953JFQJijCIkczOQsLc2n/Wj+6G+h7n8tYcgPX8x8/y1fbszz10/foCBPAe957iJ3mjzKfexgXTYvhP7Tqxcac5j/t58L/83MTjoZKDHA+/M6gX5H13+HKTnPspe/b1AK+yoVrh+26czkSPZ/3ZIDrITXeF6WjfObfbK2GV78YepUV+1QO8ywDrsbburFtAZ6I0hMKVof3Mo/RkvnGnuaL2x4dqGcnTPW09t5MTGjXa7iQFM8JjRnSNWnekfk1Wskfz2W22/cdyew1y7cR1f84Q91lzTtCjmHMYgjNHUuDWgFesZDJ0xVKl3MT9n0x4/0OXToSS5umG1dhjq8QbMWd9aX3Pvbzd0hmMAZGBnXD4dBWJ2nDl3MXp9oacWmNa9u2Q7mZKGrTtzLdPys1fHhbuZ2Txkd13+EiS3fRRw95uALn6Sf+MYq7bDtvgZlDYgffIngM79ttXvQ/c/fmpBEfD/nAG/lmOjD3rzQCsF0OMLN5eGrFSZKWaGmvTBa7YbhcYA3QDbGMCLPZcmU2LY8TVNC/hq9pGrVoo0ztKAmPFCDHLzOzSvZRydBdz3PZDsvQ8oYWOYvdlexnj1s7/JROCT9qINdpK9NUtVtxjw9YGubQo54+TJ0Pt1cw9a6j19IXFPq8DYR8TR7Wla9uAv5lfbxEmvguT6n2OPfMz6yMe+PwNrcuuvAj35fgb8l6H2sj9mA5iB3kNvY67+85kqg4ffwxTn80DPfZg//4yNgVuI6Wtzrt9viTfs39TbwqC1nxrQ544miKwXKthE20VPv/16kb4YkL1lSI79VAb29MT97O2fBGid5kD0LQyhWUZICsktH+Lfr4X05Hsz749ThxjgX2A2+jRTl9/MWRFT2rnbGPQXLT2avwOSm/4r0NM/DbT2qMWawWHWavSG+Tn1PXwP6zbQrS1YepW2hwGvCZZ7+W9Zr3wqyJIDwPc9ex/0bGn1nYWDo0ne9usF+6KB1o47/3ZmALDycC5nM4KOvJcpzNshffrfAZ39n5k6A42DQKt/DXT6f2SdULWX/h7THeb9bAAwf6cVFtrPM0V6BRvKIWtE86/Mt5/NfoPZW/l6RjB5LgM37vx2K1iYFsEYhLlOfZf9PvcSG19kaiNKHt7NbMOCtFigN7BsOf62p3+RvowytQ/Sp34M8Nh/BLzmHdk7ffT7GIin7C7TN1izMHKj8bZGNTN9KIabz9wMuPetDMjbGdx3AOx4LQez35nRoSxo7RiF7zzgtT8KuOtvZcemj/8LNqD7ILn2vUyV/jyjQXjkhzIqhKsPMz36DW5xfoTjg2lm4/NsWA8B7ngNpGd/m1uLn2XDOljCajIEvOvpTcDGN9pgD9/YbaPrQSfBtqd/EQrt7AD3Zh6Y/upeSL/xJgugm36R8XGNRcXF37eM5baPWrCbjMmMRExnXpcu/ZHl8ec+wUD98SwmwB3fDrj/7zOVeTxLCcHDP2C3L9wJyXUM/sP3Mz16H/S+/Ho2hn/F3v/l0HvwVmtAh9+VBch04n1W1mSKlJ7+ZW5pfiBjKaZzUTDbfg9rDnbsv3F4sw0Ge2OPpTjb9OZFymaYJ3eYetz2vwC/7QHA2Zfa7a0nBwOD6AJ71hPsgWdfwkHsr1nunaV4QP7Zs4GqoS4GcyYWMAlmF/7A0hSmOmhahuYhSJ/4AKQXPm3TEJpsULNHMiNC5uU4cwP73umMoxuliFa/YT9b3NK0ns/tsyZiNBnN8y7w+EFT0Af9Tgt64+mT5jboX4z8PRvkcTELUtEoNStfhfSRd9q+ko2T/H4K0nMfY0//KTaIWy01yQJOsLhZ+hLDrMle/R6mK++xXnnhLqYrX2EP/xjjeRcbwAczPp5p9ksPsnf/UfbY74HaKx7g3/4TtxKfhdorPwu0+HlIn/lFK5OaYHbl62yQF7L0Blr8Yt6RWk5Lxvbl91Ojvl5uvop8fpBm0LIafRZdXy50B2Mc/rfHtEYeczXq8Ll0aDzo1BHrBFsmH6ZtubuhLyZo5O3UvWCVGBNIZinfiTUWE+SacRMGjGsnsmA0kyHXn8zTEWbsdxN4mjwOEyCboHXmRrufCZDNfkbPX/mGHWdhOr9MgGvUGfPd3Gcmby5kD1TueLr8Ew7gUf/MQM9gb1+wgzIy0Pe1/G3Av7B7WtF6c6OQmM9aPrAnXbfSdTKbX7qT5zo18sC1L3RQDkwGrekNNwZgmIUBp9neZxMmPbw/8Cg7ZsUeb/Yz+DPXy35LLFUyqmKGw5yhZPcyJQLe0eFBUGwc9cZYUyPfv03W00MnL6xt9eYFT2v6wBts6gO7MbQYA/LB8D4a/cyTyqzB9L/3Cr2saa6/Ewx09OJ+5rz962e3k9Pr4mi4bJtsvfWhQgMKrXHi3Az0OPREGei3O6e2X1f/qz6UISVwo5/Tm+armQybT9MMbffIbr+ufsC7qkwEj++3CibKbubb2piDvu2hRNuv7ddV4+FrEWAvfMf+fzXLr5q5AWSgz7VXQhjJZUAlaKpqF8GprVDcNLKNwG+Y5BxTPFYNKGn0d6wQuILnfki4d0kxHCPWH6+sN+kYGudcNHGgX04e8xU8+mhPzQYZzZwaZaA30XdPjHeq1PWYO/gBghUKnMp2jxQwXOEalAjGVTwPEajorlJm5FSXAxYKIQ6LwIlE7eAYKkOlcJqSaJRIqlLhPIgCZrAwXiHOgNCpG5nSoAJ8sQXogx7zQd8m7yaf9wUVC6SIWi3uo3k6CqCdJvA2xUIuVkzIjWZ4IPkiJG0jQdlwr+UaCMnnoyLAqVDKhXN7zyndCwjPnAotnFQOVKhhUo6JqBQqGpprLxRUC+uDVIKooFXbnoM+G6O6u1AY6KEZqIDdHUGEkYaB1Ty5WzmkHUSBynWBRx4gFwFHo26ISACks008h/N7vg1L24ogJeEaJADZ+Y1odFvp+v3PVLh393ihrLxNAglNeKFVGen8pBCHj9HhA7w++zSnqxdOh5HHKdcqAZ4C9ygZTBW3TgHvCzIo0QFxv2Kx8H3ghXwghVHQlfZLh+fwApZgOHVi4VPcr/h3KgDct68E9rR8/+A3Rnl/CBtDKH4TDVhUaTSwh767smUMyCWAR1wTpSATw4GdRHZR8izoaeY9zYbknbFgAAMAGimXCjy0UKlI5VYg646nssdDKggCvoeuFX4HKZAQnitRwIMB/l48nkaP8Z7DvV7ixDDFsko9wQqWDQOLWCoDXwhaKQDqcTx2TKsRG6fiBFE/6YFSTCwAHk+Phcol6QHSiPiDPDSNZHqgcdzidb0xjfK7e++icyIlak89f4cUgsJxlEbWBQqUSnZyQk9rEgnOioaAEkWJMBCsQF9ihR3ySQUTvtAFLzrP63g/cYA8OQF6sVKTsnEFywEFBQgViafwN6LjFNz7ToSWpujxU+feU6e+U8EBucdRwLPHaMBDA/V0PG0C2HFCA4luDQIVjUJzWFKOMMLLkSLox2SLJg5fRkWvJUGVIs+9SPwW5X6BEZoQejZUOiOkskNBAECBtqTlY8g1yMRTRq6RYBn0hF7+bn4XOp7GDF5xXCBXBX1VWpREuntU1ICKGr73/OhUZMjeaKhHD0BAzvdQjx4JIoBURqmwLzn0RQIoBmIg9IOZNE4qgb7gOIiUwvN7eyeXBuI9PY7D2yv8jq6UiXE9LrEtACleIoRojOH64PGMHqNDEOgPKsD0Ac0j1ar0hwKtBXq2k9CaSIbggJ6kVsVHj/r7Y2TwCoKDiZYli39GyojFiyVQ7qFNAy0DKrJkCuEeVLXSfd4Ey1E+kd6kh+hN6TIUMNy0wJk1MCaeANDnyR1gInhy5VEpwMLiEj6wESpxQpFKSYbQf6b+dXw0K1FA73M+yYiEWx8O7YPqXl76bs49Y3KhOwDra9mgCRwsM8PXmZoGaLccQBUCW3Kky+L9T5s85wbAWte5pXGCz4BnVymM5G00fl34TWwQyOH4mgd2PSlEUAMY9Z4odQLSaB0Gg8UYry/dLyl8PuDpo0Hv8fZImg4/BpfPwN6E1cVF+OpXe3D+0gIkaHVm0xOWpiksLS/C/PwcJEk9WxCZCt6GCh00NPi027sdgh0LG3D3XQ3Yd3gHG1M6JrCLLQkqnUoY4Pno4akS/5aKTQoowcOXQaEAUr+EZCwOsEYUGHSUElComKLaiOWSeGRN8jiI4r1Jik0M6P31Xh+dmoP8nimG0tQR2uur8NnPTUFaex0cv2kXpL0u9Ho2kazFnv2xJ78Idxy9E+ZmZ6HT6UBKKRsCZZ/US4W/zfce1LlhOLfUgY9/4gS87b4V2G9A3+o5rQBVUHJSgVYVtV8lI6ykYEjbQhQfC7kfUuvheRYK0AY1lvCdxxcEu9KqB9im5RbLrVC+BAFjkY5JNx30QscTBpQOxeM3GvDo185Aq/sdcO/rboCzz5/K1wygzGM3Gz3YvSuBHfMpTM90odvt8TMR9Mh+mv3SHPTZ9zTN3v3ve/dMwyOPXQePPPIk7D+CEQrMOOI8RkiREg0g/zEjSWeajCh55EAqBQktTimojvHMUMp6HH0uTc+P+I7gAX0iSI2hVqMi6GmkpxUjA9EYeTKBjU6dAduF9fUV9uw5WHPrN57eANd8Zm+zEEEB3JR79iLI+7TH7L+x0WIqZFqFWmTfQVGHd/Gd6FRCpS1UgaZghPjj6YByPSuRrGaRxuQESiPRFtKokQZo14uj0rnmA3FRqkwVdqGAnvzKTHF/JbUAlabap8MnUK+bqW7SzFP3ebkBsi1nq5/2QZ79o/Ib+q1CAeyDv9NetgrlaC5GrA5PAZ4f8upSGTrHYDGhK4k8n0efL10sKdMxLW0aIRBQgr+TiCDgdUHg/hhxHgq0jm7QWvy7AGbyeXq3k2/0GSJSC1zZsJDQM73fzjrVWrSn4mMN556emoaFHTsYqJ0BLTGHdptdqNXrmTH0vbnr3Y3XrzfqMDM1M2gR7JsY6MhUqMOfiXOvpPS/YKT+7PPgipevEi9RaASMpvAUqQoqOr7UG0qjZUW+Xt6gtusP5sk9X1Fe9Oj8JSkTFCpTjBFiOL2f4vhnLUBFWkuYUjRvhd4zvwPQWYHa8Tfb+b6hxjx9Ck6ePMGevgtr6yvZ7gbIRqVZW1uFSxcvQrPZtGBPadAC9MFvwL6yugKPP/5YBvK+itM3mlOnVuDoNUaeNPOO5ONnkQIYitXR3XLCsjGR1hsa1X0qKykjnSuKcSAUclggEABK8qHkXQUvLsYdobgFhM4l4d4oxM9j99PojQx6O112X4svvkfUG2eS1eYt0Dv5G9D6w/9ip+zI5hSx+yR8bKvVgtW1FdhY32DQrzGfX88+V9fWskC1T2/6YC/Sl+npaXj6yacY2KcykJtzmeM3NjagxW/zSWJFJCBO/T34TfpUvg+WmHfOie55pXP63hCxT/EeQD4GhW0U+BuEc5Hv/pTOxBGtXngmIodPO300FOp5T/L9JGeb+JnHCENBz3HBMa0OxTGG0NgDna/8JHQf+98w/Zafg2T/ndmk+H3e1Gp14CXf9gq4555Xw+KlC5aO5Pq6oSt/+qefg9XVVZibmxvx7FlLwPt282VnXvayl8OxY8e4VVjLqQ1BrZbA7j2XYWrqDGQTc6I241mAd6Lm6dwBCKGu+JB3jU1bcHlwnhNPqUdBwkDz4SowIRVLO2+BrlCqUBRfTyxFKD3gyJxaJ5QSyKLUv2LxGZEP72rHTEeWnrazme27xdoM9VcBrGX8emVlBS6cPw9LS4sDjm5e7U4bWu02twJY8uyZNDnoiCJYXl6Gy5cvZ8Yx2M7HLS1dzs9Xi4nUPN5EADKis3qhq4m7KgCJspecjQhh40DwjLwP5cj4Opok9cdVZaRrIah5N+Shh+TT9MkpX1CADML+ngzLULxFco9r4m/ShObW3ED7PEy9/kPQuO0tsPaR+yA984V8BTZrOKZPdYo5+uzcLMzMzHCQOT34nJ2dZS9dg26uugyC1gKft51UmFGbqamp7NO8m80pPu9Utg0x8dAYgYKh9E7CzX2pSXTLKBlthtW/BVChj6qAcl++e3R15wi6FKJUUotAnvug0Mi3YqsaORKOtNFzzuzWRR9G6El8G1AaiIjUC9vNbAS989B4zQeZ3rC3X3wYkkPfUZAlm/DNZ74JM7MJc+/VkfQBw8WN1242mqOdS5QOpEjTQpge2CeeeCLbv80tQl+pMTk5z5xaghuvM8semsB1o0JagS+pKIZqVMxeQEFXRyFwlFQXdLR8N14JqT0UojhuTo/UgvjSigXpkWJ7OpUA2ds/EJIxQUizALXlCKcWoBu9875dM4PrSWjc8YN2Sg6zult/UYWMrhgdvjeUG80k9lyIaV9Ph9GAta/k9DuazIZh51NvIEsawPfSXiE/PNFVGgA1YvdTINK1YxQqx6fuuDo0poX7F6gVhdIEQOlpBeUZAfQ8IQgc4wSWI2qIj0K6iounr0fV6vvX8o2EUmRJSgUd3jtNByrBa36dTIrEIdj5u1Fhjl57PAs6L1++NACyeXU7XVhibm6UltmZWTGFwASthrJcf/31cOTIkSxo7f9mAI+1RWg01gIdNTGVrQ11K4KbFAxJfD0NxKlSpwgorY/Sy0la34Emz2oGpA0YIQ/P1lIjwJPn77aCUt48RPRyF4BOmqePSi0A3RAGhVgbXNzIkuvrGwzspSx4HfSqmgXgmJ50uh2bOUnDtIFiCoH9nmZANwGroTVDz28yjtfy76GBK6GAVqiAqESv0ICPROlppMDAEW2IHXjyxEOjpwiiB7kQgD/DMaZ32ne/0qAOxckEe4dJoUt6fk2ELBnIanP2NTFnRslpNAnMzsE1pC9+sFOecJaWfjMe3lCbXkoFTTxG3ZB6FH29py6n9FGZGDIfkg4dBcLNDiRS8kOUjrVS6q9g5IQB/6AtcKGkJqtePUBtgsBWer5HBra49zcsP2V+eJ9kBSrtMSu1GzzW640hYFObE+9KkUWQF2mNVWvKhlCv15jyUAZ626rEZkdKWm9EnKp5fDFXQwuMQ5o3QTir0Xca1IPBYOvm65UN7CtOWOVpuSg0pYaU7ekDe4jPS9RxoMNDRC5F5OwBaRduvu0APHziPHzt66fh8OEd0GMKM8yH78HiUhvWN2zw2+mw16danj1pDQ+TBBYvt2Gu28j2W13tB6wAp59bhtb6Rbj5pushzlADwRtKo3zA440Q9DRWgOCA6VA2ZFU1KDhopOjNC4ln5KMXoQ4k0vsayOmgGmRAhlICQlTJ40woVfofZIOpl72QNhBECNqKr24Kswu74I1v6MDnH3wYNlb35ZN62gdHNojjRxvQrJ3nsqhBHdOM5tRqlMUb5ntCdTh2tM6BKcFU/QIkcx1LcfgUzdo6vPmNR+DYjQc4IGhFevjI8ZvoTvVLHi+RRjSxoXJMx1RDSRhMEdtrC45mHgp1lDGqUbn9vnwaX9l4aGRJrdGGCUp1MmoY2F75PWo0egomKs4NY67TtIld7dWVPJDFnFoi1KamIW21BqpLsdMlgwJvN/uYm6RON/P4g2kZp8x5+d3ZsLxJ7EIGCM8b6VEdStPdAZQnEi3+7s63CJ7JRvvHFKW8VD4HafNEUvgYSkGdP3JkZFL/fpxjBsf5tju/SfNWjpxfm0BV2s9XN77fi/Nx+nDQ5/CIEbN7RQB9oGYYubKTUZbm7K5yy5+aBdbqIM70y3/UCvp/BnCiYSdkl+yShCP9A5pResaySoETxWbkSY5E8dru9dxhfa7HLs0qEKA80TOQebIlvUPsQoPFMXB9iosbtCxTCggoFKHFO7/VyRtY4QTb8lN2U0XWDHWChB4aIiRJbTtFcsaASiPNfx/sy6LAwgOFmKEk/Ggxg5YO7Muj9wWfIPD8UCAKHvrnKU/y9KhSKJD35duEeGLCNJp8hREB6qh9sOJ5Ys9FEftRwPtEcF4pX54ETp5l+FVUgaQufxFUnl5PTdOXei9L6odv9FJMy0IQnCbDN+QvajsoYNf6MPTAta5LZ+NQG4z0vqF9Mf4+fKkFpGUqUqDVUTqASvWcQHCxZHFgg5MKPMLZyTmqmNClpf+SYnAxfSpUlvXI10GleHiJlvnybgggRmHRp0sJqWb9XBozegl6FUE+yXyPOOZxEOjACRlVKJ9aAKe7xE2IwoEC8hGjSDwqkFweBMUlY/pGkyodS/k1MPXQDvBzaNJmNo7o3ygNDgl476Bk6RtRFSNlugbFHD487nNMDg9OYCZyw5hzheILjK8IqFq4IMxGoM3Ai4pH16gHeljD8BwW9Ipni5pCm3SKSKgbQ7DzzPOsvniFYjy5m1sT6Owjjc8nUPd33lTwtBjrsccxmEnWeg1RFWHZu9IiBFLBEYTnQSl6b2nmX9/86H65l6C/SJqv15UUGieUJcXwYh/OSVFV3OSwmDhKC24VcYNCmZMlDo8Q3cs3FocfB7SoHBrRcSJ2W4cAUKAxQHHrfkodI94I150uO6JzT7jngZ8PevRQT6gva1EDkvJs7rkJwvflnYXZ0wM88lvs5Fguhx/gfRyVpmqnFI1xfBwQxg+UQ7NmxYxDDXFJ8oO8qHcXZj+gwW+uXl/09AFjJomeYNmgyUd3PPfs0lI1VUFpOUibrUAAO0VIlYEsTg+liV0+ZVyvjhOCvIrcp9AXr8SGgRbCoT2llemc+3D1+xHt25n4H5U4p+DVM0+vafSkGBnF5tBHyJ0k5ehHqGHBlUFDacZai9PflJQGgdTDYyQ1T1x1LseqwTFFnjek14fUGhK+KwZEIQlTqw9BNnTmtaGRmcz81IVGFj5W5DrvDMShOeMltUMxHAotn+NZaIFCOfPazGQhajNKNQPpweN62QmkRwzp6BGWPXIubU0jj4yoVmxE6i5qOrymIkiqhy/Ag1FOTz61BSBuaF9A0YlNV9LEASlHniiKe8ddOJyZWZ8ooAxSFQoEoJN47hg5kwRZlMYw5MSj2igTpZYWJHPGsFLVOMABP4VoXEjhiAF4KM05NJRQkSapgqGEelwpZqZngMIqfpsJvkkoT9XfqMI5YxY10LyptPSixMtjKhI8+rfWXe4/3lIbKeADofMMwwoPUYU6I53CkrYCoOcZMXIGAwrdSznfpx4PzklzbbZAf6eQYqIVSIBreq+fCAsZSCN1AjTJY1xEIEt7gdxyS220/JbUH4yPzGyWCq1KZMBLodwYkOegV+sjkNTm7EPONdE5X0QuzWZ0/GzmOWNjg5CUWFz+MHb0jeQlAcpLKQaelZR+ANEgfCuIjwKQBgKUO+Mzybbu9ZqecQbaSiClUVMh7dwzTDIoSUrF6Q9gi33VBZVms4E3LtgrNqvoAbOPt1IEwKR1RpEiVqkDiE9pkLviiRSejb7OltH9RpLNtCUtJS+s5g2RkB7tSR2WDIMCToVCMymMKjREEVmTNOys6xtXfXO59WZ69EkVIh/oNIUFFY4O8fPA+DxcVJlpy8RAmeMKuj2ZReTII895PXgoj0lboU86JJSuQP6WRPH0FBMnKYsv16sFmJqcWHX6t62iObqMp09uSuW89pFbDHl6kI1Knc+muHodKIMfwJkbxxd4U0CZqRKohihizGofUiupxQQy2C1tSQMBfSioxiq5NJMEmTE9lrhJQI/1+uDJZ/fN5KsBN2bGYACxi9+dvcud8Mk7aFs6puDl+ynF5DGE6Dyc4jPGxCI+mTMUvILI8cm7bpQCcPTr8fmY1i1SUaJpEcbhNriToi1T7AADBP+SkgB6Dkdsq1M2GPINw6PAVCIuRy/GBE7Aprd2VdKKIWIIYIg6ufNL+sBeUR4N6Pv18YbgbWVQC2PMvhHbaygEYd7p72KHE0oyn3JPUiyAqEz6ipFGIxxPfj26HKOgooT4EtFMy9irBnaiQF26YA8N59PGPpevVd8a2XFS/Z4iwO4JPCkGpM6MXEiB7mxp/dKqrU1IzakafMd0lJGs2gSv4QBVS/UlJeWCYsE/PJaiFrmAKG8uGVJ9a4C8FS1GlXOFMviEgA9RmdUrtkWhuG1OBxX5OnOIwJ9WQB46U+4EGiaZuTInyHSJlFYyOPOZx1mI4B9NPyA3ZhyZq8Y3pYpvxuFJg9aJgF51sYEkEtQBWQ9i1hXyZOxRhWcPGUMpr0bx2BSaUVijJp4WAH0xTISRkofWaJ7XjZko7HkpOJUf6VCKlCvrceCq6mUnSdbC8YHuG6WPVPaYKi/Whp5FBHwYo8NvAkePkuLcq2lxCwSMLySlCrRyZKKqMocnqXxE6uMRGKK9fTSHn5SWTDDD71iWrKULu4UXw4MB/EuzKM+IigHGGN6InChVKCrGJ61aCIK8SYrKI9SJWH6aFg/gX9IGZL4ezMwcx9NPlB68VbwbNsEwIvRaRL1SxZQEH7XQFlII3SeU1QiKyVsPeXXPqoW+64x442LZpXHVQTFglSiMSzfQIyXHUM14x1fffBBPyt9jZsQN/R43vtGrKXuBG85lkeOFiNFEmlY+oA2+RRGEeSlRNqDydB/jOh3yZ4aWnMRoBxmVJE/yxAAxdRTjfEoqTRUQV11waxO9vXa+qFghcuQPBY6RVt4QR+BHju/0ejsQ6AOIPatVWsPBnZEk9YbSpkNSMam0k6JGUmmcfgzDLHP4KmBMKiLUs/J1NP+qkuCkKRu+qSq0Cq1CLXzX8QHYV9EhJSc0kEUACY3T4AYmjYo+fzEfRnpmLcVYa2kBwtMbeoPWLeLxiBWMJbbZj+XKsUPEYo3GMWLvNHwhma8IAN/S68LqdgjyBKailw7PpFtqDzEwaRJp3jxm7ho3cK8C9tiWX+L8pYmYrpLAlDbJuCg+cy7Ywxi10l6Ip0tlFEozpkjuXKXndpwWJcapFICrjLMldY6cmHvTeH5oOpHh9eqbB9qtClarZPSBkinnO31Mh8y4BqslZ2nTcAsenUILkrkyJpQDSxrNtc9WYfHVBUmtiG97oGiilJwYp0HhOIGClCaBall/VYBaJQss4EVIO7dT+Ygerl4lMHOnnq6QxkzhnkoKZm9CBF2KmdpCHyNqnyiUNRnr8aWiwEDcItyXtjwohZQ24feCkdbHC0Y3I7iNHQEUo7JgnCxJEVwTUZloqaoTqDLXeZVYwjfxEfi9IEWczxvwos7jY8uIIoAbpHLgj2HAFwcMtyVbGrQGHyLmLR0TApq0uvi4adDyWlTDBQi0+w3FHFXkXRT4rSTPglwGpTWxUJFiq5S9v5yJULkv9GNCms7Pu3AyyuXl6QhMtg6oFd4Ucz3fPWgUC/VtPl0fMcJoYsondrtgBJWS1wJgDhxPvnL2emQIDBrCUbC759b6EMS5KwV66zMApa+GRj38JB4XPd71SrUUgUJTvT5WNHTJI3mASvL5yXueeJCWz41QPZMVy0VGGOnVK1yPfC1JQMkiwdlQ9TiTCt1dm6zD4yYf58tlidF7fZ4idhJOn1xZJVUAIpUYjV+noK+RpMQlPu1ezKcJSbbxSX1eVUadHtCX7xMTH5fv1zeQZIs6niYZlK3JkFoO+CTLmscEjGMYsTgrL1YDF0XU+si0HRgwIop3ElHKSczsCBHXiJ2CvzLQR/fZbGkmkudPwoFDXD2Sb1duGtGhMLGtFEJ4MlOX4/p+m4yrh+gGUYWcKvJ5dwwAVaDAlWcmrmgXBTq0RYCvCp4qgV6V7+MAc5LJpSrOziCuNAdjyLUVy4Zir1NVKQuULcYEqVXAP6RQFGohaEs4/CT0xdNEUpWmWZuXXAdJeWnIwBwqXk9XIeGMqnSMVXEm2qrXnv2IFDLq1+aJCqRwrCQ1EM8bLPfQVB6eGRgm8PCT0JZYr4XVPRhNuu5rTOvge1ZpPCsGFJpIr0lVWptIqkOxrRF5DgvRxwAWxNmRQ0pbQXuhGJVOBPw4+vmVMAjtvKQU7jidTQgUlTagGAJOsvhbFZlyAkCrfQ/FXUhgBOgsKTVcXo20WYejFBvXuP3ItRTG1+Gkl21dr6hxmiWq6EnHbQOrNPexk+6PBl44dtusPW+sfArK/WqaYAwFDCkq6Az6DtXvhGVE8WXmL4LA2rrU9/D4reLvIFQuegK5SabeDgeX5KyZtLnBeURgOc7IsKrT9MAEVC801jqGu2u9tpOu7UuKEOD0vibwLX/Fctoxp+LWChfHBUFVmXWS2CU2bkGhpYhZMMLjsQVaQaURXbExgEJrq6TwxzYuRN4hn8nWADiWt6MuCeKYwRhsngehAbevKjmOEwtMAPpNpV9VqAfpQbu2iy/oRKFDiUItY1wR5AsWjZv4NakxRHhElDL9tCBtMxdbqzqAWNCaC1PKEY0TvHq+E1R8lqKLJCXQlw5R6ovGtZj4BeniPXvwBnoJIp7eGm8eu+AxKk2gz9vjGCD2/I7+1ocqk+UqscWV8sCh1ogiOb/kWSPqmLBCq+Yas+ceq6hPo9ueS7pd+n9bIx+Ow3kx7O0n4saTgYbGmjIwJnCN5bOxqRVUwQik+do9AeBmGixhlPJGFAPs6Jb7T5Kl5c6vbo4Xx0gLrqq8xIAex5AAq1YeyqDHzcoQ3SwNf0y6FE0RApmik6p+cZ56XF71seTipc6nDPK/NUErbHIlxwazYwKOxjHgSWlISLev+txVgTJpz3Usfccwd58sJv8jfn866fUSOvPc+vfyhU5uHaWRwLOZU/DFVgwqQZleCVujf+CYWMLJcVx5WpEYYQBH+06qFlpVgSD+9Ti//xGcmKNk1855OH1m7fTZcxt388bPTERpJqYz4zwkbrKhbFbr5qtLrNZBXIkC4hi/j1sOmzm1S2iKFqyQS1Qq3D/k92vTR6fPJV8+DrixvggnnzgFnU4PFhYasHdP840L8/V38k738vsQVJmsyTP3d5J2ACl1eud8HR/uSB/3QUieo4WcfbzXSEfOSSP79M+TCveZDq6B+aAxHLlO4T34Ox18Jyrc+2Cp9/xvTJ1jC3+n+b5YODaLL9Py/lS4JqWF507lc/uOdZ+DUuHZhP2LdZMd4zwnFfZB9zww3E79ehHOi0599+fZHO7f5f/O8Odn+fPXuuebn4FH52HqqR3w4B23w/8XYADXyngkwnkVmAAAAABJRU5ErkJggg==",
     cardPlateOrientation: "horizontal",
     supports36Months: true,
@@ -5442,7 +5447,7 @@ const SKT_AFFILIATE_CARDS = [
       targetDevice: "전기종 (아이폰/갤럭시)",
       minPayment: "5만원 이상",
       autoTransfer: "미필수 (자유)",
-      annualFee: "Master, AMEX 2만 5천원 / 국내 2만 5천원",
+      annualFee: "Master, AMEX 2만 5천원 / 국내 2만 2천원",
       installmentInterest: "24개월 5.9% / 36개월 7.0%",
       applyMethod: "발급 QR코드 스캔 / 공식 모바일 URL / 고객센터 1544-7000"
     },
@@ -5452,29 +5457,29 @@ const SKT_AFFILIATE_CARDS = [
     promotions: [
       {
         badge: "프로모션할인",
-        title: "매월 통신요금 프로모션할인",
+        title: "매월 통신요금 프로모션할인 (24/36개월 지원)",
         condition: "신규 발급 또는 6개월 무실적 고객 (라이트할부 승인일 기준)",
-        highlight: "매월 최대 35,000원",
+        highlight: "매월 최대 24,000원",
         tiers: [
-          { label: "전월 50만원 이상", amount: "월 34,000원 할인", amountNum: 34000, baseAmount: "8,000", promoAmount: "26,000", sub: "기본 8,000원 + 프로모션 26,000원", total24: "24개월 총 816,000원 할인", total24Num: 816000, total36: "36개월 총 912,000원 할인", total36Num: 912000, total36Note: "1~24회차: 월 34,000원 / 25~36회차: 기본 월 8,000원" },
-          { label: "전월 100만원 이상", amount: "월 35,000원 할인", amountNum: 35000, baseAmount: "10,000", promoAmount: "25,000", sub: "기본 10,000원 + 프로모션 25,000원", total24: "24개월 총 840,000원 할인", total24Num: 840000, total36: "36개월 총 960,000원 할인", total36Num: 960000, total36Note: "1~24회차: 월 35,000원 / 25~36회차: 기본 월 10,000원" }
+          { label: "전월 30만원 이상", amount: "월 22,000원 할인", amountNum: 22000, baseAmount: "10,000", promoAmount: "12,000", sub: "기본 10,000원 + 프로모션 12,000원", total24: "24개월 총 528,000원 할인", total24Num: 528000, total36: "36개월 총 648,000원 할인", total36Num: 648000, total36Note: "1~24회차: 월 22,000원 / 25~36회차: 기본 월 10,000원" },
+          { label: "전월 70만원 이상", amount: "월 24,000원 할인", amountNum: 24000, baseAmount: "15,000", promoAmount: "9,000", sub: "기본 15,000원 + 프로모션 9,000원", total24: "24개월 총 576,000원 할인", total24Num: 576000, total36: "36개월 총 756,000원 할인", total36Num: 756000, total36Note: "1~24회차: 월 24,000원 / 25~36회차: 기본 월 15,000원" }
         ]
       },
       {
         badge: "추가 프로모션",
-        title: "Master 브랜드 발급 고객 특별 혜택",
-        condition: "신한 T라이트 마스터카드 발급 후 라이트할부 승인 시",
-        benefit: "추가 캐시백 혜택 제공 (신한카드 세부 프로모션 참조)"
+        title: "신한 마이신한포인트 및 제휴 가맹점 혜택",
+        condition: "신한 T라이트 카드 이용 시",
+        benefit: "주요 제휴처 할인 및 포인트 적립"
       }
     ],
     basicBenefits: [
-      "라이트할부 미이용 시 전월실적 50만원 이상 통신요금 5,000원 청구할인",
+      "라이트할부 미이용 시 전월실적 30만원 이상 통신요금 5,000원 청구할인",
       "신한카드 마이신한포인트 기본 적립 프로그램 적용",
       "주요 테마파크, 영화, 외식 브랜드 제휴 할인"
     ],
     details: [
-      "카드 발급월 익월까지는 전월실적 미충족 시에도 전월 50만원 이상 구간 혜택 1회차 기본 제공",
-      "할인 제공 기간: 라이트할부 승인 익월부터 최대 24회 결제계좌 입금",
+      "카드 발급월 익월까지는 전월실적 미충족 시에도 전월 30만원 이상 구간 혜택 1회차 기본 제공",
+      "할인 제공 기간: 라이트할부 승인 익월부터 최대 24회차 프로모션 적용 (36개월 이용 시 25~36회차는 기본할인)",
       "전월실적 제외: 단기카드대출, 장기카드대출, 연회비, 국세, 지방세, 아파트관리비, 상품권 구매"
     ]
   },
@@ -5808,8 +5813,8 @@ const SKT_AFFILIATE_CARDS = [
       targetDevice: "전기종 (아이폰/갤럭시)",
       minPayment: "5만원 이상",
       autoTransfer: "미필수 (자유)",
-      annualFee: "국내 2만 2천원 / Master 2만 5천원",
-      installmentInterest: "24개월 5.9% (36개월 할부 없음)",
+      annualFee: "국내 2만 5천원 / Master 2만 5천원",
+      installmentInterest: "24개월 5.9% (36개월 할부 미지원)",
       applyMethod: "발급 QR코드 스캔 / 공식 모바일 URL / 고객센터 1588-8100"
     },
     summary: {
@@ -5818,23 +5823,29 @@ const SKT_AFFILIATE_CARDS = [
     promotions: [
       {
         badge: "프로모션할인",
-        title: "매월 통신요금 프로모션할인 (24개월 전용)",
+        title: "매월 결제계좌 현금 캐시백 프로모션 (24개월 전용)",
         condition: "신규 발급 또는 6개월 무실적 고객 (라이트할부 승인일 기준)",
-        highlight: "매월 최대 24,000원",
+        highlight: "매월 최대 35,000원 캐시백",
         tiers: [
-          { label: "전월 30만원 이상", amount: "월 22,000원 할인", amountNum: 22000, baseAmount: "10,000", promoAmount: "12,000", sub: "기본 10,000원 + 프로모션 12,000원", total24: "24개월 총 528,000원 할인", total24Num: 528000, total36: "36개월 할부 미지원 (24개월 전용)", total36Num: 0 },
-          { label: "전월 70만원 이상", amount: "월 24,000원 할인", amountNum: 24000, baseAmount: "15,000", promoAmount: "9,000", sub: "기본 15,000원 + 프로모션 9,000원", total24: "24개월 총 576,000원 할인", total24Num: 576000, total36: "36개월 할부 미지원 (24개월 전용)", total36Num: 0 }
+          { label: "전월 50만원 이상", amount: "월 34,000원 할인", amountNum: 34000, baseAmount: "8,000", promoAmount: "26,000", sub: "기본 8,000원 + 프로모션 26,000원 캐시백", total24: "24개월 총 816,000원 할인", total24Num: 816000, total36: "36개월 할부 미지원 (24개월 전용)", total36Num: 0 },
+          { label: "전월 100만원 이상", amount: "월 35,000원 할인", amountNum: 35000, baseAmount: "10,000", promoAmount: "25,000", sub: "기본 10,000원 + 프로모션 25,000원 캐시백", total24: "24개월 총 840,000원 할인", total24Num: 840000, total36: "36개월 할부 미지원 (24개월 전용)", total36Num: 0 }
         ]
+      },
+      {
+        badge: "추가 프로모션",
+        title: "동일 실적 대비 통신 3사 최고 수준 현금 캐시백",
+        condition: "결제일에 청구할인 대신 고객 결제계좌로 현금 입금",
+        benefit: "월 최대 35,000원 결제계좌 입금"
       }
     ],
     basicBenefits: [
-      "라이트할부 미이용 시 구간별 3,000원 / 5,000원 청구할인",
+      "라이트할부 미이용 시 전월실적 50만원 이상 5,000원 청구할인",
       "롯데백화점 5% 할인쿠폰 및 무료주차권 제공",
       "롯데리아, 엔제리너스 등 롯데 계열 가맹점 제휴 할인"
     ],
     details: [
       "본 카드는 24개월 라이트할부 전용 상품입니다 (36개월 할부 미제공).",
-      "승인일 기준 익월 1회차는 전월실적조건 미충족 시에도 혜택 제공",
+      "승인일 기준 익월 1회차는 전월실적조건 미충족 시에도 혜택 제공 (결제계좌 입금 방식)",
       "전월실적 제외: 단기/장기카드대출, 연회비, 국세, 지방세, 아파트관리비, 상품권"
     ]
   },
@@ -6162,10 +6173,1373 @@ const SKT_AFFILIATE_CARDS = [
 ];
 
 
+const KT_AFFILIATE_CARDS = [
+  // ==================== [KT 라이트할부 8종] ====================
+  {
+    id: "kt_kb_light_plus",
+    carrier: "KT",
+    type: "light",
+    typeLabel: "라이트할부",
+    cardCompany: "KB국민카드",
+    cardName: "KT 할부 Plus KB국민카드",
+    theme: "theme-gold",
+    highlightBadge: "최대 27,000원 할인 & 24/36개월 장기할부 지원",
+    phone: "KB국민카드 고객센터 1577-9900",
+    applyUrl: "https://m.kbcard.com/CRD/DVIEW/MCAMCXHIACRC0002?mainCC=b&allianceCode=01507&solicitorcode=7021507000",
+    eventTarget: "직전 6개월 무실적 고객 프로모션 (24/36개월 장기할부 5.9%/7.0%)",
+    cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/2425de02-e741-4b82-84c1-947049d1b989",
+    cardPlateOrientation: "horizontal",
+    supports36Months: true,
+    promo36Months: false,
+    specs: {
+      targetDevice: "전기종 (아이폰/갤럭시)",
+      minPayment: "5만원 이상",
+      autoTransfer: "장기할부 필수",
+      annualFee: "국내 2만원 / 해외(Master/JCB) 2만원",
+      installmentInterest: "24개월 5.9% / 36개월 7.0%",
+      applyMethod: "발급 QR코드 스캔 / 공식 모바일 URL"
+    },
+    summary: {
+      installmentSub: "※ 단말기 잔여 할부원금은 아래 매월 카드 이용 실적 청구할인 혜택으로 전액 상쇄됩니다."
+    },
+    promotions: [
+      {
+        badge: "프로모션할인",
+        title: "매월 통신요금 프로모션할인",
+        condition: "신규 발급 또는 6개월 무실적 고객 (라이트할부 승인일 기준)",
+        highlight: "매월 최대 27,000원",
+        tiers: [
+          { label: "전월 30만원 이상", amount: "월 25,000원 할인", amountNum: 25000, baseAmount: "8,000", promoAmount: "17,000", sub: "기본 8,000원 + 프로모션 17,000원", total24: "24개월 총 600,000원 할인", total24Num: 600000, total36: "36개월 총 696,000원 할인", total36Num: 696000, total36Note: "1~24회차: 월 25,000원 / 25~36회차: 기본 월 8,000원" },
+          { label: "전월 70만원 이상", amount: "월 26,000원 할인", amountNum: 26000, baseAmount: "12,000", promoAmount: "14,000", sub: "기본 12,000원 + 프로모션 14,000원", total24: "24개월 총 624,000원 할인", total24Num: 624000, total36: "36개월 총 768,000원 할인", total36Num: 768000, total36Note: "1~24회차: 월 26,000원 / 25~36회차: 기본 월 12,000원" },
+          { label: "전월 100만원 이상", amount: "월 27,000원 할인", amountNum: 27000, baseAmount: "14,000", promoAmount: "13,000", sub: "기본 14,000원 + 프로모션 13,000원", total24: "24개월 총 648,000원 할인", total24Num: 648000, total36: "36개월 총 816,000원 할인", total36Num: 816000, total36Note: "1~24회차: 월 27,000원 / 25~36회차: 기본 월 14,000원" }
+        ]
+      }
+    ],
+    basicBenefits: [
+      "KT 라이트할부 미이용 시 기본 청구할인 제공",
+      "대중교통 및 생활가맹점 포인트 적립",
+      "주요 놀이공원 및 영화관 제휴 할인"
+    ],
+    details: [
+      "신규 발급 회원은 승인 익월 전월실적 미충족 시에도 1회차 기본 및 프로모션 할인 제공",
+      "전월실적 산정: 통신비 자동이체금, 장기할부 약정금액, 일반 일시불/할부 이용금액 합산",
+      "출처: 세이브드림 KT 공식 정책"
+    ]
+  },
+
+  {
+    id: "kt_lotte_light",
+    carrier: "KT",
+    type: "light",
+    typeLabel: "라이트할부",
+    cardCompany: "롯데카드",
+    cardName: "KT 할부 롯데카드",
+    theme: "theme-red",
+    highlightBadge: "50만 실적 3.4만 / 100만 실적 3.5만원 최대 24개월 캐시백",
+    phone: "롯데카드 고객센터 1588-8100",
+    applyUrl: "http://m.lottecard.co.kr/spa/card/booth?bId=106378&vtCdKndC=P15912-A15912",
+    eventTarget: "직전 6개월 무실적 고객 프로모션 참여 후 장기할부 수납 완료 시",
+    cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/3dab1f98-3e05-4452-bc7f-54574612b7e3",
+    cardPlateOrientation: "horizontal",
+    supports36Months: false,
+    promo36Months: false,
+    specs: {
+      targetDevice: "전기종",
+      minPayment: "5만원 이상",
+      autoTransfer: "장기할부 필수",
+      annualFee: "국내 2.5만원 / 해외(MASTER/AMEX) 2.5만원",
+      installmentInterest: "24개월 5.9% (36개월 미지원)",
+      applyMethod: "발급 QR코드 스캔 / 공식 모바일 URL"
+    },
+    summary: {
+      installmentSub: "※ 단말기 잔여 할부원금은 아래 매월 카드 이용 실적 청구할인 혜택으로 전액 상쇄됩니다."
+    },
+    promotions: [
+      {
+        badge: "프로모션할인",
+        title: "매월 통신요금 캐시백 프로모션 (24개월)",
+        condition: "직전 6개월 무실적 고객 장기할부 수납 완료 시",
+        highlight: "매월 최대 35,000원 결제계좌 현금 캐시백",
+        tiers: [
+          { label: "전월 50만원 이상", amount: "월 34,000원 할인", amountNum: 34000, baseAmount: "8,000", promoAmount: "26,000", sub: "기본 8,000원 + 프로모션 26,000원", total24: "24개월 총 816,000원 할인", total24Num: 816000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 },
+          { label: "전월 100만원 이상", amount: "월 35,000원 할인", amountNum: 35000, baseAmount: "10,000", promoAmount: "25,000", sub: "기본 10,000원 + 프로모션 25,000원", total24: "24개월 총 840,000원 할인", total24Num: 840000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 }
+        ]
+      }
+    ],
+    basicBenefits: [
+      "롯데백화점 5% 할인 e-쿠폰 및 무료 주차권",
+      "롯데리아, 엔제리너스 등 롯데 계열 가맹점 제휴 할인"
+    ],
+    details: [
+      "추가 캐시백은 프로모션 익월부터 최대 24개월 적용",
+      "전월실적 제외: 단기/장기카드대출, 연회비, 국세, 지방세, 아파트관리비, 상품권",
+      "출처: 세이브드림 KT 공식 정책"
+    ]
+  },
+
+  {
+    id: "kt_hyundai_m3_2",
+    carrier: "KT",
+    type: "light",
+    typeLabel: "라이트할부",
+    cardCompany: "현대카드",
+    cardName: "KT 현대카드M Edition3 (통신할인형 2.0)",
+    theme: "theme-red",
+    highlightBadge: "최대 35,000원 청구할인 & Apple Pay 완벽 지원",
+    phone: "현대카드 고객센터 02-2655-6033",
+    applyUrl: "https://www.hyundaicard.com/cpc/cr/CPCCR0201_01.hc?cardWcd=MKTE3TP&eventCode=KTP9N",
+    eventTarget: "직전 6개월 무실적 고객 프로모션 (장기할부 결제 시)",
+    cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/056b253d-354e-4f10-bbdd-9472ffc5c190",
+    cardPlateOrientation: "horizontal",
+    supports36Months: false,
+    promo36Months: false,
+    specs: {
+      targetDevice: "전기종 (Apple Pay 지원)",
+      minPayment: "5만원 이상",
+      autoTransfer: "장기할부 필수",
+      annualFee: "국내 2만원 / 국내외겸용(Visa, Amex) 2만원",
+      installmentInterest: "24개월 5.8% (36개월 미지원)",
+      applyMethod: "발급 QR코드 스캔 / 공식 모바일 URL"
+    },
+    summary: {
+      installmentSub: "※ 단말기 잔여 할부원금은 아래 매월 카드 이용 실적 청구할인 혜택으로 전액 상쇄됩니다."
+    },
+    promotions: [
+      {
+        badge: "프로모션할인",
+        title: "매월 통신요금 프로모션할인 (24개월)",
+        condition: "신규 발급 또는 6개월 무실적 고객",
+        highlight: "매월 최대 35,000원",
+        tiers: [
+          { label: "전월 50만원 이상", amount: "월 34,000원 할인", amountNum: 34000, baseAmount: "15,000", promoAmount: "19,000", sub: "기본 15,000원 + 프로모션 19,000원", total24: "24개월 총 816,000원 할인", total24Num: 816000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 },
+          { label: "전월 100만원 이상", amount: "월 35,000원 할인", amountNum: 35000, baseAmount: "25,000", promoAmount: "10,000", sub: "기본 25,000원 + 프로모션 10,000원", total24: "24개월 총 840,000원 할인", total24Num: 840000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 }
+        ]
+      }
+    ],
+    basicBenefits: [
+      "M포인트 기본 적립 및 가맹점 사용",
+      "Apple Pay 즉시 등록 및 오프라인 간편 결제"
+    ],
+    details: [
+      "본 카드는 24개월 라이트할부 전용 상품입니다",
+      "전월실적 제외: 상품권, 세금, 연회비 등",
+      "출처: 세이브드림 KT 공식 정책"
+    ]
+  },
+
+  {
+    id: "kt_samsung_light_s",
+    carrier: "KT",
+    type: "light",
+    typeLabel: "라이트할부",
+    cardCompany: "삼성카드",
+    cardName: "KT 할부 S 삼성카드",
+    theme: "theme-blue",
+    highlightBadge: "월 2.2만/2.3만/2.4만원 청구할인 (기본+프로모션)",
+    phone: "삼성카드 고객센터 1588-8700",
+    applyUrl: "https://www.samsungcard.com/home/card/cardinfo/PGHPPCCCardCardinfoDetails001?code=AAP1839&alncmpC=QKKTLITE&affcode=QKKTLITE",
+    eventTarget: "전월 40/80/120만원 이상 이용 시 프로모션 적용",
+    cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/46d651ec-5640-421d-b78a-cc09054e04e6",
+    cardPlateOrientation: "horizontal",
+    supports36Months: true,
+    promo36Months: true,
+    specs: {
+      targetDevice: "전기종",
+      minPayment: "10만원 이상",
+      autoTransfer: "장기할부 필수",
+      annualFee: "국내 2만5천원 / 해외(Master) 2만5천원",
+      installmentInterest: "24개월 5.9% / 36개월 7.0%",
+      applyMethod: "발급 QR코드 스캔 / 공식 모바일 URL"
+    },
+    summary: {
+      installmentSub: "※ 단말기 잔여 할부원금은 아래 매월 카드 이용 실적 청구할인 혜택으로 전액 상쇄됩니다."
+    },
+    promotions: [
+      {
+        badge: "프로모션할인",
+        title: "매월 통신요금 프로모션할인",
+        condition: "신규 발급 또는 6개월 무실적 고객",
+        highlight: "매월 최대 24,000원",
+        tiers: [
+          { label: "전월 40만원 이상", amount: "월 22,000원 할인", amountNum: 22000, baseAmount: "10,000", promoAmount: "12,000", sub: "기본 10,000원 + 프로모션 12,000원", total24: "24개월 총 528,000원 할인", total24Num: 528000, total36: "36개월 총 792,000원 할인", total36Num: 792000, total36Note: "36개월간 월 22,000원 할인" },
+          { label: "전월 80만원 이상", amount: "월 23,000원 할인", amountNum: 23000, baseAmount: "15,000", promoAmount: "8,000", sub: "기본 15,000원 + 프로모션 8,000원", total24: "24개월 총 552,000원 할인", total24Num: 552000, total36: "36개월 총 828,000원 할인", total36Num: 828000, total36Note: "36개월간 월 23,000원 할인" },
+          { label: "전월 120만원 이상", amount: "월 24,000원 할인", amountNum: 24000, baseAmount: "20,000", promoAmount: "4,000", sub: "기본 20,000원 + 프로모션 4,000원", total24: "24개월 총 576,000원 할인", total24Num: 576000, total36: "36개월 총 864,000원 할인", total36Num: 864000, total36Note: "36개월간 월 24,000원 할인" }
+        ]
+      }
+    ],
+    basicBenefits: [
+      "삼성카드 빅포인트 적립",
+      "통신비 청구할인 혜택"
+    ],
+    details: [
+      "24개월/36개월 라이트할부 수납 시 적용",
+      "출처: 세이브드림 KT 공식 정책"
+    ]
+  },
+
+  {
+    id: "kt_shinhan_family_light",
+    carrier: "KT",
+    type: "light",
+    typeLabel: "라이트할부",
+    cardCompany: "신한카드",
+    cardName: "KT 가족만족 할부 신한카드",
+    theme: "theme-blue",
+    highlightBadge: "30만 실적 2.5만 / 70만 실적 2.7만원 24개월 청구할인",
+    phone: "신한카드 고객센터 1544-7000",
+    applyUrl: "https://www.shinhancard.com/pconts/html/card/apply/credit/1221484_2207.html?EntryLoc=3298&empSeq=501&btnApp=dp01",
+    eventTarget: "직전 6개월 무실적 고객 프로모션 (30만 이상 이용 시)",
+    cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/4cec261f-497f-4be8-941c-5759f0a48aa8",
+    cardPlateOrientation: "horizontal",
+    supports36Months: false,
+    promo36Months: false,
+    specs: {
+      targetDevice: "전기종",
+      minPayment: "5만원 이상",
+      autoTransfer: "장기할부 필수",
+      annualFee: "국내 2.2만원 / 해외(Master) 2.5만원",
+      installmentInterest: "24개월 연 5.9%",
+      applyMethod: "발급 QR코드 스캔 / 공식 모바일 URL"
+    },
+    summary: {
+      installmentSub: "※ 단말기 잔여 할부원금은 아래 매월 카드 이용 실적 청구할인 혜택으로 전액 상쇄됩니다."
+    },
+    promotions: [
+      {
+        badge: "프로모션할인",
+        title: "매월 통신요금 프로모션할인 (24개월)",
+        condition: "신규 발급 또는 6개월 무실적 고객",
+        highlight: "매월 최대 27,000원",
+        tiers: [
+          { label: "전월 30만원 이상", amount: "월 25,000원 할인", amountNum: 25000, baseAmount: "10,000", promoAmount: "15,000", sub: "기본 10,000원 + 프로모션 15,000원", total24: "24개월 총 600,000원 할인", total24Num: 600000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 },
+          { label: "전월 70만원 이상", amount: "월 27,000원 할인", amountNum: 27000, baseAmount: "15,000", promoAmount: "12,000", sub: "기본 15,000원 + 프로모션 12,000원", total24: "24개월 총 648,000원 할인", total24Num: 648000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 }
+        ]
+      }
+    ],
+    basicBenefits: [
+      "마이신한포인트 기본 적립",
+      "통신비 청구할인 혜택"
+    ],
+    details: [
+      "승인 익월 1회차 실적유예 적용, 24회차까지 청구할인",
+      "출처: 세이브드림 KT 공식 정책"
+    ]
+  },
+
+  {
+    id: "kt_woori_36_plus",
+    carrier: "KT",
+    type: "light",
+    typeLabel: "라이트할부",
+    cardCompany: "우리카드",
+    cardName: "KT 36 Plus 우리카드",
+    theme: "theme-blue",
+    highlightBadge: "최대 36개월 3.1만원 청구할인 & 36개월 장기할부",
+    phone: "우리카드 고객센터 1588-9955",
+    applyUrl: "https://m.wooricard.com/dcmw/yh1/crd/crd01/M1CRD101S02.do?cdPrdCd=104168&canvasser=88936106",
+    eventTarget: "직전 6개월 무실적 고객 (최대 36개월 청구할인)",
+    cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/004cc44c-9ca5-478e-87d1-7c24cb39e9eb",
+    cardPlateOrientation: "horizontal",
+    supports36Months: true,
+    promo36Months: true,
+    specs: {
+      targetDevice: "전기종",
+      minPayment: "10만원 이상",
+      autoTransfer: "장기할부 필수",
+      annualFee: "국내 2.5만원 / 해외(Visa) 2.5만원",
+      installmentInterest: "36개월 연 7.0%",
+      applyMethod: "발급 QR코드 스캔 / 공식 모바일 URL"
+    },
+    summary: {
+      installmentSub: "※ 단말기 잔여 할부원금은 아래 매월 카드 이용 실적 청구할인 혜택으로 전액 상쇄됩니다."
+    },
+    promotions: [
+      {
+        badge: "프로모션할인",
+        title: "매월 통신요금 프로모션할인 (최대 36개월)",
+        condition: "신규 발급 또는 6개월 무실적 고객",
+        highlight: "매월 최대 31,000원",
+        tiers: [
+          { label: "전월 40만원 이상", amount: "월 24,000원 할인", amountNum: 24000, baseAmount: "10,000", promoAmount: "14,000", sub: "기본 10,000원 + 프로모션 14,000원", total24: "24개월 총 576,000원 할인", total24Num: 576000, total36: "36개월 총 864,000원 할인", total36Num: 864000, total36Note: "36개월간 월 24,000원 청구할인" },
+          { label: "전월 80만원 이상", amount: "월 29,000원 할인", amountNum: 29000, baseAmount: "15,000", promoAmount: "14,000", sub: "기본 15,000원 + 프로모션 14,000원", total24: "24개월 총 696,000원 할인", total24Num: 696000, total36: "36개월 총 1,044,000원 할인", total36Num: 1044000, total36Note: "36개월간 월 29,000원 청구할인" },
+          { label: "전월 120만원 이상", amount: "월 31,000원 할인", amountNum: 31000, baseAmount: "20,000", promoAmount: "11,000", sub: "기본 20,000원 + 프로모션 11,000원", total24: "24개월 총 744,000원 할인", total24Num: 744000, total36: "36개월 총 1,116,000원 할인", total36Num: 1116000, total36Note: "36개월간 월 31,000원 청구할인" }
+        ]
+      }
+    ],
+    basicBenefits: [
+      "통신비 전월실적 인정",
+      "우리포인트 기본 적립"
+    ],
+    details: [
+      "36개월 장기할부 선택 시 36개월간 할인 유지",
+      "출처: 세이브드림 KT 공식 정책"
+    ]
+  },
+
+  {
+    id: "kt_nh_light_plus",
+    carrier: "KT",
+    type: "light",
+    typeLabel: "라이트할부",
+    cardCompany: "NH농협카드",
+    cardName: "KT 할부 Plus NH농협카드",
+    theme: "theme-green",
+    highlightBadge: "월 2.2만/2.4만/2.7만원 청구할인 & 40만 실적 혜택",
+    phone: "NH농협카드 고객센터 1644-4000",
+    applyUrl: "https://go.nhcard.com/LkMCWj6",
+    eventTarget: "라이트할부 수납 고객 프로모션 (캐시백 + 청구할인)",
+    cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/c6389d85-e974-4857-9532-fffc5b89e0bf",
+    cardPlateOrientation: "horizontal",
+    supports36Months: false,
+    promo36Months: false,
+    specs: {
+      targetDevice: "전기종",
+      minPayment: "5만원 이상",
+      autoTransfer: "장기할부 필수",
+      annualFee: "국내 2만원 / 해외(Visa) 2.3만원",
+      installmentInterest: "24개월 연 5.9%",
+      applyMethod: "발급 QR코드 스캔 / 공식 모바일 URL"
+    },
+    summary: {
+      installmentSub: "※ 단말기 잔여 할부원금은 아래 매월 카드 이용 실적 청구할인 혜택으로 전액 상쇄됩니다."
+    },
+    promotions: [
+      {
+        badge: "프로모션할인",
+        title: "매월 통신요금 프로모션할인 (24개월)",
+        condition: "신규 발급 또는 6개월 무실적 고객",
+        highlight: "매월 최대 27,000원",
+        tiers: [
+          { label: "전월 40만원 이상", amount: "월 22,000원 할인", amountNum: 22000, baseAmount: "10,000", promoAmount: "12,000", sub: "기본 10,000원 + 캐시백 12,000원", total24: "24개월 총 528,000원 할인", total24Num: 528000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 },
+          { label: "전월 80만원 이상", amount: "월 24,000원 할인", amountNum: 24000, baseAmount: "12,000", promoAmount: "12,000", sub: "기본 12,000원 + 캐시백 12,000원", total24: "24개월 총 576,000원 할인", total24Num: 576000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 },
+          { label: "전월 120만원 이상", amount: "월 27,000원 할인", amountNum: 27000, baseAmount: "15,000", promoAmount: "12,000", sub: "기본 15,000원 + 캐시백 12,000원", total24: "24개월 총 648,000원 할인", total24Num: 648000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 }
+        ]
+      }
+    ],
+    basicBenefits: [
+      "통신비 제외, 아파트 관리비 제외, 학교납입금 제외",
+      "농협 하나로클럽 및 계열 가맹점 포인트 적립"
+    ],
+    details: [
+      "24개월 라이트할부 수납 시 최대 24개월 적용",
+      "출처: 세이브드림 KT 공식 정책"
+    ]
+  },
+
+  {
+    id: "kt_bc_super_dc",
+    carrier: "KT",
+    type: "light",
+    typeLabel: "라이트할부",
+    cardCompany: "BC바로카드",
+    cardName: "KT SUPER DC BC바로카드",
+    theme: "theme-rose",
+    highlightBadge: "1.3만 / 1.4만 / 1.5만원 24개월 청구할인",
+    phone: "BC카드 고객센터 1588-4000",
+    applyUrl: "https://web.paybooc.co.kr/web/evnt/evnt-dts?pybcUnifEvntNo=2025030014&affiCd=K001",
+    cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/3541547b-0d33-48f2-b5f6-571644d55899",
+    cardPlateOrientation: "horizontal",
+    supports36Months: false,
+    promo36Months: false,
+    specs: {
+      targetDevice: "전기종",
+      minPayment: "5만원 이상",
+      autoTransfer: "장기할부 필수",
+      annualFee: "국내 2.5만원 / 해외(Master) 2.5만원",
+      installmentInterest: "24개월 연 5.9%",
+      applyMethod: "발급 QR코드 스캔 / 페이북 앱"
+    },
+    summary: {
+      installmentSub: "※ 단말기 잔여 할부원금은 아래 매월 카드 이용 실적 청구할인 혜택으로 전액 상쇄됩니다."
+    },
+    promotions: [
+      {
+        badge: "프로모션할인",
+        title: "매월 통신요금 프로모션할인 (24개월)",
+        condition: "신규 발급 또는 6개월 무실적 고객",
+        highlight: "매월 최대 15,000원",
+        tiers: [
+          { label: "전월 40만원 이상", amount: "월 13,000원 할인", amountNum: 13000, baseAmount: "8,000", promoAmount: "5,000", sub: "기본 8,000원 + 프로모션 5,000원", total24: "24개월 총 312,000원 할인", total24Num: 312000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 },
+          { label: "전월 80만원 이상", amount: "월 14,000원 할인", amountNum: 14000, baseAmount: "10,000", promoAmount: "4,000", sub: "기본 10,000원 + 프로모션 4,000원", total24: "24개월 총 336,000원 할인", total24Num: 336000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 },
+          { label: "전월 120만원 이상", amount: "월 15,000원 할인", amountNum: 15000, baseAmount: "12,000", promoAmount: "3,000", sub: "기본 12,000원 + 프로모션 3,000원", total24: "24개월 총 360,000원 할인", total24Num: 360000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 }
+        ]
+      }
+    ],
+    basicBenefits: [
+      "페이북 머니 적립 및 가맹점 제휴",
+      "통신비 청구할인"
+    ],
+    details: [
+      "24개월 장기할부 필수",
+      "출처: 세이브드림 KT 공식 정책"
+    ]
+  },
+
+  // ==================== [KT 요금할인 7종] ====================
+  {
+    id: "kt_lotte_dc",
+    carrier: "KT",
+    type: "bill",
+    typeLabel: "요금할인",
+    cardCompany: "롯데카드",
+    cardName: "KT DC 롯데카드",
+    theme: "theme-red",
+    highlightBadge: "40만 실적 2.8만 / 80만 실적 2.9만원 최대 24개월 청구할인",
+    phone: "롯데카드 고객센터 1588-8100",
+    applyUrl: "http://m.lottecard.co.kr/spa/card/booth?bId=107345&vtCdKndC=P15933-A15933",
+    eventTarget: "직전 6개월 무실적 고객 프로모션",
+    cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/b9dd0721-6d77-446f-968f-1169fdd01cda",
+    cardPlateOrientation: "horizontal",
+    supports36Months: false,
+    promo36Months: false,
+    specs: {
+      targetDevice: "통신사 전회선 (자동이체)",
+      minPayment: "할부 약정 없음 (자동이체 전용)",
+      autoTransfer: "자동이체 필수",
+      annualFee: "국내 2.5만원 / 해외(MASTER/AMEX) 2.5만원",
+      installmentInterest: "해당 없음 (할부이자 0원)",
+      applyMethod: "발급 QR코드 스캔 / 공식 모바일 URL"
+    },
+    summary: {
+      installmentSub: "※ 통신요금 자동이체 시 매월 이용실적에 따라 통신비가 청구할인됩니다."
+    },
+    promotions: [
+      {
+        badge: "프로모션할인",
+        title: "매월 통신요금 프로모션할인 (24개월)",
+        condition: "신규 발급 또는 6개월 무실적 고객",
+        highlight: "매월 최대 29,000원",
+        tiers: [
+          { label: "전월 40만원 이상", amount: "월 28,000원 할인", amountNum: 28000, baseAmount: "8,000", promoAmount: "20,000", sub: "기본 8,000원 + 프로모션 20,000원", total24: "24개월 총 672,000원 할인", total24Num: 672000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 },
+          { label: "전월 80만원 이상", amount: "월 29,000원 할인", amountNum: 29000, baseAmount: "13,000", promoAmount: "16,000", sub: "기본 13,000원 + 프로모션 16,000원", total24: "24개월 총 696,000원 할인", total24Num: 696000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 }
+        ]
+      }
+    ],
+    basicBenefits: [
+      "롯데백화점 5% 할인쿠폰 및 무료주차권",
+      "롯데 계열사 제휴 할인"
+    ],
+    details: [
+      "자동이체 필수 등록, 24개월 청구할인",
+      "출처: 세이브드림 KT 공식 정책"
+    ]
+  },
+
+  {
+    id: "kt_shinhan_family_dc",
+    carrier: "KT",
+    type: "bill",
+    typeLabel: "요금할인",
+    cardCompany: "신한카드",
+    cardName: "KT 가족만족 DC 신한카드",
+    theme: "theme-blue",
+    highlightBadge: "30만 실적 2.2만 / 70만 실적 2.7만원 36개월 청구할인",
+    phone: "신한카드 고객센터 1544-7000",
+    applyUrl: "https://www.shinhancard.com/pconts/html/card/apply/credit/1223352_2207.html?empSeq=501&btnApp=dp01",
+    eventTarget: "직전 6개월 무실적 고객 프로모션",
+    cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/074b0e83-5f28-4167-b895-fea12fdef0a2",
+    cardPlateOrientation: "horizontal",
+    supports36Months: true,
+    promo36Months: true,
+    specs: {
+      targetDevice: "통신사 전회선 (자동이체)",
+      minPayment: "할부 약정 없음",
+      autoTransfer: "자동이체 필수",
+      annualFee: "국내 1.5만원 / 해외(Master) 1.8만원",
+      installmentInterest: "해당 없음 (할부이자 0원)",
+      applyMethod: "발급 QR코드 스캔 / 공식 모바일 URL"
+    },
+    summary: {
+      installmentSub: "※ 통신요금 자동이체 시 매월 이용실적에 따라 통신비가 청구할인됩니다."
+    },
+    promotions: [
+      {
+        badge: "프로모션할인",
+        title: "매월 통신요금 프로모션할인 (36개월)",
+        condition: "신규 발급 또는 6개월 무실적 고객",
+        highlight: "매월 최대 27,000원",
+        tiers: [
+          { label: "전월 30만원 이상", amount: "월 22,000원 할인", amountNum: 22000, baseAmount: "8,000", promoAmount: "14,000", sub: "기본 8,000원 + 프로모션 14,000원", total24: "24개월 총 528,000원 할인", total24Num: 528000, total36: "36개월 총 792,000원 할인", total36Num: 792000, total36Note: "36개월간 월 22,000원 할인" },
+          { label: "전월 70만원 이상", amount: "월 27,000원 할인", amountNum: 27000, baseAmount: "12,000", promoAmount: "15,000", sub: "기본 12,000원 + 프로모션 15,000원", total24: "24개월 총 648,000원 할인", total24Num: 648000, total36: "36개월 총 972,000원 할인", total36Num: 972000, total36Note: "36개월간 월 27,000원 할인" }
+        ]
+      }
+    ],
+    basicBenefits: [
+      "마이신한포인트 기본 적립",
+      "통신비 청구할인"
+    ],
+    details: [
+      "자동이체 필수 등록, 최대 36개월간 청구할인",
+      "출처: 세이브드림 KT 공식 정책"
+    ]
+  },
+
+  {
+    id: "kt_samsung_bill",
+    carrier: "KT",
+    type: "bill",
+    typeLabel: "요금할인",
+    cardCompany: "삼성카드",
+    cardName: "KT 삼성카드",
+    theme: "theme-blue",
+    highlightBadge: "최대 2.5만원 청구할인 & 30만/70만/120만 실적 혜택",
+    phone: "삼성카드 고객센터 1588-8700",
+    applyUrl: "https://www.samsungcard.com/home/card/cardinfo/PGHPPCCCardCardinfoDetails001?code=AAP1665&alncmpC=QKKT&affcode=QKKT",
+    eventTarget: "직전 6개월 무실적 고객 프로모션",
+    cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/c04ea319-cf93-421f-b8fa-20b9f4857c1e",
+    cardPlateOrientation: "horizontal",
+    supports36Months: false,
+    promo36Months: false,
+    specs: {
+      targetDevice: "통신사 전회선",
+      minPayment: "할부 약정 없음",
+      autoTransfer: "자동이체 필수",
+      annualFee: "국내 2만원 / 해외(Master) 2만원",
+      installmentInterest: "해당 없음 (할부이자 0원)",
+      applyMethod: "발급 QR코드 스캔 / 공식 모바일 URL"
+    },
+    summary: {
+      installmentSub: "※ 통신요금 자동이체 시 매월 이용실적에 따라 통신비가 청구할인됩니다."
+    },
+    promotions: [
+      {
+        badge: "프로모션할인",
+        title: "매월 통신요금 프로모션할인 (24개월)",
+        condition: "신규 발급 또는 6개월 무실적 고객",
+        highlight: "매월 최대 25,000원",
+        tiers: [
+          { label: "전월 30만원 이상", amount: "월 23,000원 할인", amountNum: 23000, baseAmount: "10,000", promoAmount: "13,000", sub: "기본 10,000원 + 프로모션 13,000원", total24: "24개월 총 552,000원 할인", total24Num: 552000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 },
+          { label: "전월 70만원 이상", amount: "월 24,000원 할인", amountNum: 24000, baseAmount: "13,000", promoAmount: "11,000", sub: "기본 13,000원 + 프로모션 11,000원", total24: "24개월 총 576,000원 할인", total24Num: 576000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 },
+          { label: "전월 120만원 이상", amount: "월 25,000원 할인", amountNum: 25000, baseAmount: "16,000", promoAmount: "9,000", sub: "기본 16,000원 + 프로모션 9,000원", total24: "24개월 총 600,000원 할인", total24Num: 600000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 }
+        ]
+      }
+    ],
+    basicBenefits: [
+      "삼성카드 빅포인트 적립",
+      "통신비 청구할인"
+    ],
+    details: [
+      "통신요금 자동이체 필수",
+      "출처: 세이브드림 KT 공식 정책"
+    ]
+  },
+
+  {
+    id: "kt_bc_dc_plus",
+    carrier: "KT",
+    type: "bill",
+    typeLabel: "요금할인",
+    cardCompany: "BC바로카드",
+    cardName: "KT DC Plus BC바로카드",
+    theme: "theme-rose",
+    highlightBadge: "30만 실적 8천원 / 70만 실적 1.5만원 36개월 할인",
+    phone: "BC카드 고객센터 1588-4000",
+    applyUrl: "https://web.paybooc.co.kr/web/evnt/evnt-dts?pybcUnifEvntNo=2023090043&affiCd=K001",
+    cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/3b366cc2-5db0-4b8e-9ab9-5ac4a28b0f0c",
+    cardPlateOrientation: "horizontal",
+    supports36Months: true,
+    promo36Months: true,
+    specs: {
+      targetDevice: "통신사 전회선",
+      minPayment: "할부 약정 없음",
+      autoTransfer: "자동이체 필수",
+      annualFee: "국내 1.2만원 / 해외(Master) 1.2만원",
+      installmentInterest: "해당 없음 (할부이자 0원)",
+      applyMethod: "발급 QR코드 스캔 / 페이북 앱"
+    },
+    summary: {
+      installmentSub: "※ 통신요금 자동이체 시 매월 이용실적에 따라 통신비가 청구할인됩니다."
+    },
+    promotions: [
+      {
+        badge: "프로모션할인",
+        title: "매월 통신요금 프로모션할인 (36개월)",
+        condition: "신규 발급 또는 6개월 무실적 고객",
+        highlight: "매월 최대 15,000원",
+        tiers: [
+          { label: "전월 30만원 이상", amount: "월 8,000원 할인", amountNum: 8000, baseAmount: "4,000", promoAmount: "4,000", sub: "기본 4,000원 + 프로모션 4,000원", total24: "24개월 총 192,000원 할인", total24Num: 192000, total36: "36개월 총 288,000원 할인", total36Num: 288000, total36Note: "36개월간 월 8,000원 할인" },
+          { label: "전월 70만원 이상", amount: "월 15,000원 할인", amountNum: 15000, baseAmount: "7,000", promoAmount: "8,000", sub: "기본 7,000원 + 프로모션 8,000원", total24: "24개월 총 360,000원 할인", total24Num: 360000, total36: "36개월 총 540,000원 할인", total36Num: 540000, total36Note: "36개월간 월 15,000원 할인" }
+        ]
+      }
+    ],
+    basicBenefits: [
+      "페이북 마일리지 적립",
+      "통신비 청구할인"
+    ],
+    details: [
+      "자동이체 필수 등록, 36개월간 청구할인",
+      "출처: 세이브드림 KT 공식 정책"
+    ]
+  },
+
+  {
+    id: "kt_kb_dc_plus",
+    carrier: "KT",
+    type: "bill",
+    typeLabel: "요금할인",
+    cardCompany: "KB국민카드",
+    cardName: "KT DC Plus KB국민카드",
+    theme: "theme-gold",
+    highlightBadge: "30만 실적 7천원 / 70만 실적 1.1만원 청구할인",
+    phone: "KB국민카드 고객센터 1577-9900",
+    applyUrl: "https://m.kbcard.com/CRD/DVIEW/MCAMCXHIACRC0002?mainCC=b&allianceCode=04293&solicitorcode=7024293000",
+    eventTarget: "직전 6개월 무실적 고객 프로모션",
+    cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/ff5f788d-a86d-4e6f-bf24-5c42faec81c8",
+    cardPlateOrientation: "horizontal",
+    supports36Months: false,
+    promo36Months: false,
+    specs: {
+      targetDevice: "통신사 전회선",
+      minPayment: "할부 약정 없음",
+      autoTransfer: "자동이체 필수",
+      annualFee: "국내 2만원 (모바일 1.4만) / Master 2만원",
+      installmentInterest: "해당 없음 (할부이자 0원)",
+      applyMethod: "발급 QR코드 스캔 / 공식 모바일 URL"
+    },
+    summary: {
+      installmentSub: "※ 통신요금 자동이체 시 매월 이용실적에 따라 통신비가 청구할인됩니다."
+    },
+    promotions: [
+      {
+        badge: "프로모션할인",
+        title: "매월 통신요금 프로모션할인",
+        condition: "신규 발급 또는 6개월 무실적 고객",
+        highlight: "매월 최대 11,000원",
+        tiers: [
+          { label: "전월 30만원 이상", amount: "월 7,000원 할인", amountNum: 7000, baseAmount: "4,000", promoAmount: "3,000", sub: "기본 4,000원 + 프로모션 3,000원", total24: "24개월 총 168,000원 할인", total24Num: 168000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 },
+          { label: "전월 70만원 이상", amount: "월 11,000원 할인", amountNum: 11000, baseAmount: "7,000", promoAmount: "4,000", sub: "기본 7,000원 + 프로모션 4,000원", total24: "24개월 총 264,000원 할인", total24Num: 264000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 }
+        ]
+      }
+    ],
+    basicBenefits: [
+      "KB국민카드 포인트리 적립",
+      "통신비 청구할인"
+    ],
+    details: [
+      "자동이체 필수 등록",
+      "출처: 세이브드림 KT 공식 정책"
+    ]
+  },
+
+  {
+    id: "kt_hana_simple",
+    carrier: "KT",
+    type: "bill",
+    typeLabel: "요금할인",
+    cardCompany: "하나카드",
+    cardName: "KT DC Plus 더 심플 하나카드",
+    theme: "theme-teal",
+    highlightBadge: "30만 실적 1만원 / 80만 실적 1.5만원 청구할인",
+    phone: "하나카드 고객센터 1800-1111",
+    applyUrl: "https://m.hanacard.co.kr/MPACMM101M.web?_frame=no&CD_PD_SEQ=17454",
+    eventTarget: "직전 6개월 무실적 고객 프로모션",
+    cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/814b8298-ea83-4b29-ae81-48b9f42f895c",
+    cardPlateOrientation: "horizontal",
+    supports36Months: false,
+    promo36Months: false,
+    specs: {
+      targetDevice: "통신사 전회선",
+      minPayment: "할부 약정 없음",
+      autoTransfer: "자동이체 필수",
+      annualFee: "국내 2.5만원 / 해외(Master) 2.5만원",
+      installmentInterest: "해당 없음 (할부이자 0원)",
+      applyMethod: "발급 QR코드 스캔 / 공식 모바일 URL"
+    },
+    summary: {
+      installmentSub: "※ 통신요금 자동이체 시 매월 이용실적에 따라 통신비가 청구할인됩니다."
+    },
+    promotions: [
+      {
+        badge: "프로모션할인",
+        title: "매월 통신요금 프로모션할인",
+        condition: "신규 발급 또는 6개월 무실적 고객",
+        highlight: "매월 최대 15,000원",
+        tiers: [
+          { label: "전월 30만원 이상", amount: "월 10,000원 할인", amountNum: 10000, baseAmount: "5,000", promoAmount: "5,000", sub: "기본 5,000원 + 프로모션 5,000원", total24: "24개월 총 240,000원 할인", total24Num: 240000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 },
+          { label: "전월 80만원 이상", amount: "월 15,000원 할인", amountNum: 15000, baseAmount: "10,000", promoAmount: "5,000", sub: "기본 10,000원 + 프로모션 5,000원", total24: "24개월 총 360,000원 할인", total24Num: 360000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 }
+        ]
+      }
+    ],
+    basicBenefits: [
+      "하나머니 적립",
+      "통신비 청구할인"
+    ],
+    details: [
+      "통신요금 자동이체 필수 등록",
+      "출처: 세이브드림 KT 공식 정책"
+    ]
+  },
+
+  {
+    id: "kt_shinhan_uratchacha",
+    carrier: "KT",
+    type: "bill",
+    typeLabel: "요금할인",
+    cardCompany: "신한카드",
+    cardName: "KT 으랏차차 신한카드",
+    theme: "theme-blue",
+    highlightBadge: "50만 실적 2.8만 / 200만 실적 5.8만원 최대 60개월 혜택",
+    phone: "신한카드 고객센터 1544-7000",
+    applyUrl: "https://www.shinhancard.com/pconts/html/card/apply/credit/1235115_2207.html?empSeq=501&btnApp=dp01",
+    eventTarget: "신한은행 결제계좌 등록 및 Master 프로모션 (최대 60개월 청구할인)",
+    cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/ed7ee762-199c-4ee6-adc9-ba259a64ee98",
+    cardPlateOrientation: "horizontal",
+    supports36Months: true,
+    promo36Months: true,
+    specs: {
+      targetDevice: "통신사 전회선",
+      minPayment: "할부 약정 없음",
+      autoTransfer: "자동이체 필수",
+      annualFee: "국내 3.6만원 / 해외(Master) 3.9만원",
+      installmentInterest: "해당 없음 (할부이자 0원)",
+      applyMethod: "발급 QR코드 스캔 / 공식 모바일 URL"
+    },
+    summary: {
+      installmentSub: "※ 통신요금 자동이체 시 매월 이용실적에 따라 통신비가 청구할인됩니다."
+    },
+    promotions: [
+      {
+        badge: "프로모션할인",
+        title: "매월 통신요금 프로모션할인 (최대 36~60개월)",
+        condition: "신규 발급 또는 6개월 무실적 고객 (신한은행 결제계좌 등록 시)",
+        highlight: "매월 최대 58,000원",
+        tiers: [
+          { label: "전월 50만원 이상", amount: "월 28,000원 할인", amountNum: 28000, baseAmount: "12,000", promoAmount: "16,000", sub: "기본 12,000원 + 프로모션 16,000원", total24: "24개월 총 672,000원 할인", total24Num: 672000, total36: "36개월 총 1,008,000원 할인", total36Num: 1008000, total36Note: "36개월간 월 28,000원 할인" },
+          { label: "전월 200만원 이상", amount: "월 58,000원 할인", amountNum: 58000, baseAmount: "33,000", promoAmount: "25,000", sub: "기본 33,000원 + 프로모션 25,000원", total24: "24개월 총 1,392,000원 할인", total24Num: 1392000, total36: "36개월 총 2,088,000원 할인", total36Num: 2088000, total36Note: "36개월간 월 58,000원 할인 (총 208.8만원)" }
+        ]
+      }
+    ],
+    basicBenefits: [
+      "마이신한포인트 적립",
+      "통신요금 고액 이용 고객 특화 할인"
+    ],
+    details: [
+      "신한은행 결제계좌 등록 시 추가 캐시백 제공",
+      "출처: 세이브드림 KT 공식 정책"
+    ]
+  }
+];
+
+
+const LGU_AFFILIATE_CARDS = [
+  // ==================== [LGU+ 라이트할부 7종] ====================
+  {
+    id: "lgu_shinhan_bora",
+    carrier: "LGU",
+    type: "light",
+    typeLabel: "라이트할부",
+    cardCompany: "신한카드",
+    cardName: "신한카드 U+ Bora",
+    theme: "theme-blue",
+    highlightBadge: "최대 57.6만원 할인 & 아파트 관리비 실적 인정",
+    phone: "신한카드 고객센터 080-850-8853",
+    applyUrl: "tel:0808508853",
+    eventTarget: "Master 브랜드 발급 고객 프로모션 (직전 6개월 무실적 고객 / 6개월 무실적 프로모션 혜택)",
+    cardPlateImageUrl: "",
+    cardPlateOrientation: "horizontal",
+    supports36Months: false,
+    promo36Months: false,
+    specs: {
+      targetDevice: "전기종",
+      minPayment: "최소결제금액 5만원 이상",
+      autoTransfer: "자동이체 필수 [장기할부 선택]",
+      annualFee: "국내 2.2만 / Master 2.5만",
+      installmentInterest: "24개월 연 5.9%",
+      applyMethod: "ARS 직통 080-850-8853"
+    },
+    summary: {
+      installmentSub: "※ 단말기 잔여 할부원금은 아래 매월 카드 이용 실적 청구할인 혜택으로 전액 상쇄됩니다."
+    },
+    promotions: [
+      {
+        badge: "프로모션할인",
+        title: "매월 통신요금 프로모션할인 (최대 24개월)",
+        condition: "신규 발급 또는 6개월 무실적 고객 (Master 브랜드)",
+        highlight: "매월 최대 24,000원",
+        tiers: [
+          { label: "전월 40만원 이상", amount: "월 22,000원 할인", amountNum: 22000, baseAmount: "10,000", promoAmount: "12,000", sub: "기본 10,000원 + 프로모션 12,000원 (이후 1.0만)", total24: "24개월 총 528,000원 할인", total24Num: 528000, total36: "36개월 할부 미지원 (24개월 전용)", total36Num: 0 },
+          { label: "전월 80만원 이상", amount: "월 24,000원 할인", amountNum: 24000, baseAmount: "15,000", promoAmount: "9,000", sub: "기본 15,000원 + 프로모션 9,000원 (이후 1.5만)", total24: "24개월 총 576,000원 할인", total24Num: 576000, total36: "36개월 할부 미지원 (24개월 전용)", total36Num: 0 }
+        ]
+      }
+    ],
+    basicBenefits: [
+      "통신비 전월실적 인정",
+      "아파트 관리비 전월실적 인정",
+      "Master 브랜드에 한해 프로모션 할인 적용"
+    ],
+    details: [
+      "최소결제금액 5만원 이상 & 24개월 (할부이자 연 5.9%)",
+      "동일 카드 재발급 시 청구 할인 및 캐시백 프로모션 혜택 적용 불가"
+    ]
+  },
+
+  {
+    id: "lgu_shinhan_smartplan",
+    carrier: "LGU",
+    type: "light",
+    typeLabel: "라이트할부",
+    cardCompany: "신한카드",
+    cardName: "신한카드 스마트플랜 Plus",
+    theme: "theme-blue",
+    highlightBadge: "30만 실적 2.2만 할인 & 관리비 실적 인정",
+    phone: "신한카드 고객센터 080-700-3103",
+    applyUrl: "tel:0807003103",
+    eventTarget: "Master 브랜드 발급 고객 프로모션 (직전 6개월 무실적 고객 / 6개월 무실적 프로모션 혜택)",
+    cardPlateImageUrl: "",
+    cardPlateOrientation: "horizontal",
+    supports36Months: false,
+    promo36Months: false,
+    specs: {
+      targetDevice: "전기종",
+      minPayment: "최소결제금액 5만원 이상",
+      autoTransfer: "자동이체 필수 [장기할부 선택]",
+      annualFee: "국내 2.2만 / Master 2.5만",
+      installmentInterest: "24개월 연 5.9%",
+      applyMethod: "ARS 직통 080-700-3103"
+    },
+    summary: {
+      installmentSub: "※ 단말기 잔여 할부원금은 아래 매월 카드 이용 실적 청구할인 혜택으로 전액 상쇄됩니다."
+    },
+    promotions: [
+      {
+        badge: "프로모션할인",
+        title: "매월 통신요금 프로모션할인 (최대 24개월)",
+        condition: "신규 발급 또는 6개월 무실적 고객 (Master 브랜드)",
+        highlight: "매월 최대 24,000원",
+        tiers: [
+          { label: "전월 30만원 이상", amount: "월 22,000원 할인", amountNum: 22000, baseAmount: "10,000", promoAmount: "12,000", sub: "기본 10,000원 + 프로모션 12,000원 (이후 1.0만)", total24: "24개월 총 528,000원 할인", total24Num: 528000, total36: "36개월 할부 미지원 (24개월 전용)", total36Num: 0 },
+          { label: "전월 70만원 이상", amount: "월 24,000원 할인", amountNum: 24000, baseAmount: "15,000", promoAmount: "9,000", sub: "기본 15,000원 + 프로모션 9,000원 (이후 1.5만)", total24: "24개월 총 576,000원 할인", total24Num: 576000, total36: "36개월 할부 미지원 (24개월 전용)", total36Num: 0 }
+        ]
+      }
+    ],
+    basicBenefits: [
+      "통신비 전월실적 인정",
+      "아파트 관리비 전월실적 인정",
+      "Master 브랜드에 한해 프로모션 할인 적용"
+    ],
+    details: [
+      "최소결제금액 5만원 이상 & 24개월 (할부이자 연 5.9%)",
+      "동일 카드 재발급 시 청구 할인 및 캐시백 프로모션 혜택 적용 불가"
+    ]
+  },
+
+  {
+    id: "lgu_kb_light2",
+    carrier: "LGU",
+    type: "light",
+    typeLabel: "라이트할부",
+    cardCompany: "KB국민카드",
+    cardName: "KB국민 U+ 라이트할부II",
+    theme: "theme-gold",
+    highlightBadge: "최대 64.8만 할인 & 아이폰 구매시 최대 10만 캐시백",
+    phone: "KB국민카드 고객센터 1577-9900",
+    applyUrl: "https://m.kbcard.com",
+    eventTarget: "아이폰18 / 아이폰듀오 구매 시 최대 10만원 추가 캐시백 (직전 6개월 무실적 고객)",
+    cardPlateImageUrl: "",
+    cardPlateOrientation: "horizontal",
+    supports36Months: false,
+    promo36Months: false,
+    specs: {
+      targetDevice: "전기종 (아이폰18/듀오 특화)",
+      minPayment: "최소결제금액 5만원 이상",
+      autoTransfer: "장기할부 필수",
+      annualFee: "2만원",
+      installmentInterest: "24개월 연 5.9%",
+      applyMethod: "발급 QR코드 스캔 / 고객센터 1577-9900"
+    },
+    summary: {
+      installmentSub: "※ 단말기 잔여 할부원금은 아래 매월 카드 이용 실적 청구할인 혜택으로 전액 상쇄됩니다."
+    },
+    promotions: [
+      {
+        badge: "프로모션할인",
+        title: "매월 통신요금 프로모션할인 (최대 24개월)",
+        condition: "신규 발급 또는 6개월 무실적 고객",
+        highlight: "매월 최대 27,000원",
+        tiers: [
+          { label: "전월 30만원 이상", amount: "월 25,000원 할인", amountNum: 25000, baseAmount: "4,000", promoAmount: "21,000", sub: "기본 4,000원 + 프로모션 21,000원 (이후 0.4만)", total24: "24개월 총 600,000원 할인", total24Num: 600000, total36: "36개월 할부 미지원 (24개월 전용)", total36Num: 0 },
+          { label: "전월 70만원 이상", amount: "월 26,000원 할인", amountNum: 26000, baseAmount: "4,000", promoAmount: "22,000", sub: "기본 4,000원 + 프로모션 22,000원 (이후 0.4만)", total24: "24개월 총 624,000원 할인", total24Num: 624000, total36: "36개월 할부 미지원 (24개월 전용)", total36Num: 0 },
+          { label: "전월 100만원 이상", amount: "월 27,000원 할인", amountNum: 27000, baseAmount: "4,000", promoAmount: "23,000", sub: "기본 4,000원 + 프로모션 23,000원 (이후 0.4만)", total24: "24개월 총 648,000원 할인", total24Num: 648000, total36: "36개월 할부 미지원 (24개월 전용)", total36Num: 0 }
+        ]
+      },
+      {
+        badge: "추가 프로모션",
+        title: "아이폰18 / 아이폰듀오 구매고객 최대 10만원 추가 캐시백",
+        condition: "행사 기간 내 대상 단말기 라이트할부 승인 시",
+        benefit: "최대 100,000원 추가 캐시백"
+      }
+    ],
+    basicBenefits: [
+      "통신비 전월실적 인정",
+      "아파트 관리비 전월실적 제외",
+      "전국 대중교통 및 생활가맹점 포인트 적립"
+    ],
+    details: [
+      "장기할부 필수: 최소결제금액 5만원 이상 & 24개월 (할부이자 연 5.9%)",
+      "동일 카드 재발급 시 청구 할인 및 캐시백 프로모션 혜택 적용 불가"
+    ]
+  },
+
+  {
+    id: "lgu_hyundai_m3",
+    carrier: "LGU",
+    type: "light",
+    typeLabel: "라이트할부",
+    cardCompany: "현대카드",
+    cardName: "현대카드 M Edition 3 (통신할인형 2.0)",
+    theme: "theme-red",
+    highlightBadge: "최대 84만원 할인 & 월 최대 3.5만원 청구할인",
+    phone: "현대카드 고객센터 02-2655-6033",
+    applyUrl: "https://www.hyundaicard.com",
+    eventTarget: "현대카드 홈페이지/앱 이벤트 응모 필수 (직전 6개월 무실적 고객)",
+    cardPlateImageUrl: "",
+    cardPlateOrientation: "horizontal",
+    supports36Months: false,
+    promo36Months: false,
+    specs: {
+      targetDevice: "전기종",
+      minPayment: "최소결제금액 5만원 이상",
+      autoTransfer: "자동이체 필수 (장기할부 선택)",
+      annualFee: "2만원",
+      installmentInterest: "24개월 연 5.8%",
+      applyMethod: "발급 QR코드 스캔 (이벤트 응모 필수)"
+    },
+    summary: {
+      installmentSub: "※ 단말기 잔여 할부원금은 아래 매월 카드 이용 실적 청구할인 혜택으로 전액 상쇄됩니다."
+    },
+    promotions: [
+      {
+        badge: "프로모션할인",
+        title: "매월 통신요금 프로모션할인 (최대 24개월)",
+        condition: "신규 발급 또는 6개월 무실적 고객 (이벤트 응모 필수)",
+        highlight: "매월 최대 35,000원",
+        tiers: [
+          { label: "전월 50만원 이상", amount: "월 34,000원 할인", amountNum: 34000, baseAmount: "8,000", promoAmount: "26,000", sub: "프로모션 적용 월 34,000원 할인", total24: "24개월 총 816,000원 할인", total24Num: 816000, total36: "36개월 할부 미지원 (24개월 전용)", total36Num: 0 },
+          { label: "전월 100만원 이상", amount: "월 35,000원 할인", amountNum: 35000, baseAmount: "10,000", promoAmount: "25,000", sub: "프로모션 적용 월 35,000원 할인", total24: "24개월 총 840,000원 할인", total24Num: 840000, total36: "36개월 할부 미지원 (24개월 전용)", total36Num: 0 }
+        ]
+      }
+    ],
+    basicBenefits: [
+      "M포인트 기본 적립 및 가맹점 사용",
+      "통신비 제외, 아파트 관리비 제외, 학교납입금 제외"
+    ],
+    details: [
+      "최소결제금액 5만원 이상 & 24개월 (할부이자 연 5.8%)",
+      "현대카드 홈페이지/앱 이벤트 응모 필수"
+    ]
+  },
+
+  {
+    id: "lgu_woori_36",
+    carrier: "LGU",
+    type: "light",
+    typeLabel: "라이트할부",
+    cardCompany: "우리카드",
+    cardName: "U+ × 36우리카드",
+    theme: "theme-blue",
+    highlightBadge: "36개월 최대 111.6만원 압도적 장기할부 할인",
+    phone: "우리카드 고객센터 1588-9955",
+    applyUrl: "https://m.wooricard.com",
+    eventTarget: "직전 6개월 무실적 프로모션 혜택 (동일카드 탈회 1년 미경과 시 미적용)",
+    cardPlateImageUrl: "",
+    cardPlateOrientation: "horizontal",
+    supports36Months: true,
+    promo36Months: true,
+    specs: {
+      targetDevice: "전기종",
+      minPayment: "최소결제금액 10만원 이상",
+      autoTransfer: "자동이체 필수 (장기할부 선택)",
+      annualFee: "2.5만원",
+      installmentInterest: "36개월 연 7.0%",
+      applyMethod: "발급 QR코드 스캔 / 고객센터 1588-9955"
+    },
+    summary: {
+      installmentSub: "※ 단말기 잔여 할부원금은 아래 매월 카드 이용 실적 청구할인 혜택으로 전액 상쇄됩니다."
+    },
+    promotions: [
+      {
+        badge: "프로모션할인",
+        title: "매월 통신요금 프로모션할인 (최대 36개월)",
+        condition: "신규 발급 또는 6개월 무실적 고객",
+        highlight: "매월 최대 31,000원 (36개월 기준)",
+        tiers: [
+          { label: "전월 40만원 이상", amount: "월 24,000원 할인", amountNum: 24000, baseAmount: "5,000", promoAmount: "19,000", sub: "기본 5,000원 + 프로모션 19,000원 (이후 0.5만)", total24: "24개월 총 576,000원 할인", total24Num: 576000, total36: "36개월 총 864,000원 할인", total36Num: 864000, total36Note: "36개월간 월 24,000원 청구할인" },
+          { label: "전월 80만원 이상", amount: "월 29,000원 할인", amountNum: 29000, baseAmount: "5,000", promoAmount: "24,000", sub: "기본 5,000원 + 프로모션 24,000원 (이후 0.5만)", total24: "24개월 총 696,000원 할인", total24Num: 696000, total36: "36개월 총 1,044,000원 할인", total36Num: 1044000, total36Note: "36개월간 월 29,000원 청구할인" },
+          { label: "전월 120만원 이상", amount: "월 31,000원 할인", amountNum: 31000, baseAmount: "5,000", promoAmount: "26,000", sub: "기본 5,000원 + 프로모션 26,000원 (이후 0.5만)", total24: "24개월 총 744,000원 할인", total24Num: 744000, total36: "36개월 총 1,116,000원 할인", total36Num: 1116000, total36Note: "36개월간 월 31,000원 청구할인 (총 111.6만원)" }
+        ]
+      }
+    ],
+    basicBenefits: [
+      "통신비 전월실적 인정",
+      "아파트 관리비 전월실적 제외",
+      "우리카드 모아포인트 기본 적립"
+    ],
+    details: [
+      "최소결제금액 10만원 이상 & 36개월 (할부이자 연 7.0%)",
+      "우리카드의 경우 동일카드 탈회 1년 미경과 시 프로모션 할인 혜택 미적용"
+    ]
+  },
+
+  {
+    id: "lgu_samsung_light",
+    carrier: "LGU",
+    type: "light",
+    typeLabel: "라이트할부",
+    cardCompany: "삼성카드",
+    cardName: "U+ 라이트 삼성카드",
+    theme: "theme-blue",
+    highlightBadge: "36개월 최대 86.4만 할인 & JCB 2.5만 추가 캐시백",
+    phone: "삼성카드 고객센터 1588-8700",
+    applyUrl: "https://www.samsungcard.com",
+    eventTarget: "JCB브랜드 발급 시 2.5만원 캐시백 (직전 6개월 무실적 고객)",
+    cardPlateImageUrl: "",
+    cardPlateOrientation: "horizontal",
+    supports36Months: true,
+    promo36Months: true,
+    specs: {
+      targetDevice: "전기종",
+      minPayment: "최소결제금액 10만원 이상",
+      autoTransfer: "장기할부 필수",
+      annualFee: "2.5만원",
+      installmentInterest: "24개월 연 5.9% / 36개월 연 5.9%",
+      applyMethod: "발급 QR코드 스캔 / 공식 모바일 URL"
+    },
+    summary: {
+      installmentSub: "※ 단말기 잔여 할부원금은 아래 매월 카드 이용 실적 청구할인 혜택으로 전액 상쇄됩니다."
+    },
+    promotions: [
+      {
+        badge: "프로모션할인",
+        title: "매월 통신요금 프로모션할인 (최대 36개월)",
+        condition: "신규 발급 또는 6개월 무실적 고객",
+        highlight: "매월 최대 24,000원 (36개월 기준)",
+        tiers: [
+          { label: "전월 40만원 이상", amount: "월 22,000원 할인", amountNum: 22000, baseAmount: "3,000", promoAmount: "19,000", sub: "기본 3,000원 + 프로모션 19,000원 (이후 0.3만)", total24: "24개월 총 528,000원 할인", total24Num: 528000, total36: "36개월 총 792,000원 할인", total36Num: 792000, total36Note: "36개월간 월 22,000원 청구할인" },
+          { label: "전월 80만원 이상", amount: "월 23,000원 할인", amountNum: 23000, baseAmount: "5,000", promoAmount: "18,000", sub: "기본 5,000원 + 프로모션 18,000원 (이후 0.5만)", total24: "24개월 총 552,000원 할인", total24Num: 552000, total36: "36개월 총 828,000원 할인", total36Num: 828000, total36Note: "36개월간 월 23,000원 청구할인" },
+          { label: "전월 120만원 이상", amount: "월 24,000원 할인", amountNum: 24000, baseAmount: "8,000", promoAmount: "16,000", sub: "기본 8,000원 + 프로모션 16,000원 (이후 0.8만)", total24: "24개월 총 576,000원 할인", total24Num: 576000, total36: "36개월 총 864,000원 할인", total36Num: 864000, total36Note: "36개월간 월 24,000원 청구할인 (총 86.4만원)" }
+        ]
+      },
+      {
+        badge: "추가 프로모션",
+        title: "JCB브랜드 발급 특별 캐시백",
+        condition: "JCB브랜드 발급 후 장기할부 승인 시",
+        benefit: "25,000원 캐시백"
+      }
+    ],
+    basicBenefits: [
+      "통신비 전월실적 인정",
+      "아파트 관리비 제외, 학교납입금 & 교통비 제외"
+    ],
+    details: [
+      "최소결제금액 10만원 이상 & 장기할부 필수 (할부이자 연 5.9%)",
+      "LG U+ 삼성카드는 가족카드 발급 불가"
+    ]
+  },
+
+  {
+    id: "lgu_lotte_light",
+    carrier: "LGU",
+    type: "light",
+    typeLabel: "라이트할부",
+    cardCompany: "롯데카드",
+    cardName: "U+ × LOCA 라이트할부",
+    theme: "theme-red",
+    highlightBadge: "최대 84만원 할인 & 50만 실적 3.4만 할인",
+    phone: "롯데카드 고객센터 1588-8100",
+    applyUrl: "http://m.lottecard.co.kr",
+    eventTarget: "직전 6개월 무실적 고객 프로모션 (롯데카드는 가족카드 발급 불가)",
+    cardPlateImageUrl: "",
+    cardPlateOrientation: "horizontal",
+    supports36Months: false,
+    promo36Months: false,
+    specs: {
+      targetDevice: "전기종",
+      minPayment: "최소결제금액 10만원 이상",
+      autoTransfer: "장기할부 필수",
+      annualFee: "2.5만원",
+      installmentInterest: "24개월 연 5.9%",
+      applyMethod: "발급 QR코드 스캔 / 고객센터 1588-8100"
+    },
+    summary: {
+      installmentSub: "※ 단말기 잔여 할부원금은 아래 매월 카드 이용 실적 청구할인 혜택으로 전액 상쇄됩니다."
+    },
+    promotions: [
+      {
+        badge: "프로모션할인",
+        title: "매월 통신요금 프로모션할인 (최대 24개월)",
+        condition: "신규 발급 또는 6개월 무실적 고객",
+        highlight: "매월 최대 35,000원",
+        tiers: [
+          { label: "전월 50만원 이상", amount: "월 34,000원 할인", amountNum: 34000, baseAmount: "10,000", promoAmount: "24,000", sub: "기본 10,000원 + 프로모션 24,000원 (이후 1.0만)", total24: "24개월 총 816,000원 할인", total24Num: 816000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 },
+          { label: "전월 100만원 이상", amount: "월 35,000원 할인", amountNum: 35000, baseAmount: "15,000", promoAmount: "20,000", sub: "기본 15,000원 + 프로모션 20,000원 (이후 1.5만)", total24: "24개월 총 840,000원 할인", total24Num: 840000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 }
+        ]
+      }
+    ],
+    basicBenefits: [
+      "통신비 전월실적 인정",
+      "아파트 관리비 전월실적 제외",
+      "롯데백화점 5% 할인쿠폰 및 무료주차권"
+    ],
+    details: [
+      "최소결제금액 10만원 이상 & 24개월 (할부이자 연 5.9%)",
+      "롯데카드는 가족카드 발급 불가"
+    ]
+  },
+
+  // ==================== [LGU+ 요금할인 5종] ====================
+  {
+    id: "lgu_samsung_bill",
+    carrier: "LGU",
+    type: "bill",
+    typeLabel: "요금할인",
+    cardCompany: "삼성카드",
+    cardName: "LG U+ 삼성카드",
+    theme: "theme-blue",
+    highlightBadge: "최대 52.8만원 요금할인 & 30만 실적 2만 할인",
+    phone: "삼성카드 고객센터 1800-1068",
+    applyUrl: "tel:18001068",
+    eventTarget: "직전 6개월 무실적 프로모션 혜택 (가족카드 발급 불가)",
+    cardPlateImageUrl: "",
+    cardPlateOrientation: "horizontal",
+    supports36Months: false,
+    promo36Months: false,
+    specs: {
+      targetDevice: "통신사 전회선 (자동이체)",
+      minPayment: "최소 10만원 이상 (장기할부 선택 시)",
+      autoTransfer: "자동이체 필수 (장기할부 선택)",
+      annualFee: "2만원",
+      installmentInterest: "24개월 연 5.9%",
+      applyMethod: "전화 신청 1800-1068"
+    },
+    summary: {
+      installmentSub: "※ 통신요금 자동이체 시 매월 이용실적에 따라 통신비가 청구할인됩니다."
+    },
+    promotions: [
+      {
+        badge: "프로모션할인",
+        title: "매월 통신요금 프로모션할인 (최대 24개월)",
+        condition: "신규 발급 또는 6개월 무실적 고객",
+        highlight: "매월 최대 22,000원",
+        tiers: [
+          { label: "전월 30만원 이상", amount: "월 20,000원 할인", amountNum: 20000, baseAmount: "7,000", promoAmount: "13,000", sub: "기본 7,000원 + 프로모션 13,000원 (이후 0.7만)", total24: "24개월 총 480,000원 할인", total24Num: 480000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 },
+          { label: "전월 70만원 이상", amount: "월 21,000원 할인", amountNum: 21000, baseAmount: "10,000", promoAmount: "11,000", sub: "기본 10,000원 + 프로모션 11,000원 (이후 1.0만)", total24: "24개월 총 504,000원 할인", total24Num: 504000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 },
+          { label: "전월 120만원 이상", amount: "월 22,000원 할인", amountNum: 22000, baseAmount: "13,000", promoAmount: "9,000", sub: "기본 13,000원 + 프로모션 9,000원 (이후 1.3만)", total24: "24개월 총 528,000원 할인", total24Num: 528000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 }
+        ]
+      }
+    ],
+    basicBenefits: [
+      "통신비 전월실적 인정",
+      "아파트 관리비 제외, 학교납입금 & 교통비 제외"
+    ],
+    details: [
+      "자동이체 필수 등록",
+      "LG U+ 삼성카드는 가족카드 발급 불가"
+    ]
+  },
+
+  {
+    id: "lgu_lotte_dc",
+    carrier: "LGU",
+    type: "bill",
+    typeLabel: "요금할인",
+    cardCompany: "롯데카드",
+    cardName: "U+ DC 롯데카드 (New)",
+    theme: "theme-red",
+    highlightBadge: "신규 출시 요금할인 & 40만 실적 2.8만 청구할인",
+    phone: "롯데카드 고객센터 1588-8100",
+    applyUrl: "http://m.lottecard.co.kr",
+    eventTarget: "직전 6개월 무실적 고객 프로모션 (장기할부 불가 상품)",
+    cardPlateImageUrl: "",
+    cardPlateOrientation: "horizontal",
+    supports36Months: false,
+    promo36Months: false,
+    specs: {
+      targetDevice: "통신사 전회선 (자동이체)",
+      minPayment: "장기할부 불가 (요금할인 전용)",
+      autoTransfer: "자동이체 필수",
+      annualFee: "2.5만원",
+      installmentInterest: "해당 없음 (할부이자 0원)",
+      applyMethod: "발급 QR코드 스캔 / 고객센터"
+    },
+    summary: {
+      installmentSub: "※ 통신요금 자동이체 시 매월 이용실적에 따라 통신비가 청구할인됩니다."
+    },
+    promotions: [
+      {
+        badge: "프로모션할인",
+        title: "매월 통신요금 프로모션할인 (최대 24개월)",
+        condition: "신규 발급 또는 6개월 무실적 고객",
+        highlight: "매월 최대 29,000원",
+        tiers: [
+          { label: "전월 40만원 이상", amount: "월 28,000원 할인", amountNum: 28000, baseAmount: "5,000", promoAmount: "23,000", sub: "기본 5,000원 + 프로모션 23,000원 (이후 0.5만)", total24: "24개월 총 672,000원 할인", total24Num: 672000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 },
+          { label: "전월 80만원 이상", amount: "월 29,000원 할인", amountNum: 29000, baseAmount: "8,000", promoAmount: "21,000", sub: "기본 8,000원 + 프로모션 21,000원 (이후 0.8만)", total24: "24개월 총 696,000원 할인", total24Num: 696000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 }
+        ]
+      }
+    ],
+    basicBenefits: [
+      "통신비 제외, 아파트 관리비 제외, 학교납입금 & 교통비 제외",
+      "롯데백화점 5% 할인쿠폰 및 무료주차권"
+    ],
+    details: [
+      "본 카드는 장기할부 불가 상품입니다 (자동이체 전용 요금할인)",
+      "롯데카드는 가족카드 발급 불가"
+    ]
+  },
+
+  {
+    id: "lgu_lotte_loca",
+    carrier: "LGU",
+    type: "bill",
+    typeLabel: "요금할인",
+    cardCompany: "롯데카드",
+    cardName: "LG U+ × LOCA",
+    theme: "theme-red",
+    highlightBadge: "36개월 최대 79.2만원 요금할인 & 30만 실적 2만 할인",
+    phone: "롯데카드 고객센터 1588-8100",
+    applyUrl: "http://m.lottecard.co.kr",
+    eventTarget: "직전 6개월 무실적 고객 프로모션 (가족카드 발급 불가)",
+    cardPlateImageUrl: "",
+    cardPlateOrientation: "horizontal",
+    supports36Months: true,
+    promo36Months: true,
+    specs: {
+      targetDevice: "통신사 전회선 (자동이체)",
+      minPayment: "최소결제금액 5만원 이상",
+      autoTransfer: "자동이체 필수 (장기할부 선택)",
+      annualFee: "2만원",
+      installmentInterest: "24개월 연 7.0%",
+      applyMethod: "발급 QR코드 스캔 / 고객센터"
+    },
+    summary: {
+      installmentSub: "※ 통신요금 자동이체 시 매월 이용실적에 따라 통신비가 청구할인됩니다."
+    },
+    promotions: [
+      {
+        badge: "프로모션할인",
+        title: "매월 통신요금 프로모션할인 (최대 36개월)",
+        condition: "신규 발급 또는 6개월 무실적 고객",
+        highlight: "매월 최대 22,000원 (36개월 기준)",
+        tiers: [
+          { label: "전월 30만원 이상", amount: "월 20,000원 할인", amountNum: 20000, baseAmount: "6,000", promoAmount: "14,000", sub: "기본 6,000원 + 프로모션 14,000원 (이후 0.6만)", total24: "24개월 총 480,000원 할인", total24Num: 480000, total36: "36개월 총 720,000원 할인", total36Num: 720000, total36Note: "36개월간 월 20,000원 청구할인" },
+          { label: "전월 70만원 이상", amount: "월 21,000원 할인", amountNum: 21000, baseAmount: "8,000", promoAmount: "13,000", sub: "기본 8,000원 + 프로모션 13,000원 (이후 0.8만)", total24: "24개월 총 504,000원 할인", total24Num: 504000, total36: "36개월 총 756,000원 할인", total36Num: 756000, total36Note: "36개월간 월 21,000원 청구할인" },
+          { label: "전월 120만원 이상", amount: "월 22,000원 할인", amountNum: 22000, baseAmount: "10,000", promoAmount: "12,000", sub: "기본 10,000원 + 프로모션 12,000원 (이후 1.0만)", total24: "24개월 총 528,000원 할인", total24Num: 528000, total36: "36개월 총 792,000원 할인", total36Num: 792000, total36Note: "36개월간 월 22,000원 청구할인 (총 79.2만원)" }
+        ]
+      }
+    ],
+    basicBenefits: [
+      "통신비 제외, 아파트 관리비 제외, 학교납입금 & 교통비 제외"
+    ],
+    details: [
+      "자동이체 필수 등록 (장기할부 선택 시 5만원 이상 & 연 7.0%)",
+      "롯데카드는 가족카드 발급 불가"
+    ]
+  },
+
+  {
+    id: "lgu_hana_family",
+    carrier: "LGU",
+    type: "bill",
+    typeLabel: "요금할인",
+    cardCompany: "하나카드",
+    cardName: "LG U+ family 카드",
+    theme: "theme-teal",
+    highlightBadge: "통신요금 납부액 25% 청구할인 & 최대 60만원 할인",
+    phone: "하나카드 고객센터 1800-4701",
+    applyUrl: "tel:18004701",
+    eventTarget: "1~24개월차 통신요금 25% 할인, 25개월차부터 15% 할인 (6개월 무실적 고객)",
+    cardPlateImageUrl: "",
+    cardPlateOrientation: "horizontal",
+    supports36Months: false,
+    promo36Months: false,
+    specs: {
+      targetDevice: "통신사 전회선 (자동이체)",
+      minPayment: "최소결제금액 10만원 이상",
+      autoTransfer: "자동이체 필수 (장기할부 선택)",
+      annualFee: "Master/UPI 2.5만 / AMEX 3.0만",
+      installmentInterest: "24개월 연 5.9%",
+      applyMethod: "전화 신청 1800-4701"
+    },
+    summary: {
+      installmentSub: "※ 통신요금 자동이체 시 매월 이용실적에 따라 통신비가 청구할인됩니다."
+    },
+    promotions: [
+      {
+        badge: "프로모션할인",
+        title: "매월 통신요금 25% 프로모션할인 (최대 24개월)",
+        condition: "신규 발급 또는 6개월 무실적 고객 (1~24회차 25% 할인)",
+        highlight: "매월 최대 25,000원",
+        tiers: [
+          { label: "전월 30만원 이상", amount: "월 24,000원 할인", amountNum: 24000, baseAmount: "17,000", promoAmount: "7,000", sub: "통신요금 납부액 25% 할인 (25회차부터 1.7만)", total24: "24개월 총 576,000원 할인", total24Num: 576000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 },
+          { label: "전월 70만원 이상", amount: "월 25,000원 할인", amountNum: 25000, baseAmount: "25,000", promoAmount: "0", sub: "통신요금 납부액 25% 할인 (25회차부터 2.5만)", total24: "24개월 총 600,000원 할인", total24Num: 600000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 }
+        ]
+      }
+    ],
+    basicBenefits: [
+      "통신비 제외, 아파트 관리비 제외, 학교납입금 제외",
+      "하나머니 기본 적립 및 가맹점 제휴 혜택"
+    ],
+    details: [
+      "최소결제금액 10만원 이상 & 24개월 (할부이자 연 5.9%)",
+      "자동이체 필수 등록"
+    ]
+  },
+
+  {
+    id: "lgu_nh_allone",
+    carrier: "LGU",
+    type: "bill",
+    typeLabel: "요금할인",
+    cardCompany: "NH농협카드",
+    cardName: "NH농협 올원 U+",
+    theme: "theme-green",
+    highlightBadge: "최대 64.8만 할인 & 70만 실적 2.7만 청구할인",
+    phone: "NH농협카드 고객센터 1644-4000",
+    applyUrl: "https://card.nonghyup.com",
+    eventTarget: "직전 6개월 무실적 프로모션 혜택 (자동이체 전용 상품)",
+    cardPlateImageUrl: "",
+    cardPlateOrientation: "horizontal",
+    supports36Months: false,
+    promo36Months: false,
+    specs: {
+      targetDevice: "통신사 전회선 (자동이체)",
+      minPayment: "장기할부 없음 (자동이체 전용)",
+      autoTransfer: "자동이체 필수",
+      annualFee: "W 1.5만원 / Master 1.7만원",
+      installmentInterest: "해당 없음 (할부이자 0원)",
+      applyMethod: "발급 QR코드 스캔 / 고객센터"
+    },
+    summary: {
+      installmentSub: "※ 통신요금 자동이체 시 매월 이용실적에 따라 통신비가 청구할인됩니다."
+    },
+    promotions: [
+      {
+        badge: "프로모션할인",
+        title: "매월 통신요금 프로모션할인 (최대 24개월)",
+        condition: "신규 발급 또는 6개월 무실적 고객",
+        highlight: "매월 최대 27,000원",
+        tiers: [
+          { label: "전월 30만원 이상", amount: "월 21,000원 할인", amountNum: 21000, baseAmount: "9,000", promoAmount: "12,000", sub: "기본 9,000원 + 프로모션 12,000원 (이후 0.9만)", total24: "24개월 총 504,000원 할인", total24Num: 504000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 },
+          { label: "전월 70만원 이상", amount: "월 27,000원 할인", amountNum: 27000, baseAmount: "15,000", promoAmount: "12,000", sub: "기본 15,000원 + 프로모션 12,000원 (이후 1.5만)", total24: "24개월 총 648,000원 할인", total24Num: 648000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 }
+        ]
+      }
+    ],
+    basicBenefits: [
+      "통신비 제외, 아파트 관리비 제외, 학교납입금 제외",
+      "농협 하나로클럽 및 농협 계열사 할인 혜택"
+    ],
+    details: [
+      "자동이체 필수 등록 (장기할부 없음)",
+      "전월실적 제외: 상품권, 세금, 공과금 등"
+    ]
+  }
+];
+
+
 const AFFILIATE_CARDS_BY_CARRIER = {
   SKT: SKT_AFFILIATE_CARDS,
-  KT: [],
-  LGU: []
+  KT: KT_AFFILIATE_CARDS,
+  LGU: LGU_AFFILIATE_CARDS,
+  'LGU+': LGU_AFFILIATE_CARDS
 };
 
 function generateQrFromUrl(url, callback) {
@@ -6264,6 +7638,8 @@ function setAffiliateMonths(m) {
 
 function setAffiliateTargetTier(idx) {
   currentAffiliateTierIndex = parseInt(idx, 10) || 0;
+  const sel = document.getElementById('affTargetTier');
+  if (sel) sel.value = currentAffiliateTierIndex;
   customInstallmentTotal = null;
   customInstallmentMonthly = null;
   renderCardPreview();
@@ -6287,30 +7663,66 @@ function handleCustomInstallmentAmount(type, valueStr) {
 
 function setAffiliateCarrier(carrier) {
   const normCarrier = carrier.replace('+', '').trim().toUpperCase(); // 'SKT', 'KT', 'LGU'
-  if (normCarrier === 'KT' || normCarrier === 'LGU') {
-    alert(`[${carrier} 제휴카드 안내]\n\n통신사에서 매월 배포하는 ${carrier} 제휴카드 정리 엑셀표를 전달해 주시면, 지금 보시는 SKT 화면처럼 모든 카드 혜택과 발급 QR이 100% 자동완성되도록 즉시 활성화해 드립니다!\n\n현재 11월 공식 정책 15종이 전면 적용된 SKT 제휴카드를 먼저 테스트 및 사용해 보세요.`);
-    return;
-  }
-  currentAffiliateCarrier = 'SKT';
+  currentAffiliateCarrier = normCarrier;
   
   // UI 버튼 스타일 갱신 (화이트 앤 로즈 테마)
   const sktBtn = document.getElementById('affCarrierBtn-SKT');
   const ktBtn = document.getElementById('affCarrierBtn-KT');
   const lguBtn = document.getElementById('affCarrierBtn-LGU');
-  if (sktBtn) {
-    sktBtn.className = "py-2.5 px-2 rounded-xl bg-rose-500 text-white font-black shadow-xs transition flex items-center justify-center gap-1.5";
+  
+  const activeClass = "py-2.5 px-2 rounded-xl bg-rose-500 text-white font-black shadow-xs transition flex items-center justify-center gap-1.5";
+  const inactiveClass = "py-2.5 px-2 rounded-xl bg-slate-50 text-slate-700 border border-slate-200 hover:text-slate-900 hover:bg-slate-100 transition flex items-center justify-center gap-1.5";
+  
+  if (sktBtn) sktBtn.className = (normCarrier === 'SKT') ? activeClass : inactiveClass;
+  if (ktBtn) ktBtn.className = (normCarrier === 'KT') ? activeClass : inactiveClass;
+  if (lguBtn) lguBtn.className = (normCarrier === 'LGU') ? activeClass : inactiveClass;
+
+  // KT 정기 최신화 안내 배너 토글 (매달 1, 3, 5, 15일)
+  const ktBanner = document.getElementById('ktScheduleBanner');
+  if (ktBanner) {
+    if (normCarrier === 'KT') {
+      ktBanner.classList.remove('hidden');
+      ktBanner.style.display = 'flex';
+    } else {
+      ktBanner.classList.add('hidden');
+      ktBanner.style.display = 'none';
+    }
   }
-  if (ktBtn) {
-    ktBtn.className = "py-2.5 px-2 rounded-xl bg-slate-50 text-slate-400 border border-slate-200 hover:text-slate-600 transition flex items-center justify-center gap-1.5";
-  }
-  if (lguBtn) {
-    lguBtn.className = "py-2.5 px-2 rounded-xl bg-slate-50 text-slate-400 border border-slate-200 hover:text-slate-600 transition flex items-center justify-center gap-1.5";
+
+  // 통신사별 카드 수치 및 종류 필터 갱신
+  const allCards = AFFILIATE_CARDS_BY_CARRIER[currentAffiliateCarrier] || [];
+  const lightN = allCards.filter(c => c.type === 'light').length;
+  const billN = allCards.filter(c => c.type === 'bill').length;
+  const totalN = allCards.length;
+
+  const allBtn = document.getElementById('affTypeBtn-all');
+  const lightBtn = document.getElementById('affTypeBtn-light');
+  const billBtn = document.getElementById('affTypeBtn-bill');
+  if (allBtn) allBtn.innerText = `전체 (${totalN})`;
+  if (lightBtn) lightBtn.innerText = `라이트할부 (${lightN})`;
+  if (billBtn) billBtn.innerText = `요금할인 (${billN})`;
+
+  // 현재 필터된 타입에 카드가 없으면 'all'로 리셋
+  if (currentAffiliateType !== 'all') {
+    const hasType = allCards.some(c => c.type === currentAffiliateType);
+    if (!hasType) {
+      currentAffiliateType = 'all';
+      ['all', 'light', 'bill'].forEach(t => {
+        const btn = document.getElementById('affTypeBtn-' + t);
+        if (!btn) return;
+        if (t === 'all') {
+          btn.className = "py-1.5 px-2.5 rounded-lg text-xs font-black bg-rose-500 text-white shadow-xs transition";
+        } else {
+          btn.className = "py-1.5 px-2.5 rounded-lg text-xs font-bold bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 transition";
+        }
+      });
+    }
   }
 
   renderAffiliateCardSelector();
-  const allCards = AFFILIATE_CARDS_BY_CARRIER[currentAffiliateCarrier] || [];
-  if (allCards.length > 0) {
-    handleSelectAffiliateCard(allCards[0].id);
+  const filtered = currentAffiliateType === 'all' ? allCards : allCards.filter(c => c.type === currentAffiliateType);
+  if (filtered.length > 0) {
+    handleSelectAffiliateCard(filtered[0].id);
   }
 }
 
@@ -6861,12 +8273,12 @@ function handleSelectAffiliateCard(cardId) {
       const totalFormatted = Number(displayTotalNum).toLocaleString();
       const monthlyFormatted = Number(displayMonthlyNum).toLocaleString();
 
-      // 3열 실적 카드 HTML (선택된 실적 구간 색상 하이라이트 & '선택 실적' 텍스트/아이콘 완전 제거)
+      // 3열 실적 카드 HTML (선택된 실적 구간 색상 하이라이트 & 클릭 시 해당 실적 즉시 선택 동기화)
       const tiersHtml = tiers.map((t, idx) => {
         const isSelected = (idx === currentAffiliateTierIndex);
         const totalSavings = (currentAffiliateMonths === 36 && t.total36) ? t.total36 : (t.total24 || t.total);
         return `
-          <div class="${isSelected ? 'bg-rose-50/70 rounded-xl p-2.5 sm:p-3 border-2 border-rose-500 shadow-sm ring-2 ring-rose-200' : 'bg-white rounded-xl p-2.5 sm:p-3 border border-slate-200/90 shadow-2xs'} flex flex-col justify-between text-center relative overflow-hidden transition-all">
+          <div onclick="setAffiliateTargetTier(${idx})" title="클릭 시 '${t.label}' 실적 기준으로 즉시 변경됩니다" class="${isSelected ? 'bg-rose-50/70 rounded-xl p-2.5 sm:p-3 border-2 border-rose-500 shadow-sm ring-2 ring-rose-200' : 'bg-white rounded-xl p-2.5 sm:p-3 border border-slate-200/90 shadow-2xs hover:border-rose-300 hover:shadow-xs'} cursor-pointer flex flex-col justify-between text-center relative overflow-hidden transition-all duration-150 transform hover:scale-[1.01] active:scale-95">
             <div class="absolute top-0 left-0 right-0 h-1.5 ${isSelected ? 'bg-rose-500' : theme.headerBg}"></div>
             <div class="pt-0.5">
               <span class="inline-block text-[10.5px] font-black ${isSelected ? 'text-rose-700 bg-rose-100/90 border border-rose-200' : 'text-slate-600 bg-slate-100'} px-2 py-0.5 rounded-md mb-1">${t.label}</span>
@@ -6998,7 +8410,11 @@ function handleSelectAffiliateCard(cardId) {
               <div id="cardPlateBox" class="${isVertical ? 'w-20 sm:w-24 h-32 sm:h-36' : 'w-32 sm:w-36 h-20 sm:h-24'} rounded-xl shadow-md border ${theme.isDark ? 'border-white/30' : 'border-slate-300'} overflow-hidden relative flex items-center justify-center shrink-0 bg-white/10 transition-all p-1">
                 ${cardData.cardPlateImageUrl 
                   ? `<img src="${cardData.cardPlateImageUrl}" class="w-full h-full object-contain rounded-lg drop-shadow-sm" alt="${cardData.cardName}" />` 
-                  : `<div class="w-full h-full flex flex-col items-center justify-center text-center text-white/80 text-[10px] font-bold"><span>실물 카드</span></div>`}
+                  : `<div class="w-full h-full rounded-lg bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 text-white p-2 flex flex-col justify-between shadow-inner">
+                       <div class="flex items-center justify-between text-[8px] tracking-wider text-slate-300 font-bold"><span>${cardData.cardCompany}</span><span class="w-3.5 h-2.5 bg-amber-400/90 rounded-xs inline-block"></span></div>
+                       <div class="text-[9px] font-black truncate text-amber-200 leading-tight">${cardData.cardName}</div>
+                       <div class="text-[7.5px] text-slate-400 font-mono tracking-widest leading-none">•••• ••••</div>
+                     </div>`}
               </div>
 
               <!-- 최상단 우측 카드 간편 발급 신청 QR 박스 -->
@@ -9046,6 +10462,7 @@ JSON 규격:
   </script>
 </body>
 </html>
+
 
 
 
