@@ -110,7 +110,7 @@
     theme: "theme-gold",
     highlightBadge: "최대 64.8만 할인 & 아이폰 구매시 최대 10만 캐시백",
     phone: "KB국민카드 고객센터 1577-9900",
-    applyUrl: "https://m.kbcard.com",
+    applyUrl: "https://card.kbcard.com/BON/DVIEW/HBBMCXCRVNEC0001?mainCC=a&eventNum=1001667",
     eventTarget: "아이폰18 / 아이폰듀오 구매 시 최대 10만원 추가 캐시백 (직전 6개월 무실적 고객)",
     cardPlateImageUrl: "",
     cardPlateOrientation: "horizontal",
@@ -166,10 +166,10 @@
     cardName: "현대카드 M Edition 3 (통신할인형 2.0)",
     theme: "theme-red",
     highlightBadge: "최대 84만원 할인 & 월 최대 3.5만원 청구할인",
-    phone: "현대카드 고객센터 02-2655-6033",
-    applyUrl: "https://www.hyundaicard.com",
+    phone: "현대카드 고객센터 1577-6000 (발급예약 02-2655-6033)",
+    applyUrl: "https://www.hyundaicard.com/cpc/cr/CPCCR0201_01.hc?cardwcd=MLGTE3",
     eventTarget: "현대카드 홈페이지/앱 이벤트 응모 필수 (직전 6개월 무실적 고객)",
-    cardPlateImageUrl: "",
+    cardPlateImageUrl: "https://img.hyundaicard.com/img/com/card_big_h/card_MLGTE3_h.png",
     cardPlateOrientation: "horizontal",
     supports36Months: false,
     promo36Months: false,
@@ -267,7 +267,7 @@
     theme: "theme-blue",
     highlightBadge: "36개월 최대 86.4만 할인 & JCB 2.5만 추가 캐시백",
     phone: "삼성카드 고객센터 1588-8700",
-    applyUrl: "https://www.samsungcard.com",
+    applyUrl: "https://www.samsungcard.com/home/card/cardinfo/PGHPPCCCardCardinfoDetails001?code=AAP1893",
     eventTarget: "JCB브랜드 발급 시 2.5만원 캐시백 (직전 6개월 무실적 고객)",
     cardPlateImageUrl: "",
     cardPlateOrientation: "horizontal",
@@ -610,3 +610,4 @@
     ]
   }
 ];
+
