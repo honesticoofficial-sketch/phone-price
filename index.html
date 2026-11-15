@@ -10653,7 +10653,7 @@ JSON 규격:
     } catch(e) {}
 
   
-    // ==================== 넷가표 이미지 캡처/저장 기능 (항목 2) ====================
+        // ==================== 넷가표 이미지 캡처/저장 기능 (항목 2) ====================
     async function captureNetTableImage() {
       const modeKo = (netDisplayMode === 'both') 
         ? '전체보기 (기본 + 올부가)' 
@@ -10676,30 +10676,30 @@ JSON 규격:
       wrap.style.fontFamily = '"Pretendard Variable", Pretendard, sans-serif';
 
       // 상단 헤더: 매장명, 넷가표 타이틀, 보기 모드, 기준일시
-      wrap.innerHTML = 
+      wrap.innerHTML = `
         <div style="background: linear-gradient(135deg, #0f172a, #1e293b); color: white; padding: 22px 26px; border-radius: 16px; margin-bottom: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.12);">
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <div>
               <div style="display: flex; align-items: center; gap: 10px;">
-                <span style="background: #3b82f6; color: white; padding: 4px 12px; border-radius: 8px; font-weight: 900; font-size: 14px; letter-spacing: -0.3px;"> + (currentStoreName || '원조폰') + </span>
+                <span style="background: #3b82f6; color: white; padding: 4px 12px; border-radius: 8px; font-weight: 900; font-size: 14px; letter-spacing: -0.3px;">${currentStoreName || '원조폰'}</span>
                 <h2 style="font-size: 24px; font-weight: 900; margin: 0; letter-spacing: -0.5px;">실시간 넷가 산출표</h2>
               </div>
               <p style="margin: 8px 0 0 0; font-size: 13px; color: #94a3b8; font-weight: 600;">
-                적용 기준: <b style="color: #38bdf8;"> + modeKo + </b> · 실시간 단가 및 공시지원금 연동
+                적용 기준: <b style="color: #38bdf8;">${modeKo}</b> · 실시간 단가 및 공시지원금 연동
               </p>
             </div>
             <div style="text-align: right;">
               <div style="font-size: 12px; color: #94a3b8; font-weight: 600;">산출 기준일시</div>
-              <div style="font-size: 15px; font-weight: 800; color: #ffffff; margin-top: 2px;"> + todayStr + </div>
+              <div style="font-size: 15px; font-weight: 800; color: #ffffff; margin-top: 2px;">${todayStr}</div>
             </div>
           </div>
         </div>
         <div id="netCaptureTableSlot"></div>
         <div style="margin-top: 16px; display: flex; justify-content: space-between; font-size: 12px; color: #64748b; font-weight: 600; padding: 0 4px;">
           <span>* 본 넷가표는 당일 대리점 정책 단가 및 공시지원금 기준 넷가 계산 결과입니다.</span>
-          <span> + (currentStoreName || '원조폰') +  NET PRICE SYSTEM</span>
+          <span>${currentStoreName || '원조폰'} NET PRICE SYSTEM</span>
         </div>
-      ;
+      `;
 
       // 넷가 테이블 복제 및 불필요한 컨트롤 제거 (순수 기종명 및 가격만 보존)
       const origTable = document.querySelector('#calcTableContainer table');
@@ -10745,7 +10745,7 @@ JSON 규격:
         // PNG 파일 자동 다운로드
         const cleanStore = (currentStoreName || '매장').replace(/[^가-힣a-zA-Z0-9]/g, '');
         const cleanMode = modeKo.replace(/[^가-힣a-zA-Z0-9]/g, '');
-        const filename = 넷가표___.png;
+        const filename = `넷가표_${cleanStore}_${cleanMode}_${new Date().toISOString().slice(0,10)}.png`;
 
         const link = document.createElement('a');
         link.download = filename;
@@ -10759,7 +10759,7 @@ JSON 규격:
           }
         });
 
-        alert(✅ [넷가표 캡처 완료]\n\n [] 넷가표 이미지가 고해상도 PNG 파일로 저장되었습니다!\n(카카오톡이나 카페에 바로 Ctrl+V 붙여넣기도 가능합니다));
+        alert(`✅ [넷가표 캡처 완료]\n\n${currentStoreName || '매장'} [${modeKo}] 넷가표 이미지가 고해상도 PNG 파일로 저장되었습니다!\n(카카오톡이나 카페에 바로 Ctrl+V 붙여넣기도 가능합니다)`);
       } catch (err) {
         console.error("Net table capture error:", err);
         alert("넷가표 캡처 중 오류가 발생했습니다: " + err.message);
@@ -10778,7 +10778,7 @@ JSON 규격:
       const dateEl = document.getElementById('posterDateText');
       if (dateEl && (!dateEl.innerText || dateEl.innerText.trim() === '')) {
         const now = new Date();
-        dateEl.innerText = ${now.getMonth() + 1}월 일;
+        dateEl.innerText = `${now.getMonth() + 1}월 ${now.getDate()}일`;
       }
 
       // 모드 배지 갱신
@@ -10810,32 +10810,32 @@ JSON 규격:
 
         const tr = document.createElement('tr');
         tr.className = "hover:bg-amber-50/40 transition";
-        tr.innerHTML = 
+        tr.innerHTML = `
           <td class="p-2 sm:p-2.5 text-center font-black border-r-2 border-slate-400 bg-slate-50/60 text-slate-900 truncate">
-             + displayName + 
+            ${displayName}
           </td>
           <!-- SK 번이 / 기변 -->
-          <td class="p-2 sm:p-2.5 text-center border-r border-slate-300 font-black cursor-pointer hover:bg-orange-50 focus:bg-orange-100" contenteditable="true" onblur="handlePosterCellPriceChange('', 'SK', 'mnp', this.innerText)" title="클릭하여 가격 직접 수정">
-             + (skAd.mnp !== '' && skAd.mnp !== null && skAd.mnp !== undefined ? skAd.mnp : '-') + 
+          <td class="p-2 sm:p-2.5 text-center border-r border-slate-300 font-black cursor-pointer hover:bg-orange-50 focus:bg-orange-100" contenteditable="true" onblur="handlePosterCellPriceChange('${d.id}', 'SK', 'mnp', this.innerText)" title="클릭하여 가격 직접 수정">
+            ${skAd.mnp !== '' && skAd.mnp !== null && skAd.mnp !== undefined ? skAd.mnp : '-'}
           </td>
-          <td class="p-2 sm:p-2.5 text-center border-r-2 border-slate-400 font-black cursor-pointer hover:bg-orange-50 focus:bg-orange-100" contenteditable="true" onblur="handlePosterCellPriceChange('', 'SK', 'chg', this.innerText)" title="클릭하여 가격 직접 수정">
-             + (skAd.chg !== '' && skAd.chg !== null && skAd.chg !== undefined ? skAd.chg : '-') + 
+          <td class="p-2 sm:p-2.5 text-center border-r-2 border-slate-400 font-black cursor-pointer hover:bg-orange-50 focus:bg-orange-100" contenteditable="true" onblur="handlePosterCellPriceChange('${d.id}', 'SK', 'chg', this.innerText)" title="클릭하여 가격 직접 수정">
+            ${skAd.chg !== '' && skAd.chg !== null && skAd.chg !== undefined ? skAd.chg : '-'}
           </td>
           <!-- KT 번이 / 기변 -->
-          <td class="p-2 sm:p-2.5 text-center border-r border-slate-300 font-black cursor-pointer hover:bg-rose-50 focus:bg-rose-100" contenteditable="true" onblur="handlePosterCellPriceChange('', 'KT', 'mnp', this.innerText)" title="클릭하여 가격 직접 수정">
-             + (ktAd.mnp !== '' && ktAd.mnp !== null && ktAd.mnp !== undefined ? ktAd.mnp : '-') + 
+          <td class="p-2 sm:p-2.5 text-center border-r border-slate-300 font-black cursor-pointer hover:bg-rose-50 focus:bg-rose-100" contenteditable="true" onblur="handlePosterCellPriceChange('${d.id}', 'KT', 'mnp', this.innerText)" title="클릭하여 가격 직접 수정">
+            ${ktAd.mnp !== '' && ktAd.mnp !== null && ktAd.mnp !== undefined ? ktAd.mnp : '-'}
           </td>
-          <td class="p-2 sm:p-2.5 text-center border-r-2 border-slate-400 font-black cursor-pointer hover:bg-rose-50 focus:bg-rose-100" contenteditable="true" onblur="handlePosterCellPriceChange('', 'KT', 'chg', this.innerText)" title="클릭하여 가격 직접 수정">
-             + (ktAd.chg !== '' && ktAd.chg !== null && ktAd.chg !== undefined ? ktAd.chg : '-') + 
+          <td class="p-2 sm:p-2.5 text-center border-r-2 border-slate-400 font-black cursor-pointer hover:bg-rose-50 focus:bg-rose-100" contenteditable="true" onblur="handlePosterCellPriceChange('${d.id}', 'KT', 'chg', this.innerText)" title="클릭하여 가격 직접 수정">
+            ${ktAd.chg !== '' && ktAd.chg !== null && ktAd.chg !== undefined ? ktAd.chg : '-'}
           </td>
           <!-- LG 번이 / 기변 -->
-          <td class="p-2 sm:p-2.5 text-center border-r border-slate-300 font-black cursor-pointer hover:bg-pink-50 focus:bg-pink-100" contenteditable="true" onblur="handlePosterCellPriceChange('', 'LG', 'mnp', this.innerText)" title="클릭하여 가격 직접 수정">
-             + (lgAd.mnp !== '' && lgAd.mnp !== null && lgAd.mnp !== undefined ? lgAd.mnp : '-') + 
+          <td class="p-2 sm:p-2.5 text-center border-r border-slate-300 font-black cursor-pointer hover:bg-pink-50 focus:bg-pink-100" contenteditable="true" onblur="handlePosterCellPriceChange('${d.id}', 'LG', 'mnp', this.innerText)" title="클릭하여 가격 직접 수정">
+            ${lgAd.mnp !== '' && lgAd.mnp !== null && lgAd.mnp !== undefined ? lgAd.mnp : '-'}
           </td>
-          <td class="p-2 sm:p-2.5 text-center font-black cursor-pointer hover:bg-pink-50 focus:bg-pink-100" contenteditable="true" onblur="handlePosterCellPriceChange('', 'LG', 'chg', this.innerText)" title="클릭하여 가격 직접 수정">
-             + (lgAd.chg !== '' && lgAd.chg !== null && lgAd.chg !== undefined ? lgAd.chg : '-') + 
+          <td class="p-2 sm:p-2.5 text-center font-black cursor-pointer hover:bg-pink-50 focus:bg-pink-100" contenteditable="true" onblur="handlePosterCellPriceChange('${d.id}', 'LG', 'chg', this.innerText)" title="클릭하여 가격 직접 수정">
+            ${lgAd.chg !== '' && lgAd.chg !== null && lgAd.chg !== undefined ? lgAd.chg : '-'}
           </td>
-        ;
+        `;
         tbody.appendChild(tr);
       });
     }
@@ -10845,7 +10845,7 @@ JSON 규격:
       if (!d) return;
       const cleanVal = newVal.trim();
       setAdValue(d, carrier, type, cleanVal, adMarginBase);
-      scheduleStoreSave('성지특가 광고', [시세표 직접수정]  ( ): );
+      scheduleStoreSave('성지특가 광고', `[시세표 직접수정] ${d.name} (${carrier} ${type}): ${cleanVal}`);
     }
 
     function syncAdPosterPrices() {
@@ -10905,7 +10905,7 @@ JSON 규격:
 
         const storeName = (document.getElementById('posterStoreTitle')?.innerText || currentStoreName || '성지특가').replace(/[^가-힣a-zA-Z0-9]/g, '');
         const dateStr = (document.getElementById('posterDateText')?.innerText || '').replace(/[^0-9가-힣]/g, '');
-        const filename = 성지특가_시세표__.png;
+        const filename = `성지특가_시세표_${storeName}_${dateStr || new Date().toISOString().slice(0,10)}.png`;
 
         if (action === 'download') {
           const link = document.createElement('a');
@@ -10922,7 +10922,6 @@ JSON 규격:
               ]).then(() => {
                 alert("✅ 시세표 이미지가 클립보드에 복사되었습니다!\n\n카카오톡 대화방이나 네이버 카페/밴드에 바로 Ctrl+V (붙여넣기) 하세요.");
               }).catch(err => {
-                // 보안 정책으로 클립보드 거부 시 다운로드로 대체
                 const link = document.createElement('a');
                 link.download = filename;
                 link.href = canvas.toDataURL('image/png');
@@ -10943,7 +10942,8 @@ JSON 규격:
         alert("시세표 이미지 캡처 중 오류가 발생했습니다: " + err.message);
       }
     }
-</script>
+
+  </script>
   <!-- 클라우드 실시간 상태 표시 (우측 하단 미니멀 배지) -->
   <div id="syncStatusBadge" class="fixed bottom-3 right-3 z-30 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/90 backdrop-blur border border-slate-200 text-slate-500 opacity-40 hover:opacity-100 transition shadow-xs cursor-default select-none" title="구글 파이어베이스 클라우드 실시간 동기화 상태">
     <span id="syncStatusDot" class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
