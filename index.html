@@ -14,8 +14,10 @@
   <!-- Firebase App & Firestore Compat SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <!-- HTML2Canvas for High-Res Image Export -->
+  <!-- HTML2Canvas for Fallback Image Export -->
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <!-- html-to-image: Browser Native SVG Engine for Zero-Artifact Image Export -->
+  <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
   <!-- jsQR for Client-Side QR Detection -->
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
   <!-- QRCode.js for Client-Side QR Generation from Apply URL -->
@@ -9515,10 +9517,11 @@ function handleSelectAffiliateCard(cardId) {
       });
 
       const offscreen = document.createElement('div');
-      offscreen.style.position = 'absolute';
+      offscreen.style.position = 'fixed';
       offscreen.style.left = '0';
       offscreen.style.top = '0';
       offscreen.style.zIndex = '-9999';
+      offscreen.style.pointerEvents = 'none';
       offscreen.style.width = '794px';
       offscreen.style.padding = '0'; // 여백으로 인한 컬럼 찌그러짐 및 글자 줄바꿈 처짐 원천 방지!
       offscreen.style.backgroundColor = '#ffffff';
@@ -9531,25 +9534,40 @@ function handleSelectAffiliateCard(cardId) {
       document.body.appendChild(offscreen);
 
       try {
-        const canvas = await html2canvas(clone, {
-          scale: 2,
-          width: 794,
-          height: clone.scrollHeight,
-          windowWidth: 1200,
-          scrollX: 0,
-          scrollY: 0,
-          useCORS: true,
-          backgroundColor: '#ffffff',
-          logging: false
-        });
+        let dataUrl = null;
+        if (typeof htmlToImage !== 'undefined') {
+          try {
+            dataUrl = await htmlToImage.toPng(clone, {
+              pixelRatio: 2,
+              backgroundColor: '#ffffff'
+            });
+          } catch(e) {
+            console.warn("htmlToImage card export error, fallback to html2canvas:", e);
+          }
+        }
+
+        if (!dataUrl) {
+          const canvas = await html2canvas(clone, {
+            scale: 2,
+            width: 794,
+            height: clone.scrollHeight,
+            windowWidth: 1200,
+            scrollX: 0,
+            scrollY: 0,
+            useCORS: true,
+            backgroundColor: '#ffffff',
+            logging: false
+          });
+          dataUrl = canvas.toDataURL('image/png');
+        }
 
         if (offscreen.parentNode) document.body.removeChild(offscreen);
         const link = document.createElement('a');
         const safeCardName = (cardData.cardName || '제휴카드안내서').replace(/[^a-zA-Z0-9가-힣_-]/g, '_');
         link.download = `제휴카드안내서_${safeCardName}_${st.name}.png`;
-        link.href = canvas.toDataURL('image/png');
+        link.href = dataUrl;
         link.click();
-        alert(`✅ [제휴카드 안내서 고화질 PNG 저장 완료]\n\n${safeCardName} 안내서가 잘림 없이 고해상도 이미지로 다운로드되었습니다.`);
+        alert(`✅ [제휴카드 안내서 고화질 PNG 저장 완료]\n\n${safeCardName} 안내서가 잘림/왜곡 없이 브라우저 원본 그대로 고해상도 이미지로 다운로드되었습니다.`);
       } catch (err) {
         if (offscreen.parentNode) document.body.removeChild(offscreen);
         console.error("PNG 저장 에러:", err);
@@ -11461,15 +11479,36 @@ JSON 규격:
       document.body.appendChild(wrap);
 
       try {
-        const canvas = await html2canvas(wrap, {
-          scale: 2,
-          useCORS: true,
-          backgroundColor: '#ffffff',
-          scrollX: 0,
-          scrollY: 0,
-          windowWidth: 1200,
-          logging: false
-        });
+        let dataUrl = null;
+        let blobData = null;
+
+        if (typeof htmlToImage !== 'undefined') {
+          try {
+            dataUrl = await htmlToImage.toPng(wrap, {
+              pixelRatio: 2,
+              backgroundColor: '#ffffff'
+            });
+            blobData = await htmlToImage.toBlob(wrap, {
+              pixelRatio: 2,
+              backgroundColor: '#ffffff'
+            });
+          } catch(e) {
+            console.warn("htmlToImage net table error, fallback to html2canvas:", e);
+          }
+        }
+
+        if (!dataUrl) {
+          const canvas = await html2canvas(wrap, {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: '#ffffff',
+            scrollX: 0,
+            scrollY: 0,
+            windowWidth: 1200,
+            logging: false
+          });
+          dataUrl = canvas.toDataURL('image/png');
+        }
 
         // PNG 파일 자동 다운로드
         const cleanMode = modeKo.replace(/[^가-힣a-zA-Z0-9]/g, '');
@@ -11477,15 +11516,13 @@ JSON 규격:
 
         const link = document.createElement('a');
         link.download = filename;
-        link.href = canvas.toDataURL('image/png');
+        link.href = dataUrl;
         link.click();
 
         // 클립보드 복사 시도
-        canvas.toBlob(blob => {
-          if (blob && navigator.clipboard && navigator.clipboard.write) {
-            navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).catch(() => {});
-          }
-        });
+        if (blobData && navigator.clipboard && navigator.clipboard.write) {
+          navigator.clipboard.write([new ClipboardItem({ 'image/png': blobData })]).catch(() => {});
+        }
 
         alert(`✅ [넷가표 캡처 완료]\n\n[${targetStoreLabel}] [${modeKo}] 넷가표 이미지가 고해상도 PNG 파일로 저장되었습니다!\n(카카오톡이나 카페에 바로 Ctrl+V 붙여넣기도 가능합니다)`);
       } catch (err) {
@@ -12323,18 +12360,40 @@ JSON 규격:
       document.body.appendChild(offscreen);
 
       try {
-        const canvas = await html2canvas(clone, {
-          scale: 2,
-          width: 760,
-          height: clone.scrollHeight,
-          windowWidth: 1200,
-          scrollX: 0,
-          scrollY: 0,
-          useCORS: true,
-          letterRendering: true,
-          backgroundColor: '#ffffff',
-          logging: false
-        });
+        let dataUrl = null;
+        let blobData = null;
+
+        // 브라우저 공식 그래픽 엔진 기반 SVG ForeignObject 고화질 렌더링 (글자 밀림/깨짐 0%)
+        if (typeof htmlToImage !== 'undefined') {
+          try {
+            dataUrl = await htmlToImage.toPng(clone, {
+              pixelRatio: 2,
+              backgroundColor: '#ffffff'
+            });
+            blobData = await htmlToImage.toBlob(clone, {
+              pixelRatio: 2,
+              backgroundColor: '#ffffff'
+            });
+          } catch(e) {
+            console.warn("htmlToImage poster error, fallback to html2canvas:", e);
+          }
+        }
+
+        if (!dataUrl) {
+          const canvas = await html2canvas(clone, {
+            scale: 2,
+            width: 760,
+            height: clone.scrollHeight,
+            windowWidth: 1200,
+            scrollX: 0,
+            scrollY: 0,
+            useCORS: true,
+            letterRendering: true,
+            backgroundColor: '#ffffff',
+            logging: false
+          });
+          dataUrl = canvas.toDataURL('image/png');
+        }
 
         if (offscreen.parentNode) document.body.removeChild(offscreen);
 
@@ -12345,32 +12404,29 @@ JSON 규격:
         if (action === 'download') {
           const link = document.createElement('a');
           link.download = filename;
-          link.href = canvas.toDataURL('image/png');
+          link.href = dataUrl;
           link.click();
           alert("✅ 통신 3사 원조폰 특가 시세표 이미지가 글자 밀림/겹침 없는 완벽한 고해상도 PNG 파일로 저장되었습니다!");
         } else if (action === 'copy') {
-          canvas.toBlob(blob => {
-            if (!blob) throw new Error("Blob 생성 실패");
-            if (navigator.clipboard && navigator.clipboard.write) {
-              navigator.clipboard.write([
-                new ClipboardItem({ 'image/png': blob })
-              ]).then(() => {
-                alert("✅ 시세표 이미지가 클립보드에 복사되었습니다!\n\n카카오톡 대화방이나 네이버 카페/밴드에 바로 Ctrl+V (붙여넣기) 하세요.");
-              }).catch(err => {
-                const link = document.createElement('a');
-                link.download = filename;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                alert("브라우저 클립보드 접근 권한으로 인해 고화질 PNG 이미지 파일로 저장되었습니다.");
-              });
-            } else {
+          if (blobData && navigator.clipboard && navigator.clipboard.write) {
+            navigator.clipboard.write([
+              new ClipboardItem({ 'image/png': blobData })
+            ]).then(() => {
+              alert("✅ 시세표 이미지가 클립보드에 복사되었습니다!\n\n카카오톡 대화방이나 네이버 카페/밴드에 바로 Ctrl+V (붙여넣기) 하세요.");
+            }).catch(err => {
               const link = document.createElement('a');
               link.download = filename;
-              link.href = canvas.toDataURL('image/png');
+              link.href = dataUrl;
               link.click();
-              alert("PNG 이미지 파일로 저장되었습니다.");
-            }
-          });
+              alert("브라우저 클립보드 접근 권한으로 인해 고화질 PNG 이미지 파일로 저장되었습니다.");
+            });
+          } else {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = dataUrl;
+            link.click();
+            alert("PNG 이미지 파일로 저장되었습니다.");
+          }
         }
       } catch (err) {
         if (offscreen.parentNode) document.body.removeChild(offscreen);
@@ -12423,31 +12479,56 @@ JSON 규격:
         cSub.style.textAlign = 'center';
       }
 
-      const iframe = document.createElement('iframe');
-      iframe.style.position = 'fixed';
-      iframe.style.right = '0';
-      iframe.style.bottom = '0';
-      iframe.style.width = '0';
-      iframe.style.height = '0';
-      iframe.style.border = '0';
-      document.body.appendChild(iframe);
+      // 부모 창의 모든 스타일 태그 및 외부 스타일시트 복사 (Tailwind 포함)
+      const parentStyles = Array.from(document.querySelectorAll('style')).map(s => s.outerHTML).join('\n');
+      const parentLinks = Array.from(document.querySelectorAll('link[rel="stylesheet"]')).map(l => l.outerHTML).join('\n');
 
-      const doc = iframe.contentWindow.document;
+      let printIframe = document.getElementById('posterPrintIframe');
+      if (!printIframe) {
+        printIframe = document.createElement('iframe');
+        printIframe.id = 'posterPrintIframe';
+        printIframe.style.position = 'fixed';
+        printIframe.style.left = '-9999px';
+        printIframe.style.top = '0';
+        printIframe.style.width = '760px';
+        printIframe.style.height = '1000px';
+        printIframe.style.border = '0';
+        printIframe.style.visibility = 'hidden';
+        document.body.appendChild(printIframe);
+      }
+
+      const doc = printIframe.contentDocument || printIframe.contentWindow.document;
       doc.open();
       doc.write(`<!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
   <title>${(document.getElementById('posterStoreTitle')?.innerText || '원조폰특가시세표').trim()}</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+  <script src="https://cdn.tailwindcss.com"><\/script>
+  ${parentLinks}
+  ${parentStyles}
   <style>
-    * { box-sizing: border-box; font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-    body { margin: 0; padding: 20px; background: #fff; display: flex; justify-content: center; }
-    @page { size: auto; margin: 8mm; }
+    @page { size: auto; margin: 6mm !important; }
+    * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    html, body {
+      font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      background: #ffffff !important;
+      display: flex !important;
+      justify-content: center !important;
+    }
+    #posterPrintContainer {
+      width: 760px !important;
+      max-width: 760px !important;
+      margin: 0 auto !important;
+      background: #ffffff !important;
+      box-sizing: border-box !important;
+    }
   </style>
 </head>
 <body>
-  <div style="width: 760px; max-width: 760px;">
+  <div id="posterPrintContainer">
     ${printClone.outerHTML}
   </div>
 </body>
@@ -12455,11 +12536,8 @@ JSON 규격:
       doc.close();
 
       setTimeout(() => {
-        iframe.contentWindow.focus();
-        iframe.contentWindow.print();
-        setTimeout(() => {
-          if (iframe.parentNode) document.body.removeChild(iframe);
-        }, 1500);
+        printIframe.contentWindow.focus();
+        printIframe.contentWindow.print();
       }, 500);
     }
 
