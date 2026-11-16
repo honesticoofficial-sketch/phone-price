@@ -2860,7 +2860,8 @@ LG - 플러스플랜 115 (월정 115,000원)</div>
     function buildModelOptions(selectedId) {
       let html = `<option value="empty" ${selectedId === 'empty' ? 'selected' : ''}>-- 구분선 (여백 칸) --</option>`;
       devices.forEach(opt => {
-        html += `<option value="${opt.id}" ${opt.id === selectedId ? 'selected' : ''}>${opt.tag} ${opt.name}</option>`;
+        const cleanName = (opt.name || '').replace(/^#[^\s]+\s*/, '').trim();
+        html += `<option value="${opt.id}" ${opt.id === selectedId ? 'selected' : ''}>${cleanName || opt.name}</option>`;
       });
       return html;
     }
@@ -3050,7 +3051,8 @@ LG - 플러스플랜 115 (월정 115,000원)</div>
       if (rowDesc) rowDesc.innerText = `${carrier} 특가 · ${index + 1}번째 줄`;
       if (currentBadge) {
         if (currentDev) {
-          currentBadge.innerText = `현재: ${currentDev.tag || ''} ${currentDev.name}`;
+          const cleanName = (currentDev.name || '').replace(/^#[^\s]+\s*/, '').trim();
+          currentBadge.innerText = `현재: ${cleanName || currentDev.name}`;
           currentBadge.className = "px-2.5 py-1 rounded-xl bg-blue-50 text-blue-700 font-bold border border-blue-200 text-xs";
         } else {
           currentBadge.innerText = `현재: 구분선 (여백 줄)`;
@@ -3076,7 +3078,8 @@ LG - 플러스플랜 115 (월정 115,000원)</div>
             gDevs.forEach(d => {
               const relPrice = (d.prices && d.prices[carrier] !== undefined) ? d.prices[carrier] : (d.price || 0);
               const isSel = (d.id === currentDevId) ? 'selected' : '';
-              html += `<option value="${d.id}" ${isSel}>${d.tag || ''} ${d.name} (출고가: ${relPrice}만)</option>`;
+              const cleanName = (d.name || '').replace(/^#[^\s]+\s*/, '').trim();
+              html += `<option value="${d.id}" ${isSel}>${cleanName || d.name} (출고가: ${relPrice}만)</option>`;
             });
             html += `</optgroup>`;
           }
@@ -3088,7 +3091,8 @@ LG - 플러스플랜 115 (월정 115,000원)</div>
           otherDevs.forEach(d => {
             const relPrice = (d.prices && d.prices[carrier] !== undefined) ? d.prices[carrier] : (d.price || 0);
             const isSel = (d.id === currentDevId) ? 'selected' : '';
-            html += `<option value="${d.id}" ${isSel}>${d.tag || ''} ${d.name} (출고가: ${relPrice}만)</option>`;
+            const cleanName = (d.name || '').replace(/^#[^\s]+\s*/, '').trim();
+            html += `<option value="${d.id}" ${isSel}>${cleanName || d.name} (출고가: ${relPrice}만)</option>`;
           });
           html += `</optgroup>`;
         }
