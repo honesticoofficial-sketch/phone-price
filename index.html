@@ -930,6 +930,10 @@
             <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
             <span>시세표 PNG 저장</span>
           </button>
+          <button onclick="printAdPoster()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs sm:text-sm font-extrabold shadow-sm transition flex items-center gap-1.5" title="브라우저 공식 그래픽 엔진으로 오차 0% PDF 저장 및 인쇄">
+            <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+            <span>🖨️ PDF / 고화질 인쇄</span>
+          </button>
         </div>
       </div>
 
@@ -1016,11 +1020,11 @@
               최소부가 가격제 시작!
             </div>
             
-            <div class="w-full py-1">
-              <h1 id="posterStoreTitle" contenteditable="true" onblur="saveAdPosterSettings(false)" class="poster-theme-text text-3xl sm:text-5xl font-black text-[#e60012] tracking-tight text-center focus:outline-none focus:ring-2 focus:ring-rose-500 rounded px-2" title="클릭하여 상호명을 수정할 수 있습니다" style="color: #e60012;">
+            <div class="w-full py-1 text-center">
+              <h1 id="posterStoreTitle" contenteditable="true" onblur="saveAdPosterSettings(false)" class="poster-theme-text text-3xl sm:text-5xl font-black text-[#e60012] tracking-tight text-center focus:outline-none focus:ring-2 focus:ring-rose-500 rounded px-2" title="클릭하여 상호명을 수정할 수 있습니다" style="color: #e60012; line-height: 1.25; margin-bottom: 8px; display: block;">
                 원조폰 특가 시세표
               </h1>
-              <div id="posterSubtitle" contenteditable="true" onblur="saveAdPosterSettings(false)" class="text-xs sm:text-sm font-extrabold text-slate-700 text-center mt-1 focus:outline-none focus:ring-1 focus:ring-rose-500 rounded" title="클릭하여 부제목을 수정할 수 있습니다">
+              <div id="posterSubtitle" contenteditable="true" onblur="saveAdPosterSettings(false)" class="text-xs sm:text-sm font-extrabold text-slate-700 text-center focus:outline-none focus:ring-1 focus:ring-rose-500 rounded" title="클릭하여 부제목을 수정할 수 있습니다" style="line-height: 1.35; margin-top: 4px; display: block;">
                 성지매장 눈속임 원조폰에서는 끝!!
               </div>
             </div>
@@ -1106,10 +1110,9 @@
 
           <!-- 4. 요금제 안내 (전체 너비 가로형 테이블 + 행 추가/삭제) -->
           <div class="rounded-xl border-2 border-slate-900 overflow-hidden shadow-xs">
-            <div class="poster-theme-bg bg-[#e60012] text-white py-1.5 text-xs sm:text-sm font-black tracking-wider flex items-center justify-between px-3">
-              <span class="w-16"></span>
-              <span class="text-center">▼ 요금제 ▼</span>
-              <button type="button" onclick="addPosterPlanRow()" class="poster-ui-action text-[11px] bg-white/20 hover:bg-white/30 text-white font-extrabold px-2 py-0.5 rounded transition cursor-pointer">➕ 행 추가</button>
+            <div class="relative poster-theme-bg bg-[#e60012] text-white py-1.5 px-3 text-xs sm:text-sm font-black tracking-wider flex items-center justify-center text-center">
+              <span class="text-center font-black">▼ 요금제 ▼</span>
+              <button type="button" onclick="addPosterPlanRow()" class="poster-ui-action absolute right-3 top-1/2 -translate-y-1/2 text-[11px] bg-white/20 hover:bg-white/30 text-white font-extrabold px-2 py-0.5 rounded transition cursor-pointer">➕ 행 추가</button>
             </div>
             <table class="w-full text-center border-collapse text-xs sm:text-sm" style="table-layout: fixed; width: 100%;">
               <colgroup id="posterPlanColGroup">
@@ -1162,10 +1165,9 @@
 
           <!-- 5. 부가서비스 안내 (전체 너비 가로형 테이블 + 행 추가/삭제) -->
           <div class="rounded-xl border-2 border-slate-900 overflow-hidden shadow-xs">
-            <div class="poster-theme-bg bg-[#e60012] text-white py-1.5 text-xs sm:text-sm font-black tracking-wider flex items-center justify-between px-3">
-              <span class="w-16"></span>
-              <span class="text-center">▼ 부가서비스 가입 선택 가능합니다 (필수X) ▼</span>
-              <button type="button" onclick="openPosterVasCarrierModal()" class="poster-ui-action text-[11px] bg-white/20 hover:bg-white/30 text-white font-extrabold px-2 py-0.5 rounded transition cursor-pointer">➕ 행 추가</button>
+            <div class="relative poster-theme-bg bg-[#e60012] text-white py-1.5 px-3 text-xs sm:text-sm font-black tracking-wider flex items-center justify-center text-center">
+              <span class="text-center font-black">▼ 부가서비스 가입 선택 가능합니다 (필수X) ▼</span>
+              <button type="button" onclick="openPosterVasCarrierModal()" class="poster-ui-action absolute right-3 top-1/2 -translate-y-1/2 text-[11px] bg-white/20 hover:bg-white/30 text-white font-extrabold px-2 py-0.5 rounded transition cursor-pointer">➕ 행 추가</button>
             </div>
             <table class="w-full text-center border-collapse text-xs sm:text-sm" style="table-layout: fixed; width: 100%;">
               <colgroup id="posterVasColGroup">
@@ -12164,7 +12166,7 @@ JSON 규격:
       }
     }
 
-    // ==================== 고해상도 PNG 캡처 & 글자 눌림/중앙정렬 오류 완벽 해결 ====================
+    // ==================== 고해상도 PNG 캡처 & 글자 눌림/중앙정렬/겹침 오류 완벽 해결 ====================
     async function captureAdPosterImage(action = 'download') {
       const sheet = document.getElementById('adPosterSheet');
       if (!sheet) {
@@ -12172,21 +12174,45 @@ JSON 규격:
         return;
       }
 
+      // 폰트 메트릭 계산 오차 방지를 위해 웹 폰트(Pretendard) 로딩 완료 보장 대기
+      if (document.fonts && document.fonts.ready) {
+        try {
+          await document.fonts.ready;
+        } catch(e) {}
+      }
+
       // 오프스크린 760px 고정너비 클론 생성
       const clone = sheet.cloneNode(true);
       clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
 
-      // 드롭다운 select 요소를 뒤 괄호 제거된 순수 대표 모델명 텍스트 span으로 치환
+      // 상단 타이틀 & 부제목 줄간격 및 마진 강제 주입 (글자 상하 겹침 현상 원천 차단)
+      const cloneTitle = clone.querySelector('#posterStoreTitle');
+      if (cloneTitle) {
+        cloneTitle.style.lineHeight = '1.25';
+        cloneTitle.style.marginBottom = '10px';
+        cloneTitle.style.display = 'block';
+        cloneTitle.style.textAlign = 'center';
+      }
+      const cloneSubtitle = clone.querySelector('#posterSubtitle');
+      if (cloneSubtitle) {
+        cloneSubtitle.style.lineHeight = '1.35';
+        cloneSubtitle.style.marginTop = '4px';
+        cloneSubtitle.style.marginBottom = '6px';
+        cloneSubtitle.style.display = 'block';
+        cloneSubtitle.style.textAlign = 'center';
+      }
+
+      // 드롭다운 select 요소를 뒤 괄호 제거된 순수 대표 모델명 텍스트로 치환 및 td 내부 완벽 정규화 (좌측 쏠림 원천 차단)
       clone.querySelectorAll('.poster-model-select').forEach(sel => {
-        const span = document.createElement('span');
-        span.className = "text-xs sm:text-sm font-black text-slate-950 text-center block whitespace-nowrap px-1";
         const selectedOption = sel.options[sel.selectedIndex];
         let modelText = selectedOption ? selectedOption.text : '';
         if (modelText.includes(' (')) {
           modelText = modelText.split(' (')[0].trim();
         }
-        span.innerText = modelText;
-        sel.parentNode.replaceChild(span, sel);
+        const td = sel.closest('td');
+        if (td) {
+          td.innerHTML = `<span class="text-xs sm:text-sm font-black text-slate-950 text-center block whitespace-nowrap px-1" style="display:block; text-align:center; width:100%;">${modelText}</span>`;
+        }
       });
 
       // UI 전용 요소(관리/삭제 컬럼, 행 추가/삭제 버튼 등) 제거
@@ -12276,10 +12302,11 @@ JSON 규격:
       });
 
       const offscreen = document.createElement('div');
-      offscreen.style.position = 'absolute';
+      offscreen.style.position = 'fixed';
       offscreen.style.left = '0';
       offscreen.style.top = '0';
       offscreen.style.zIndex = '-9999';
+      offscreen.style.pointerEvents = 'none';
       offscreen.style.width = '760px';
       offscreen.style.padding = '0';
       offscreen.style.backgroundColor = '#ffffff';
@@ -12320,7 +12347,7 @@ JSON 규격:
           link.download = filename;
           link.href = canvas.toDataURL('image/png');
           link.click();
-          alert("✅ 통신 3사 원조폰 특가 시세표 이미지가 글자 밀림 없는 완벽한 고해상도 PNG 파일로 저장되었습니다!");
+          alert("✅ 통신 3사 원조폰 특가 시세표 이미지가 글자 밀림/겹침 없는 완벽한 고해상도 PNG 파일로 저장되었습니다!");
         } else if (action === 'copy') {
           canvas.toBlob(blob => {
             if (!blob) throw new Error("Blob 생성 실패");
@@ -12350,6 +12377,90 @@ JSON 규격:
         console.error("Poster capture error:", err);
         alert("시세표 이미지 캡처 중 오류가 발생했습니다: " + err.message);
       }
+    }
+
+    // ==================== 브라우저 공식 그래픽 엔진 기반 무오차 PDF / 인쇄 출력 ====================
+    async function printAdPoster() {
+      const sheet = document.getElementById('adPosterSheet');
+      if (!sheet) {
+        alert("시세표 요소를 찾을 수 없습니다.");
+        return;
+      }
+      if (document.fonts && document.fonts.ready) {
+        try {
+          await document.fonts.ready;
+        } catch(e) {}
+      }
+
+      // 인쇄용 클론 생성
+      const printClone = sheet.cloneNode(true);
+      printClone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+      printClone.querySelectorAll('.poster-model-select').forEach(sel => {
+        const selectedOption = sel.options[sel.selectedIndex];
+        let modelText = selectedOption ? selectedOption.text : '';
+        if (modelText.includes(' (')) modelText = modelText.split(' (')[0].trim();
+        const td = sel.closest('td');
+        if (td) {
+          td.innerHTML = `<span style="font-weight:900; font-size:13px; text-align:center; display:block; width:100%;">${modelText}</span>`;
+        }
+      });
+      printClone.querySelectorAll('.poster-ui-action').forEach(el => el.remove());
+      printClone.querySelectorAll('button').forEach(el => el.remove());
+
+      const cTitle = printClone.querySelector('#posterStoreTitle');
+      if (cTitle) {
+        cTitle.style.lineHeight = '1.25';
+        cTitle.style.marginBottom = '10px';
+        cTitle.style.display = 'block';
+        cTitle.style.textAlign = 'center';
+      }
+      const cSub = printClone.querySelector('#posterSubtitle');
+      if (cSub) {
+        cSub.style.lineHeight = '1.35';
+        cSub.style.marginTop = '4px';
+        cSub.style.marginBottom = '6px';
+        cSub.style.display = 'block';
+        cSub.style.textAlign = 'center';
+      }
+
+      const iframe = document.createElement('iframe');
+      iframe.style.position = 'fixed';
+      iframe.style.right = '0';
+      iframe.style.bottom = '0';
+      iframe.style.width = '0';
+      iframe.style.height = '0';
+      iframe.style.border = '0';
+      document.body.appendChild(iframe);
+
+      const doc = iframe.contentWindow.document;
+      doc.open();
+      doc.write(`<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>${(document.getElementById('posterStoreTitle')?.innerText || '원조폰특가시세표').trim()}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+  <style>
+    * { box-sizing: border-box; font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    body { margin: 0; padding: 20px; background: #fff; display: flex; justify-content: center; }
+    @page { size: auto; margin: 8mm; }
+  </style>
+</head>
+<body>
+  <div style="width: 760px; max-width: 760px;">
+    ${printClone.outerHTML}
+  </div>
+</body>
+</html>`);
+      doc.close();
+
+      setTimeout(() => {
+        iframe.contentWindow.focus();
+        iframe.contentWindow.print();
+        setTimeout(() => {
+          if (iframe.parentNode) document.body.removeChild(iframe);
+        }, 1500);
+      }, 500);
     }
 
   </script>
