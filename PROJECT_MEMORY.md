@@ -1073,4 +1073,47 @@ Write-Host "Pushed Commit: $($res.commit.sha)"
 ### 7) 넷가표 최종 넷가 금액 아래 회색 글자로 단가처(도매/온라인) 표기
 - `[넷가표]` 탭의 `renderCell` 함수를 업그레이드하여, 최종 넷가 금액 바로 아래에 작고 깔끔한 회색 글씨(`text-[10px] text-slate-400 font-normal`)로 단가처(예: `도매`, `온라인`)가 함께 표출되도록 개선.
 
+---
+
+## 32. 부가서비스 통신사 통합(rowspan) 렌더링, 기종 열 너비 확장, 한국 날짜 매일 자동갱신, PNG 캡처 글자눌림 완치, 매장별 시세표/제휴카드 분리 및 Firestore 실시간 동기화 (2026-11-16)
+
+### 1) 부가서비스 표 통신사 통합(rowspan) 데이터 모델 기반 동적 렌더링
+- **문제점**: 부가서비스 행 추가 시 기존 SK 밑으로 묶이지 않고 표 맨 아래에 새 행으로 생성되며, 통신사명 셀이 합쳐지지 않던 문제 발생.
+- **해결책**:
+  - `posterVasData` 구조화된 데이터 배열 모델 도입 (`[{ id, carrier: 'SK'|'KT'|'LG', name, fee, period, penalty }]`).
+  - `renderPosterVasTable()`에서 통신사(SK, KT, LG) 순으로 그룹화하여 렌더링하며, 각 통신사의 첫 번째 행에 `rowspan="${carrierCount}"`를 동적으로 부여.
+  - 새 부가서비스 추가 모달(`confirmAddPosterVasRow(carrier)`)에서 통신사 선택 시 해당 통신사의 마지막 항목 뒤에 삽입되어, 통신사 명칭이 통합으로 단 1개만 노출되고 기존 통신사 그룹 아래로 완벽하게 묶임.
+  - 항목 삭제 시에도 `rowspan`이 자동으로 계산되어 테이블 구조가 깨지지 않음.
+  - "기타 안내사항" 행은 항상 표의 최하단에 단단히 고정.
+
+### 2) 기종 열 너비 대폭 확장 및 기종명 말줄임(...) 완치
+- **문제점**: 기종 선택 드롭다운 박스 폭이 좁고 `truncate` 클래스로 인해 `S26 (갤럭시 S...`, `폴드8와이드 (...` 처럼 글자가 잘리던 문제.
+- **해결책**:
+  - UI 편집 모드에서 기종 선택 열 너비를 `28%`에서 `33%`로 대폭 확장, 통신사 6열을 각 `10.5%`, 삭제 열을 `38px`로 최적화.
+  - 셀렉트 박스에서 `truncate` 제거 및 `flex-1 min-w-0` 적용, 좌측 드래그 핸들과 화살표 버튼의 여백을 콤팩트화하여 긴 기종명도 전혀 잘리지 않고 한눈에 쏙 들어오게 개선.
+  - PNG 캡처 이미지 출력 시에는 `modelText.split(' (')[0].trim()` 로직을 통해 뒤 괄호 설명 없이 깔끔한 대표 기종명(`S26`, `S26U`, `폴드8와이드` 등)만 정중앙에 선명하게 출력 유지.
+
+### 3) 한국 표준시(KST) 매일 당일 날짜 자동 갱신
+- `getKstTodayString()` 함수 구현 (`Asia/Seoul` 시간대 기준 당일 월/일 추출, 예: `11월 16일`).
+- 매일 새로운 날에 접속하거나 새로고침할 때마다 시세표 상단의 날짜가 자동으로 오늘 날짜로 최신화됨.
+
+### 4) PNG 이미지 출력 시 글자 아래 눌림 / 수직 중앙 정렬 오류 완치
+- **원인 규명**: `html2canvas`가 한글 폰트(`Pretendard`) 및 숫자 baseline 메트릭을 계산할 때 ascent/descent 오차로 인해 테이블 셀 텍스트가 바닥선(bottom border) 쪽으로 3~5px 내려앉는 현상.
+- **완치 조치**:
+  - `captureAdPosterImage`에서 클론의 모든 `td`, `th` 내부 콘텐츠를 flexbox wrapper(`display: flex; align-items: center; justify-content: center; width: 100%; min-height: 36px; line-height: 1.2; transform: translateY(-0.5px);`)로 감싸 상하/좌우 완벽한 절대 수직 중앙 정렬을 강제.
+  - 좌측 정렬 열은 `justify-content: flex-start; text-align: left;` 적용.
+  - `html2canvas` 옵션에 `scale: 2, useCORS: true, letterRendering: true` 적용하여 글자 쏠림이나 잘림 없는 완벽한 고해상도 시세표 이미지 출력 달성.
+
+### 5) 매장별(명지점 / 광안점) 시세표 및 제휴카드 데이터 완전 분리
+- 로컬스토리지 저장 키를 `_${currentStoreId}` (`_myeongji`, `_gwangan`)로 완전 분리.
+- 매장 전환(`masterSwitchStore`, `setCardStore`) 시 해당 매장의 시세표(상호명, 기종 목록, 마진 모드, 테마 색상, 부가서비스표 등) 및 제휴카드 상담 진행 상태가 독립적으로 로드 및 렌더링.
+- 상호명 기본값도 `명지원조폰 특가 시세표`, `광안원조폰 특가 시세표`로 분리.
+
+### 6) 시세표 & 제휴카드 실시간 클라우드(Firestore) 저장 및 동기화
+- `scheduleStoreSave()`의 payload에 `posterSettings: getAdPosterDataForSave()` 및 `cardSettings: getCardSettingsForSave()` 포함.
+- 시세표에서 가격, 기종, 순서, 부가서비스 수정 시 `saveAdPosterSettings(false)`를 통해 Firestore `stores/${currentStoreId}`에 즉시 실시간 동기화.
+- 제휴카드 탭에서 카드 선택, 개월수, 실적구간, 할부원금, 테마 변경 시 `saveCardSettings(false)`를 통해 Firestore에 즉시 실시간 동기화.
+- `subscribeStoreData()` 리스너를 통해 다른 기기나 새로고침 시에도 클라우드에서 최신 데이터를 받아 자동 복원.
+
+
 
