@@ -796,6 +796,10 @@
                   <button onclick="setAdCarrier('KT')" id="adTab-KT" class="px-3.5 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 transition">KT 특가</button>
                   <button onclick="setAdCarrier('LG')" id="adTab-LG" class="px-3.5 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 transition">LG 특가</button>
                 </div>
+                <button onclick="addAdDeviceRow()" class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg text-xs font-bold text-blue-700 shadow-2xs flex items-center gap-1.5 transition" title="광고표에 새 기종 추가 및 매칭">
+                  <svg class="w-3.5 h-3.5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                  <span>기종 행 추가</span>
+                </button>
                 <button onclick="addAdEmptyRow()" class="px-3 py-1.5 bg-white hover:bg-slate-50 border border-dashed border-slate-300 rounded-lg text-xs font-bold text-slate-600 shadow-2xs flex items-center gap-1.5 transition">
                   <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"/></svg>
                   <span>구분선(줄바꿈) 추가</span>
@@ -805,17 +809,17 @@
             </div>
 
             <div class="overflow-x-auto border border-slate-200 rounded-xl">
-              <table id="adTable" class="w-full text-xs text-left border-collapse" style="table-layout: fixed; min-width: 780px;">
+              <table id="adTable" class="w-full text-xs text-left border-collapse" style="table-layout: fixed; min-width: 820px;">
                 <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 select-none">
                   <tr>
                     <th class="relative p-2.5 text-center" style="width: 65px;">
                       <span>순서</span>
                       <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
                     </th>
-                    <th class="relative p-2.5 text-center" style="width: 75px;">
-                      <span class="flex items-center justify-center">
-                        게시상태
-                        <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>게시 스위치 (ON/OFF)</b><br>OFF로 끄면 외부 광고 텍스트 복사에서 해당 기종이 자동으로 제외됩니다. 재고 소진 시 임시로 숨길 때 유용합니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>게시 스위치 (ON/OFF)</b><br>OFF로 끄면 외부 광고 텍스트 복사에서 해당 기종이 자동으로 제외됩니다. 재고 소진 시 임시로 숨길 때 유용합니다.')" title="게시상태 안내">?</button>
+                    <th class="relative p-2.5 text-center" style="width: 115px;">
+                      <span class="flex items-center justify-center gap-0.5">
+                        게시 / 매칭
+                        <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>게시 및 기종 매칭</b><br>• <b>게시/숨김</b>: 광고 문구 복사 시 포함 여부를 설정합니다.<br>• <b>매칭</b>: 클릭 시 팝업 알림이 떠서 리베이트 단가표의 원하는 기종과 1:1로 직접 연결(출고가·공시·기준넷가 자동 연동)합니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>게시 및 기종 매칭</b><br>• <b>게시/숨김</b>: 광고 문구 복사 시 포함 여부를 설정합니다.<br>• <b>매칭</b>: 클릭 시 팝업 알림이 떠서 리베이트 단가표의 원하는 기종과 1:1로 직접 연결(출고가·공시·기준넷가 자동 연동)합니다.')" title="게시 및 매칭 안내">?</button>
                       </span>
                       <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
                     </th>
@@ -2048,6 +2052,89 @@ LG - 플러스플랜 115 (월정 115,000원)</div>
       </div>
     </div>
 
+    <!-- ==================== 광고 행 기종 1:1 매칭 모달 ==================== -->
+    <div id="adDeviceMatchModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-3 hidden">
+      <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 border border-slate-200 space-y-4 max-h-[92vh] flex flex-col">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+            </div>
+            <div>
+              <h3 class="text-sm font-black text-slate-900">광고 행 기종 1:1 매칭</h3>
+              <p class="text-[11px] text-slate-500">리베이트(단가표) 기종과 연결하여 출고가·공시·기준넷가를 자동 연동합니다</p>
+            </div>
+          </div>
+          <button onclick="closeAdDeviceMatchModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-lg transition">&times;</button>
+        </div>
+
+        <div class="overflow-y-auto flex-1 space-y-4 text-xs pr-1">
+          <!-- 현재 선택된 줄 정보 -->
+          <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between">
+            <div>
+              <span class="text-[11px] text-slate-500 block mb-0.5">매칭 대상 광고줄</span>
+              <span id="adMatchRowDesc" class="font-black text-slate-800 text-sm">SK 특가 · 1번째 줄</span>
+            </div>
+            <div id="adMatchCurrentBadge" class="px-2.5 py-1 rounded-xl bg-blue-50 text-blue-700 font-bold border border-blue-200 text-xs">
+              현재: 갤럭시 S25
+            </div>
+          </div>
+
+          <!-- 연결할 기종 선택 드롭다운 -->
+          <div class="space-y-2 p-3.5 bg-amber-50/50 rounded-2xl border border-amber-200">
+            <label class="block font-black text-slate-900">
+              연동할 리베이트 기종 선택 <span class="text-rose-500">*</span>
+            </label>
+            <select id="adMatchDeviceSelect" onchange="previewAdDeviceMatch(this.value)" class="w-full px-3 py-2.5 bg-white border border-amber-300 rounded-xl font-bold text-slate-900 focus:ring-2 focus:ring-amber-500 text-xs">
+              <!-- JS 옵션 주입 -->
+            </select>
+            <p class="text-[11px] text-slate-500">※ 리베이트 입력표 및 공시 출고가 설정에 등록된 모든 기종이 표시됩니다.</p>
+          </div>
+
+          <!-- 실시간 기종 단가 & 넷가 미리보기 카드 -->
+          <div id="adMatchPreviewCard" class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2 hidden">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-700">기종 상세 가격 정보 (<span id="adMatchCarrierSpan">SK</span> 기준)</span>
+              <span id="adMatchGroupBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-200 text-slate-700">S시리즈</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-center">
+              <div class="p-2 bg-white rounded-xl border border-slate-200">
+                <span class="text-[10px] text-slate-400 block font-bold">출고가</span>
+                <span id="adMatchPreviewRelease" class="font-black text-slate-900 text-xs">-</span>
+              </div>
+              <div class="p-2 bg-white rounded-xl border border-slate-200">
+                <span class="text-[10px] text-slate-400 block font-bold">공시지원금 (번/기)</span>
+                <span id="adMatchPreviewSub" class="font-bold text-rose-600 text-xs">-</span>
+              </div>
+              <div class="p-2 bg-white rounded-xl border border-slate-200">
+                <span class="text-[10px] text-slate-400 block font-bold">리베이트 단가 (번/기)</span>
+                <span id="adMatchPreviewRebate" class="font-bold text-blue-600 text-xs">-</span>
+              </div>
+              <div class="p-2 bg-emerald-50 rounded-xl border border-emerald-200">
+                <span class="text-[10px] text-emerald-700 block font-bold">계산된 기준넷가 (번/기)</span>
+                <span id="adMatchPreviewNet" class="font-black text-emerald-800 text-xs">-</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-100">
+          <button onclick="deleteCurrentMatchingAdRow()" class="px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold transition text-xs flex items-center gap-1" title="이 줄을 광고표에서 삭제">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            <span>이 줄 삭제</span>
+          </button>
+          <div class="flex items-center gap-2">
+            <button onclick="closeAdDeviceMatchModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition text-xs">
+              취소
+            </button>
+            <button onclick="confirmAdDeviceMatch()" class="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-black shadow-xs transition text-xs flex items-center gap-1.5">
+              <span>🔗 기종 매칭 적용하기</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- ==================== 6. 버그/개선사항 등록 모달 ==================== -->
     <div id="newRequestModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-3 hidden">
       <div class="bg-white rounded-3xl shadow-2xl max-w-xl w-full p-6 border border-slate-200 space-y-4 max-h-[90vh] flex flex-col">
@@ -2734,7 +2821,21 @@ LG - 플러스플랜 115 (월정 115,000원)</div>
       ['SK', 'KT', 'LG'].forEach(c => {
         if (!dailyCarrierRows[c] || !Array.isArray(dailyCarrierRows[c])) {
           dailyCarrierRows[c] = [...defaultIds];
+        } else {
+          defaultIds.forEach(id => {
+            if (!dailyCarrierRows[c].includes(id)) dailyCarrierRows[c].push(id);
+          });
         }
+        if (!adCarrierOrders[c] || !Array.isArray(adCarrierOrders[c])) {
+          adCarrierOrders[c] = [...defaultIds];
+        } else {
+          defaultIds.forEach(id => {
+            if (!adCarrierOrders[c].includes(id)) adCarrierOrders[c].push(id);
+          });
+        }
+      });
+      defaultIds.forEach(id => {
+        if (!calcRows.includes(id)) calcRows.push(id);
       });
     }
 
@@ -2886,7 +2987,7 @@ LG - 플러스플랜 115 (월정 115,000원)</div>
         adCarrierOrders[activeAdCarrier] = devices.map(d => d.id);
       }
       adCarrierOrders[activeAdCarrier].push('empty');
-      saveLayouts();
+      saveLayouts('광고 구분선 추가', `${activeAdCarrier} 광고표에 빈 줄(구분선) 추가`);
       renderAdSection();
       setTimeout(() => {
         const last = document.querySelector('#adTableBody tr:last-child');
@@ -2897,17 +2998,192 @@ LG - 플러스플랜 115 (월정 115,000원)</div>
         }
       }, 50);
     }
+
+    function addAdDeviceRow() {
+      if (!adCarrierOrders[activeAdCarrier]) {
+        adCarrierOrders[activeAdCarrier] = devices.map(d => d.id);
+      }
+      adCarrierOrders[activeAdCarrier].push('empty');
+      const newIdx = adCarrierOrders[activeAdCarrier].length - 1;
+      saveLayouts('광고 기종 추가', `${activeAdCarrier} 광고표에 새 기종 줄 추가`);
+      renderAdSection();
+      setTimeout(() => {
+        const last = document.querySelector('#adTableBody tr:last-child');
+        if (last) {
+          last.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          last.classList.add('bg-amber-50/80');
+          setTimeout(() => last.classList.remove('bg-amber-50/80'), 1200);
+        }
+        openAdDeviceMatchModal(activeAdCarrier, newIdx);
+      }, 50);
+    }
+
     function deleteAdRow(carrier, idx) {
       if (adCarrierOrders[carrier]) {
         adCarrierOrders[carrier].splice(idx, 1);
-        saveLayouts();
+        saveLayouts('광고 행 삭제', `${carrier} 광고표 ${idx + 1}번째 줄 삭제`);
         renderAdSection();
       }
     }
+
     function resetAdRows() {
       adCarrierOrders[activeAdCarrier] = devices.map(d => d.id);
-      saveLayouts();
+      saveLayouts('광고표 순서 초기화', `${activeAdCarrier} 광고표 순서 기본값 복구`);
       renderAdSection();
+    }
+
+    // ==================== 광고 행 기종 1:1 매칭 팝업 제어 ====================
+    let currentAdMatchTarget = { carrier: 'SK', index: -1 };
+
+    function openAdDeviceMatchModal(carrier, index) {
+      currentAdMatchTarget = { carrier, index };
+      const carrierOrders = adCarrierOrders[carrier] || [];
+      const currentDevId = carrierOrders[index];
+      const currentDev = (currentDevId && currentDevId !== 'empty') ? devices.find(d => d.id === currentDevId) : null;
+
+      const modal = document.getElementById('adDeviceMatchModal');
+      const rowDesc = document.getElementById('adMatchRowDesc');
+      const currentBadge = document.getElementById('adMatchCurrentBadge');
+      const select = document.getElementById('adMatchDeviceSelect');
+      const carrierSpan = document.getElementById('adMatchCarrierSpan');
+
+      if (rowDesc) rowDesc.innerText = `${carrier} 특가 · ${index + 1}번째 줄`;
+      if (currentBadge) {
+        if (currentDev) {
+          currentBadge.innerText = `현재: ${currentDev.tag || ''} ${currentDev.name}`;
+          currentBadge.className = "px-2.5 py-1 rounded-xl bg-blue-50 text-blue-700 font-bold border border-blue-200 text-xs";
+        } else {
+          currentBadge.innerText = `현재: 구분선 (여백 줄)`;
+          currentBadge.className = "px-2.5 py-1 rounded-xl bg-slate-100 text-slate-500 font-bold border border-slate-200 text-xs";
+        }
+      }
+      if (carrierSpan) carrierSpan.innerText = carrier;
+
+      if (select) {
+        let html = `<option value="empty" ${(!currentDevId || currentDevId === 'empty') ? 'selected' : ''}>-- 구분선 (여백 줄) --</option>`;
+
+        const groups = [
+          { key: 'S', label: '갤럭시 S 시리즈' },
+          { key: 'FOLD', label: '갤럭시 Z 폴더블 / 플립' },
+          { key: 'IPHONE', label: '아이폰 (iPhone)' },
+          { key: 'A', label: '보급형 / 기타 기종' }
+        ];
+
+        groups.forEach(g => {
+          const gDevs = devices.filter(d => (d.group || 'S') === g.key);
+          if (gDevs.length > 0) {
+            html += `<optgroup label="${g.label}">`;
+            gDevs.forEach(d => {
+              const relPrice = (d.prices && d.prices[carrier] !== undefined) ? d.prices[carrier] : (d.price || 0);
+              const isSel = (d.id === currentDevId) ? 'selected' : '';
+              html += `<option value="${d.id}" ${isSel}>${d.tag || ''} ${d.name} (출고가: ${relPrice}만)</option>`;
+            });
+            html += `</optgroup>`;
+          }
+        });
+
+        const otherDevs = devices.filter(d => !groups.some(g => g.key === (d.group || 'S')));
+        if (otherDevs.length > 0) {
+          html += `<optgroup label="기타 등록 기종">`;
+          otherDevs.forEach(d => {
+            const relPrice = (d.prices && d.prices[carrier] !== undefined) ? d.prices[carrier] : (d.price || 0);
+            const isSel = (d.id === currentDevId) ? 'selected' : '';
+            html += `<option value="${d.id}" ${isSel}>${d.tag || ''} ${d.name} (출고가: ${relPrice}만)</option>`;
+          });
+          html += `</optgroup>`;
+        }
+
+        select.innerHTML = html;
+      }
+
+      previewAdDeviceMatch(select ? select.value : currentDevId);
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeAdDeviceMatchModal() {
+      const modal = document.getElementById('adDeviceMatchModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function previewAdDeviceMatch(deviceId) {
+      const card = document.getElementById('adMatchPreviewCard');
+      if (!card) return;
+      if (!deviceId || deviceId === 'empty') {
+        card.classList.add('hidden');
+        return;
+      }
+
+      const d = devices.find(x => x.id === deviceId);
+      if (!d) {
+        card.classList.add('hidden');
+        return;
+      }
+
+      card.classList.remove('hidden');
+      const carrier = currentAdMatchTarget.carrier || activeAdCarrier;
+      const relPrice = (d.prices && d.prices[carrier] !== undefined) ? d.prices[carrier] : (d.price || 0);
+      const subMnp = (d.sub && d.sub[carrier] && d.sub[carrier].mnp !== undefined) ? d.sub[carrier].mnp : 0;
+      const subChg = (d.sub && d.sub[carrier] && d.sub[carrier].chg !== undefined) ? d.sub[carrier].chg : 0;
+      const rateMnp = (d.rate && d.rate[carrier] && d.rate[carrier].mnp !== undefined) ? d.rate[carrier].mnp : 0;
+      const rateChg = (d.rate && d.rate[carrier] && d.rate[carrier].chg !== undefined) ? d.rate[carrier].chg : 0;
+      const netMnp = calcNet(d, carrier, 'mnp', adMarginBase);
+      const netChg = calcNet(d, carrier, 'chg', adMarginBase);
+
+      const groupBadge = document.getElementById('adMatchGroupBadge');
+      const previewRelease = document.getElementById('adMatchPreviewRelease');
+      const previewSub = document.getElementById('adMatchPreviewSub');
+      const previewRebate = document.getElementById('adMatchPreviewRebate');
+      const previewNet = document.getElementById('adMatchPreviewNet');
+
+      if (groupBadge) groupBadge.innerText = d.group || '기종';
+      if (previewRelease) previewRelease.innerText = `${relPrice}만`;
+      if (previewSub) previewSub.innerText = `${subMnp}만 / ${subChg}만`;
+      if (previewRebate) previewRebate.innerText = `${rateMnp !== '' && rateMnp !== null ? rateMnp : 0}만 / ${rateChg !== '' && rateChg !== null ? rateChg : 0}만`;
+      if (previewNet) previewNet.innerText = `${netMnp !== null ? netMnp : '품절'} / ${netChg !== null ? netChg : '품절'}`;
+    }
+
+    function confirmAdDeviceMatch() {
+      const { carrier, index } = currentAdMatchTarget;
+      if (index < 0 || !adCarrierOrders[carrier]) {
+        closeAdDeviceMatchModal();
+        return;
+      }
+
+      const select = document.getElementById('adMatchDeviceSelect');
+      const selectedDeviceId = select ? select.value : 'empty';
+
+      adCarrierOrders[carrier][index] = selectedDeviceId;
+
+      let targetDevice = null;
+      if (selectedDeviceId !== 'empty') {
+        targetDevice = devices.find(d => d.id === selectedDeviceId);
+        if (targetDevice) {
+          if (!targetDevice.ad) targetDevice.ad = {};
+          if (!targetDevice.ad[carrier]) {
+            targetDevice.ad[carrier] = { mnp: '0', chg: '0', note: '', hidden: false, tag: '' };
+          }
+          if (!targetDevice.ad[carrier].tag) {
+            targetDevice.ad[carrier].tag = targetDevice.tag || targetDevice.name;
+          }
+        }
+      }
+
+      saveLayouts('광고 기종 매칭', `${carrier} 특가 ${index + 1}번째 줄 ➔ ${targetDevice ? targetDevice.name : '구분선'} 매칭 완료`);
+      renderAdSection();
+      if (typeof renderAdPosterTable === 'function') renderAdPosterTable();
+      closeAdDeviceMatchModal();
+
+      alert(`✅ [기종 매칭 완료]\n\n${carrier} 특가 ${index + 1}번째 줄이 '${targetDevice ? targetDevice.name : '구분선'}'으로 성공적으로 매칭되었습니다!\n출고가·공시·리베이트 및 기준넷가가 즉시 연동됩니다.`);
+    }
+
+    function deleteCurrentMatchingAdRow() {
+      const { carrier, index } = currentAdMatchTarget;
+      if (index >= 0 && adCarrierOrders[carrier]) {
+        if (confirm("이 광고 행을 광고표에서 삭제하시겠습니까?")) {
+          deleteAdRow(carrier, index);
+          closeAdDeviceMatchModal();
+        }
+      }
     }
 
     // ==================== 엑셀 스타일 열 너비 조절 (Column Resizing) ====================
@@ -3539,6 +3815,9 @@ LG - 플러스플랜 115 (월정 115,000원)</div>
       renderDailyTable();
       renderAdSection();
       renderSettingsTable();
+      if (typeof renderAdPosterTable === 'function') {
+        renderAdPosterTable();
+      }
     }
 
     function updateLocation(id, type, val) {
@@ -3803,7 +4082,13 @@ LG - 플러스플랜 115 (월정 115,000원)</div>
               </div>
             </td>
             <td class="p-2 text-center">
-              <button onclick="deleteAdRow('${activeAdCarrier}', ${idx})" class="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50 text-xs transition" title="구분선 삭제">✕</button>
+              <div class="flex items-center justify-center gap-1">
+                <button onclick="deleteAdRow('${activeAdCarrier}', ${idx})" class="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50 text-xs transition" title="구분선 삭제">✕</button>
+                <button onclick="openAdDeviceMatchModal('${activeAdCarrier}', ${idx})" class="px-2 py-1 rounded-lg text-xs font-black bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-300 shadow-2xs transition flex items-center gap-0.5" title="이 구분선을 특정 기종과 1:1 매칭">
+                  <svg class="w-3 h-3 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                  <span>매칭</span>
+                </button>
+              </div>
             </td>
             <td colspan="6" class="p-2.5 text-center text-slate-400 text-xs font-medium tracking-widest select-none">
               <span class="inline-flex items-center gap-2 text-slate-400">
@@ -3852,27 +4137,40 @@ LG - 플러스플랜 115 (월정 115,000원)</div>
             </div>
           </td>
 
-          <!-- 숨김 / 게시 토글 버튼 -->
+          <!-- 숨김 / 게시 토글 및 기종 매칭 버튼 -->
           <td class="p-2 text-center overflow-hidden">
-            <button onclick="toggleAdHidden('${d.id}')"
-                    class="px-2.5 py-1 rounded-lg text-xs font-bold border transition ${isHidden ? 'bg-slate-100 text-slate-400 border-slate-300' : 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100'}">
-              ${isHidden ? '숨김' : '게시'}
-            </button>
+            <div class="flex items-center justify-center gap-1">
+              <button onclick="toggleAdHidden('${d.id}')"
+                      class="px-2 py-1 rounded-lg text-xs font-bold border transition ${isHidden ? 'bg-slate-100 text-slate-400 border-slate-300' : 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100'}"
+                      title="${isHidden ? '현재 광고 문구에서 숨김' : '현재 광고 문구에 게시 중'}">
+                ${isHidden ? '숨김' : '게시'}
+              </button>
+              <button onclick="openAdDeviceMatchModal('${activeAdCarrier}', ${idx})"
+                      class="px-2 py-1 rounded-lg text-xs font-black bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-300 shadow-2xs transition flex items-center gap-0.5"
+                      title="리베이트 단가표 기종과 1:1 매칭 (출고가·공시·리베이트 자동연동)">
+                <svg class="w-3 h-3 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                <span>매칭</span>
+              </button>
+            </div>
           </td>
 
-          <!-- 기종명 직접 수정 (드롭다운 대신 인풋) -->
+          <!-- 기종명 직접 수정 (광고 홍보용 표기명) -->
           <td class="p-2 overflow-hidden">
             <div class="space-y-0.5">
               <input type="text"
                      value="${currentTag}"
                      data-orig-val="${currentTag}"
                      placeholder="${d.tag}"
+                     title="광고 문구에 표시될 홍보명 (기종 변경은 좌측 [매칭] 버튼 클릭)"
                      onfocus="this.select(); if(this.dataset.origVal===undefined) this.dataset.origVal = this.value"
                      onkeydown="if(event.key==='Enter') this.blur(); if(event.key==='Escape'){this.value=this.dataset.origVal||''; this.blur();}"
                      oninput="updateAdTagLive('${d.id}', this.value)"
                      onchange="updateAdTagCommit('${d.id}', this.value, this)"
                      class="w-full px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
-              <div class="text-[10px] text-slate-400 pl-0.5 truncate select-none">${d.name}</div>
+              <div class="text-[10px] text-slate-400 pl-0.5 truncate select-none flex items-center justify-between">
+                <span>연동: ${d.name}</span>
+                <span class="text-amber-600 font-semibold cursor-pointer hover:underline" onclick="openAdDeviceMatchModal('${activeAdCarrier}', ${idx})" title="리베이트 기종 변경">기종변경 ❯</span>
+              </div>
             </div>
           </td>
 
@@ -4488,7 +4786,12 @@ LG - 플러스플랜 115 (월정 115,000원)</div>
         const numVal = parseFloat(val) || 0;
         if (oldVal === numVal) return;
         d.prices[carrier] = numVal;
+        if (carrier === 'SK') d.price = numVal;
         scheduleMasterSave('출고가/공시 설정', `${d.name} (${carrier}) 출고가: ${oldVal}만 → ${numVal}만원`);
+        renderCalcTable();
+        renderDailyTable();
+        renderAdSection();
+        if (typeof renderAdPosterTable === 'function') renderAdPosterTable();
       }
     }
 
@@ -4501,6 +4804,10 @@ LG - 플러스플랜 115 (월정 115,000원)</div>
         d.sub[carrier][type] = numVal;
         const typeKo = type === 'mnp' ? '번이' : '기변';
         scheduleMasterSave('출고가/공시 설정', `${d.name} (${carrier} ${typeKo}) 공시지원금: ${oldVal}만 → ${numVal}만원`);
+        renderCalcTable();
+        renderDailyTable();
+        renderAdSection();
+        if (typeof renderAdPosterTable === 'function') renderAdPosterTable();
       }
     }
 
@@ -4785,16 +5092,39 @@ LG - 플러스플랜 115 (월정 115,000원)</div>
               syncCarrierConditionInputs();
             }
 
-            // 행 레이아웃 복원
+            // 행 레이아웃 복원 & 등록된 전체 기종 자동 포함 보장
             if (Array.isArray(data.calcRows) && data.calcRows.length > 0) {
               calcRows = data.calcRows;
             }
+            devices.forEach(d => {
+              if (d.id !== 'empty' && !calcRows.includes(d.id)) calcRows.push(d.id);
+            });
+
             if (data.dailyCarrierRows && typeof data.dailyCarrierRows === 'object') {
               dailyCarrierRows = data.dailyCarrierRows;
             }
+            ['SK', 'KT', 'LG'].forEach(c => {
+              if (!dailyCarrierRows[c] || !Array.isArray(dailyCarrierRows[c])) {
+                dailyCarrierRows[c] = devices.map(d => d.id);
+              } else {
+                devices.forEach(d => {
+                  if (d.id !== 'empty' && !dailyCarrierRows[c].includes(d.id)) dailyCarrierRows[c].push(d.id);
+                });
+              }
+            });
+
             if (data.adCarrierOrders && typeof data.adCarrierOrders === 'object') {
               adCarrierOrders = data.adCarrierOrders;
             }
+            ['SK', 'KT', 'LG'].forEach(c => {
+              if (!adCarrierOrders[c] || !Array.isArray(adCarrierOrders[c])) {
+                adCarrierOrders[c] = devices.map(d => d.id);
+              } else {
+                devices.forEach(d => {
+                  if (d.id !== 'empty' && !adCarrierOrders[c].includes(d.id)) adCarrierOrders[c].push(d.id);
+                });
+              }
+            });
 
             // rates, locs, ads 데이터 복원
             if (data.rates) {
