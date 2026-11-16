@@ -1132,6 +1132,37 @@ Write-Host "Pushed Commit: $($res.commit.sha)"
 ### 3) `subscribeStoreData()` 내 미정의 `targetStoreId` ReferenceError 제거
 - `subscribeStoreData()`의 구독 해제 블록 내에 남아있던 미정의 `targetStoreId` 참조 구문을 안전하게 정리.
 
+---
+
+## 34. 시세표 PNG 캡처 3대 시각적 오류 완치 및 무오차 대안(🖨️ PDF / 고화질 인쇄) 탑재 (2026-11-16)
+
+### 1) 타이틀 & 부제목 상하 겹침 현상 원천 차단
+- **문제 원인**: `h1#posterStoreTitle`에 Tailwind `text-3xl sm:text-5xl`의 기본값(`line-height: 1`)이 적용되어 있고 부제목의 상단 마진(`mt-1`)이 협소하여 `html2canvas` 폰트 메트릭 계산 시 부제목(`posterSubtitle`)이 메인 타이틀 하단 글자와 겹쳐 뭉개지는 현상 발생.
+- **완치 조치**:
+  - `h1#posterStoreTitle`에 `line-height: 1.25; margin-bottom: 8px;` 적용.
+  - `#posterSubtitle`에 `line-height: 1.35; margin-top: 4px;` 적용.
+  - `captureAdPosterImage` 클론 DOM에도 인라인 스타일을 강제 주입하여 캡처 시 글자 겹침을 100% 원천 차단.
+
+### 2) 메인 시세표 기종명 좌측 쏠림 현상 완치 (절대 중앙 정렬)
+- **문제 원인**: UI 편집 시 드래그 핸들과 상하 이동 화살표를 감싸고 있던 부모 `<div class="flex items-center gap-1 w-full">`의 `justify-content` 기본값이 `flex-start`였음. 캡처 시 UI 버튼들은 제거되었으나 부모 div가 남아있어 치환된 기종명 span이 왼쪽 벽에 붙어 렌더링됨.
+- **완치 조치**:
+  - 드롭다운 치환 시 `td.innerHTML`을 순수 `<span class="text-xs sm:text-sm font-black text-slate-950 text-center block whitespace-nowrap px-1" style="display:block; text-align:center; width:100%;">${modelText}</span>`로 단일화.
+  - 셀 flexbox wrapper를 통해 모든 기종명이 정중앙에 완벽하게 정렬되도록 개선.
+
+### 3) 요금제 헤더 바 (`▼ 요금제 ▼`) 우측 쏠림 현상 완치
+- **문제 원인**: 요금제 헤더 컨테이너가 `flex items-center justify-between` 구조였는데, 우측 `➕ 행 추가` 버튼이 제거되면서 좌측 더미 `<span class="w-16"></span>`과 요금제 텍스트 2개만 남아 요금제 텍스트가 우측으로 밀림.
+- **완치 조치**:
+  - 요금제 및 부가서비스 상단 바를 `relative flex items-center justify-center text-center`로 개편하고 `➕ 행 추가` 버튼을 `absolute right-3`로 배치.
+  - UI 편집 모드와 PNG 캡처 모드 모두에서 타이틀 텍스트가 100% 절대 정중앙을 유지.
+
+### 4) Pretendard 웹 폰트 메트릭 로딩 보장 (`document.fonts.ready`)
+- 캡처 실행 직전 `await document.fonts.ready`를 호출하여 폰트 메트릭이 100% 로딩된 상태에서 캔버스가 그려지도록 보장.
+
+### 5) 캔버스 오차 0%의 최강 대안: 브라우저 네이티브 `🖨️ PDF / 고화질 인쇄` 기능 탑재
+- 사용자 질문("오류 없게 할 수 있는 다른 방법")에 부응하여, 자바스크립트 캔버스의 시뮬레이션 한계를 완전히 뛰어넘는 브라우저 공식 그래픽 엔진 기반 인쇄/PDF 기능 추가.
+- 상단 액션 바에 `🖨️ PDF / 고화질 인쇄` 버튼 추가 -> 원클릭으로 UI 버튼 없이 깔끔하게 정돈된 시세표를 초고해상도 PDF로 저장하거나 출력 가능.
+
+
 
 
 
