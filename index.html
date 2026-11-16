@@ -2429,6 +2429,20 @@
     let enteredPin = "";
     let isUnlocked = false;
     var currentPosterThemeColor = '#e60012';
+    var posterDeviceRows = null;
+    var posterMarginMode = 'basic';
+    var draggedPosterRowIndex = null;
+    var posterVasData = null;
+    var posterVasEtcText = '통신사보험 가입, 기종별 금액상이 (KT, LG M+3개월 / SK M+1개월 미가입 추가 3만원)';
+
+    function getDefaultPosterVasData() {
+      return [
+        { id: 'vas_sk_1', carrier: 'SK', name: '마이스마트콜3', fee: '3,500원', period: 'M+2 (당월+2개월)', penalty: '3만' },
+        { id: 'vas_kt_1', carrier: 'KT', name: '필수팩', fee: '9,900원', period: 'M+4 (당월+4개월)', penalty: '6만' },
+        { id: 'vas_lg_1', carrier: 'LG', name: '교보문고SAM+구글원', fee: '16,500원', period: 'M+3 (당월+3개월)', penalty: '5만' },
+        { id: 'vas_lg_2', carrier: 'LG', name: 'V컬러링+음악감상+벨링콘텐츠', fee: '15,400원', period: 'M+3 (당월+3개월)', penalty: '5만' }
+      ];
+    }
 
     // 실시간 리스너 구독 해제 핸들
     let unsubscribeMasterConfig = null;
@@ -5132,8 +5146,6 @@
     function subscribeStoreData() {
       if (unsubscribeStoreData) {
         unsubscribeStoreData();
-      if (currentTab === 'card') setCardStore(targetStoreId);
-      if (currentTab === 'compare') setCompareStore(targetStoreId);
         unsubscribeStoreData = null;
       }
       if (!db) return;
@@ -9438,11 +9450,11 @@ function handleSelectAffiliateCard(cardId) {
   <div id="printContainer" class="${sheet.className}">
     ${clone.innerHTML}
   </div>
-  <!-- 클라우드 실시간 상태 표시 (우측 하단 미니멀 배지) -->
-  <div id="syncStatusBadge" class="fixed bottom-3 right-3 z-30 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/90 backdrop-blur border border-slate-200 text-slate-500 opacity-40 hover:opacity-100 transition shadow-xs cursor-default select-none" title="구글 파이어베이스 클라우드 실시간 동기화 상태">
-    <span id="syncStatusDot" class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-    <span id="syncStatusText">동기화 완료</span>
-  </div>
+  <script>
+    window.onload = function() {
+      window.print();
+    };
+  <\/script>
 </body>
 </html>`);
       iframeDoc.close();
@@ -11483,10 +11495,7 @@ JSON 규격:
     }
 
     // ==================== 통신 3사 성지특가 통합 시세표 포스터 기능 ====================
-    let posterDeviceRows = null; // 포스터에 표시할 기종 ID 배열
-    let posterMarginMode = 'basic'; // 시세표 가격 연동 기준 ('basic': 기본조건, 'all': 풀부가/올부가)
-    let draggedPosterRowIndex = null; // 드래그 앤 드롭 인덱스
-    let currentPosterThemeColor = '#e60012';
+    currentPosterThemeColor = currentPosterThemeColor || '#e60012';
 
     // 한국 표준시(KST) 오늘 날짜 문자열 반환 (매일 자동 갱신)
     function getKstTodayString() {
@@ -11505,17 +11514,6 @@ JSON 규격:
         return `${now.getMonth() + 1}월 ${now.getDate()}일`;
       }
     }
-
-    // 기본 부가서비스 데이터 모델
-    const defaultPosterVasData = [
-      { id: 'vas_sk_1', carrier: 'SK', name: '마이스마트콜3', fee: '3,500원', period: 'M+2 (당월+2개월)', penalty: '3만' },
-      { id: 'vas_kt_1', carrier: 'KT', name: '필수팩', fee: '9,900원', period: 'M+4 (당월+4개월)', penalty: '6만' },
-      { id: 'vas_lg_1', carrier: 'LG', name: '교보문고SAM+구글원', fee: '16,500원', period: 'M+3 (당월+3개월)', penalty: '5만' },
-      { id: 'vas_lg_2', carrier: 'LG', name: 'V컬러링+음악감상+벨링콘텐츠', fee: '15,400원', period: 'M+3 (당월+3개월)', penalty: '5만' }
-    ];
-
-    let posterVasData = null;
-    let posterVasEtcText = '통신사보험 가입, 기종별 금액상이 (KT, LG M+3개월 / SK M+1개월 미가입 추가 3만원)';
 
     function getInitialPosterDeviceRows() {
       const defaultIds = ['s26', 's26u', 'flip8', 'fold8', 'fold8u', 'ip17', 'ip18p', 'ip18pm', 'ipduo'];
@@ -11577,7 +11575,7 @@ JSON 규격:
       tbody.innerHTML = '';
 
       if (!posterVasData || !Array.isArray(posterVasData) || posterVasData.length === 0) {
-        posterVasData = JSON.parse(JSON.stringify(defaultPosterVasData));
+        posterVasData = JSON.parse(JSON.stringify(getDefaultPosterVasData()));
       }
 
       const carriers = ['SK', 'KT', 'LG'];
@@ -11654,7 +11652,7 @@ JSON 규격:
 
     function confirmAddPosterVasRow(carrier) {
       closePosterVasCarrierModal();
-      if (!posterVasData) posterVasData = JSON.parse(JSON.stringify(defaultPosterVasData));
+      if (!posterVasData) posterVasData = JSON.parse(JSON.stringify(getDefaultPosterVasData()));
 
       const newItem = {
         id: 'vas_' + carrier.toLowerCase() + '_' + Date.now(),

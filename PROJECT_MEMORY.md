@@ -1115,5 +1115,23 @@ Write-Host "Pushed Commit: $($res.commit.sha)"
 - 제휴카드 탭에서 카드 선택, 개월수, 실적구간, 할부원금, 테마 변경 시 `saveCardSettings(false)`를 통해 Firestore에 즉시 실시간 동기화.
 - `subscribeStoreData()` 리스너를 통해 다른 기기나 새로고침 시에도 클라우드에서 최신 데이터를 받아 자동 복원.
 
+---
+
+## 33. 보안잠금 PIN 먹통 긴급 해결 (SyntaxError & TDZ ReferenceError 완치) (2026-11-16)
+
+### 1) 식별자 중복 선언 (`SyntaxError: Identifier 'currentPosterThemeColor' has already been declared`) 해결
+- **문제 원인**: 코드 상단(라인 2431)에 `var currentPosterThemeColor = '#e60012';`가 선언되어 있었는데, 시세표 포스터 블록에서 `let currentPosterThemeColor = '#e60012';`로 중복 선언되어 브라우저가 스크립트 컴파일 단계에서 문법 에러(`SyntaxError`)를 발생시키고 전체 스크립트 실행을 중단시킴 -> PIN 모달의 버튼 및 `inputPin()` 함수가 실행되지 않아 보안잠금이 먹통이 됨.
+- **해결책**: 중복 `let` 선언을 제거하고 `currentPosterThemeColor = currentPosterThemeColor || '#e60012';`로 정상화.
+
+### 2) 호이스팅 이전 TDZ 변수 참조 (`ReferenceError: Cannot access 'posterDeviceRows' before initialization`) 해결
+- **문제 원인**: 스크립트 초기화 구간(라인 6036)에서 `loadAdPosterSettings()` 및 `renderPosterVasTable()`이 즉시 호출되는데, `posterDeviceRows`, `posterVasData` 등이 코드 하단에 `let`으로 선언되어 있어 TDZ(Temporal Dead Zone) ReferenceError 발생.
+- **해결책**:
+  - `posterDeviceRows`, `posterMarginMode`, `draggedPosterRowIndex`, `posterVasData`, `posterVasEtcText`를 스크립트 최상단(라인 2430 부근)에 `var`로 선언하여 안전하게 전역 호이스팅 보장.
+  - 부가서비스 초기 데이터 모델을 `getDefaultPosterVasData()` 함수로 정의하여 언제 호출해도 에러 없이 안전하게 배열을 반환하도록 리팩토링.
+
+### 3) `subscribeStoreData()` 내 미정의 `targetStoreId` ReferenceError 제거
+- `subscribeStoreData()`의 구독 해제 블록 내에 남아있던 미정의 `targetStoreId` 참조 구문을 안전하게 정리.
+
+
 
 
