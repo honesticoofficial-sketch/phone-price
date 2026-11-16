@@ -1,4 +1,4 @@
-﻿# 📱 스마트폰 넷가 & 시세표 관리 시스템 (Phone Price Calculator)
+# 📱 스마트폰 넷가 & 시세표 관리 시스템 (Phone Price Calculator)
 # 🌟 마스터 프로젝트 인수인계 수첩 (PROJECT_MEMORY.md)
 
 > **이 문서는 무엇인가요?**  
@@ -1180,6 +1180,32 @@ Write-Host "Pushed Commit: $($res.commit.sha)"
   3. **실시간 넷가 산출표(`captureNetTableImage`)**: `htmlToImage.toPng()` 1순위 적용.
 - **결과**:
   - 시세표, 제휴카드, 넷가표 모두 브라우저 화면과 0.001px의 오차도 없는 100% 네이티브 고화질 PNG 이미지 저장 및 클립보드 복사 달성.
+
+---
+
+## 36. 시세표 [필수확인] 중앙 정렬 보정 및 contenteditable 편집 포커스 풀림/수정 불가 완치 (2026-11-16)
+
+### 1) [필수확인] 타이틀 완벽한 시각적·물리적 정중앙 정렬 달성
+- **문제 원인**: 좌측에만 확성기 이모지(`📢`)가 있고 우측에는 대칭 요소가 없어, 약 24px의 시각적 너비 차이로 인해 `[필수확인]` 텍스트 자체가 오른쪽으로 치우쳐 보였음.
+- **완치 조치**:
+  - `📢 [필수확인] 📢` 좌우 대칭 구조로 완벽히 개편하여 픽셀 오차 없는 100% 절대 중앙 정렬 달성.
+  - 2열 유의사항 박스 간격(`gap-x-6 gap-y-2`) 및 패딩 정돈.
+
+### 2) Firestore 실시간 동기화 시 `contenteditable` 편집 포커스 증발 및 수정 불가 완치
+- **문제 원인**:
+  - `subscribeStoreData()` 리스너의 `isTyping` 검사식에서 `<input>`, `<textarea>`, `<select>`만 확인하고 `<div contenteditable="true">` 및 `<td contenteditable="true">`를 누락함.
+  - 사용자가 `[필수확인]`이나 상호명, 요금제 셀을 클릭하여 타이핑하거나 포커스를 두었을 때, Firestore 실시간 스냅샷이 수신되면 `applyStorePosterSettings()` 및 `render()`가 강제 실행되어 DOM이 새로고침되고 사용자가 작성 중이던 텍스트가 덮어씌워지며 포커스가 강제로 풀리는 현상 발생.
+- **완치 조치**:
+  - `isTyping` 검사식에 `activeEl.isContentEditable || activeEl.getAttribute('contenteditable') === 'true'` 추가.
+  - 사용자가 타이핑/편집 중일 때는 `applyStorePosterSettings()` 및 `applyStoreCardSettings()`의 DOM 덮어쓰기를 건너뛰도록 철통 방어 로직 적용.
+  - `posterNoticeLeft`, `posterNoticeRight`에 마우스 호버(`hover:ring-1 hover:ring-rose-300 hover:bg-white/90`) 및 포커스(`focus:ring-2 focus:ring-rose-500 focus:bg-white`) 시각 피드백을 적용하여 직관적인 텍스트 수정 경험 제공.
+
+### 3) 인쇄 창 닫힌 후 부모 창 포커스 복원 보장
+- `printAdPoster()` 및 `printCardA4()`의 인쇄 아이프레임 내부에 `window.onafterprint` 리스너를 주입하고 `setTimeout(() => window.focus(), 800)`을 적용하여, 인쇄 대화상자 종료 후 포커스가 보이지 않는 아이프레임에 갇혀 키보드 입력이나 버튼 클릭이 씹히는 문제 원천 차단.
+
+### 4) 부가서비스 통신사 모달(`posterVasCarrierModal`) CSS 충돌 방지
+- 인라인 스타일 `display: none`을 명시하여 Tailwind의 `flex` 클래스와의 우선순위 간섭을 완전히 제거.
+
 
 
 

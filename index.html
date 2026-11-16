@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -1092,17 +1092,18 @@
 
           <!-- 3. [필수확인] 전체 9개 유의사항 2열 박스 (첫 번째 이미지 내용 100% 반영) -->
           <div class="bg-rose-50/40 rounded-2xl border-2 poster-theme-border border-[#e60012]/40 p-4 sm:p-5 space-y-2.5 shadow-2xs">
-            <div class="text-center font-black text-sm sm:text-base text-slate-900 tracking-tight flex items-center justify-center gap-1.5">
-              <span class="poster-theme-text text-[#e60012] font-black">📢</span>
-              <span class="border-b-2 poster-theme-border border-[#e60012] pb-0.5">[필수확인]</span>
+            <div class="text-center font-black text-sm sm:text-base text-slate-900 tracking-tight flex items-center justify-center gap-2">
+              <span class="poster-theme-text text-[#e60012] font-black select-none">📢</span>
+              <span class="border-b-2 poster-theme-border border-[#e60012] pb-0.5 px-1 font-black">[필수확인]</span>
+              <span class="poster-theme-text text-[#e60012] font-black select-none">📢</span>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-1.5 text-[11px] sm:text-xs text-slate-800 font-bold leading-relaxed">
-              <div id="posterNoticeLeft" contenteditable="true" onblur="saveAdPosterSettings(false)" class="whitespace-pre-wrap focus:outline-none focus:ring-1 focus:ring-rose-500 rounded p-1" title="클릭하여 수정 가능">- 부가서비스 및 결합은 필수 의무사항이 아니며 고객님 의사로 변경 가능합니다.
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-[11px] sm:text-xs text-slate-800 font-bold leading-relaxed">
+              <div id="posterNoticeLeft" contenteditable="true" onblur="saveAdPosterSettings(false)" class="whitespace-pre-wrap cursor-text hover:bg-white/90 hover:ring-1 hover:ring-rose-300 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white rounded-lg p-2.5 transition border border-transparent hover:border-rose-200" title="클릭하여 내용을 직접 수정할 수 있습니다">- 부가서비스 및 결합은 필수 의무사항이 아니며 고객님 의사로 변경 가능합니다.
 - 부가서비스 혜택 기간은 기종 통신사별로 상이합니다 문의 부탁드립니다.
 - 휴대폰+인터넷+TV 결합기준 동시가입 지원금 포함된 가격입니다
 - 공통지원금 기준으로 안내드린 금액이나 선택약정으로 고객님 선택 가능합니다
 - 요금제는 필수조건이 아니시며 고객님 의사에 따라 변경가능합니다</div>
-              <div id="posterNoticeRight" contenteditable="true" onblur="saveAdPosterSettings(false)" class="whitespace-pre-wrap focus:outline-none focus:ring-1 focus:ring-rose-500 rounded p-1" title="클릭하여 수정 가능">- 현금개통 및 할부개통 선택가능 합니다
+              <div id="posterNoticeRight" contenteditable="true" onblur="saveAdPosterSettings(false)" class="whitespace-pre-wrap cursor-text hover:bg-white/90 hover:ring-1 hover:ring-rose-300 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white rounded-lg p-2.5 transition border border-transparent hover:border-rose-200" title="클릭하여 내용을 직접 수정할 수 있습니다">- 현금개통 및 할부개통 선택가능 합니다
 - 할부 개통시 할부이자 5.9% 발생됩니다 (24개월 할부기준)
 - 선택약정은 공통지원금이 포함되지 않습니다
 - 휴대폰 보험 미가입시 추가금 5만원 (3사 공통 6개월 사용조건)
@@ -1197,7 +1198,7 @@
           </div>
 
           <!-- 부가서비스 통신사 선택 팝업 모달 (UI 전용) -->
-          <div id="posterVasCarrierModal" class="poster-ui-action hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div id="posterVasCarrierModal" class="poster-ui-action hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4" style="display: none;">
             <div class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-slate-200 text-center space-y-4 animate-in fade-in zoom-in duration-150">
               <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto text-2xl font-black shadow-xs">
                 ➕
@@ -5247,20 +5248,24 @@
               });
             }
 
-            // 사용자가 글을 작성 중일 때 테이블 DOM이 지워져서 포커스가 풀리는 현상 완전 방지
+            // 사용자가 글을 작성 중일 때 테이블 및 시세표 DOM이 지워져서 포커스가 풀리는 현상 완전 방지
             const activeEl = document.activeElement;
             const isTyping = activeEl && (
               activeEl.tagName === 'INPUT' ||
               activeEl.tagName === 'TEXTAREA' ||
-              activeEl.tagName === 'SELECT'
+              activeEl.tagName === 'SELECT' ||
+              activeEl.isContentEditable ||
+              activeEl.getAttribute('contenteditable') === 'true'
             );
 
-            // 시세표 포스터 및 제휴카드 클라우드 데이터 동기화 복원
-            if (data.posterSettings && typeof applyStorePosterSettings === 'function') {
-              applyStorePosterSettings(data.posterSettings);
-            }
-            if (data.cardSettings && typeof applyStoreCardSettings === 'function') {
-              applyStoreCardSettings(data.cardSettings);
+            // 시세표 포스터 및 제휴카드 클라우드 데이터 동기화 복원 (사용자가 타이핑/수정 중이 아닐 때만 안전하게 적용)
+            if (!isTyping) {
+              if (data.posterSettings && typeof applyStorePosterSettings === 'function') {
+                applyStorePosterSettings(data.posterSettings);
+              }
+              if (data.cardSettings && typeof applyStoreCardSettings === 'function') {
+                applyStoreCardSettings(data.cardSettings);
+              }
             }
 
             if (isTyping) {
@@ -8706,6 +8711,10 @@ function handleSelectAffiliateCard(cardId) {
 
     function applyStoreCardSettings(cs) {
       if (!cs || typeof cs !== 'object') return;
+      const activeEl = document.activeElement;
+      if (activeEl && (activeEl.isContentEditable || activeEl.getAttribute('contenteditable') === 'true' || activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) {
+        return;
+      }
       const storeKey = currentStoreId || 'myeongji';
       localStorage.setItem('phone_card_settings_' + storeKey, JSON.stringify(cs));
       if (currentTab === 'card') {
@@ -9457,6 +9466,9 @@ function handleSelectAffiliateCard(cardId) {
   <script>
     window.onload = function() {
       window.print();
+    };
+    window.onafterprint = function() {
+      try { window.parent.focus(); } catch(e) {}
     };
   <\/script>
 </body>
@@ -11681,12 +11693,18 @@ JSON 규격:
 
     function openPosterVasCarrierModal() {
       const modal = document.getElementById('posterVasCarrierModal');
-      if (modal) modal.classList.remove('hidden');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.style.display = 'flex';
+      }
     }
 
     function closePosterVasCarrierModal() {
       const modal = document.getElementById('posterVasCarrierModal');
-      if (modal) modal.classList.add('hidden');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.style.display = 'none';
+      }
     }
 
     function confirmAddPosterVasRow(carrier) {
@@ -12174,6 +12192,10 @@ JSON 규격:
 
     function applyStorePosterSettings(ps) {
       if (!ps || typeof ps !== 'object') return;
+      const activeEl = document.activeElement;
+      if (activeEl && (activeEl.isContentEditable || activeEl.getAttribute('contenteditable') === 'true' || activeEl.closest('#adPosterSheet [contenteditable="true"]'))) {
+        return;
+      }
       const storeKey = currentStoreId || 'myeongji';
       localStorage.setItem(`phone_ad_poster_custom_${storeKey}`, JSON.stringify(ps));
       if (ps.deviceRows) {
@@ -12531,6 +12553,11 @@ JSON 규격:
   <div id="posterPrintContainer">
     ${printClone.outerHTML}
   </div>
+  <script>
+    window.onafterprint = function() {
+      try { window.parent.focus(); } catch(e) {}
+    };
+  <\/script>
 </body>
 </html>`);
       doc.close();
@@ -12538,6 +12565,9 @@ JSON 규격:
       setTimeout(() => {
         printIframe.contentWindow.focus();
         printIframe.contentWindow.print();
+        setTimeout(() => {
+          try { window.focus(); } catch(e) {}
+        }, 800);
       }, 500);
     }
 
