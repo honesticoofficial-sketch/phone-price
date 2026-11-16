@@ -992,6 +992,17 @@
               <option value="#6b21a8">🔮 로열 퍼플 (#6B21A8)</option>
             </select>
           </div>
+
+          <!-- 4. 풀부가 / 기본부가 모드 선택 세그먼트 -->
+          <div class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200">
+            <span class="text-xs font-bold text-slate-600 pl-2">연동 가격 조건:</span>
+            <button type="button" id="posterMarginModeBtn-basic" onclick="setPosterMarginMode('basic')" class="px-3 py-1 rounded-lg text-xs font-black transition cursor-pointer bg-white text-slate-900 shadow-xs border border-slate-200">
+              🏷️ 기본부가 조건
+            </button>
+            <button type="button" id="posterMarginModeBtn-all" onclick="setPosterMarginMode('all')" class="px-3 py-1 rounded-lg text-xs font-black transition cursor-pointer text-slate-500 hover:text-slate-900">
+              🌟 풀부가 (올부가) 조건
+            </button>
+          </div>
         </div>
       </div>
 
@@ -999,7 +1010,7 @@
       <div class="flex justify-center overflow-x-auto py-2">
         <div id="adPosterSheet" class="w-full max-w-[760px] bg-white p-5 sm:p-7 rounded-3xl shadow-2xl space-y-4 text-slate-900 select-text transition-all duration-200" style="font-family: 'Pretendard Variable', Pretendard, sans-serif; border: 6px solid #e60012;">
           
-          <!-- 1. 최상단 대형 타이틀 & 날짜 & 부제 -->
+          <!-- 1. 최상단 대형 타이틀 & 부제 (단위 배너 삭제 완료) -->
           <div class="flex flex-col items-center gap-1.5 text-center">
             <div class="inline-block poster-theme-bg bg-[#e60012] text-white font-black text-xs sm:text-sm px-4 py-1 rounded-full uppercase tracking-wider shadow-xs">
               최소부가 가격제 시작!
@@ -1013,45 +1024,50 @@
                 성지매장 눈속임 원조폰에서는 끝!!
               </div>
             </div>
-
-            <!-- 단위 및 약어 안내 배너 -->
-            <div class="w-full text-[11px] sm:text-xs font-bold text-slate-600 bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-center">
-              표시 금액 단위 : 만원 | 예) -20 ➔ 기기값 0원 + 추가혜택(차비) 20만원 | 이동 = 번호이동 | 기변 = 기기변경
-            </div>
           </div>
 
-          <!-- 2. 메인 시세표 테이블 (드롭다운 기종 선택 & 실시간 광고가 연동) -->
+          <!-- 2. 메인 시세표 테이블 (드롭다운 기종 선택 & 실시간 광고가 연동 & 드래그 순서변경) -->
           <div class="bg-white rounded-2xl border-4 border-slate-950 overflow-hidden shadow-xs">
-            <table class="w-full text-center border-collapse" style="table-layout: fixed;">
+            <table class="w-full text-center border-collapse" style="table-layout: fixed; width: 100%;">
+              <colgroup id="posterMainColGroup">
+                <col style="width: 28%;">
+                <col style="width: 12%;">
+                <col style="width: 12%;">
+                <col style="width: 12%;">
+                <col style="width: 12%;">
+                <col style="width: 12%;">
+                <col style="width: 12%;">
+                <col class="poster-ui-action" style="width: 48px;">
+              </colgroup>
               <thead>
                 <!-- 헤더 1열: 날짜 + 통신 3사 로고 -->
                 <tr class="border-b-4 border-slate-950">
-                  <th class="w-[28%] p-2.5 sm:p-3 bg-white border-r-4 border-slate-950">
-                    <div id="posterDateText" contenteditable="true" onblur="saveAdPosterSettings(false)" class="text-xl sm:text-3xl font-black text-slate-950 tracking-tight focus:outline-none focus:ring-1 focus:ring-rose-500 rounded px-1" title="클릭하여 날짜를 수정할 수 있습니다">
+                  <th class="p-2 sm:p-2.5 bg-white border-r-4 border-slate-950 text-center align-middle">
+                    <div id="posterDateText" contenteditable="true" onblur="saveAdPosterSettings(false)" class="text-xl sm:text-3xl font-black text-slate-950 tracking-tight text-center focus:outline-none focus:ring-1 focus:ring-rose-500 rounded px-1" title="클릭하여 날짜를 수정할 수 있습니다">
                       11월 16일
                     </div>
                   </th>
-                  <th colspan="2" class="w-[24%] p-2 sm:p-2.5 bg-white border-r-4 border-slate-950">
+                  <th colspan="2" class="p-2 sm:p-2.5 bg-white border-r-4 border-slate-950 text-center align-middle">
                     <span class="text-2xl sm:text-3xl font-black tracking-tight" style="color: #ff6b00;">SK</span>
                   </th>
-                  <th colspan="2" class="w-[24%] p-2 sm:p-2.5 bg-white border-r-4 border-slate-950">
+                  <th colspan="2" class="p-2 sm:p-2.5 bg-white border-r-4 border-slate-950 text-center align-middle">
                     <span class="text-2xl sm:text-3xl font-black tracking-tight" style="color: #e60012;">KT</span>
                   </th>
-                  <th colspan="2" class="w-[24%] p-2 sm:p-2.5 bg-white">
+                  <th colspan="2" class="p-2 sm:p-2.5 bg-white text-center align-middle">
                     <span class="text-2xl sm:text-3xl font-black tracking-tight" style="color: #d90077;">LG</span>
                   </th>
-                  <th class="poster-ui-action w-[4%] p-1 bg-slate-100"></th>
+                  <th class="poster-ui-action p-1 bg-rose-50/50 text-rose-500 font-bold text-xs text-center align-middle">삭제</th>
                 </tr>
                 <!-- 헤더 2열: 이동 / 기변 구분 -->
                 <tr class="bg-slate-50 text-xs sm:text-sm font-extrabold text-slate-900 border-b-2 border-slate-400">
-                  <th class="p-1.5 sm:p-2 border-r-2 border-slate-400 font-black text-slate-700">기종 선택</th>
-                  <th class="p-1.5 sm:p-2 border-r border-slate-300">이동</th>
-                  <th class="p-1.5 sm:p-2 border-r-2 border-slate-400">기변</th>
-                  <th class="p-1.5 sm:p-2 border-r border-slate-300">이동</th>
-                  <th class="p-1.5 sm:p-2 border-r-2 border-slate-400">기변</th>
-                  <th class="p-1.5 sm:p-2 border-r border-slate-300">이동</th>
-                  <th class="p-1.5 sm:p-2">기변</th>
-                  <th class="poster-ui-action p-1 text-center text-[10px] text-slate-400">관리</th>
+                  <th class="p-1.5 sm:p-2 border-r-2 border-slate-400 font-black text-slate-800 text-center align-middle">기종 선택</th>
+                  <th class="p-1.5 sm:p-2 border-r border-slate-300 text-center align-middle">이동</th>
+                  <th class="p-1.5 sm:p-2 border-r-2 border-slate-400 text-center align-middle">기변</th>
+                  <th class="p-1.5 sm:p-2 border-r border-slate-300 text-center align-middle">이동</th>
+                  <th class="p-1.5 sm:p-2 border-r-2 border-slate-400 text-center align-middle">기변</th>
+                  <th class="p-1.5 sm:p-2 border-r border-slate-300 text-center align-middle">이동</th>
+                  <th class="p-1.5 sm:p-2 text-center align-middle">기변</th>
+                  <th class="poster-ui-action p-1 text-center text-xs font-bold text-rose-500 bg-rose-50/50 align-middle">삭제</th>
                 </tr>
               </thead>
               <tbody id="adPosterTableBody" class="divide-y divide-slate-200 text-sm sm:text-base font-black">
@@ -1062,7 +1078,7 @@
 
           <!-- 기종 행 추가 버튼 바 (UI 전용) -->
           <div class="poster-ui-action flex justify-between items-center px-1">
-            <span class="text-[11px] text-slate-500 font-bold">💡 기종을 드롭다운으로 선택하면 광고가격이 자동 반영되며, 가격 숫자를 클릭해 직접 수정할 수도 있습니다.</span>
+            <span class="text-[11px] text-slate-500 font-bold">💡 기종을 드롭다운으로 선택하면 광고가격이 자동 반영되며, 좌측 핸들(⠿)이나 버튼(▲▼)으로 순서를 바꿀 수 있습니다.</span>
             <button type="button" onclick="addPosterDeviceRow()" class="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition flex items-center gap-1 shadow-xs cursor-pointer">
               <span>➕ 기종 행 추가</span>
             </button>
@@ -1095,37 +1111,50 @@
               <span class="text-center">▼ 요금제 ▼</span>
               <button type="button" onclick="addPosterPlanRow()" class="poster-ui-action text-[11px] bg-white/20 hover:bg-white/30 text-white font-extrabold px-2 py-0.5 rounded transition cursor-pointer">➕ 행 추가</button>
             </div>
-            <table class="w-full text-center border-collapse text-xs sm:text-sm" style="table-layout: fixed;">
+            <table class="w-full text-center border-collapse text-xs sm:text-sm" style="table-layout: fixed; width: 100%;">
+              <colgroup id="posterPlanColGroup">
+                <col style="width: 16%;">
+                <col style="width: 32%;">
+                <col style="width: 24%;">
+                <col style="width: 28%;">
+                <col class="poster-ui-action" style="width: 48px;">
+              </colgroup>
               <thead>
                 <tr class="bg-slate-100 border-b border-slate-300 font-black text-slate-700">
-                  <th class="w-[18%] py-1.5 border-r border-slate-300">통신사</th>
-                  <th class="w-[30%] py-1.5 border-r border-slate-300">상품</th>
-                  <th class="w-[28%] py-1.5 border-r border-slate-300">월정료</th>
-                  <th class="w-[20%] py-1.5 border-r border-slate-300">유지기간</th>
-                  <th class="poster-ui-action w-[4%] py-1.5">관리</th>
+                  <th class="py-1.5 border-r border-slate-300 text-center align-middle">통신사</th>
+                  <th class="py-1.5 border-r border-slate-300 text-center align-middle">상품</th>
+                  <th class="py-1.5 border-r border-slate-300 text-center align-middle">월정료</th>
+                  <th class="py-1.5 border-r border-slate-300 text-center align-middle">유지기간</th>
+                  <th class="poster-ui-action py-1.5 text-center text-xs font-bold text-rose-500 bg-rose-50/50 align-middle">삭제</th>
                 </tr>
               </thead>
               <tbody id="posterPlanTableBody" class="divide-y divide-slate-200 font-bold text-slate-800">
                 <tr>
-                  <td class="py-2 font-black text-orange-600 bg-orange-50/40 border-r border-slate-300" contenteditable="true" onblur="saveAdPosterSettings(false)">SK</td>
-                  <td class="py-2 border-r border-slate-300 text-slate-900 font-black" contenteditable="true" onblur="saveAdPosterSettings(false)">베스트 109</td>
-                  <td class="py-2 border-r border-slate-300" contenteditable="true" onblur="saveAdPosterSettings(false)">109,000원 / 81,750원</td>
-                  <td class="py-2 border-r border-slate-300 bg-slate-50 text-[11px] sm:text-xs font-bold leading-tight" contenteditable="true" onblur="saveAdPosterSettings(false)">공통지원금 186일 / 선택약정 186일</td>
-                  <td class="poster-ui-action py-1 px-1 border-b border-slate-200 text-center"><button type="button" onclick="deletePosterRow(this)" class="text-slate-400 hover:text-rose-600 font-bold px-1" title="이 행 삭제">✕</button></td>
+                  <td class="py-2 font-black text-orange-600 bg-orange-50/40 border-r border-slate-300 text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">SK</td>
+                  <td class="py-2 border-r border-slate-300 text-slate-900 font-black text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">베스트 109</td>
+                  <td class="py-2 border-r border-slate-300 text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">109,000원 / 81,750원</td>
+                  <td class="py-2 border-r border-slate-300 bg-slate-50 text-[11px] sm:text-xs font-bold leading-tight text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">공통지원금 186일 / 선택약정 186일</td>
+                  <td class="poster-ui-action py-1 px-1 border-b border-slate-200 text-center align-middle">
+                    <button type="button" onclick="deletePosterRow(this)" class="w-6 h-6 rounded-md bg-rose-50 hover:bg-rose-100 text-rose-600 font-black text-xs transition inline-flex items-center justify-center cursor-pointer shadow-2xs" title="이 행 삭제">✕</button>
+                  </td>
                 </tr>
                 <tr>
-                  <td class="py-2 font-black text-red-600 bg-red-50/40 border-r border-slate-300" contenteditable="true" onblur="saveAdPosterSettings(false)">KT</td>
-                  <td class="py-2 border-r border-slate-300 text-slate-900 font-black" contenteditable="true" onblur="saveAdPosterSettings(false)">초이스 더블</td>
-                  <td class="py-2 border-r border-slate-300" contenteditable="true" onblur="saveAdPosterSettings(false)">120,000원 / 90,000원</td>
-                  <td class="py-2 border-r border-slate-300 bg-slate-50 text-[11px] sm:text-xs font-bold leading-tight" contenteditable="true" onblur="saveAdPosterSettings(false)">공통지원금 186일 / 선택약정 186일</td>
-                  <td class="poster-ui-action py-1 px-1 border-b border-slate-200 text-center"><button type="button" onclick="deletePosterRow(this)" class="text-slate-400 hover:text-rose-600 font-bold px-1" title="이 행 삭제">✕</button></td>
+                  <td class="py-2 font-black text-red-600 bg-red-50/40 border-r border-slate-300 text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">KT</td>
+                  <td class="py-2 border-r border-slate-300 text-slate-900 font-black text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">초이스 더블</td>
+                  <td class="py-2 border-r border-slate-300 text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">120,000원 / 90,000원</td>
+                  <td class="py-2 border-r border-slate-300 bg-slate-50 text-[11px] sm:text-xs font-bold leading-tight text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">공통지원금 186일 / 선택약정 186일</td>
+                  <td class="poster-ui-action py-1 px-1 border-b border-slate-200 text-center align-middle">
+                    <button type="button" onclick="deletePosterRow(this)" class="w-6 h-6 rounded-md bg-rose-50 hover:bg-rose-100 text-rose-600 font-black text-xs transition inline-flex items-center justify-center cursor-pointer shadow-2xs" title="이 행 삭제">✕</button>
+                  </td>
                 </tr>
                 <tr>
-                  <td class="py-2 font-black text-pink-600 bg-pink-50/40 border-r border-slate-300" contenteditable="true" onblur="saveAdPosterSettings(false)">LG</td>
-                  <td class="py-2 border-r border-slate-300 text-slate-900 font-black" contenteditable="true" onblur="saveAdPosterSettings(false)">플러스플랜 115</td>
-                  <td class="py-2 border-r border-slate-300" contenteditable="true" onblur="saveAdPosterSettings(false)">115,000원 / 86,250원</td>
-                  <td class="py-2 border-r border-slate-300 bg-slate-50 text-[11px] sm:text-xs font-bold leading-tight" contenteditable="true" onblur="saveAdPosterSettings(false)">공통지원금 186일 / 선택약정 186일</td>
-                  <td class="poster-ui-action py-1 px-1 border-b border-slate-200 text-center"><button type="button" onclick="deletePosterRow(this)" class="text-slate-400 hover:text-rose-600 font-bold px-1" title="이 행 삭제">✕</button></td>
+                  <td class="py-2 font-black text-pink-600 bg-pink-50/40 border-r border-slate-300 text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">LG</td>
+                  <td class="py-2 border-r border-slate-300 text-slate-900 font-black text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">플러스플랜 115</td>
+                  <td class="py-2 border-r border-slate-300 text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">115,000원 / 86,250원</td>
+                  <td class="py-2 border-r border-slate-300 bg-slate-50 text-[11px] sm:text-xs font-bold leading-tight text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">공통지원금 186일 / 선택약정 186일</td>
+                  <td class="poster-ui-action py-1 px-1 border-b border-slate-200 text-center align-middle">
+                    <button type="button" onclick="deletePosterRow(this)" class="w-6 h-6 rounded-md bg-rose-50 hover:bg-rose-100 text-rose-600 font-black text-xs transition inline-flex items-center justify-center cursor-pointer shadow-2xs" title="이 행 삭제">✕</button>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -1136,61 +1165,109 @@
             <div class="poster-theme-bg bg-[#e60012] text-white py-1.5 text-xs sm:text-sm font-black tracking-wider flex items-center justify-between px-3">
               <span class="w-16"></span>
               <span class="text-center">▼ 부가서비스 가입 선택 가능합니다 (필수X) ▼</span>
-              <button type="button" onclick="addPosterVasRow()" class="poster-ui-action text-[11px] bg-white/20 hover:bg-white/30 text-white font-extrabold px-2 py-0.5 rounded transition cursor-pointer">➕ 행 추가</button>
+              <button type="button" onclick="openPosterVasCarrierModal()" class="poster-ui-action text-[11px] bg-white/20 hover:bg-white/30 text-white font-extrabold px-2 py-0.5 rounded transition cursor-pointer">➕ 행 추가</button>
             </div>
-            <table class="w-full text-center border-collapse text-xs sm:text-sm" style="table-layout: fixed;">
+            <table class="w-full text-center border-collapse text-xs sm:text-sm" style="table-layout: fixed; width: 100%;">
+              <colgroup id="posterVasColGroup">
+                <col style="width: 14%;">
+                <col style="width: 34%;">
+                <col style="width: 18%;">
+                <col style="width: 20%;">
+                <col style="width: 14%;">
+                <col class="poster-ui-action" style="width: 48px;">
+              </colgroup>
               <thead>
                 <tr class="bg-slate-100 border-b border-slate-300 font-black text-slate-700">
-                  <th class="w-[14%] py-1.5 border-r border-slate-300">통신사</th>
-                  <th class="w-[32%] py-1.5 border-r border-slate-300">부가서비스명</th>
-                  <th class="w-[20%] py-1.5 border-r border-slate-300">월 청구금</th>
-                  <th class="w-[18%] py-1.5 border-r border-slate-300">유지기간</th>
-                  <th class="w-[12%] py-1.5 border-r border-slate-300">미가입추가금</th>
-                  <th class="poster-ui-action w-[4%] py-1.5">관리</th>
+                  <th class="py-1.5 border-r border-slate-300 text-center align-middle">통신사</th>
+                  <th class="py-1.5 border-r border-slate-300 text-center align-middle">부가서비스명</th>
+                  <th class="py-1.5 border-r border-slate-300 text-center align-middle">월 청구금</th>
+                  <th class="py-1.5 border-r border-slate-300 text-center align-middle">유지기간</th>
+                  <th class="py-1.5 border-r border-slate-300 text-center align-middle">미가입추가금</th>
+                  <th class="poster-ui-action py-1.5 text-center text-xs font-bold text-rose-500 bg-rose-50/50 align-middle">삭제</th>
                 </tr>
               </thead>
               <tbody id="posterVasTableBody" class="divide-y divide-slate-200 font-bold text-slate-800">
-                <tr>
-                  <td class="py-1.5 font-black text-orange-600 bg-orange-50/40 border-r border-slate-300" contenteditable="true" onblur="saveAdPosterSettings(false)">SK</td>
-                  <td class="py-1.5 border-r border-slate-300 text-slate-900 font-black text-left px-2 sm:px-3" contenteditable="true" onblur="saveAdPosterSettings(false)">마이스마트콜3</td>
-                  <td class="py-1.5 border-r border-slate-300" contenteditable="true" onblur="saveAdPosterSettings(false)">3,500원</td>
-                  <td class="py-1.5 border-r border-slate-300 text-[11px] sm:text-xs" contenteditable="true" onblur="saveAdPosterSettings(false)">M+2 (당월+2개월)</td>
-                  <td class="py-1.5 font-black text-rose-600 border-r border-slate-300" contenteditable="true" onblur="saveAdPosterSettings(false)">3만</td>
-                  <td class="poster-ui-action py-1 px-1 border-b border-slate-200 text-center"><button type="button" onclick="deletePosterRow(this)" class="text-slate-400 hover:text-rose-600 font-bold px-1" title="이 행 삭제">✕</button></td>
+                <tr data-carrier="SK">
+                  <td class="py-1.5 font-black text-orange-600 bg-orange-50/40 border-r border-slate-300 text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">SK</td>
+                  <td class="py-1.5 border-r border-slate-300 text-slate-900 font-black text-left px-2 sm:px-3 align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">마이스마트콜3</td>
+                  <td class="py-1.5 border-r border-slate-300 text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">3,500원</td>
+                  <td class="py-1.5 border-r border-slate-300 text-[11px] sm:text-xs text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">M+2 (당월+2개월)</td>
+                  <td class="py-1.5 font-black text-rose-600 border-r border-slate-300 text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">3만</td>
+                  <td class="poster-ui-action py-1 px-1 border-b border-slate-200 text-center align-middle">
+                    <button type="button" onclick="deletePosterRow(this)" class="w-6 h-6 rounded-md bg-rose-50 hover:bg-rose-100 text-rose-600 font-black text-xs transition inline-flex items-center justify-center cursor-pointer shadow-2xs" title="이 행 삭제">✕</button>
+                  </td>
                 </tr>
-                <tr>
-                  <td class="py-1.5 font-black text-red-600 bg-red-50/40 border-r border-slate-300" contenteditable="true" onblur="saveAdPosterSettings(false)">KT</td>
-                  <td class="py-1.5 border-r border-slate-300 text-slate-900 font-black text-left px-2 sm:px-3" contenteditable="true" onblur="saveAdPosterSettings(false)">필수팩</td>
-                  <td class="py-1.5 border-r border-slate-300" contenteditable="true" onblur="saveAdPosterSettings(false)">9,900원</td>
-                  <td class="py-1.5 border-r border-slate-300 text-[11px] sm:text-xs" contenteditable="true" onblur="saveAdPosterSettings(false)">M+4 (당월+4개월)</td>
-                  <td class="py-1.5 font-black text-rose-600 border-r border-slate-300" contenteditable="true" onblur="saveAdPosterSettings(false)">6만</td>
-                  <td class="poster-ui-action py-1 px-1 border-b border-slate-200 text-center"><button type="button" onclick="deletePosterRow(this)" class="text-slate-400 hover:text-rose-600 font-bold px-1" title="이 행 삭제">✕</button></td>
+                <tr data-carrier="KT">
+                  <td class="py-1.5 font-black text-red-600 bg-red-50/40 border-r border-slate-300 text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">KT</td>
+                  <td class="py-1.5 border-r border-slate-300 text-slate-900 font-black text-left px-2 sm:px-3 align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">필수팩</td>
+                  <td class="py-1.5 border-r border-slate-300 text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">9,900원</td>
+                  <td class="py-1.5 border-r border-slate-300 text-[11px] sm:text-xs text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">M+4 (당월+4개월)</td>
+                  <td class="py-1.5 font-black text-rose-600 border-r border-slate-300 text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">6만</td>
+                  <td class="poster-ui-action py-1 px-1 border-b border-slate-200 text-center align-middle">
+                    <button type="button" onclick="deletePosterRow(this)" class="w-6 h-6 rounded-md bg-rose-50 hover:bg-rose-100 text-rose-600 font-black text-xs transition inline-flex items-center justify-center cursor-pointer shadow-2xs" title="이 행 삭제">✕</button>
+                  </td>
                 </tr>
-                <tr>
-                  <td class="py-1.5 font-black text-pink-600 bg-pink-50/40 border-r border-slate-300" contenteditable="true" onblur="saveAdPosterSettings(false)">LG</td>
-                  <td class="py-1.5 border-r border-slate-300 text-slate-900 font-black text-left px-2 sm:px-3" contenteditable="true" onblur="saveAdPosterSettings(false)">교보문고SAM+구글원</td>
-                  <td class="py-1.5 border-r border-slate-300" contenteditable="true" onblur="saveAdPosterSettings(false)">16,500원</td>
-                  <td class="py-1.5 border-r border-slate-300 text-[11px] sm:text-xs" contenteditable="true" onblur="saveAdPosterSettings(false)">M+3 (당월+3개월)</td>
-                  <td class="py-1.5 font-black text-rose-600 border-r border-slate-300" contenteditable="true" onblur="saveAdPosterSettings(false)">5만</td>
-                  <td class="poster-ui-action py-1 px-1 border-b border-slate-200 text-center"><button type="button" onclick="deletePosterRow(this)" class="text-slate-400 hover:text-rose-600 font-bold px-1" title="이 행 삭제">✕</button></td>
+                <tr data-carrier="LG">
+                  <td class="py-1.5 font-black text-pink-600 bg-pink-50/40 border-r border-slate-300 text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">LG</td>
+                  <td class="py-1.5 border-r border-slate-300 text-slate-900 font-black text-left px-2 sm:px-3 align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">교보문고SAM+구글원</td>
+                  <td class="py-1.5 border-r border-slate-300 text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">16,500원</td>
+                  <td class="py-1.5 border-r border-slate-300 text-[11px] sm:text-xs text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">M+3 (당월+3개월)</td>
+                  <td class="py-1.5 font-black text-rose-600 border-r border-slate-300 text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">5만</td>
+                  <td class="poster-ui-action py-1 px-1 border-b border-slate-200 text-center align-middle">
+                    <button type="button" onclick="deletePosterRow(this)" class="w-6 h-6 rounded-md bg-rose-50 hover:bg-rose-100 text-rose-600 font-black text-xs transition inline-flex items-center justify-center cursor-pointer shadow-2xs" title="이 행 삭제">✕</button>
+                  </td>
                 </tr>
-                <tr>
-                  <td class="py-1.5 font-black text-pink-600 bg-pink-50/40 border-r border-slate-300" contenteditable="true" onblur="saveAdPosterSettings(false)">LG</td>
-                  <td class="py-1.5 border-r border-slate-300 text-slate-900 font-black text-left px-2 sm:px-3" contenteditable="true" onblur="saveAdPosterSettings(false)">V컬러링+음악감상+벨링콘텐츠</td>
-                  <td class="py-1.5 border-r border-slate-300" contenteditable="true" onblur="saveAdPosterSettings(false)">15,400원</td>
-                  <td class="py-1.5 border-r border-slate-300 text-[11px] sm:text-xs" contenteditable="true" onblur="saveAdPosterSettings(false)">M+3 (당월+3개월)</td>
-                  <td class="py-1.5 font-black text-rose-600 border-r border-slate-300" contenteditable="true" onblur="saveAdPosterSettings(false)">5만</td>
-                  <td class="poster-ui-action py-1 px-1 border-b border-slate-200 text-center"><button type="button" onclick="deletePosterRow(this)" class="text-slate-400 hover:text-rose-600 font-bold px-1" title="이 행 삭제">✕</button></td>
+                <tr data-carrier="LG">
+                  <td class="py-1.5 font-black text-pink-600 bg-pink-50/40 border-r border-slate-300 text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">LG</td>
+                  <td class="py-1.5 border-r border-slate-300 text-slate-900 font-black text-left px-2 sm:px-3 align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">V컬러링+음악감상+벨링콘텐츠</td>
+                  <td class="py-1.5 border-r border-slate-300 text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">15,400원</td>
+                  <td class="py-1.5 border-r border-slate-300 text-[11px] sm:text-xs text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">M+3 (당월+3개월)</td>
+                  <td class="py-1.5 font-black text-rose-600 border-r border-slate-300 text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">5만</td>
+                  <td class="poster-ui-action py-1 px-1 border-b border-slate-200 text-center align-middle">
+                    <button type="button" onclick="deletePosterRow(this)" class="w-6 h-6 rounded-md bg-rose-50 hover:bg-rose-100 text-rose-600 font-black text-xs transition inline-flex items-center justify-center cursor-pointer shadow-2xs" title="이 행 삭제">✕</button>
+                  </td>
                 </tr>
-                <tr class="bg-slate-50 border-t border-slate-300">
-                  <td class="py-1.5 font-black text-slate-700 border-r border-slate-300 text-[11px]" contenteditable="true" onblur="saveAdPosterSettings(false)">기타 안내사항</td>
-                  <td colspan="4" class="py-1.5 px-2 sm:px-3 text-left text-[11px] sm:text-xs text-slate-700 font-bold" contenteditable="true" onblur="saveAdPosterSettings(false)">
+                <tr id="posterVasEtcRow" class="bg-slate-50 border-t border-slate-300">
+                  <td class="py-1.5 font-black text-slate-700 border-r border-slate-300 text-[11px] text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">기타 안내사항</td>
+                  <td colspan="4" class="py-1.5 px-2 sm:px-3 text-left text-[11px] sm:text-xs text-slate-700 font-bold align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">
                     통신사보험 가입, 기종별 금액상이 (KT, LG M+3개월 / SK M+1개월 미가입 추가 3만원)
                   </td>
-                  <td class="poster-ui-action py-1 px-1 border-b border-slate-200 text-center"><button type="button" onclick="deletePosterRow(this)" class="text-slate-400 hover:text-rose-600 font-bold px-1" title="이 행 삭제">✕</button></td>
+                  <td class="poster-ui-action py-1 px-1 border-b border-slate-200 text-center align-middle">
+                    <button type="button" onclick="deletePosterRow(this)" class="w-6 h-6 rounded-md bg-rose-50 hover:bg-rose-100 text-rose-600 font-black text-xs transition inline-flex items-center justify-center cursor-pointer shadow-2xs" title="이 행 삭제">✕</button>
+                  </td>
                 </tr>
               </tbody>
             </table>
+          </div>
+
+          <!-- 부가서비스 통신사 선택 팝업 모달 (UI 전용) -->
+          <div id="posterVasCarrierModal" class="poster-ui-action hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+            <div class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-slate-200 text-center space-y-4 animate-in fade-in zoom-in duration-150">
+              <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto text-2xl font-black shadow-xs">
+                ➕
+              </div>
+              <div>
+                <h3 class="text-base sm:text-lg font-black text-slate-900">부가서비스 통신사 선택</h3>
+                <p class="text-xs text-slate-500 mt-1">어느 통신사 항목에 부가서비스를 추가하시겠습니까?</p>
+              </div>
+              <div class="grid grid-cols-3 gap-2 py-2">
+                <button type="button" onclick="confirmAddPosterVasRow('SK')" class="py-3 px-2 rounded-2xl border-2 border-orange-200 bg-orange-50/50 hover:bg-orange-100 text-orange-600 font-black text-sm transition cursor-pointer flex flex-col items-center gap-1 shadow-2xs hover:scale-105">
+                  <span class="text-lg">🟠</span>
+                  <span>SKT</span>
+                </button>
+                <button type="button" onclick="confirmAddPosterVasRow('KT')" class="py-3 px-2 rounded-2xl border-2 border-red-200 bg-red-50/50 hover:bg-red-100 text-red-600 font-black text-sm transition cursor-pointer flex flex-col items-center gap-1 shadow-2xs hover:scale-105">
+                  <span class="text-lg">🔴</span>
+                  <span>KT</span>
+                </button>
+                <button type="button" onclick="confirmAddPosterVasRow('LG')" class="py-3 px-2 rounded-2xl border-2 border-pink-200 bg-pink-50/50 hover:bg-pink-100 text-pink-600 font-black text-sm transition cursor-pointer flex flex-col items-center gap-1 shadow-2xs hover:scale-105">
+                  <span class="text-lg">🟣</span>
+                  <span>LGU+</span>
+                </button>
+              </div>
+              <button type="button" onclick="closePosterVasCarrierModal()" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition cursor-pointer">
+                취소
+              </button>
+            </div>
           </div>
 
         </div>
@@ -3537,10 +3614,14 @@
 
       if (basicNet === null) return `<span class="text-slate-400 font-normal">품절</span>`;
 
+      // 단가처 (도매, 온라인 등) 추출
+      const locText = (d.loc && d.loc[carrier] && d.loc[carrier][type]) ? d.loc[carrier][type] : '';
+      const locHtml = locText ? `<div class="text-[10px] text-slate-400 font-normal leading-none mt-0.5 tracking-tight">${locText}</div>` : '';
+
       if (netDisplayMode === 'basic') {
-        return `<div class="py-1.5">${formatNetSimple(basicNet, true)}</div>`;
+        return `<div class="py-1 flex flex-col items-center justify-center">${formatNetSimple(basicNet, true)}${locHtml}</div>`;
       } else if (netDisplayMode === 'all') {
-        return `<div class="py-1.5">${formatNetSimple(allNet, true)}</div>`;
+        return `<div class="py-1 flex flex-col items-center justify-center">${formatNetSimple(allNet, true)}${locHtml}</div>`;
       } else {
         return `
           <div class="py-1 space-y-1 whitespace-nowrap">
@@ -3552,6 +3633,7 @@
               <span class="text-blue-600 font-black text-xs">올부가</span>
               ${formatNetSimple(allNet, false)}
             </div>
+            ${locText ? `<div class="text-[10px] text-slate-400 font-normal text-right pr-1 pt-0.5 leading-none tracking-tight">${locText}</div>` : ''}
           </div>
         `;
       }
@@ -11367,6 +11449,8 @@ JSON 규격:
 
     // ==================== 통신 3사 성지특가 통합 시세표 포스터 기능 ====================
     let posterDeviceRows = null; // 포스터에 표시할 기종 ID 배열
+    let posterMarginMode = 'basic'; // 시세표 가격 연동 기준 ('basic': 기본조건, 'all': 풀부가/올부가)
+    let draggedPosterRowIndex = null; // 드래그 앤 드롭 인덱스
 
     function getInitialPosterDeviceRows() {
       const defaultIds = ['s26', 's26u', 'flip8', 'fold8', 'fold8u', 'ip17', 'ip18p', 'ip18pm', 'ipduo'];
@@ -11399,6 +11483,25 @@ JSON 규격:
       return html;
     }
 
+    function setPosterMarginMode(mode) {
+      posterMarginMode = (mode === 'all') ? 'all' : 'basic';
+      
+      const btnBasic = document.getElementById('posterMarginModeBtn-basic');
+      const btnAll = document.getElementById('posterMarginModeBtn-all');
+      if (btnBasic && btnAll) {
+        if (posterMarginMode === 'basic') {
+          btnBasic.className = 'px-3 py-1 rounded-lg text-xs font-black transition cursor-pointer bg-white text-slate-900 shadow-xs border border-slate-200';
+          btnAll.className = 'px-3 py-1 rounded-lg text-xs font-black transition cursor-pointer text-slate-500 hover:text-slate-900';
+        } else {
+          btnAll.className = 'px-3 py-1 rounded-lg text-xs font-black transition cursor-pointer bg-white text-indigo-700 shadow-xs border border-indigo-200';
+          btnBasic.className = 'px-3 py-1 rounded-lg text-xs font-black transition cursor-pointer text-slate-500 hover:text-slate-900';
+        }
+      }
+
+      localStorage.setItem('phone_ad_poster_margin_mode', posterMarginMode);
+      renderAdPosterTable();
+    }
+
     function renderAdPosterTable() {
       const tbody = document.getElementById('adPosterTableBody');
       if (!tbody) return;
@@ -11413,18 +11516,6 @@ JSON 규격:
         dateEl.innerText = `${m}월 ${d}일`;
       }
 
-      // 모드 배지 갱신
-      const modeBadge = document.getElementById('posterAdModeBadge');
-      if (modeBadge) {
-        if (adMarginBase === 'all') {
-          modeBadge.innerText = '🌟 올부가 광고가 연동 중';
-          modeBadge.className = 'px-2.5 py-0.5 rounded-full text-xs font-black bg-indigo-50 text-indigo-700 border border-indigo-200';
-        } else {
-          modeBadge.innerText = '🏷️ 기본부가 광고가 연동 중';
-          modeBadge.className = 'px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-50 text-emerald-700 border border-emerald-200';
-        }
-      }
-
       // posterDeviceRows 초기화
       if (!posterDeviceRows || !Array.isArray(posterDeviceRows) || posterDeviceRows.length === 0) {
         try {
@@ -11435,6 +11526,23 @@ JSON 규격:
         } catch (e) {}
         if (!posterDeviceRows || posterDeviceRows.length === 0) {
           posterDeviceRows = getInitialPosterDeviceRows();
+        }
+      }
+
+      // 모드 로드
+      const savedMode = localStorage.getItem('phone_ad_poster_margin_mode');
+      if (savedMode) {
+        posterMarginMode = savedMode;
+      }
+      const btnBasic = document.getElementById('posterMarginModeBtn-basic');
+      const btnAll = document.getElementById('posterMarginModeBtn-all');
+      if (btnBasic && btnAll) {
+        if (posterMarginMode === 'basic') {
+          btnBasic.className = 'px-3 py-1 rounded-lg text-xs font-black transition cursor-pointer bg-white text-slate-900 shadow-xs border border-slate-200';
+          btnAll.className = 'px-3 py-1 rounded-lg text-xs font-black transition cursor-pointer text-slate-500 hover:text-slate-900';
+        } else {
+          btnAll.className = 'px-3 py-1 rounded-lg text-xs font-black transition cursor-pointer bg-white text-indigo-700 shadow-xs border border-indigo-200';
+          btnBasic.className = 'px-3 py-1 rounded-lg text-xs font-black transition cursor-pointer text-slate-500 hover:text-slate-900';
         }
       }
 
@@ -11459,49 +11567,101 @@ JSON 규격:
         const d = devices.find(x => x.id === devId) || devices[0];
         if (!d) return;
 
-        const skAd = getAdData(d, 'SK', adMarginBase);
-        const ktAd = getAdData(d, 'KT', adMarginBase);
-        const lgAd = getAdData(d, 'LG', adMarginBase);
+        const skAd = getAdData(d, 'SK', posterMarginMode);
+        const ktAd = getAdData(d, 'KT', posterMarginMode);
+        const lgAd = getAdData(d, 'LG', posterMarginMode);
 
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50 transition border-b border-slate-200";
         tr.dataset.rowIndex = rowIndex;
         tr.dataset.deviceId = d.id;
+        tr.setAttribute('draggable', 'true');
+        tr.setAttribute('ondragstart', `onPosterRowDragStart(event, ${rowIndex})`);
+        tr.setAttribute('ondragover', `onPosterRowDragOver(event, ${rowIndex})`);
+        tr.setAttribute('ondrop', `onPosterRowDrop(event, ${rowIndex})`);
+        tr.setAttribute('ondragend', 'onPosterRowDragEnd(event)');
 
         tr.innerHTML = `
-          <!-- 기종 드롭다운 선택칸 (포스터 UI) -->
-          <td class="p-1 sm:p-2 text-center font-black border-r-2 border-slate-900 bg-white">
-            <select class="poster-model-select w-full bg-transparent font-black text-slate-950 text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-rose-500 rounded py-1 px-1 cursor-pointer truncate" onchange="onPosterDeviceRowSelect(this, ${rowIndex})">
-              ${buildPosterDeviceOptions(d.id)}
-            </select>
+          <!-- 기종 드롭다운 & 드래그 핸들 (포스터 UI) -->
+          <td class="p-1 sm:p-1.5 text-center font-black border-r-2 border-slate-900 bg-white align-middle">
+            <div class="flex items-center gap-1">
+              <div class="poster-ui-action drag-handle cursor-grab active:cursor-grabbing p-1 rounded hover:bg-slate-100 text-slate-400 select-none flex items-center justify-center shrink-0" title="마우스로 끌어서 순서 변경">
+                <svg class="w-3.5 h-3.5 pointer-events-none" fill="currentColor" viewBox="0 0 20 20"><path d="M7 2a2 2 0 10.001 4.001A2 2 0 007 2zm0 6a2 2 0 10.001 4.001A2 2 0 007 8zm0 6a2 2 0 10.001 4.001A2 2 0 007 14zm6-12a2 2 0 10.001 4.001A2 2 0 0013 2zm0 6a2 2 0 10.001 4.001A2 2 0 0013 8zm0 6a2 2 0 10.001 4.001A2 2 0 0013 14z"></path></svg>
+              </div>
+              <div class="poster-ui-action flex flex-col gap-0.5 shrink-0">
+                <button type="button" onclick="movePosterDeviceRow(${rowIndex}, -1)" ${rowIndex === 0 ? 'disabled' : ''} class="w-3.5 h-3 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[8px] flex items-center justify-center" title="위로 한 칸">▲</button>
+                <button type="button" onclick="movePosterDeviceRow(${rowIndex}, 1)" ${rowIndex === posterDeviceRows.length - 1 ? 'disabled' : ''} class="w-3.5 h-3 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[8px] flex items-center justify-center" title="아래로 한 칸">▼</button>
+              </div>
+              <select class="poster-model-select w-full bg-transparent font-black text-slate-950 text-xs sm:text-sm text-center focus:outline-none focus:ring-1 focus:ring-rose-500 rounded py-1 px-0.5 cursor-pointer truncate" onchange="onPosterDeviceRowSelect(this, ${rowIndex})">
+                ${buildPosterDeviceOptions(d.id)}
+              </select>
+            </div>
           </td>
           <!-- SK 번이 / 기변 -->
-          <td class="cell-sk-mnp p-2 sm:p-2.5 text-center border-r border-slate-200 cursor-pointer hover:bg-orange-50/50 focus:bg-orange-100 ${getPriceClass(skAd.mnp)}" contenteditable="true" onblur="handlePosterCellPriceChange('${d.id}', 'SK', 'mnp', this.innerText, this)" title="클릭하여 가격 직접 수정">
+          <td class="cell-sk-mnp p-2 sm:p-2.5 text-center align-middle border-r border-slate-200 cursor-pointer hover:bg-orange-50/50 focus:bg-orange-100 ${getPriceClass(skAd.mnp)}" contenteditable="true" onblur="handlePosterCellPriceChange('${d.id}', 'SK', 'mnp', this.innerText, this)" title="클릭하여 가격 직접 수정">
             ${formatPrice(skAd.mnp)}
           </td>
-          <td class="cell-sk-chg p-2 sm:p-2.5 text-center border-r-2 border-slate-900 cursor-pointer hover:bg-orange-50/50 focus:bg-orange-100 ${getPriceClass(skAd.chg)}" contenteditable="true" onblur="handlePosterCellPriceChange('${d.id}', 'SK', 'chg', this.innerText, this)" title="클릭하여 가격 직접 수정">
+          <td class="cell-sk-chg p-2 sm:p-2.5 text-center align-middle border-r-2 border-slate-900 cursor-pointer hover:bg-orange-50/50 focus:bg-orange-100 ${getPriceClass(skAd.chg)}" contenteditable="true" onblur="handlePosterCellPriceChange('${d.id}', 'SK', 'chg', this.innerText, this)" title="클릭하여 가격 직접 수정">
             ${formatPrice(skAd.chg)}
           </td>
           <!-- KT 번이 / 기변 -->
-          <td class="cell-kt-mnp p-2 sm:p-2.5 text-center border-r border-slate-200 cursor-pointer hover:bg-blue-50/50 focus:bg-blue-100 ${getPriceClass(ktAd.mnp)}" contenteditable="true" onblur="handlePosterCellPriceChange('${d.id}', 'KT', 'mnp', this.innerText, this)" title="클릭하여 가격 직접 수정">
+          <td class="cell-kt-mnp p-2 sm:p-2.5 text-center align-middle border-r border-slate-200 cursor-pointer hover:bg-blue-50/50 focus:bg-blue-100 ${getPriceClass(ktAd.mnp)}" contenteditable="true" onblur="handlePosterCellPriceChange('${d.id}', 'KT', 'mnp', this.innerText, this)" title="클릭하여 가격 직접 수정">
             ${formatPrice(ktAd.mnp)}
           </td>
-          <td class="cell-kt-chg p-2 sm:p-2.5 text-center border-r-2 border-slate-900 cursor-pointer hover:bg-blue-50/50 focus:bg-blue-100 ${getPriceClass(ktAd.chg)}" contenteditable="true" onblur="handlePosterCellPriceChange('${d.id}', 'KT', 'chg', this.innerText, this)" title="클릭하여 가격 직접 수정">
+          <td class="cell-kt-chg p-2 sm:p-2.5 text-center align-middle border-r-2 border-slate-900 cursor-pointer hover:bg-blue-50/50 focus:bg-blue-100 ${getPriceClass(ktAd.chg)}" contenteditable="true" onblur="handlePosterCellPriceChange('${d.id}', 'KT', 'chg', this.innerText, this)" title="클릭하여 가격 직접 수정">
             ${formatPrice(ktAd.chg)}
           </td>
           <!-- LG 번이 / 기변 -->
-          <td class="cell-lg-mnp p-2 sm:p-2.5 text-center border-r border-slate-200 cursor-pointer hover:bg-pink-50/50 focus:bg-pink-100 ${getPriceClass(lgAd.mnp)}" contenteditable="true" onblur="handlePosterCellPriceChange('${d.id}', 'LG', 'mnp', this.innerText, this)" title="클릭하여 가격 직접 수정">
+          <td class="cell-lg-mnp p-2 sm:p-2.5 text-center align-middle border-r border-slate-200 cursor-pointer hover:bg-pink-50/50 focus:bg-pink-100 ${getPriceClass(lgAd.mnp)}" contenteditable="true" onblur="handlePosterCellPriceChange('${d.id}', 'LG', 'mnp', this.innerText, this)" title="클릭하여 가격 직접 수정">
             ${formatPrice(lgAd.mnp)}
           </td>
-          <td class="cell-lg-chg p-2 sm:p-2.5 text-center cursor-pointer hover:bg-pink-50/50 focus:bg-pink-100 ${getPriceClass(lgAd.chg)}" contenteditable="true" onblur="handlePosterCellPriceChange('${d.id}', 'LG', 'chg', this.innerText, this)" title="클릭하여 가격 직접 수정">
+          <td class="cell-lg-chg p-2 sm:p-2.5 text-center align-middle cursor-pointer hover:bg-pink-50/50 focus:bg-pink-100 ${getPriceClass(lgAd.chg)}" contenteditable="true" onblur="handlePosterCellPriceChange('${d.id}', 'LG', 'chg', this.innerText, this)" title="클릭하여 가격 직접 수정">
             ${formatPrice(lgAd.chg)}
           </td>
           <!-- 행 삭제 버튼 (UI 전용) -->
-          <td class="poster-ui-action p-1 text-center bg-slate-50 border-l border-slate-200">
-            <button type="button" onclick="deletePosterDeviceRow(${rowIndex})" class="text-slate-400 hover:text-rose-600 font-black p-1 transition cursor-pointer" title="이 기종 행 삭제">✕</button>
+          <td class="poster-ui-action p-1 text-center align-middle bg-rose-50/20 border-l border-slate-200">
+            <button type="button" onclick="deletePosterDeviceRow(${rowIndex})" class="w-6 h-6 rounded-md bg-rose-50 hover:bg-rose-100 text-rose-600 font-black text-xs transition inline-flex items-center justify-center cursor-pointer shadow-2xs" title="이 기종 행 삭제">✕</button>
           </td>
         `;
         tbody.appendChild(tr);
+      });
+    }
+
+    function movePosterDeviceRow(index, direction) {
+      if (!posterDeviceRows) return;
+      const target = index + direction;
+      if (target < 0 || target >= posterDeviceRows.length) return;
+      const tmp = posterDeviceRows[index];
+      posterDeviceRows[index] = posterDeviceRows[target];
+      posterDeviceRows[target] = tmp;
+      localStorage.setItem('phone_ad_poster_device_rows', JSON.stringify(posterDeviceRows));
+      renderAdPosterTable();
+    }
+
+    function onPosterRowDragStart(e, idx) {
+      draggedPosterRowIndex = idx;
+      e.dataTransfer.effectAllowed = 'move';
+      e.currentTarget.classList.add('opacity-50', 'bg-blue-50');
+    }
+
+    function onPosterRowDragOver(e, idx) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+    }
+
+    function onPosterRowDrop(e, targetIdx) {
+      e.preventDefault();
+      if (draggedPosterRowIndex === null || draggedPosterRowIndex === targetIdx) return;
+      const item = posterDeviceRows.splice(draggedPosterRowIndex, 1)[0];
+      posterDeviceRows.splice(targetIdx, 0, item);
+      localStorage.setItem('phone_ad_poster_device_rows', JSON.stringify(posterDeviceRows));
+      renderAdPosterTable();
+    }
+
+    function onPosterRowDragEnd(e) {
+      draggedPosterRowIndex = null;
+      document.querySelectorAll('#adPosterTableBody tr').forEach(r => {
+        r.classList.remove('opacity-50', 'bg-blue-50');
       });
     }
 
@@ -11518,9 +11678,9 @@ JSON 규격:
       if (!tr) return;
       tr.dataset.deviceId = d.id;
 
-      const skAd = getAdData(d, 'SK', adMarginBase);
-      const ktAd = getAdData(d, 'KT', adMarginBase);
-      const lgAd = getAdData(d, 'LG', adMarginBase);
+      const skAd = getAdData(d, 'SK', posterMarginMode);
+      const ktAd = getAdData(d, 'KT', posterMarginMode);
+      const lgAd = getAdData(d, 'LG', posterMarginMode);
 
       const updateCell = (selector, carrier, type, val, isBorder2) => {
         const cell = tr.querySelector(selector);
@@ -11535,7 +11695,7 @@ JSON 규격:
         else if (str.startsWith('-') || Number(str) < 0) colorClass = 'text-rose-600 font-black text-sm sm:text-base';
         else if (str === '0' || Number(str) === 0) colorClass = 'text-amber-600 font-black text-sm sm:text-base';
 
-        cell.className = `${selector.replace('.', '')} p-2 sm:p-2.5 text-center ${isBorder2 ? 'border-r-2 border-slate-900' : 'border-r border-slate-200'} cursor-pointer hover:bg-slate-100 ${colorClass}`;
+        cell.className = `${selector.replace('.', '')} p-2 sm:p-2.5 text-center align-middle ${isBorder2 ? 'border-r-2 border-slate-900' : 'border-r border-slate-200'} cursor-pointer hover:bg-slate-100 ${colorClass}`;
       };
 
       updateCell('.cell-sk-mnp', 'SK', 'mnp', skAd.mnp, false);
@@ -11570,29 +11730,68 @@ JSON 규격:
       if (!tbody) return;
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td class="py-2 font-black text-slate-800 border-r border-slate-300" contenteditable="true" onblur="saveAdPosterSettings(false)">통신사</td>
-        <td class="py-2 border-r border-slate-300 text-slate-900 font-black" contenteditable="true" onblur="saveAdPosterSettings(false)">신규 요금제</td>
-        <td class="py-2 border-r border-slate-300" contenteditable="true" onblur="saveAdPosterSettings(false)">100,000원 / 75,000원</td>
-        <td class="py-2 border-r border-slate-300 bg-slate-50 text-[11px] sm:text-xs font-bold leading-tight" contenteditable="true" onblur="saveAdPosterSettings(false)">공통지원금 186일 / 선택약정 186일</td>
-        <td class="poster-ui-action py-1 px-1 border-b border-slate-200 text-center"><button type="button" onclick="deletePosterRow(this)" class="text-slate-400 hover:text-rose-600 font-bold px-1" title="이 행 삭제">✕</button></td>
+        <td class="py-2 font-black text-slate-800 border-r border-slate-300 text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">통신사</td>
+        <td class="py-2 border-r border-slate-300 text-slate-900 font-black text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">신규 요금제</td>
+        <td class="py-2 border-r border-slate-300 text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">100,000원 / 75,000원</td>
+        <td class="py-2 border-r border-slate-300 bg-slate-50 text-[11px] sm:text-xs font-bold leading-tight text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">공통지원금 186일 / 선택약정 186일</td>
+        <td class="poster-ui-action py-1 px-1 border-b border-slate-200 text-center align-middle">
+          <button type="button" onclick="deletePosterRow(this)" class="w-6 h-6 rounded-md bg-rose-50 hover:bg-rose-100 text-rose-600 font-black text-xs transition inline-flex items-center justify-center cursor-pointer shadow-2xs" title="이 행 삭제">✕</button>
+        </td>
       `;
       tbody.appendChild(tr);
       saveAdPosterSettings(false);
     }
 
-    function addPosterVasRow() {
+    function openPosterVasCarrierModal() {
+      const modal = document.getElementById('posterVasCarrierModal');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closePosterVasCarrierModal() {
+      const modal = document.getElementById('posterVasCarrierModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function confirmAddPosterVasRow(carrier) {
+      closePosterVasCarrierModal();
+      addPosterVasRow(carrier);
+    }
+
+    function addPosterVasRow(carrier = 'SK') {
       const tbody = document.getElementById('posterVasTableBody');
       if (!tbody) return;
+
+      let colorClass = 'text-orange-600 bg-orange-50/40';
+      if (carrier === 'KT') colorClass = 'text-red-600 bg-red-50/40';
+      else if (carrier === 'LG') colorClass = 'text-pink-600 bg-pink-50/40';
+
       const tr = document.createElement('tr');
+      tr.dataset.carrier = carrier;
       tr.innerHTML = `
-        <td class="py-1.5 font-black text-slate-800 border-r border-slate-300" contenteditable="true" onblur="saveAdPosterSettings(false)">통신사</td>
-        <td class="py-1.5 border-r border-slate-300 text-slate-900 font-black text-left px-2 sm:px-3" contenteditable="true" onblur="saveAdPosterSettings(false)">신규 부가서비스</td>
-        <td class="py-1.5 border-r border-slate-300" contenteditable="true" onblur="saveAdPosterSettings(false)">5,000원</td>
-        <td class="py-1.5 border-r border-slate-300 text-[11px] sm:text-xs" contenteditable="true" onblur="saveAdPosterSettings(false)">M+1 (익월말)</td>
-        <td class="py-1.5 font-black text-rose-600 border-r border-slate-300" contenteditable="true" onblur="saveAdPosterSettings(false)">3만</td>
-        <td class="poster-ui-action py-1 px-1 border-b border-slate-200 text-center"><button type="button" onclick="deletePosterRow(this)" class="text-slate-400 hover:text-rose-600 font-bold px-1" title="이 행 삭제">✕</button></td>
+        <td class="py-1.5 font-black ${colorClass} border-r border-slate-300 text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">${carrier}</td>
+        <td class="py-1.5 border-r border-slate-300 text-slate-900 font-black text-left px-2 sm:px-3 align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">신규 부가서비스</td>
+        <td class="py-1.5 border-r border-slate-300 text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">5,000원</td>
+        <td class="py-1.5 border-r border-slate-300 text-[11px] sm:text-xs text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">M+1 (익월말)</td>
+        <td class="py-1.5 font-black text-rose-600 border-r border-slate-300 text-center align-middle" contenteditable="true" onblur="saveAdPosterSettings(false)">3만</td>
+        <td class="poster-ui-action py-1 px-1 border-b border-slate-200 text-center align-middle">
+          <button type="button" onclick="deletePosterRow(this)" class="w-6 h-6 rounded-md bg-rose-50 hover:bg-rose-100 text-rose-600 font-black text-xs transition inline-flex items-center justify-center cursor-pointer shadow-2xs" title="이 행 삭제">✕</button>
+        </td>
       `;
-      tbody.appendChild(tr);
+
+      // 해당 통신사의 마지막 행 찾아서 그 뒤에 삽입
+      const carrierRows = Array.from(tbody.querySelectorAll(`tr[data-carrier="${carrier}"]`));
+      if (carrierRows.length > 0) {
+        carrierRows[carrierRows.length - 1].after(tr);
+      } else {
+        // 해당 통신사 행이 아직 없으면, 기타 안내사항 행(#posterVasEtcRow) 앞에 삽입
+        const etcRow = document.getElementById('posterVasEtcRow');
+        if (etcRow) {
+          etcRow.before(tr);
+        } else {
+          tbody.appendChild(tr);
+        }
+      }
+
       saveAdPosterSettings(false);
     }
 
@@ -11608,14 +11807,14 @@ JSON 규격:
       const d = devices.find(x => x.id === deviceId);
       if (!d) return;
       const cleanVal = newVal.trim();
-      setAdValue(d, carrier, type, cleanVal, adMarginBase);
+      setAdValue(d, carrier, type, cleanVal, posterMarginMode);
       if (cellEl) {
         const isBorder2 = cellEl.className.includes('border-r-2');
         let colorClass = 'text-slate-900 font-black text-sm sm:text-base';
         if (cleanVal === '' || cleanVal === '-') colorClass = 'text-slate-400 font-bold';
         else if (cleanVal.startsWith('-') || Number(cleanVal) < 0) colorClass = 'text-rose-600 font-black text-sm sm:text-base';
         else if (cleanVal === '0') colorClass = 'text-amber-600 font-black text-sm sm:text-base';
-        cellEl.className = `${cellEl.className.split(' ')[0]} p-2 sm:p-2.5 text-center ${isBorder2 ? 'border-r-2 border-slate-900' : 'border-r border-slate-200'} cursor-pointer ${colorClass}`;
+        cellEl.className = `${cellEl.className.split(' ')[0]} p-2 sm:p-2.5 text-center align-middle ${isBorder2 ? 'border-r-2 border-slate-900' : 'border-r border-slate-200'} cursor-pointer ${colorClass}`;
       }
       scheduleStoreSave('성지특가 광고', `[시세표 직접수정] ${d.name} (${carrier} ${type}): ${cleanVal}`);
     }
@@ -11703,6 +11902,7 @@ JSON 규격:
         if (posterDeviceRows) {
           localStorage.setItem('phone_ad_poster_device_rows', JSON.stringify(posterDeviceRows));
         }
+        localStorage.setItem('phone_ad_poster_margin_mode', posterMarginMode);
         if (showAlert) {
           alert("✅ 시세표 상호명, 요금제, 부가서비스 표 및 유의사항이 저장되었습니다!\n새로고침을 하거나 재접속해도 유지됩니다.");
         }
@@ -11735,6 +11935,11 @@ JSON 규격:
           } catch(e) {}
         }
 
+        const savedMode = localStorage.getItem('phone_ad_poster_margin_mode');
+        if (savedMode) {
+          posterMarginMode = savedMode;
+        }
+
         applyPosterThemeColor(themeColor);
       } catch (e) {
         console.error("Load poster settings error:", e);
@@ -11752,10 +11957,10 @@ JSON 규격:
       const clone = sheet.cloneNode(true);
       clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
 
-      // 드롭다운 select 요소를 깨끗한 텍스트 span으로 치환 (캡처 이미지에 화살표나 회색 박스 방지)
+      // 드롭다운 select 요소를 깨끗하고 볼드한 텍스트 span으로 치환 (캡처 이미지에 화살표나 드롭다운 폼 제거)
       clone.querySelectorAll('.poster-model-select').forEach(sel => {
         const span = document.createElement('span');
-        span.className = "text-xs sm:text-sm font-black text-slate-950";
+        span.className = "text-xs sm:text-sm font-black text-slate-950 text-center block whitespace-nowrap px-1";
         const selectedOption = sel.options[sel.selectedIndex];
         let modelText = selectedOption ? selectedOption.text : '';
         if (modelText.includes(' (')) {
@@ -11765,9 +11970,58 @@ JSON 규격:
         sel.parentNode.replaceChild(span, sel);
       });
 
-      // UI 전용 요소(관리 컬럼, 행 추가/삭제 버튼 등) 제거
+      // UI 전용 요소(관리/삭제 컬럼, 행 추가/삭제 버튼 등) 제거
       clone.querySelectorAll('.poster-ui-action').forEach(el => el.remove());
       clone.querySelectorAll('button').forEach(el => el.remove());
+
+      // colgroup 보정 (UI 액션 열이 빠진 후 남은 컬럼 비율 100% 완전 밀착)
+      const mainColgroup = clone.querySelector('#posterMainColGroup');
+      if (mainColgroup) {
+        mainColgroup.innerHTML = `
+          <col style="width: 28%;">
+          <col style="width: 12%;">
+          <col style="width: 12%;">
+          <col style="width: 12%;">
+          <col style="width: 12%;">
+          <col style="width: 12%;">
+          <col style="width: 12%;">
+        `;
+      }
+      const planColgroup = clone.querySelector('#posterPlanColGroup');
+      if (planColgroup) {
+        planColgroup.innerHTML = `
+          <col style="width: 16%;">
+          <col style="width: 32%;">
+          <col style="width: 24%;">
+          <col style="width: 28%;">
+        `;
+      }
+      const vasColgroup = clone.querySelector('#posterVasColGroup');
+      if (vasColgroup) {
+        vasColgroup.innerHTML = `
+          <col style="width: 14%;">
+          <col style="width: 34%;">
+          <col style="width: 18%;">
+          <col style="width: 20%;">
+          <col style="width: 14%;">
+        `;
+      }
+
+      // 기타 안내사항 행 colspan 밀착 보정 (5열 테이블이므로 colspan="4")
+      const etcRow = clone.querySelector('#posterVasEtcRow');
+      if (etcRow) {
+        const tds = etcRow.querySelectorAll('td');
+        if (tds.length >= 2) {
+          tds[1].setAttribute('colspan', '4');
+        }
+      }
+
+      // 테이블 스타일 고정
+      clone.querySelectorAll('table').forEach(tbl => {
+        tbl.style.width = '100%';
+        tbl.style.tableLayout = 'fixed';
+        tbl.style.borderCollapse = 'collapse';
+      });
 
       const offscreen = document.createElement('div');
       offscreen.style.position = 'absolute';
