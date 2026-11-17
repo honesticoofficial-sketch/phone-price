@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -924,13 +924,9 @@
             <svg class="w-4 h-4 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
             <span>문구/조건 저장</span>
           </button>
-          <button onclick="captureAdPosterImage('copy')" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs sm:text-sm font-extrabold shadow-sm transition flex items-center gap-1.5">
+          <button id="posterCopyBtn" onclick="captureAdPosterImage('copy')" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs sm:text-sm font-extrabold shadow-sm transition flex items-center gap-1.5">
             <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
             <span>이미지 클립보드 복사</span>
-          </button>
-          <button onclick="captureAdPosterImage('download')" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs sm:text-sm font-extrabold shadow-sm transition flex items-center gap-1.5">
-            <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
-            <span>시세표 PNG 저장</span>
           </button>
           <button onclick="printAdPoster()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs sm:text-sm font-extrabold shadow-sm transition flex items-center gap-1.5" title="브라우저 공식 그래픽 엔진으로 오차 0% PDF 저장 및 인쇄">
             <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
@@ -9528,9 +9524,10 @@ function handleSelectAffiliateCard(cardId) {
         }
       });
 
+      // 화면 깜빡임 및 잔상 오버레이 원천 방지: 화면 밖 -10000px 좌표에 오프스크린 격리 배치
       const offscreen = document.createElement('div');
       offscreen.style.position = 'fixed';
-      offscreen.style.left = '0';
+      offscreen.style.left = '-10000px';
       offscreen.style.top = '0';
       offscreen.style.zIndex = '-9999';
       offscreen.style.pointerEvents = 'none';
@@ -11334,10 +11331,10 @@ JSON 규격:
       // 계정명이 아닌 현재 활성 매장(명지점 / 광안점) 기준으로 표기
       const targetStoreLabel = (currentStoreId === 'gwangan') ? '광안점' : '명지점';
 
-      // 캡처용 전용 오프스크린 컨테이너 생성 (좌표 0,0 및 z-index: -9999로 스크롤/뷰포트 밀림 완전 차단)
+      // 캡처용 전용 오프스크린 컨테이너 생성 (화면 밖 -10000px 배치로 화면 깜빡임 및 잔상 오버레이 원천 차단)
       const wrap = document.createElement('div');
-      wrap.style.position = 'absolute';
-      wrap.style.left = '0';
+      wrap.style.position = 'fixed';
+      wrap.style.left = '-10000px';
       wrap.style.top = '0';
       wrap.style.zIndex = '-9999';
       wrap.style.width = '1000px';
@@ -12226,11 +12223,21 @@ JSON 규격:
     }
 
     // ==================== 고해상도 PNG 캡처 & 글자 눌림/중앙정렬/겹침 오류 완벽 해결 ====================
-    async function captureAdPosterImage(action = 'download') {
+    async function captureAdPosterImage(action = 'copy') {
       const sheet = document.getElementById('adPosterSheet');
       if (!sheet) {
         alert("시세표 요소를 찾을 수 없습니다.");
         return;
+      }
+
+      const copyBtn = document.getElementById('posterCopyBtn');
+      const originalBtnHtml = copyBtn ? copyBtn.innerHTML : '';
+      if (copyBtn && action === 'copy') {
+        copyBtn.disabled = true;
+        copyBtn.innerHTML = `
+          <svg class="w-4 h-4 text-white animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+          <span>고화질 복사 중...</span>
+        `;
       }
 
       // 폰트 메트릭 계산 오차 방지를 위해 웹 폰트(Pretendard) 로딩 완료 보장 대기
@@ -12360,9 +12367,10 @@ JSON 규격:
         cell.appendChild(wrapper);
       });
 
+      // 화면 깜빡임 및 뷰포트 오버레이 잔상 원천 차단을 위해 화면 밖 -10000px 좌표에 오프스크린 격리 배치
       const offscreen = document.createElement('div');
       offscreen.style.position = 'fixed';
-      offscreen.style.left = '0';
+      offscreen.style.left = '-10000px';
       offscreen.style.top = '0';
       offscreen.style.zIndex = '-9999';
       offscreen.style.pointerEvents = 'none';
@@ -12431,17 +12439,19 @@ JSON 규격:
           alert("✅ 통신 3사 원조폰 특가 시세표 이미지가 글자 밀림/겹침 없는 완벽한 고해상도 PNG 파일로 저장되었습니다!");
         } else if (action === 'copy') {
           if (blobData && navigator.clipboard && navigator.clipboard.write) {
-            navigator.clipboard.write([
-              new ClipboardItem({ 'image/png': blobData })
-            ]).then(() => {
+            try {
+              await navigator.clipboard.write([
+                new ClipboardItem({ 'image/png': blobData })
+              ]);
               alert("✅ 시세표 이미지가 클립보드에 복사되었습니다!\n\n카카오톡 대화방이나 네이버 카페/밴드에 바로 Ctrl+V (붙여넣기) 하세요.");
-            }).catch(err => {
+            } catch (clipboardErr) {
+              console.warn("Clipboard write error:", clipboardErr);
               const link = document.createElement('a');
               link.download = filename;
               link.href = dataUrl;
               link.click();
               alert("브라우저 클립보드 접근 권한으로 인해 고화질 PNG 이미지 파일로 저장되었습니다.");
-            });
+            }
           } else {
             const link = document.createElement('a');
             link.download = filename;
@@ -12454,10 +12464,16 @@ JSON 규격:
         if (offscreen.parentNode) document.body.removeChild(offscreen);
         console.error("Poster capture error:", err);
         alert("시세표 이미지 캡처 중 오류가 발생했습니다: " + err.message);
+      } finally {
+        if (offscreen.parentNode) document.body.removeChild(offscreen);
+        if (copyBtn && action === 'copy') {
+          copyBtn.disabled = false;
+          copyBtn.innerHTML = originalBtnHtml;
+        }
       }
     }
 
-    // ==================== 브라우저 공식 그래픽 엔진 기반 무오차 PDF / 인쇄 출력 ====================
+        // ==================== 브라우저 공식 그래픽 엔진 기반 무오차 PDF / 인쇄 출력 ====================
     async function printAdPoster() {
       const sheet = document.getElementById('adPosterSheet');
       if (!sheet) {
