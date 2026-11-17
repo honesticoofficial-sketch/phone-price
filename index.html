@@ -899,54 +899,37 @@
 
         <!-- ==================== TAB 4: 광고가격(시세표) 통신 3사 성지특가 통합 시세표 포스터 ==================== -->
     <div id="tab-adtable" class="space-y-4 hidden">
-      <!-- 시세표 툴바 -->
-      <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-2xs flex flex-wrap items-center justify-between gap-3">
-        <div class="space-y-0.5">
-          <div class="flex items-center gap-2">
-            <h2 class="text-base sm:text-lg font-black text-slate-900 flex items-center gap-1.5">
-              <span>🖼️</span> 통신 3사 성지특가 통합 시세표
-            </h2>
-            <span id="posterAdModeBadge" class="px-2.5 py-0.5 rounded-full text-xs font-black bg-indigo-50 text-indigo-700 border border-indigo-200">
-              올부가 광고가 연동 중
-            </span>
-          </div>
-          <p class="text-xs text-slate-500">
-            [광고가격(문구)] 탭에 등록된 3사 번이/기변 시세가 실시간으로 자동 연동됩니다. 시세표를 직접 수정하거나 이미지로 캡처할 수 있습니다.
-          </p>
-        </div>
-
-        <div class="flex items-center gap-2 flex-wrap">
-          <button onclick="syncAdPosterPrices()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1.5">
-            <svg class="w-4 h-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-            <span>가격 다시 불러오기</span>
-          </button>
-          <button onclick="saveAdPosterSettings(true)" class="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-xl text-xs sm:text-sm font-bold shadow-2xs transition flex items-center gap-1.5">
-            <svg class="w-4 h-4 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
-            <span>문구/조건 저장</span>
-          </button>
-          <button id="posterCopyBtn" onclick="captureAdPosterImage('copy')" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs sm:text-sm font-extrabold shadow-sm transition flex items-center gap-1.5">
-            <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-            <span>이미지 클립보드 복사</span>
-          </button>
-          <button onclick="printAdPoster()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs sm:text-sm font-extrabold shadow-sm transition flex items-center gap-1.5" title="브라우저 공식 그래픽 엔진으로 오차 0% PDF 저장 및 인쇄">
-            <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
-            <span>🖨️ PDF / 고화질 인쇄</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- 시세표 테두리 & 브랜드 포인트 색상 설정 바 -->
+      <!-- 시세표 상단 테두리 & 브랜드 포인트 색상 설정 및 출력 바 -->
       <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs space-y-3">
-        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-2.5">
           <div class="flex items-center gap-2">
             <span class="w-7 h-7 rounded-xl bg-rose-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">🎨</span>
             <div>
-              <span class="font-black text-xs sm:text-sm text-slate-900 flex items-center gap-1.5">
-                시세표 테두리 & 브랜드 포인트 색상 설정
-                <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-100 text-blue-700">실시간 반영</span>
-              </span>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="font-black text-xs sm:text-sm text-slate-900">시세표 테두리 & 브랜드 포인트 색상 설정</span>
+                <span id="posterAdModeBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-indigo-50 text-indigo-700 border border-indigo-200">
+                  올부가 광고가 연동 중
+                </span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-700">문구·조건 실시간 자동저장</span>
+              </div>
               <p class="text-[11px] text-slate-500">배경은 눈이 편안한 화이트로 고정되며, 브랜드 테마 색상은 외곽 테두리와 표 헤더 포인트로 깔끔하게 적용됩니다.</p>
             </div>
+          </div>
+
+          <!-- 시세표 액션 버튼 그룹 (하단 통합) -->
+          <div class="flex items-center gap-2 flex-wrap">
+            <button type="button" onclick="syncAdPosterPrices()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1.5 cursor-pointer">
+              <svg class="w-4 h-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              <span>가격 다시 불러오기</span>
+            </button>
+            <button type="button" id="posterCopyBtn" onclick="captureAdPosterImage('copy')" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs sm:text-sm font-extrabold shadow-sm transition flex items-center gap-1.5 cursor-pointer">
+              <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              <span>이미지 클립보드 복사</span>
+            </button>
+            <button type="button" onclick="printAdPoster()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs sm:text-sm font-extrabold shadow-sm transition flex items-center gap-1.5 cursor-pointer" title="브라우저 공식 그래픽 엔진으로 오차 0% PDF 저장 및 인쇄">
+              <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+              <span>🖨️ PDF / 고화질 인쇄</span>
+            </button>
           </div>
         </div>
 
@@ -1019,10 +1002,10 @@
             </div>
             
             <div class="w-full py-1 text-center">
-              <h1 id="posterStoreTitle" contenteditable="true" onblur="saveAdPosterSettings(false)" class="poster-theme-text text-3xl sm:text-5xl font-black text-[#e60012] tracking-tight text-center focus:outline-none focus:ring-2 focus:ring-rose-500 rounded px-2" title="클릭하여 상호명을 수정할 수 있습니다" style="color: #e60012; line-height: 1.25; margin-bottom: 8px; display: block;">
+              <h1 id="posterStoreTitle" contenteditable="true" oninput="saveAdPosterSettings(false)" onblur="saveAdPosterSettings(false)" class="poster-theme-text text-3xl sm:text-5xl font-black text-[#e60012] tracking-tight text-center focus:outline-none focus:ring-2 focus:ring-rose-500 rounded px-2" title="클릭하여 상호명을 수정할 수 있습니다" style="color: #e60012; line-height: 1.25; margin-bottom: 8px; display: block;">
                 원조폰 특가 시세표
               </h1>
-              <div id="posterSubtitle" contenteditable="true" onblur="saveAdPosterSettings(false)" class="text-xs sm:text-sm font-extrabold text-slate-700 text-center focus:outline-none focus:ring-1 focus:ring-rose-500 rounded" title="클릭하여 부제목을 수정할 수 있습니다" style="line-height: 1.35; margin-top: 4px; display: block;">
+              <div id="posterSubtitle" contenteditable="true" oninput="saveAdPosterSettings(false)" onblur="saveAdPosterSettings(false)" class="text-xs sm:text-sm font-extrabold text-slate-700 text-center focus:outline-none focus:ring-1 focus:ring-rose-500 rounded" title="클릭하여 부제목을 수정할 수 있습니다" style="line-height: 1.35; margin-top: 4px; display: block;">
                 성지매장 눈속임 원조폰에서는 끝!!
               </div>
             </div>
@@ -1045,7 +1028,7 @@
                 <!-- 헤더 1열: 날짜 + 통신 3사 로고 -->
                 <tr class="border-b-4 border-slate-950">
                   <th class="p-2 sm:p-2.5 bg-white border-r-4 border-slate-950 text-center align-middle">
-                    <div id="posterDateText" contenteditable="true" onblur="saveAdPosterSettings(false)" class="text-xl sm:text-3xl font-black text-slate-950 tracking-tight text-center focus:outline-none focus:ring-1 focus:ring-rose-500 rounded px-1" title="클릭하여 날짜를 수정할 수 있습니다">
+                    <div id="posterDateText" contenteditable="true" oninput="saveAdPosterSettings(false)" onblur="saveAdPosterSettings(false)" class="text-xl sm:text-3xl font-black text-slate-950 tracking-tight text-center focus:outline-none focus:ring-1 focus:ring-rose-500 rounded px-1" title="클릭하여 날짜를 수정할 수 있습니다">
                       11월 16일
                     </div>
                   </th>
@@ -1086,24 +1069,23 @@
             </button>
           </div>
 
-          <!-- 3. [필수확인] 전체 9개 유의사항 2열 박스 (첫 번째 이미지 내용 100% 반영) -->
+          <!-- 3. [필수확인] 필수 안내 유의사항 (단일 1칸 박스) -->
           <div class="bg-rose-50/40 rounded-2xl border-2 poster-theme-border border-[#e60012]/40 p-4 sm:p-5 space-y-2.5 shadow-2xs">
             <div class="text-center font-black text-sm sm:text-base text-slate-900 tracking-tight flex items-center justify-center gap-2">
               <span class="poster-theme-text text-[#e60012] font-black select-none">📢</span>
               <span class="border-b-2 poster-theme-border border-[#e60012] pb-0.5 px-1 font-black">[필수확인]</span>
               <span class="poster-theme-text text-[#e60012] font-black select-none">📢</span>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-[11px] sm:text-xs text-slate-800 font-bold leading-relaxed">
-              <div id="posterNoticeLeft" contenteditable="true" onblur="saveAdPosterSettings(false)" class="whitespace-pre-wrap cursor-text hover:bg-white/90 hover:ring-1 hover:ring-rose-300 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white rounded-lg p-2.5 transition border border-transparent hover:border-rose-200" title="클릭하여 내용을 직접 수정할 수 있습니다">- 부가서비스 및 결합은 필수 의무사항이 아니며 고객님 의사로 변경 가능합니다.
+            <div class="text-[11px] sm:text-xs text-slate-800 font-bold leading-relaxed">
+              <div id="posterNoticeText" contenteditable="true" oninput="saveAdPosterSettings(false)" onblur="saveAdPosterSettings(false)" class="whitespace-pre-wrap cursor-text hover:bg-white/90 hover:ring-1 hover:ring-rose-300 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white rounded-lg p-2.5 transition border border-transparent hover:border-rose-200" title="클릭하여 내용을 직접 수정할 수 있습니다 (실시간 자동 저장)">- 부가서비스 및 결합은 필수 의무사항이 아니며 고객님 의사로 변경 가능합니다.
 - 부가서비스 혜택 기간은 기종 통신사별로 상이합니다 문의 부탁드립니다.
 - 휴대폰+인터넷+TV 결합기준 동시가입 지원금 포함된 가격입니다
 - 공통지원금 기준으로 안내드린 금액이나 선택약정으로 고객님 선택 가능합니다
-- 요금제는 필수조건이 아니시며 고객님 의사에 따라 변경가능합니다</div>
-              <div id="posterNoticeRight" contenteditable="true" onblur="saveAdPosterSettings(false)" class="whitespace-pre-wrap cursor-text hover:bg-white/90 hover:ring-1 hover:ring-rose-300 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white rounded-lg p-2.5 transition border border-transparent hover:border-rose-200" title="클릭하여 내용을 직접 수정할 수 있습니다">- 현금개통 및 할부개통 선택가능 합니다
+- 요금제는 필수조건이 아니시며 고객님 의사에 따라 변경가능합니다
+- 현금개통 및 할부개통 선택가능 합니다
 - 할부 개통시 할부이자 5.9% 발생됩니다 (24개월 할부기준)
 - 선택약정은 공통지원금이 포함되지 않습니다
-- 휴대폰 보험 미가입시 추가금 5만원 (3사 공통 6개월 사용조건)
-  (sk=M+1개월 kt=M+3개월 LG=99일 유지조건)</div>
+- 휴대폰 보험 미가입시 추가금 5만원 (3사 공통 6개월 사용조건 / sk=M+1개월, kt=M+3개월, LG=99일 유지조건)</div>
             </div>
           </div>
 
@@ -2900,22 +2882,14 @@
       ['SK', 'KT', 'LG'].forEach(c => {
         if (!dailyCarrierRows[c] || !Array.isArray(dailyCarrierRows[c])) {
           dailyCarrierRows[c] = [...defaultIds];
-        } else {
-          defaultIds.forEach(id => {
-            if (!dailyCarrierRows[c].includes(id)) dailyCarrierRows[c].push(id);
-          });
         }
         if (!adCarrierOrders[c] || !Array.isArray(adCarrierOrders[c])) {
           adCarrierOrders[c] = [...defaultIds];
-        } else {
-          defaultIds.forEach(id => {
-            if (!adCarrierOrders[c].includes(id)) adCarrierOrders[c].push(id);
-          });
         }
       });
-      defaultIds.forEach(id => {
-        if (!calcRows.includes(id)) calcRows.push(id);
-      });
+      if (!Array.isArray(calcRows) || calcRows.length === 0) {
+        calcRows = [...defaultIds];
+      }
     }
 
     function getDailyRows(carrier = activeInputCarrier) {
@@ -3038,8 +3012,11 @@
     }
     function deleteDailyRow(idx) {
       const rows = getDailyRows(activeInputCarrier);
+      const deletedId = rows[idx];
+      const d = devices.find(x => x.id === deletedId);
+      const name = d ? d.name : (deletedId === 'empty' ? '구분선' : deletedId);
       rows.splice(idx, 1);
-      saveLayouts();
+      saveLayouts('대리점 단가 수정', `[${activeInputCarrier}] '${name}' 기종 행 삭제 완료`);
       renderDailyTable();
       renderCalcTable(); // 넷가 산출표 즉시 품절 연동!
     }
@@ -3752,12 +3729,20 @@
         const d = devices.find(x => x.id === rowId);
         if (!d) return;
 
-        const skP = d.prices ? d.prices.SK : d.price;
-        const ktP = d.prices ? d.prices.KT : d.price;
-        const lgP = d.prices ? d.prices.LG : d.price;
+        const skP = (d.prices && d.prices.SK !== undefined) ? d.prices.SK : d.price;
+        const ktP = (d.prices && d.prices.KT !== undefined) ? d.prices.KT : d.price;
+        const lgP = (d.prices && d.prices.LG !== undefined) ? d.prices.LG : d.price;
         let priceSummary = `${skP}만`;
-        if (skP !== ktP || skP !== lgP) {
-          priceSummary = `SK ${skP} / KT,LG ${lgP}만`;
+        if (skP === ktP && ktP === lgP) {
+          priceSummary = `${skP}만`;
+        } else if (ktP === lgP) {
+          priceSummary = `SK ${skP} / KT·LG ${ktP}만`;
+        } else if (skP === ktP) {
+          priceSummary = `SK·KT ${skP} / LG ${lgP}만`;
+        } else if (skP === lgP) {
+          priceSummary = `SK·LG ${skP} / KT ${ktP}만`;
+        } else {
+          priceSummary = `SK ${skP} / KT ${ktP} / LG ${lgP}만`;
         }
 
         tr.innerHTML = `
@@ -5184,13 +5169,10 @@
               syncCarrierConditionInputs();
             }
 
-            // 행 레이아웃 복원 & 등록된 전체 기종 자동 포함 보장
+            // 행 레이아웃 복원 (사용자가 삭제한 기종은 부활시키지 않고 설정 그대로 유지)
             if (Array.isArray(data.calcRows) && data.calcRows.length > 0) {
               calcRows = data.calcRows;
             }
-            devices.forEach(d => {
-              if (d.id !== 'empty' && !calcRows.includes(d.id)) calcRows.push(d.id);
-            });
 
             if (data.dailyCarrierRows && typeof data.dailyCarrierRows === 'object') {
               dailyCarrierRows = data.dailyCarrierRows;
@@ -5198,10 +5180,6 @@
             ['SK', 'KT', 'LG'].forEach(c => {
               if (!dailyCarrierRows[c] || !Array.isArray(dailyCarrierRows[c])) {
                 dailyCarrierRows[c] = devices.map(d => d.id);
-              } else {
-                devices.forEach(d => {
-                  if (d.id !== 'empty' && !dailyCarrierRows[c].includes(d.id)) dailyCarrierRows[c].push(d.id);
-                });
               }
             });
 
@@ -5211,10 +5189,6 @@
             ['SK', 'KT', 'LG'].forEach(c => {
               if (!adCarrierOrders[c] || !Array.isArray(adCarrierOrders[c])) {
                 adCarrierOrders[c] = devices.map(d => d.id);
-              } else {
-                devices.forEach(d => {
-                  if (d.id !== 'empty' && !adCarrierOrders[c].includes(d.id)) adCarrierOrders[c].push(d.id);
-                });
               }
             });
 
@@ -11761,10 +11735,10 @@ JSON 규격:
         const todayKst = getKstTodayString();
         const storeKey = currentStoreId || 'myeongji';
         const todayKey = new Date().toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' });
-        const lastSyncDay = localStorage.getItem(`phone_poster_date_last_day_${storeKey}`);
+        const lastSyncDay = localStorage.getItem(phone_poster_date_last_day_);
         if (lastSyncDay !== todayKey || !dateEl.innerText.trim()) {
           dateEl.innerText = todayKst;
-          localStorage.setItem(`phone_poster_date_last_day_${storeKey}`, todayKey);
+          localStorage.setItem(phone_poster_date_last_day_, todayKey);
         }
       }
 
@@ -11772,7 +11746,7 @@ JSON 규격:
       const storeKey = currentStoreId || 'myeongji';
       if (!posterDeviceRows || !Array.isArray(posterDeviceRows) || posterDeviceRows.length === 0) {
         try {
-          const savedRows = localStorage.getItem(`phone_ad_poster_device_rows_${storeKey}`);
+          const savedRows = localStorage.getItem(phone_ad_poster_device_rows_);
           if (savedRows) {
             posterDeviceRows = JSON.parse(savedRows);
           }
@@ -11783,7 +11757,7 @@ JSON 규격:
       }
 
       // 모드 로드
-      const savedMode = localStorage.getItem(`phone_ad_poster_margin_mode_${storeKey}`);
+      const savedMode = localStorage.getItem(phone_ad_poster_margin_mode_);
       if (savedMode) {
         posterMarginMode = savedMode;
       }
@@ -11799,42 +11773,69 @@ JSON 규격:
         }
       }
 
-      const formatPrice = (val) => {
-        if (val === '' || val === null || val === undefined) return '-';
-        return val;
-      };
+      // posterAdModeBadge 업데이트
+      const adBadge = document.getElementById('posterAdModeBadge');
+      if (adBadge) {
+        adBadge.innerText = (posterMarginMode === 'all') ? '올부가 광고가 연동 중' : '기본부가 광고가 연동 중';
+        adBadge.className = (posterMarginMode === 'all')
+          ? 'px-2.5 py-0.5 rounded-full text-[10px] font-black bg-indigo-50 text-indigo-700 border border-indigo-200'
+          : 'px-2.5 py-0.5 rounded-full text-[10px] font-black bg-slate-100 text-slate-700 border border-slate-300';
+      }
 
-      const getPriceClass = (val) => {
-        if (val === '' || val === null || val === undefined || val === '-') return 'text-slate-400 font-bold';
-        const str = String(val).trim();
-        if (str.startsWith('-') || Number(str) < 0) {
-          return 'text-rose-600 font-black text-sm sm:text-base';
+      // 단일 시세표 셀 렌더링 헬퍼 (품절, 130만/마이너스 빨간색, 넷가 이하 느낌표 + 팝업)
+      function renderPosterPriceCell(d, carrier, type, isBorder2) {
+        const adData = getAdData(d, carrier, posterMarginMode);
+        const isSoldOut = (!isDeviceActiveInDaily(carrier, d.id) || !!adData.hidden || adData[type] === '품절');
+        const borderClass = isBorder2 ? 'border-r-2 border-slate-900' : 'border-r border-slate-200';
+        const cellClass = cell--;
+
+        if (isSoldOut) {
+          return <td class=" p-2 sm:p-2.5 text-center align-middle  text-slate-400 font-bold text-sm sm:text-base cursor-pointer hover:bg-slate-100/50" contenteditable="true" onblur="handlePosterCellPriceChange('', '', '', this.innerText, this)" title="품절 기종 (클릭하여 수정 가능)">품절</td>;
         }
-        if (str === '0' || Number(str) === 0) {
-          return 'text-amber-600 font-black text-sm sm:text-base';
+
+        const rawVal = adData[type];
+        if (rawVal === '' || rawVal === null || rawVal === undefined || rawVal === '-') {
+          return <td class=" p-2 sm:p-2.5 text-center align-middle  text-slate-400 font-bold text-sm sm:text-base cursor-pointer hover:bg-slate-100/50" contenteditable="true" onblur="handlePosterCellPriceChange('', '', '', this.innerText, this)" title="클릭하여 가격 직접 수정">-</td>;
         }
-        return 'text-slate-900 font-black text-sm sm:text-base';
-      };
+
+        const numVal = parseFloat(String(rawVal).replace(/[^0-9.-]/g, ''));
+        const factoryPrice = (d.prices && d.prices[carrier] !== undefined) ? Number(d.prices[carrier]) : Number(d.price || 0);
+
+        // 색상 기준: 출고가 대비 130만원 이상 저렴하거나, 마이너스(-) 가격일 때 빨간색 (0원 주황색 제거)
+        let isRed = false;
+        if (!isNaN(numVal)) {
+          if (numVal < 0 || (factoryPrice - numVal) >= 130) {
+            isRed = true;
+          }
+        }
+        const colorClass = isRed ? 'text-rose-600 font-black text-sm sm:text-base' : 'text-slate-900 font-black text-sm sm:text-base';
+
+        // 넷가 이하 판매(역마진) 주의 경고: 느낌표 ⚠️ 및 마우스 호버 시 툴팁 팝업
+        const currentNet = calcNet(d, carrier, type, posterMarginMode);
+        let warningHtml = '';
+        if (currentNet !== null && !isNaN(numVal) && numVal < currentNet) {
+          const loss = Math.round((currentNet - numVal) * 10) / 10;
+          warningHtml = <span class="poster-ui-warning relative inline-flex items-center ml-1 group cursor-help select-none" contenteditable="false" title="⚠️ 넷가 이하 판매 주의! 현재 넷가: 만원"><span class="text-amber-500 font-black text-xs sm:text-sm">⚠️</span><span class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex flex-col items-center z-50 whitespace-nowrap bg-slate-950 text-white text-[11px] font-bold px-2.5 py-1.5 rounded-lg shadow-2xl border border-amber-400/60 leading-snug"><span class="text-amber-300 font-black">⚠️ 넷가 이하 주의!</span><span>현재 넷가: <strong class="text-white">만원</strong></span><span class="text-rose-300 text-[10px]">(역마진: -만원)</span><span class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-950"></span></span></span>;
+        }
+
+        return <td class=" p-2 sm:p-2.5 text-center align-middle  cursor-pointer hover:bg-amber-50/40 focus:bg-amber-100 " contenteditable="true" onblur="handlePosterCellPriceChange('', '', '', this.innerText, this)" title="클릭하여 가격 직접 수정"></td>;
+      }
 
       posterDeviceRows.forEach((devId, rowIndex) => {
         const d = devices.find(x => x.id === devId) || devices[0];
         if (!d) return;
-
-        const skAd = getAdData(d, 'SK', posterMarginMode);
-        const ktAd = getAdData(d, 'KT', posterMarginMode);
-        const lgAd = getAdData(d, 'LG', posterMarginMode);
 
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50 transition border-b border-slate-200";
         tr.dataset.rowIndex = rowIndex;
         tr.dataset.deviceId = d.id;
         tr.setAttribute('draggable', 'true');
-        tr.setAttribute('ondragstart', `onPosterRowDragStart(event, ${rowIndex})`);
-        tr.setAttribute('ondragover', `onPosterRowDragOver(event, ${rowIndex})`);
-        tr.setAttribute('ondrop', `onPosterRowDrop(event, ${rowIndex})`);
+        tr.setAttribute('ondragstart', onPosterRowDragStart(event, ));
+        tr.setAttribute('ondragover', onPosterRowDragOver(event, ));
+        tr.setAttribute('ondrop', onPosterRowDrop(event, ));
         tr.setAttribute('ondragend', 'onPosterRowDragEnd(event)');
 
-        tr.innerHTML = `
+        tr.innerHTML = 
           <!-- 기종 드롭다운 & 드래그 핸들 (폭 넉넉히 확보하여 기종명 안 잘림) -->
           <td class="p-1 sm:p-1.5 text-center font-black border-r-2 border-slate-900 bg-white align-middle">
             <div class="flex items-center gap-1 w-full">
@@ -11842,40 +11843,28 @@ JSON 규격:
                 <svg class="w-3.5 h-3.5 pointer-events-none" fill="currentColor" viewBox="0 0 20 20"><path d="M7 2a2 2 0 10.001 4.001A2 2 0 007 2zm0 6a2 2 0 10.001 4.001A2 2 0 007 8zm0 6a2 2 0 10.001 4.001A2 2 0 007 14zm6-12a2 2 0 10.001 4.001A2 2 0 0013 2zm0 6a2 2 0 10.001 4.001A2 2 0 0013 8zm0 6a2 2 0 10.001 4.001A2 2 0 0013 14z"></path></svg>
               </div>
               <div class="poster-ui-action flex flex-col gap-0.5 shrink-0">
-                <button type="button" onclick="movePosterDeviceRow(${rowIndex}, -1)" ${rowIndex === 0 ? 'disabled' : ''} class="w-3 h-2.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[7px] flex items-center justify-center cursor-pointer" title="위로 한 칸">▲</button>
-                <button type="button" onclick="movePosterDeviceRow(${rowIndex}, 1)" ${rowIndex === posterDeviceRows.length - 1 ? 'disabled' : ''} class="w-3 h-2.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[7px] flex items-center justify-center cursor-pointer" title="아래로 한 칸">▼</button>
+                <button type="button" onclick="movePosterDeviceRow(, -1)"  class="w-3 h-2.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[7px] flex items-center justify-center cursor-pointer" title="위로 한 칸">▲</button>
+                <button type="button" onclick="movePosterDeviceRow(, 1)"  class="w-3 h-2.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[7px] flex items-center justify-center cursor-pointer" title="아래로 한 칸">▼</button>
               </div>
-              <select class="poster-model-select flex-1 min-w-0 bg-transparent font-black text-slate-950 text-xs sm:text-[13px] text-center focus:outline-none focus:ring-1 focus:ring-rose-500 rounded py-1 px-0.5 cursor-pointer" onchange="onPosterDeviceRowSelect(this, ${rowIndex})">
-                ${buildPosterDeviceOptions(d.id)}
+              <select class="poster-model-select flex-1 min-w-0 bg-transparent font-black text-slate-950 text-xs sm:text-[13px] text-center focus:outline-none focus:ring-1 focus:ring-rose-500 rounded py-1 px-0.5 cursor-pointer" onchange="onPosterDeviceRowSelect(this, )">
+                
               </select>
             </div>
           </td>
           <!-- SK 번이 / 기변 -->
-          <td class="cell-sk-mnp p-2 sm:p-2.5 text-center align-middle border-r border-slate-200 cursor-pointer hover:bg-orange-50/50 focus:bg-orange-100 ${getPriceClass(skAd.mnp)}" contenteditable="true" onblur="handlePosterCellPriceChange('${d.id}', 'SK', 'mnp', this.innerText, this)" title="클릭하여 가격 직접 수정">
-            ${formatPrice(skAd.mnp)}
-          </td>
-          <td class="cell-sk-chg p-2 sm:p-2.5 text-center align-middle border-r-2 border-slate-900 cursor-pointer hover:bg-orange-50/50 focus:bg-orange-100 ${getPriceClass(skAd.chg)}" contenteditable="true" onblur="handlePosterCellPriceChange('${d.id}', 'SK', 'chg', this.innerText, this)" title="클릭하여 가격 직접 수정">
-            ${formatPrice(skAd.chg)}
-          </td>
+          
+          
           <!-- KT 번이 / 기변 -->
-          <td class="cell-kt-mnp p-2 sm:p-2.5 text-center align-middle border-r border-slate-200 cursor-pointer hover:bg-blue-50/50 focus:bg-blue-100 ${getPriceClass(ktAd.mnp)}" contenteditable="true" onblur="handlePosterCellPriceChange('${d.id}', 'KT', 'mnp', this.innerText, this)" title="클릭하여 가격 직접 수정">
-            ${formatPrice(ktAd.mnp)}
-          </td>
-          <td class="cell-kt-chg p-2 sm:p-2.5 text-center align-middle border-r-2 border-slate-900 cursor-pointer hover:bg-blue-50/50 focus:bg-blue-100 ${getPriceClass(ktAd.chg)}" contenteditable="true" onblur="handlePosterCellPriceChange('${d.id}', 'KT', 'chg', this.innerText, this)" title="클릭하여 가격 직접 수정">
-            ${formatPrice(ktAd.chg)}
-          </td>
+          
+          
           <!-- LG 번이 / 기변 -->
-          <td class="cell-lg-mnp p-2 sm:p-2.5 text-center align-middle border-r border-slate-200 cursor-pointer hover:bg-pink-50/50 focus:bg-pink-100 ${getPriceClass(lgAd.mnp)}" contenteditable="true" onblur="handlePosterCellPriceChange('${d.id}', 'LG', 'mnp', this.innerText, this)" title="클릭하여 가격 직접 수정">
-            ${formatPrice(lgAd.mnp)}
+          
+          
+          <!-- 삭제 버튼 -->
+          <td class="poster-ui-action p-1 text-center align-middle">
+            <button type="button" onclick="deletePosterDeviceRow()" class="w-6 h-6 rounded-md bg-rose-50 hover:bg-rose-100 text-rose-600 font-black text-xs transition inline-flex items-center justify-center cursor-pointer shadow-2xs" title="이 기종 행 삭제">✕</button>
           </td>
-          <td class="cell-lg-chg p-2 sm:p-2.5 text-center align-middle cursor-pointer hover:bg-pink-50/50 focus:bg-pink-100 ${getPriceClass(lgAd.chg)}" contenteditable="true" onblur="handlePosterCellPriceChange('${d.id}', 'LG', 'chg', this.innerText, this)" title="클릭하여 가격 직접 수정">
-            ${formatPrice(lgAd.chg)}
-          </td>
-          <!-- 행 삭제 버튼 (UI 전용) -->
-          <td class="poster-ui-action p-1 text-center align-middle bg-rose-50/20 border-l border-slate-200">
-            <button type="button" onclick="deletePosterDeviceRow(${rowIndex})" class="w-6 h-6 rounded-md bg-rose-50 hover:bg-rose-100 text-rose-600 font-black text-xs transition inline-flex items-center justify-center cursor-pointer shadow-2xs" title="이 기종 행 삭제">✕</button>
-          </td>
-        `;
+        ;
         tbody.appendChild(tr);
       });
     }
@@ -12017,16 +12006,14 @@ JSON 규격:
     function handlePosterCellPriceChange(deviceId, carrier, type, newVal, cellEl) {
       const d = devices.find(x => x.id === deviceId);
       if (!d) return;
-      const cleanVal = newVal.trim();
+      let cleanVal = String(newVal || '')
+        .replace(/⚠️[^\n]*/g, '')
+        .replace(/⚠️/g, '')
+        .replace(/\[.*?\]/g, '')
+        .trim();
+      
       setAdValue(d, carrier, type, cleanVal, posterMarginMode);
-      if (cellEl) {
-        const isBorder2 = cellEl.className.includes('border-r-2');
-        let colorClass = 'text-slate-900 font-black text-sm sm:text-base';
-        if (cleanVal === '' || cleanVal === '-') colorClass = 'text-slate-400 font-bold';
-        else if (cleanVal.startsWith('-') || Number(cleanVal) < 0) colorClass = 'text-rose-600 font-black text-sm sm:text-base';
-        else if (cleanVal === '0') colorClass = 'text-amber-600 font-black text-sm sm:text-base';
-        cellEl.className = `${cellEl.className.split(' ')[0]} p-2 sm:p-2.5 text-center align-middle ${isBorder2 ? 'border-r-2 border-slate-900' : 'border-r border-slate-200'} cursor-pointer ${colorClass}`;
-      }
+      renderAdPosterTable();
       saveAdPosterSettings(false);
     }
 
@@ -12090,12 +12077,15 @@ JSON 규격:
 
     // ==================== 매장별 시세표 설정 로드 / 저장 & Firestore 실시간 동기화 ====================
     function getAdPosterDataForSave() {
+      const noticeEl = document.getElementById('posterNoticeText');
+      const noticeVal = noticeEl ? noticeEl.innerText : '';
       return {
         title: document.getElementById('posterStoreTitle')?.innerText || '',
         subtitle: document.getElementById('posterSubtitle')?.innerText || '',
         date: document.getElementById('posterDateText')?.innerText || '',
-        noticeLeft: document.getElementById('posterNoticeLeft')?.innerText || '',
-        noticeRight: document.getElementById('posterNoticeRight')?.innerText || '',
+        noticeText: noticeVal,
+        noticeLeft: noticeVal,
+        noticeRight: '',
         planHtml: document.getElementById('posterPlanTableBody')?.innerHTML || '',
         themeColor: currentPosterThemeColor || '#e60012',
         marginMode: posterMarginMode || 'basic',
@@ -12110,23 +12100,24 @@ JSON 규격:
         const storeKey = currentStoreId || 'myeongji';
         const settings = getAdPosterDataForSave();
 
-        localStorage.setItem(`phone_ad_poster_custom_${storeKey}`, JSON.stringify(settings));
+        localStorage.setItem(phone_ad_poster_custom_, JSON.stringify(settings));
         if (posterDeviceRows) {
-          localStorage.setItem(`phone_ad_poster_device_rows_${storeKey}`, JSON.stringify(posterDeviceRows));
+          localStorage.setItem(phone_ad_poster_device_rows_, JSON.stringify(posterDeviceRows));
         }
-        localStorage.setItem(`phone_ad_poster_margin_mode_${storeKey}`, posterMarginMode);
-        localStorage.setItem(`phone_ad_poster_vas_data_${storeKey}`, JSON.stringify(posterVasData));
-        localStorage.setItem(`phone_ad_poster_vas_etc_${storeKey}`, posterVasEtcText);
-        localStorage.setItem(`adPosterThemeColor_${storeKey}`, currentPosterThemeColor);
+        localStorage.setItem(phone_ad_poster_margin_mode_, posterMarginMode);
+        localStorage.setItem(phone_ad_poster_vas_data_, JSON.stringify(posterVasData));
+        localStorage.setItem(phone_ad_poster_vas_etc_, posterVasEtcText);
+        localStorage.setItem(dPosterThemeColor_, currentPosterThemeColor);
 
-        // Firestore stores/${currentStoreId}에 실시간 동기화!
-        scheduleStoreSave('성지특가 시세표', `시세표 포스터 설정 및 부가서비스 저장 (${currentStoreName})`);
+        // Firestore stores/에 실시간 동기화!
+        scheduleStoreSave('성지특가 시세표', 시세표 포스터 설정 및 부가서비스 저장 ());
 
         if (showAlert) {
-          alert(`✅ [${currentStoreName}] 시세표 상호명, 요금제, 부가서비스 표 및 유의사항이 클라우드에 실시간 저장되었습니다!\n새로고침을 하거나 재접속해도 영구 유지됩니다.`);
+          alert(✅ [] 시세표 상호명, 유의사항, 테마 설정이 클라우드에 안전하게 저장되었습니다!);
         }
-      } catch (e) {
-        console.error("Save poster settings error:", e);
+      } catch (err) {
+        console.error("Failed to save poster settings:", err);
+        if (showAlert) alert("시세표 설정 저장 중 오류가 발생했습니다: " + err.message);
       }
     }
 
@@ -12134,18 +12125,26 @@ JSON 규격:
       try {
         const sId = storeId || 'myeongji';
         const storeLabel = (sId === 'myeongji') ? '명지원조폰' : '광안원조폰';
-        const defaultTitle = `${storeLabel} 특가 시세표`;
+        const defaultTitle = ${storeLabel} 특가 시세표;
 
-        const saved = localStorage.getItem(`phone_ad_poster_custom_${sId}`);
-        let themeColor = localStorage.getItem(`adPosterThemeColor_${sId}`) || '#e60012';
+        const saved = localStorage.getItem(phone_ad_poster_custom_);
+        let themeColor = localStorage.getItem(dPosterThemeColor_) || '#e60012';
 
         if (saved) {
           const s = JSON.parse(saved);
           if (document.getElementById('posterStoreTitle')) document.getElementById('posterStoreTitle').innerText = s.title || defaultTitle;
           if (document.getElementById('posterSubtitle')) document.getElementById('posterSubtitle').innerText = s.subtitle || '성지매장 눈속임 원조폰에서는 끝!!';
           if (document.getElementById('posterDateText') && s.date) document.getElementById('posterDateText').innerText = s.date;
-          if (document.getElementById('posterNoticeLeft') && s.noticeLeft) document.getElementById('posterNoticeLeft').innerText = s.noticeLeft;
-          if (document.getElementById('posterNoticeRight') && s.noticeRight) document.getElementById('posterNoticeRight').innerText = s.noticeRight;
+          
+          const noticeEl = document.getElementById('posterNoticeText');
+          if (noticeEl) {
+            if (s.noticeText) {
+              noticeEl.innerText = s.noticeText;
+            } else if (s.noticeLeft || s.noticeRight) {
+              noticeEl.innerText = [s.noticeLeft, s.noticeRight].filter(Boolean).join('\n');
+            }
+          }
+
           if (document.getElementById('posterPlanTableBody') && s.planHtml) document.getElementById('posterPlanTableBody').innerHTML = s.planHtml;
           if (s.themeColor) themeColor = s.themeColor;
           if (s.vasData && Array.isArray(s.vasData)) posterVasData = s.vasData;
@@ -12155,35 +12154,12 @@ JSON 규격:
           if (document.getElementById('posterSubtitle')) document.getElementById('posterSubtitle').innerText = '성지매장 눈속임 원조폰에서는 끝!!';
         }
 
-        const savedRows = localStorage.getItem(`phone_ad_poster_device_rows_${sId}`);
-        if (savedRows) {
-          try {
-            posterDeviceRows = JSON.parse(savedRows);
-          } catch(e) {}
-        } else {
-          posterDeviceRows = getInitialPosterDeviceRows();
+        if (themeColor) {
+          currentPosterThemeColor = themeColor;
+          applyPosterThemeColor(themeColor);
         }
-
-        const savedMode = localStorage.getItem(`phone_ad_poster_margin_mode_${sId}`);
-        if (savedMode) {
-          posterMarginMode = savedMode;
-        }
-
-        const savedVas = localStorage.getItem(`phone_ad_poster_vas_data_${sId}`);
-        if (savedVas) {
-          try {
-            posterVasData = JSON.parse(savedVas);
-          } catch(e) {}
-        }
-
-        const savedEtc = localStorage.getItem(`phone_ad_poster_vas_etc_${sId}`);
-        if (savedEtc) {
-          posterVasEtcText = savedEtc;
-        }
-
-        applyPosterThemeColor(themeColor);
-      } catch (e) {
-        console.error("Load poster settings error:", e);
+      } catch (err) {
+        console.error("Failed to load poster settings:", err);
       }
     }
 
@@ -12194,26 +12170,26 @@ JSON 규격:
         return;
       }
       const storeKey = currentStoreId || 'myeongji';
-      localStorage.setItem(`phone_ad_poster_custom_${storeKey}`, JSON.stringify(ps));
+      localStorage.setItem(phone_ad_poster_custom_, JSON.stringify(ps));
       if (ps.deviceRows) {
         posterDeviceRows = ps.deviceRows;
-        localStorage.setItem(`phone_ad_poster_device_rows_${storeKey}`, JSON.stringify(ps.deviceRows));
+        localStorage.setItem(phone_ad_poster_device_rows_, JSON.stringify(ps.deviceRows));
       }
       if (ps.marginMode) {
         posterMarginMode = ps.marginMode;
-        localStorage.setItem(`phone_ad_poster_margin_mode_${storeKey}`, ps.marginMode);
+        localStorage.setItem(phone_ad_poster_margin_mode_, ps.marginMode);
       }
       if (ps.vasData) {
         posterVasData = ps.vasData;
-        localStorage.setItem(`phone_ad_poster_vas_data_${storeKey}`, JSON.stringify(ps.vasData));
+        localStorage.setItem(phone_ad_poster_vas_data_, JSON.stringify(ps.vasData));
       }
       if (ps.vasEtcText) {
         posterVasEtcText = ps.vasEtcText;
-        localStorage.setItem(`phone_ad_poster_vas_etc_${storeKey}`, ps.vasEtcText);
+        localStorage.setItem(phone_ad_poster_vas_etc_, ps.vasEtcText);
       }
       if (ps.themeColor) {
         currentPosterThemeColor = ps.themeColor;
-        localStorage.setItem(`adPosterThemeColor_${storeKey}`, ps.themeColor);
+        localStorage.setItem(dPosterThemeColor_, ps.themeColor);
       }
       if (currentTab === 'adtable') {
         loadAdPosterSettings(currentStoreId);
@@ -12222,7 +12198,7 @@ JSON 규격:
       }
     }
 
-    // ==================== 고해상도 PNG 캡처 & 글자 눌림/중앙정렬/겹침 오류 완벽 해결 ====================
+    // ==================== 고해상도 PNG 캡처 & 100% 클립보드 복사 전용 (다운로드 방지) ====================
     async function captureAdPosterImage(action = 'copy') {
       const sheet = document.getElementById('adPosterSheet');
       if (!sheet) {
@@ -12234,10 +12210,10 @@ JSON 규격:
       const originalBtnHtml = copyBtn ? copyBtn.innerHTML : '';
       if (copyBtn && action === 'copy') {
         copyBtn.disabled = true;
-        copyBtn.innerHTML = `
+        copyBtn.innerHTML = 
           <svg class="w-4 h-4 text-white animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
           <span>고화질 복사 중...</span>
-        `;
+        ;
       }
 
       // 폰트 메트릭 계산 오차 방지를 위해 웹 폰트(Pretendard) 로딩 완료 보장 대기
@@ -12277,18 +12253,19 @@ JSON 규격:
         }
         const td = sel.closest('td');
         if (td) {
-          td.innerHTML = `<span class="text-xs sm:text-sm font-black text-slate-950 text-center block whitespace-nowrap px-1" style="display:block; text-align:center; width:100%;">${modelText}</span>`;
+          td.innerHTML = <span class="text-xs sm:text-sm font-black text-slate-950 text-center block whitespace-nowrap px-1" style="display:block; text-align:center; width:100%;"></span>;
         }
       });
 
-      // UI 전용 요소(관리/삭제 컬럼, 행 추가/삭제 버튼 등) 제거
+      // UI 전용 요소(관리/삭제 컬럼, 행 추가/삭제 버튼 등) 및 내부 마진 주의 경고(고객 미노출) 완벽 제거
       clone.querySelectorAll('.poster-ui-action').forEach(el => el.remove());
+      clone.querySelectorAll('.poster-ui-warning').forEach(el => el.remove());
       clone.querySelectorAll('button').forEach(el => el.remove());
 
       // colgroup 보정 (UI 액션 열이 빠진 후 남은 컬럼 비율 100% 완전 밀착)
       const mainColgroup = clone.querySelector('#posterMainColGroup');
       if (mainColgroup) {
-        mainColgroup.innerHTML = `
+        mainColgroup.innerHTML = 
           <col style="width: 28%;">
           <col style="width: 12%;">
           <col style="width: 12%;">
@@ -12296,26 +12273,26 @@ JSON 규격:
           <col style="width: 12%;">
           <col style="width: 12%;">
           <col style="width: 12%;">
-        `;
+        ;
       }
       const planColgroup = clone.querySelector('#posterPlanColGroup');
       if (planColgroup) {
-        planColgroup.innerHTML = `
+        planColgroup.innerHTML = 
           <col style="width: 16%;">
           <col style="width: 32%;">
           <col style="width: 24%;">
           <col style="width: 28%;">
-        `;
+        ;
       }
       const vasColgroup = clone.querySelector('#posterVasColGroup');
       if (vasColgroup) {
-        vasColgroup.innerHTML = `
+        vasColgroup.innerHTML = 
           <col style="width: 14%;">
           <col style="width: 34%;">
           <col style="width: 18%;">
           <col style="width: 20%;">
           <col style="width: 14%;">
-        `;
+        ;
       }
 
       // 기타 안내사항 행 colspan 밀착 보정 (5열 테이블이므로 colspan="4")
@@ -12334,8 +12311,7 @@ JSON 규격:
         tbl.style.borderCollapse = 'collapse';
       });
 
-      // ==================== html2canvas 폰트 baseline 처짐 및 눌림 현상 완벽 방지 ====================
-      // 모든 셀의 내부 콘텐츠를 flexbox 컨테이너로 감싸 수직/수평 절대 중앙 정렬 보장
+      // html2canvas 폰트 baseline 처짐 및 눌림 현상 완벽 방지
       clone.querySelectorAll('td, th').forEach(cell => {
         const isLeft = cell.classList.contains('text-left') || cell.getAttribute('align') === 'left';
         const isRight = cell.classList.contains('text-right') || cell.getAttribute('align') === 'right';
@@ -12358,7 +12334,6 @@ JSON 규격:
         wrapper.style.lineHeight = '1.2';
         wrapper.style.textAlign = textAlign;
         wrapper.style.fontFeatureSettings = '"tnum"';
-        // html2canvas 폰트 메트릭 계산 오차로 글자가 1~2px 아래로 처지는 현상을 정밀 상쇄
         wrapper.style.transform = 'translateY(-0.5px)';
 
         while (cell.firstChild) {
@@ -12393,7 +12368,7 @@ JSON 규격:
         let dataUrl = null;
         let blobData = null;
 
-        // 브라우저 공식 그래픽 엔진 기반 SVG ForeignObject 고화질 렌더링 (글자 밀림/깨짐 0%)
+        // 1순위: htmlToImage SVG 외국객체 기반 초고화질
         if (typeof htmlToImage !== 'undefined') {
           try {
             dataUrl = await htmlToImage.toPng(clone, {
@@ -12409,6 +12384,7 @@ JSON 규격:
           }
         }
 
+        // 2순위: html2canvas 캔버스 폴백
         if (!dataUrl) {
           const canvas = await html2canvas(clone, {
             scale: 2,
@@ -12427,37 +12403,46 @@ JSON 규격:
 
         if (offscreen.parentNode) document.body.removeChild(offscreen);
 
+        // blobData 확보 보장 (fetch 또는 base64 수동 변환)
+        if (!blobData && dataUrl) {
+          try {
+            const res = await fetch(dataUrl);
+            blobData = await res.blob();
+          } catch(e) {
+            const byteCharacters = atob(dataUrl.split(',')[1]);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+              byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            blobData = new Blob([byteArray], { type: 'image/png' });
+          }
+        }
+
         const storeName = (document.getElementById('posterStoreTitle')?.innerText || currentStoreName || '원조폰').replace(/[^가-힣a-zA-Z0-9]/g, '');
         const dateStr = (document.getElementById('posterDateText')?.innerText || '').replace(/[^0-9가-힣]/g, '');
-        const filename = `원조폰특가_시세표_${storeName}_${dateStr || new Date().toISOString().slice(0,10)}.png`;
+        const filename = 원조폰특가_시세표__.png;
 
         if (action === 'download') {
           const link = document.createElement('a');
           link.download = filename;
           link.href = dataUrl;
           link.click();
-          alert("✅ 통신 3사 원조폰 특가 시세표 이미지가 글자 밀림/겹침 없는 완벽한 고해상도 PNG 파일로 저장되었습니다!");
+          alert("✅ 통신 3사 원조폰 특가 시세표 이미지가 고해상도 PNG 파일로 저장되었습니다!");
         } else if (action === 'copy') {
-          if (blobData && navigator.clipboard && navigator.clipboard.write) {
+          // 파일 다운로드로 넘어가지 않고 오직 클립보드 복사만 수행!
+          if (navigator.clipboard && navigator.clipboard.write && blobData) {
             try {
               await navigator.clipboard.write([
                 new ClipboardItem({ 'image/png': blobData })
               ]);
-              alert("✅ 시세표 이미지가 클립보드에 복사되었습니다!\n\n카카오톡 대화방이나 네이버 카페/밴드에 바로 Ctrl+V (붙여넣기) 하세요.");
+              alert("✅ 시세표 이미지가 클립보드에 복사되었습니다!\n\n카카오톡 대화방이나 네이버 카페/밴드에 바로 Ctrl+V (붙여넣기) 하시면 됩니다.");
             } catch (clipboardErr) {
               console.warn("Clipboard write error:", clipboardErr);
-              const link = document.createElement('a');
-              link.download = filename;
-              link.href = dataUrl;
-              link.click();
-              alert("브라우저 클립보드 접근 권한으로 인해 고화질 PNG 이미지 파일로 저장되었습니다.");
+              alert("⚠️ 클립보드 복사 권한이 차단되어 있습니다.\n브라우저 주소창 왼쪽의 자물쇠/설정 아이콘에서 클립보드 권한을 '허용'해주세요.");
             }
           } else {
-            const link = document.createElement('a');
-            link.download = filename;
-            link.href = dataUrl;
-            link.click();
-            alert("PNG 이미지 파일로 저장되었습니다.");
+            alert("⚠️ 현재 브라우저 환경에서 이미지 클립보드 복사 기능을 지원하지 않거나 권한이 차단되어 있습니다.\n최신 Chrome 또는 Edge 브라우저를 이용해주세요.");
           }
         }
       } catch (err) {
@@ -12473,7 +12458,7 @@ JSON 규격:
       }
     }
 
-        // ==================== 브라우저 공식 그래픽 엔진 기반 무오차 PDF / 인쇄 출력 ====================
+    // ==================== 브라우저 공식 그래픽 엔진 기반 무오차 PDF / 인쇄 출력 ====================
     async function printAdPoster() {
       const sheet = document.getElementById('adPosterSheet');
       if (!sheet) {
@@ -12499,6 +12484,7 @@ JSON 규격:
         }
       });
       printClone.querySelectorAll('.poster-ui-action').forEach(el => el.remove());
+      printClone.querySelectorAll('.poster-ui-warning').forEach(el => el.remove());
       printClone.querySelectorAll('button').forEach(el => el.remove());
 
       const cTitle = printClone.querySelector('#posterStoreTitle');
