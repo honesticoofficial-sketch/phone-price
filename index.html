@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -2885,11 +2885,15 @@
         }
         if (!adCarrierOrders[c] || !Array.isArray(adCarrierOrders[c])) {
           adCarrierOrders[c] = [...defaultIds];
+        } else {
+          defaultIds.forEach(id => {
+            if (!adCarrierOrders[c].includes(id)) adCarrierOrders[c].push(id);
+          });
         }
       });
-      if (!Array.isArray(calcRows) || calcRows.length === 0) {
-        calcRows = [...defaultIds];
-      }
+      defaultIds.forEach(id => {
+        if (!calcRows.includes(id)) calcRows.push(id);
+      });
     }
 
     function getDailyRows(carrier = activeInputCarrier) {
@@ -3729,7 +3733,7 @@
         const d = devices.find(x => x.id === rowId);
         if (!d) return;
 
-        const skP = (d.prices && d.prices.SK !== undefined) ? d.prices.SK : d.price;
+                const skP = (d.prices && d.prices.SK !== undefined) ? d.prices.SK : d.price;
         const ktP = (d.prices && d.prices.KT !== undefined) ? d.prices.KT : d.price;
         const lgP = (d.prices && d.prices.LG !== undefined) ? d.prices.LG : d.price;
         let priceSummary = `${skP}만`;
@@ -5169,10 +5173,13 @@
               syncCarrierConditionInputs();
             }
 
-            // 행 레이아웃 복원 (사용자가 삭제한 기종은 부활시키지 않고 설정 그대로 유지)
+            // 행 레이아웃 복원 & 등록된 전체 기종 자동 포함 보장
             if (Array.isArray(data.calcRows) && data.calcRows.length > 0) {
               calcRows = data.calcRows;
             }
+            devices.forEach(d => {
+              if (d.id !== 'empty' && !calcRows.includes(d.id)) calcRows.push(d.id);
+            });
 
             if (data.dailyCarrierRows && typeof data.dailyCarrierRows === 'object') {
               dailyCarrierRows = data.dailyCarrierRows;
@@ -5189,6 +5196,10 @@
             ['SK', 'KT', 'LG'].forEach(c => {
               if (!adCarrierOrders[c] || !Array.isArray(adCarrierOrders[c])) {
                 adCarrierOrders[c] = devices.map(d => d.id);
+              } else {
+                devices.forEach(d => {
+                  if (d.id !== 'empty' && !adCarrierOrders[c].includes(d.id)) adCarrierOrders[c].push(d.id);
+                });
               }
             });
 
@@ -11735,10 +11746,10 @@ JSON 규격:
         const todayKst = getKstTodayString();
         const storeKey = currentStoreId || 'myeongji';
         const todayKey = new Date().toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' });
-        const lastSyncDay = localStorage.getItem(phone_poster_date_last_day_);
+        const lastSyncDay = localStorage.getItem(`phone_poster_date_last_day_${storeKey}`);
         if (lastSyncDay !== todayKey || !dateEl.innerText.trim()) {
           dateEl.innerText = todayKst;
-          localStorage.setItem(phone_poster_date_last_day_, todayKey);
+          localStorage.setItem(`phone_poster_date_last_day_${storeKey}`, todayKey);
         }
       }
 
@@ -11746,7 +11757,7 @@ JSON 규격:
       const storeKey = currentStoreId || 'myeongji';
       if (!posterDeviceRows || !Array.isArray(posterDeviceRows) || posterDeviceRows.length === 0) {
         try {
-          const savedRows = localStorage.getItem(phone_ad_poster_device_rows_);
+          const savedRows = localStorage.getItem(`phone_ad_poster_device_rows_${storeKey}`);
           if (savedRows) {
             posterDeviceRows = JSON.parse(savedRows);
           }
@@ -11757,7 +11768,7 @@ JSON 규격:
       }
 
       // 모드 로드
-      const savedMode = localStorage.getItem(phone_ad_poster_margin_mode_);
+      const savedMode = localStorage.getItem(`phone_ad_poster_margin_mode_${storeKey}`);
       if (savedMode) {
         posterMarginMode = savedMode;
       }
@@ -11787,15 +11798,15 @@ JSON 규격:
         const adData = getAdData(d, carrier, posterMarginMode);
         const isSoldOut = (!isDeviceActiveInDaily(carrier, d.id) || !!adData.hidden || adData[type] === '품절');
         const borderClass = isBorder2 ? 'border-r-2 border-slate-900' : 'border-r border-slate-200';
-        const cellClass = cell--;
+        const cellClass = `cell-${carrier.toLowerCase()}-${type}`;
 
         if (isSoldOut) {
-          return <td class=" p-2 sm:p-2.5 text-center align-middle  text-slate-400 font-bold text-sm sm:text-base cursor-pointer hover:bg-slate-100/50" contenteditable="true" onblur="handlePosterCellPriceChange('', '', '', this.innerText, this)" title="품절 기종 (클릭하여 수정 가능)">품절</td>;
+          return `<td class="${cellClass} p-2 sm:p-2.5 text-center align-middle ${borderClass} text-slate-400 font-bold text-sm sm:text-base cursor-pointer hover:bg-slate-100/50" contenteditable="true" onblur="handlePosterCellPriceChange('${d.id}', '${carrier}', '${type}', this.innerText, this)" title="품절 기종 (클릭하여 수정 가능)">품절</td>`;
         }
 
         const rawVal = adData[type];
         if (rawVal === '' || rawVal === null || rawVal === undefined || rawVal === '-') {
-          return <td class=" p-2 sm:p-2.5 text-center align-middle  text-slate-400 font-bold text-sm sm:text-base cursor-pointer hover:bg-slate-100/50" contenteditable="true" onblur="handlePosterCellPriceChange('', '', '', this.innerText, this)" title="클릭하여 가격 직접 수정">-</td>;
+          return `<td class="${cellClass} p-2 sm:p-2.5 text-center align-middle ${borderClass} text-slate-400 font-bold text-sm sm:text-base cursor-pointer hover:bg-slate-100/50" contenteditable="true" onblur="handlePosterCellPriceChange('${d.id}', '${carrier}', '${type}', this.innerText, this)" title="클릭하여 가격 직접 수정">-</td>`;
         }
 
         const numVal = parseFloat(String(rawVal).replace(/[^0-9.-]/g, ''));
@@ -11815,10 +11826,10 @@ JSON 규격:
         let warningHtml = '';
         if (currentNet !== null && !isNaN(numVal) && numVal < currentNet) {
           const loss = Math.round((currentNet - numVal) * 10) / 10;
-          warningHtml = <span class="poster-ui-warning relative inline-flex items-center ml-1 group cursor-help select-none" contenteditable="false" title="⚠️ 넷가 이하 판매 주의! 현재 넷가: 만원"><span class="text-amber-500 font-black text-xs sm:text-sm">⚠️</span><span class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex flex-col items-center z-50 whitespace-nowrap bg-slate-950 text-white text-[11px] font-bold px-2.5 py-1.5 rounded-lg shadow-2xl border border-amber-400/60 leading-snug"><span class="text-amber-300 font-black">⚠️ 넷가 이하 주의!</span><span>현재 넷가: <strong class="text-white">만원</strong></span><span class="text-rose-300 text-[10px]">(역마진: -만원)</span><span class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-950"></span></span></span>;
+          warningHtml = `<span class="poster-ui-warning relative inline-flex items-center ml-1 group cursor-help select-none" contenteditable="false" title="⚠️ 넷가 이하 판매 주의! 현재 넷가: ${currentNet}만원"><span class="text-amber-500 font-black text-xs sm:text-sm">⚠️</span><span class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex flex-col items-center z-50 whitespace-nowrap bg-slate-950 text-white text-[11px] font-bold px-2.5 py-1.5 rounded-lg shadow-2xl border border-amber-400/60 leading-snug"><span class="text-amber-300 font-black">⚠️ 넷가 이하 주의!</span><span>현재 넷가: <strong class="text-white">${currentNet}만원</strong></span><span class="text-rose-300 text-[10px]">(역마진: -${loss}만원)</span><span class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-950"></span></span></span>`;
         }
 
-        return <td class=" p-2 sm:p-2.5 text-center align-middle  cursor-pointer hover:bg-amber-50/40 focus:bg-amber-100 " contenteditable="true" onblur="handlePosterCellPriceChange('', '', '', this.innerText, this)" title="클릭하여 가격 직접 수정"></td>;
+        return `<td class="${cellClass} p-2 sm:p-2.5 text-center align-middle ${borderClass} cursor-pointer hover:bg-amber-50/40 focus:bg-amber-100 ${colorClass}" contenteditable="true" onblur="handlePosterCellPriceChange('${d.id}', '${carrier}', '${type}', this.innerText, this)" title="클릭하여 가격 직접 수정">${rawVal}${warningHtml}</td>`;
       }
 
       posterDeviceRows.forEach((devId, rowIndex) => {
@@ -11830,12 +11841,12 @@ JSON 규격:
         tr.dataset.rowIndex = rowIndex;
         tr.dataset.deviceId = d.id;
         tr.setAttribute('draggable', 'true');
-        tr.setAttribute('ondragstart', onPosterRowDragStart(event, ));
-        tr.setAttribute('ondragover', onPosterRowDragOver(event, ));
-        tr.setAttribute('ondrop', onPosterRowDrop(event, ));
+        tr.setAttribute('ondragstart', `onPosterRowDragStart(event, ${rowIndex})`);
+        tr.setAttribute('ondragover', `onPosterRowDragOver(event, ${rowIndex})`);
+        tr.setAttribute('ondrop', `onPosterRowDrop(event, ${rowIndex})`);
         tr.setAttribute('ondragend', 'onPosterRowDragEnd(event)');
 
-        tr.innerHTML = 
+        tr.innerHTML = `
           <!-- 기종 드롭다운 & 드래그 핸들 (폭 넉넉히 확보하여 기종명 안 잘림) -->
           <td class="p-1 sm:p-1.5 text-center font-black border-r-2 border-slate-900 bg-white align-middle">
             <div class="flex items-center gap-1 w-full">
@@ -11843,31 +11854,33 @@ JSON 규격:
                 <svg class="w-3.5 h-3.5 pointer-events-none" fill="currentColor" viewBox="0 0 20 20"><path d="M7 2a2 2 0 10.001 4.001A2 2 0 007 2zm0 6a2 2 0 10.001 4.001A2 2 0 007 8zm0 6a2 2 0 10.001 4.001A2 2 0 007 14zm6-12a2 2 0 10.001 4.001A2 2 0 0013 2zm0 6a2 2 0 10.001 4.001A2 2 0 0013 8zm0 6a2 2 0 10.001 4.001A2 2 0 0013 14z"></path></svg>
               </div>
               <div class="poster-ui-action flex flex-col gap-0.5 shrink-0">
-                <button type="button" onclick="movePosterDeviceRow(, -1)"  class="w-3 h-2.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[7px] flex items-center justify-center cursor-pointer" title="위로 한 칸">▲</button>
-                <button type="button" onclick="movePosterDeviceRow(, 1)"  class="w-3 h-2.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[7px] flex items-center justify-center cursor-pointer" title="아래로 한 칸">▼</button>
+                <button type="button" onclick="movePosterDeviceRow(${rowIndex}, -1)" ${rowIndex === 0 ? 'disabled' : ''} class="w-3 h-2.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[7px] flex items-center justify-center cursor-pointer" title="위로 한 칸">▲</button>
+                <button type="button" onclick="movePosterDeviceRow(${rowIndex}, 1)" ${rowIndex === posterDeviceRows.length - 1 ? 'disabled' : ''} class="w-3 h-2.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[7px] flex items-center justify-center cursor-pointer" title="아래로 한 칸">▼</button>
               </div>
-              <select class="poster-model-select flex-1 min-w-0 bg-transparent font-black text-slate-950 text-xs sm:text-[13px] text-center focus:outline-none focus:ring-1 focus:ring-rose-500 rounded py-1 px-0.5 cursor-pointer" onchange="onPosterDeviceRowSelect(this, )">
-                
+              <select class="poster-model-select flex-1 min-w-0 bg-transparent font-black text-slate-950 text-xs sm:text-[13px] text-center focus:outline-none focus:ring-1 focus:ring-rose-500 rounded py-1 px-0.5 cursor-pointer" onchange="onPosterDeviceRowSelect(this, ${rowIndex})">
+                ${buildPosterDeviceOptions(d.id)}
               </select>
             </div>
           </td>
           <!-- SK 번이 / 기변 -->
-          
-          
+          ${renderPosterPriceCell(d, 'SK', 'mnp', false)}
+          ${renderPosterPriceCell(d, 'SK', 'chg', true)}
           <!-- KT 번이 / 기변 -->
-          
-          
+          ${renderPosterPriceCell(d, 'KT', 'mnp', false)}
+          ${renderPosterPriceCell(d, 'KT', 'chg', true)}
           <!-- LG 번이 / 기변 -->
-          
-          
+          ${renderPosterPriceCell(d, 'LG', 'mnp', false)}
+          ${renderPosterPriceCell(d, 'LG', 'chg', true)}
           <!-- 삭제 버튼 -->
           <td class="poster-ui-action p-1 text-center align-middle">
-            <button type="button" onclick="deletePosterDeviceRow()" class="w-6 h-6 rounded-md bg-rose-50 hover:bg-rose-100 text-rose-600 font-black text-xs transition inline-flex items-center justify-center cursor-pointer shadow-2xs" title="이 기종 행 삭제">✕</button>
+            <button type="button" onclick="deletePosterDeviceRow(${rowIndex})" class="w-6 h-6 rounded-md bg-rose-50 hover:bg-rose-100 text-rose-600 font-black text-xs transition inline-flex items-center justify-center cursor-pointer shadow-2xs" title="이 기종 행 삭제">✕</button>
           </td>
-        ;
+        `;
         tbody.appendChild(tr);
       });
     }
+
+    
 
     function movePosterDeviceRow(index, direction) {
       if (!posterDeviceRows) return;
@@ -12017,6 +12030,8 @@ JSON 규격:
       saveAdPosterSettings(false);
     }
 
+    
+
     function syncAdPosterPrices() {
       renderAdPosterTable();
       alert("✅ 광고가격(문구) 탭에 등록된 최신 시세표 가격을 성공적으로 다시 불러왔습니다!");
@@ -12100,20 +12115,20 @@ JSON 규격:
         const storeKey = currentStoreId || 'myeongji';
         const settings = getAdPosterDataForSave();
 
-        localStorage.setItem(phone_ad_poster_custom_, JSON.stringify(settings));
+        localStorage.setItem(`phone_ad_poster_custom_${storeKey}`, JSON.stringify(settings));
         if (posterDeviceRows) {
-          localStorage.setItem(phone_ad_poster_device_rows_, JSON.stringify(posterDeviceRows));
+          localStorage.setItem(`phone_ad_poster_device_rows_${storeKey}`, JSON.stringify(posterDeviceRows));
         }
-        localStorage.setItem(phone_ad_poster_margin_mode_, posterMarginMode);
-        localStorage.setItem(phone_ad_poster_vas_data_, JSON.stringify(posterVasData));
-        localStorage.setItem(phone_ad_poster_vas_etc_, posterVasEtcText);
-        localStorage.setItem(dPosterThemeColor_, currentPosterThemeColor);
+        localStorage.setItem(`phone_ad_poster_margin_mode_${storeKey}`, posterMarginMode);
+        localStorage.setItem(`phone_ad_poster_vas_data_${storeKey}`, JSON.stringify(posterVasData));
+        localStorage.setItem(`phone_ad_poster_vas_etc_${storeKey}`, posterVasEtcText);
+        localStorage.setItem(`adPosterThemeColor_${storeKey}`, currentPosterThemeColor);
 
-        // Firestore stores/에 실시간 동기화!
-        scheduleStoreSave('성지특가 시세표', 시세표 포스터 설정 및 부가서비스 저장 ());
+        // Firestore stores/${currentStoreId}에 실시간 동기화!
+        scheduleStoreSave('성지특가 시세표', `시세표 포스터 설정 및 부가서비스 저장 (${currentStoreName})`);
 
         if (showAlert) {
-          alert(✅ [] 시세표 상호명, 유의사항, 테마 설정이 클라우드에 안전하게 저장되었습니다!);
+          alert(`✅ [${currentStoreName}] 시세표 상호명, 유의사항, 테마 설정이 클라우드에 안전하게 저장되었습니다!`);
         }
       } catch (err) {
         console.error("Failed to save poster settings:", err);
@@ -12125,10 +12140,10 @@ JSON 규격:
       try {
         const sId = storeId || 'myeongji';
         const storeLabel = (sId === 'myeongji') ? '명지원조폰' : '광안원조폰';
-        const defaultTitle = ${storeLabel} 특가 시세표;
+        const defaultTitle = `${storeLabel} 특가 시세표`;
 
-        const saved = localStorage.getItem(phone_ad_poster_custom_);
-        let themeColor = localStorage.getItem(dPosterThemeColor_) || '#e60012';
+        const saved = localStorage.getItem(`phone_ad_poster_custom_${sId}`);
+        let themeColor = localStorage.getItem(`adPosterThemeColor_${sId}`) || '#e60012';
 
         if (saved) {
           const s = JSON.parse(saved);
@@ -12170,26 +12185,26 @@ JSON 규격:
         return;
       }
       const storeKey = currentStoreId || 'myeongji';
-      localStorage.setItem(phone_ad_poster_custom_, JSON.stringify(ps));
+      localStorage.setItem(`phone_ad_poster_custom_${storeKey}`, JSON.stringify(ps));
       if (ps.deviceRows) {
         posterDeviceRows = ps.deviceRows;
-        localStorage.setItem(phone_ad_poster_device_rows_, JSON.stringify(ps.deviceRows));
+        localStorage.setItem(`phone_ad_poster_device_rows_${storeKey}`, JSON.stringify(ps.deviceRows));
       }
       if (ps.marginMode) {
         posterMarginMode = ps.marginMode;
-        localStorage.setItem(phone_ad_poster_margin_mode_, ps.marginMode);
+        localStorage.setItem(`phone_ad_poster_margin_mode_${storeKey}`, ps.marginMode);
       }
       if (ps.vasData) {
         posterVasData = ps.vasData;
-        localStorage.setItem(phone_ad_poster_vas_data_, JSON.stringify(ps.vasData));
+        localStorage.setItem(`phone_ad_poster_vas_data_${storeKey}`, JSON.stringify(ps.vasData));
       }
       if (ps.vasEtcText) {
         posterVasEtcText = ps.vasEtcText;
-        localStorage.setItem(phone_ad_poster_vas_etc_, ps.vasEtcText);
+        localStorage.setItem(`phone_ad_poster_vas_etc_${storeKey}`, ps.vasEtcText);
       }
       if (ps.themeColor) {
         currentPosterThemeColor = ps.themeColor;
-        localStorage.setItem(dPosterThemeColor_, ps.themeColor);
+        localStorage.setItem(`adPosterThemeColor_${storeKey}`, ps.themeColor);
       }
       if (currentTab === 'adtable') {
         loadAdPosterSettings(currentStoreId);
@@ -12210,10 +12225,10 @@ JSON 규격:
       const originalBtnHtml = copyBtn ? copyBtn.innerHTML : '';
       if (copyBtn && action === 'copy') {
         copyBtn.disabled = true;
-        copyBtn.innerHTML = 
+        copyBtn.innerHTML = `
           <svg class="w-4 h-4 text-white animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
           <span>고화질 복사 중...</span>
-        ;
+        `;
       }
 
       // 폰트 메트릭 계산 오차 방지를 위해 웹 폰트(Pretendard) 로딩 완료 보장 대기
@@ -12253,7 +12268,7 @@ JSON 규격:
         }
         const td = sel.closest('td');
         if (td) {
-          td.innerHTML = <span class="text-xs sm:text-sm font-black text-slate-950 text-center block whitespace-nowrap px-1" style="display:block; text-align:center; width:100%;"></span>;
+          td.innerHTML = `<span class="text-xs sm:text-sm font-black text-slate-950 text-center block whitespace-nowrap px-1" style="display:block; text-align:center; width:100%;">${modelText}</span>`;
         }
       });
 
@@ -12265,7 +12280,7 @@ JSON 규격:
       // colgroup 보정 (UI 액션 열이 빠진 후 남은 컬럼 비율 100% 완전 밀착)
       const mainColgroup = clone.querySelector('#posterMainColGroup');
       if (mainColgroup) {
-        mainColgroup.innerHTML = 
+        mainColgroup.innerHTML = `
           <col style="width: 28%;">
           <col style="width: 12%;">
           <col style="width: 12%;">
@@ -12273,26 +12288,26 @@ JSON 규격:
           <col style="width: 12%;">
           <col style="width: 12%;">
           <col style="width: 12%;">
-        ;
+        `;
       }
       const planColgroup = clone.querySelector('#posterPlanColGroup');
       if (planColgroup) {
-        planColgroup.innerHTML = 
+        planColgroup.innerHTML = `
           <col style="width: 16%;">
           <col style="width: 32%;">
           <col style="width: 24%;">
           <col style="width: 28%;">
-        ;
+        `;
       }
       const vasColgroup = clone.querySelector('#posterVasColGroup');
       if (vasColgroup) {
-        vasColgroup.innerHTML = 
+        vasColgroup.innerHTML = `
           <col style="width: 14%;">
           <col style="width: 34%;">
           <col style="width: 18%;">
           <col style="width: 20%;">
           <col style="width: 14%;">
-        ;
+        `;
       }
 
       // 기타 안내사항 행 colspan 밀착 보정 (5열 테이블이므로 colspan="4")
@@ -12421,7 +12436,7 @@ JSON 규격:
 
         const storeName = (document.getElementById('posterStoreTitle')?.innerText || currentStoreName || '원조폰').replace(/[^가-힣a-zA-Z0-9]/g, '');
         const dateStr = (document.getElementById('posterDateText')?.innerText || '').replace(/[^0-9가-힣]/g, '');
-        const filename = 원조폰특가_시세표__.png;
+        const filename = `원조폰특가_시세표_${storeName}_${dateStr || new Date().toISOString().slice(0,10)}.png`;
 
         if (action === 'download') {
           const link = document.createElement('a');
@@ -12457,6 +12472,8 @@ JSON 규격:
         }
       }
     }
+
+    
 
     // ==================== 브라우저 공식 그래픽 엔진 기반 무오차 PDF / 인쇄 출력 ====================
     async function printAdPoster() {
