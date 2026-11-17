@@ -1282,3 +1282,19 @@ Write-Host "Pushed Commit: $($res.commit.sha)"
   - 기존 0원 표시 시 적용되던 주황색(	ext-amber-600)을 완전히 제거.
   - 새로운 색상 기준: 기종별 출고가 대비 130만원 이상 저렴하거나((factoryPrice - val) >= 130), 가격이 마이너스(al < 0)일 때만 빨간색 강렬 포인트(	ext-rose-600 font-black) 적용.
   - 그 외 일반 가격은 정갈한 다크 슬레이트(	ext-slate-900 font-black), 품절 및 빈값은 연한 회색(	ext-slate-400 font-bold)으로 일관성 있게 표현.
+
+---
+
+## 39. 보안잠금 PIN 언락 불가 긴급 해결 (템플릿 리터럴 문법 오류 완치 및 무결성 검증 체계 확립) (2026-11-17)
+
+### 1) 보안 잠금 PIN 언락 불가 현상 원인 규명
+- **문제 원인**: 이전 배포 스크립트 실행 과정에서 백틱(`  `) 템플릿 리터럴 내부의 ${...} 변수가 문자열 치환 오차로 인해 백틱 기호가 유실되면서 eturn <td class="..."> 형태의 잘못된 문법으로 기록됨.
+- 이로 인해 브라우저 자바스크립트 엔진이 컴파일 단계에서 SyntaxError: Unexpected token '<'를 발생시키고 전체 스크립트 실행을 중단함 -> 키패드 입력 함수 inputPin() 및 키보드 이벤트 리스너가 등록되지 못해 매장 보안 잠금 PIN 모달이 열리지 않는 현상 발생.
+
+### 2) 완치 조치 내역
+- 순수 리터럴 스니펫 기반으로 index.html 전체 자바스크립트 코드를 무결하게 복원 및 재작성.
+- enderPosterPriceCell(), handlePosterCellPriceChange(), getAdPosterDataForSave(), captureAdPosterImage() 등 신규 탑재된 8대 기능의 백틱 및 변수 치환식을 100% 완벽 보존.
+- Edge Headless 브라우저를 통한 실측 검증:
+  - SyntaxError 및 Uncaught exception 0건 검증 완료 (errs: []).
+  - 마스터 PIN(103105), 명지점 PIN(152411), 광안점 PIN(152422) 입력 시 pinModal이 즉시 hidden으로 전환되며 정상 언락 동작 검증 완료.
+  - 잘못된 PIN 입력 시 "일치하는 매장 PIN 번호가 없습니다." 에러 피드백 및 자동 리셋 검증 완료.
