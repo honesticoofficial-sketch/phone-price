@@ -1424,3 +1424,69 @@ Write-Host "Pushed Commit: $($res.commit.sha)"
 
 ### 6) 보안 잠금 PIN 2차 무결성 전수 검증
 - 마스터 PIN(`103105`), 명지점 PIN(`152411`), 광안점 PIN(`152422`) 3개 계정 모두 Edge Headless CDP를 통해 잠금 해제, 1회 클릭 즉시 제휴카드 탭 진입, 카드사/단말기/QR 실시간 변경, 콘솔 에러 0건을 100% 무결성 검증 완료.
+
+---
+
+## 43. 제휴카드 가로형 규격(Horizontal) 전면 복원, 공식 고화질 플레이트 이미지 교체(배지/왜곡 제거), 라이트할부 강조 직선 밑줄 변경, 전월실적 화면 클릭 버그 완치 & 프로모션 대상자 확인 [이벤트확인 QR] 듀얼 탑재 (2026-11-18)
+
+### 1) 제휴카드 플레이트 가로고정 규격(Horizontal) 전면 복원
+- **작업 배경**: 이전 작업에서 세로형으로 변경되었던 `#cardPlateBox`로 인해 카드 비율이 맞지 않고 어색해졌던 문제를 해결, 사용자 요청에 맞춰 본래의 안정적이고 시원한 **가로고정 규격(`w-36 sm:w-44 h-22 sm:h-28`, 약 1.58:1 신용카드 표준 비율)**으로 100% 전면 복원.
+- **조치 내용**:
+  - `index.html` 내 `#cardPlateBox` 컨테이너 클래스를 `w-36 sm:w-44 h-22 sm:h-28`로 복원.
+  - `cardData.cardPlateOrientation = 'horizontal'` 및 전 카드 기본 설정을 가로형으로 고정.
+  - 카드 이미지 태그에 `object-contain filter drop-shadow-md rounded-lg`를 유지하여 가로형 카드는 꽉 차게, 현대카드 등 세로 디자인 카드는 중앙에 자연스럽고 고급스럽게 안착되도록 레이아웃 최적화.
+
+### 2) SK 및 LGU+ 제휴카드 공식 고화질 카드 플레이트 교체 (배지/스티커/화질 저하 전면 퇴출)
+- **작업 배경**: 과거 사용자가 제공한 안내 팸플릿/PDF 문서에서 잘라낸 이미지는 해상도가 깨지고 "최대 35,000원 캐시백" 등 이벤트 홍보 스티커/배지가 카드 면에 붙어 있어 시인성이 크게 떨어졌음.
+- **조치 내용**:
+  - 팸플릿 추출 방식을 전면 폐기하고, 각 카드사(KB국민, 신한, 현대, 삼성, 우리, 농협, 하나, 롯데 등) 공식 모바일 발급 페이지 및 CDN에서 순수 오리지널 카드 플레이트 이미지를 직접 추출/확보.
+  - **KB국민카드**: `09327_img.png` (SK T라이트), `04124_img.png` (KB T이코노미), `01508_img.png` (LGU+ 라이트II) 등 570x360 규격 초고화질 가로형 플레이트 탑재.
+  - **신한카드**: `cdCreditBOAC5C.png` (SK T라이트), `cdCreditACAC1D.png` (SK 파인애플), `cdCreditACACD8.png` (LGU+ Bora), `cdCreditBOAC5B.png` (LGU+ 스마트플랜) 등 1119x705 원본 무손실 가로 플레이트 탑재.
+  - **현대카드**: `card_MSKTE3TP_h.png` (SKT M3 T라이트2), `card_MLGTE3_h.png` (LGU+ M Edition3) 등 공식 디자인 탑재.
+  - **삼성/우리/농협/하나/롯데**: 카드사 정품 플레이트 기반으로 고품질 리샘플링하여 내장.
+  - 모든 이미지를 Base64 데이터 URL로 인라인 임베딩하여 A4 인쇄(`@media print`) 및 클립보드 복사 시 CORS 보안 에러 0%, 오프라인 100% 안정 작동 보장.
+
+### 3) 라이트할부 승인 안내 배너 강조선 물결표시 제거 및 직선 밑줄 복원
+- **작업 배경**: 금액 아래 적용되었던 구불구불한 물결 밑줄(`decoration-wavy`)이 서식지의 단정함을 해친다는 사용자 피드백 반영.
+- **조치 내용**:
+  - `decoration-wavy` 클래스를 전면 제거하고 단정하고 강렬한 직선 강조 밑줄(`underline decoration-2 font-bold` / `font-black`)로 복원.
+  - 총 금액 및 월 결제금액 숫자 클릭 시 즉시 직접 수정 가능한 `contenteditable="true"` 유지 및 수정 후 Enter 키 입력 시 즉시 반영(`onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"`) UX 탑재.
+
+### 4) A4 미리보기 서식지 실적 카드 직접 클릭 버그 완벽 해결
+- **문제 원인 분석**:
+  - 좌측 사이드바 드롭다운(`affTargetTier`) 변경 시에는 정상 작동하지만, 화면 중앙의 실적 카드(예: 30만/70만/100만)를 직접 클릭할 때 일시적으로 변경되었다가 0.1초 뒤 실적 0번으로 강제 롤백되는 현상 발생.
+  - 원인은 실적 클릭 시 `saveCardSettings` -> Firestore 동기화 파이프라인에서 `applyStoreCardSettings`가 실행되면서 `handleSelectAffiliateCard(currentAffiliateCardId)`를 무조건 호출하였고, 이 함수 내부에서 `currentAffiliateTierIndex = 0`으로 강제 초기화되고 있었음.
+- **완치 조치**:
+  - `handleSelectAffiliateCard(cardId)` 내부에서 **카드가 실제로 변경되었을 때(`isDifferentCard`)만 실적 인덱스를 0으로 초기화**하도록 조건 분기 추가.
+  - `applyStoreCardSettings`에서 불필요하게 카드를 다시 선택하여 실적을 리셋하던 구문을 제거하고 `renderCardPreview()`만 호출하도록 안전화.
+  - `setAffiliateTargetTier(idx)`의 인자 파싱을 안전하게 강화하고, 실적 카드 DOM에 `pointer-events-auto select-none`을 추가하여 클릭 이벤트가 부모 요소에 가려지지 않고 100% 즉각 반응하도록 보장.
+
+### 5) 프로모션 대상자 확인 [이벤트확인 QR] 듀얼 QR 전면 탑재
+- **작업 배경**: 현대카드에만 붙어 있던 이벤트 QR을 다른 프로모션 카드(6개월 무실적, 통신사/브랜드별 조건 등)에도 확대하여 대상 고객이 직접 스마트폰으로 자격 요건을 확인할 수 있도록 지원 요청.
+- **조치 내용**:
+  - 프로모션 조건(`eventTarget`) 또는 `eventUrl`이 있는 모든 카드에 대해 메인 `[발급신청 QR]` 바로 우측에 나란히 듀얼 QR 슬롯 배치.
+  - **현대카드**: `[이벤트응모 QR]` (스캔 시 필수응모) - 골드/앰버 테두리 박스로 표시.
+  - **기타 프로모션 카드**: `[이벤트확인 QR]` (스캔 시 대상확인) - 골드/앰버 테두리 박스로 표시.
+  - 고객과 상담원이 스마트폰 카메라로 비추면 각각 공식 발급 페이지와 프로모션 대상 확인/응모 페이지로 즉각 분기 접속.
+
+### 6) 현대카드 만료된 단축링크(Naver Short URL) 전면 교체
+- **문제 원인**: 기존에 등록되어 있던 `http://m.site.naver.com/18fKx` 등의 네이버 단축링크가 네이버 측 정책으로 서비스 종료되어 `/inactive-qr`로 리다이렉트되거나 404가 발생하던 문제 발견.
+- **조치 내용**:
+  - SKT 현대카드:
+    - 신청 URL: `https://www.hyundaicard.com/cpc/cr/CPCCR0201_01.hc?cardwcd=M3T2`
+    - 이벤트 응모 URL: `https://card.hyundaicard.com/EVENT?id=SKT7K&agentCode=L600100000000&eventCode=KTT02&pmotDtlCn=SKT7K&pmotClasCd=C0&tmYn=N&seprStagcd=X2` (공식 200 OK 검증 완료)
+  - LGU+ 현대카드:
+    - 신청 URL: `https://www.hyundaicard.com/cpc/cr/CPCCR0201_01.hc?cardwcd=MLGTE3`
+    - 이벤트 응모 URL: `https://card.hyundaicard.com/EVENT?id=LGUAPGG&agentCode=L600100000000&eventCode=KTT6S&pmotDtlCn=LGUAPGG&pmotClasCd=C0&tmYn=N&seprStagCd=X2` (공식 200 OK 검증 완료)
+  - KT 현대카드:
+    - 신청 URL: `https://www.hyundaicard.com/cpc/cr/CPCCR0201_01.hc?cardwcd=MKTE3`
+    - 이벤트 응모 URL: `https://www.hyundaicard.com/cpc/cr/CPCCR0201_01.hc?cardWcd=MKTE3TP&eventCode=KTP9N` (공식 200 OK 검증 완료)
+  - 저장소 내 모든 카드에서 만료된 `18fK*` 단축 URL을 완전히 제거하고 카드사 공식 다이렉트 링크로 전수 교체 완료.
+
+### 7) Edge Headless CDP 전수 무결성 검증 완료
+- Microsoft Edge Headless 모드 및 Chrome DevTools Protocol(CDP)을 통해 실제 브라우저 렌더링 검증 완료:
+  - Master PIN(`103105`) 잠금 해제 정상 통과.
+  - 제휴카드 탭 전환 및 가로형 박스(`w-36 sm:w-44 h-22 sm:h-28`) 클래스 적용 확인.
+  - 실적 카드 직접 클릭 시 인덱스 변경(0 -> 1 -> 2) 및 사이드바 드롭다운 연동 100% 정상 작동 검증.
+  - 라이트할부 승인 금액의 직선 밑줄(`underline decoration-2`) 및 `contenteditable="true"` 브라우저 DOM 확인.
+  - 듀얼 QR(`발급신청 QR` + `이벤트확인 QR`) 2개 정상 동적 생성 및 이미지 3개(플레이트 + 발급QR + 이벤트QR) 온전 렌더링 확인.
