@@ -145,7 +145,62 @@ try {
       bad;
     "
     Write-Output "Cards with non-horizontal orientation flag: $vertCount"
-    
+
+    # 6. Test Master Admin Login (103105) & Test Store Sandbox Switcher
+    Write-Output "Testing Master Login (103105) and Test Store..."
+    EvalJs "lockApp();"
+    Start-Sleep -Milliseconds 300
+    EvalJs "['1','0','3','1','0','5'].forEach(d => inputPin(d));"
+    Start-Sleep -Milliseconds 400
+
+    $masterUnlocked = EvalJs "isUnlocked"
+    $masterRole = EvalJs "currentRole"
+    $switcherVisible = EvalJs "!document.getElementById('masterStoreSwitcher').classList.contains('hidden')"
+    $testBtnExists = EvalJs "!!document.getElementById('switchBtn-test_store')"
+    Write-Output "Master Logged In: $masterUnlocked, Role: $masterRole, Switcher Visible: $switcherVisible, TestBtn Exists: $testBtnExists"
+
+    if ($masterRole -eq "master" -and $switcherVisible -and $testBtnExists) {
+        Write-Output ">>> SUCCESS: Master login reveals store switcher with Test Store button!"
+    } else {
+        Write-Output ">>> FAILURE: Master store switcher not properly visible!"
+    }
+
+    # Switch to test_store
+    Write-Output "Switching to test_store..."
+    EvalJs "masterSwitchStore('test_store');"
+    Start-Sleep -Milliseconds 300
+
+    $curStoreAfterSwitch = EvalJs "currentStoreId"
+    $badgeText = EvalJs "document.getElementById('userBadgeText').innerText"
+    Write-Output "Store after switch: $curStoreAfterSwitch, Header Badge: $badgeText"
+
+    if ($curStoreAfterSwitch -eq "test_store" -and $badgeText -like "*테스트매장*") {
+        Write-Output ">>> SUCCESS: Switched to test_store with proper amber header badge!"
+    } else {
+        Write-Output ">>> FAILURE: Failed to switch to test_store ($curStoreAfterSwitch)"
+    }
+
+    # 7. Test General Store Isolation (152411 - 명지점 & 152422 - 광안점)
+    Write-Output "Testing General Store Isolation (PIN 152411)..."
+    EvalJs "lockApp();"
+    Start-Sleep -Milliseconds 300
+    EvalJs "['1','5','2','4','1','1'].forEach(d => inputPin(d));"
+    Start-Sleep -Milliseconds 400
+
+    $storeRole = EvalJs "currentRole"
+    $storeSwitcherHidden = EvalJs "document.getElementById('masterStoreSwitcher').classList.contains('hidden')"
+    $cardTestBtnHidden = EvalJs "document.getElementById('cardStoreBtn-test_store').classList.contains('hidden')"
+    $compTestBtnHidden = EvalJs "document.getElementById('compStoreBtn-test_store').classList.contains('hidden')"
+    $histTestBtnHidden = EvalJs "document.getElementById('histFilter-test_store').classList.contains('hidden')"
+
+    Write-Output "Store Role: $storeRole, Switcher Hidden: $storeSwitcherHidden, Card Test Hidden: $cardTestBtnHidden, Comp Test Hidden: $compTestBtnHidden, Hist Test Hidden: $histTestBtnHidden"
+
+    if ($storeSwitcherHidden -and $cardTestBtnHidden -and $compTestBtnHidden -and $histTestBtnHidden) {
+        Write-Output ">>> SUCCESS: test_store is 100% hidden and isolated from general store accounts!"
+    } else {
+        Write-Output ">>> FAILURE: test_store was not properly hidden from general store!"
+    }
+
     $ws.CloseAsync([System.Net.WebSockets.WebSocketCloseStatus]::NormalClosure, "Done", $cts.Token).Wait()
 } finally {
     if ($edgeProc -and !$edgeProc.HasExited) {

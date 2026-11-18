@@ -244,6 +244,10 @@
             <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             <span>광안점</span>
           </button>
+          <button id="switchBtn-test_store" onclick="masterSwitchStore('test_store')" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-amber-700 hover:text-amber-900 transition font-bold" title="관리자 전용 업데이트 테스트 샌드박스">
+            <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+            <span>🧪 테스트매장</span>
+          </button>
         </div>
 
 
@@ -1230,6 +1234,7 @@
           <div class="flex items-center bg-slate-100 p-1 rounded-xl text-xs font-bold">
             <button onclick="setCardStore('myeongji')" id="cardStoreBtn-myeongji" class="px-3.5 py-1.5 rounded-lg bg-indigo-600 text-white shadow-2xs transition font-black">명지점 설정</button>
             <button onclick="setCardStore('gwangan')" id="cardStoreBtn-gwangan" class="px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition font-black">광안점 설정</button>
+            <button onclick="setCardStore('test_store')" id="cardStoreBtn-test_store" class="hidden px-3.5 py-1.5 rounded-lg text-amber-700 hover:text-amber-900 transition font-black">🧪 테스트매장 설정</button>
           </div>
         </div>
 
@@ -1436,6 +1441,7 @@
             <span class="text-[11px] text-slate-500 px-2">대조 매장:</span>
             <button onclick="setCompareStore('myeongji')" id="compStoreBtn-myeongji" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white shadow-2xs transition">명지점 단가 기준</button>
             <button onclick="setCompareStore('gwangan')" id="compStoreBtn-gwangan" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">광안점 단가 기준</button>
+            <button onclick="setCompareStore('test_store')" id="compStoreBtn-test_store" class="hidden px-3 py-1.5 rounded-lg text-amber-700 hover:text-amber-900 transition font-bold">🧪 테스트매장 단가 기준</button>
           </div>
 
           <!-- 마진 산출 기준 토글 -->
@@ -1847,6 +1853,7 @@
             <button onclick="filterHistory('all')" id="histFilter-all" class="px-3 py-1 rounded-lg font-bold bg-white text-slate-900 shadow-2xs">전체 내역</button>
             <button onclick="filterHistory('myeongji')" id="histFilter-myeongji" class="px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900">명지점</button>
             <button onclick="filterHistory('gwangan')" id="histFilter-gwangan" class="px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900">광안점</button>
+            <button onclick="filterHistory('test_store')" id="histFilter-test_store" class="hidden px-3 py-1 rounded-lg text-amber-700 hover:text-amber-900 font-bold">🧪 테스트매장</button>
             <button onclick="filterHistory('master')" id="histFilter-master" class="px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900">👑 본사</button>
           </div>
           <div id="historyStoreTitleBadge" class="hidden items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black bg-indigo-50 text-indigo-700 border border-indigo-200">
@@ -1912,6 +1919,7 @@
               <select id="copySrcStore" onchange="onCopySrcChanged()" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl font-bold text-slate-900 focus:ring-2 focus:ring-purple-500">
                 <option value="myeongji">명지점</option>
                 <option value="gwangan">광안점</option>
+                <option value="test_store">🧪 테스트매장</option>
               </select>
             </div>
             <div>
@@ -1919,6 +1927,7 @@
               <select id="copyTgtStore" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl font-bold text-slate-900 focus:ring-2 focus:ring-purple-500">
                 <option value="gwangan">광안점</option>
                 <option value="myeongji">명지점</option>
+                <option value="test_store">🧪 테스트매장</option>
               </select>
             </div>
           </div>
@@ -3331,50 +3340,65 @@
 
     // PIN 및 멀티 매장 계정 로그인
     function inputPin(d) {
-      if (enteredPin.length < 6) {
-        enteredPin += d;
-        updateDots();
-      }
-      if (enteredPin.length === 6) {
-        const auth = STORE_ROLES[enteredPin];
-        if (auth) {
-          currentRole = auth.role;
-          currentStoreId = auth.storeId;
-          currentStoreName = auth.name;
-          isUnlocked = true;
-          try {
-            sessionStorage.setItem('phone_current_pin', enteredPin);
-          } catch(e) {}
-          document.getElementById('pinModal').classList.add('hidden');
-          document.getElementById('pinMsg').innerText = "";
-          updateUserHeaderBadge();
-          initFirestoreListeners();
-        } else {
-          document.getElementById('pinMsg').innerText = "일치하는 매장 PIN 번호가 없습니다.";
-          setTimeout(clearPin, 600);
+      try {
+        if (enteredPin.length < 6 && d !== '') {
+          enteredPin += d;
+          updateDots();
         }
+        if (enteredPin.length === 6) {
+          const auth = STORE_ROLES[enteredPin];
+          if (auth) {
+            currentRole = auth.role;
+            currentStoreId = auth.storeId;
+            currentStoreName = auth.name;
+            isUnlocked = true;
+            try {
+              sessionStorage.setItem('phone_current_pin', enteredPin);
+            } catch(e) {}
+            const pModal = document.getElementById('pinModal');
+            if (pModal) pModal.classList.add('hidden');
+            const pMsg = document.getElementById('pinMsg');
+            if (pMsg) pMsg.innerText = "";
+            updateUserHeaderBadge();
+            initFirestoreListeners();
+          } else {
+            const pMsg = document.getElementById('pinMsg');
+            if (pMsg) pMsg.innerText = "일치하는 매장 PIN 번호가 없습니다.";
+            setTimeout(clearPin, 600);
+          }
+        }
+      } catch (err) {
+        console.error("inputPin error:", err);
       }
     }
     function clearPin() {
       enteredPin = "";
-      document.getElementById('pinMsg').innerText = "";
+      const pMsg = document.getElementById('pinMsg');
+      if (pMsg) pMsg.innerText = "";
       updateDots();
     }
     function backspacePin() {
       enteredPin = enteredPin.slice(0, -1);
-      document.getElementById('pinMsg').innerText = "";
+      const pMsg = document.getElementById('pinMsg');
+      if (pMsg) pMsg.innerText = "";
       updateDots();
     }
     function updateDots() {
-      const pinDotsEl = document.getElementById('pinDots');
-      if (!pinDotsEl) return;
-      const dots = pinDotsEl.children;
-      for (let i = 0; i < 6; i++) {
-        if (i < enteredPin.length) {
-          dots[i].className = "w-3.5 h-3.5 rounded-full bg-slate-900 border-2 border-slate-900";
-        } else {
-          dots[i].className = "w-3.5 h-3.5 rounded-full border-2 border-slate-200 bg-white";
+      try {
+        const pinDotsEl = document.getElementById('pinDots');
+        if (!pinDotsEl) return;
+        const dots = pinDotsEl.children;
+        for (let i = 0; i < 6; i++) {
+          if (dots[i]) {
+            if (i < enteredPin.length) {
+              dots[i].className = "w-3.5 h-3.5 rounded-full bg-slate-900 border-2 border-slate-900";
+            } else {
+              dots[i].className = "w-3.5 h-3.5 rounded-full border-2 border-slate-200 bg-white";
+            }
+          }
         }
+      } catch(e) {
+        console.error("updateDots error:", e);
       }
     }
     function lockApp() {
@@ -3388,12 +3412,17 @@
       clearPin();
       isUnlocked = false;
       currentRole = null;
-      document.getElementById('pinModal').classList.remove('hidden');
+      const pModal = document.getElementById('pinModal');
+      if (pModal) pModal.classList.remove('hidden');
       const userBadge = document.getElementById('userBadge');
       if (userBadge) userBadge.classList.add('hidden');
       const switcher = document.getElementById('masterStoreSwitcher');
       if (switcher) switcher.classList.add('hidden');
     }
+    window.inputPin = inputPin;
+    window.clearPin = clearPin;
+    window.backspacePin = backspacePin;
+    window.lockApp = lockApp;
 
     // 키보드 숫자 입력 지원 (물리 키보드로 PIN 입력 가능) 및 백스페이스 뒤로가기 절대 방지
     window.addEventListener('keydown', (e) => {
@@ -4751,8 +4780,8 @@
       const copyConditions = document.getElementById('copyConditionCheck').checked;
       const copyOrder = document.getElementById('copyOrderCheck').checked;
 
-      const srcName = srcStore === 'myeongji' ? '명지점' : '광안점';
-      const tgtName = tgtStore === 'myeongji' ? '명지점' : '광안점';
+      const srcName = srcStore === 'myeongji' ? '명지점' : srcStore === 'gwangan' ? '광안점' : '🧪 테스트매장';
+      const tgtName = tgtStore === 'myeongji' ? '명지점' : tgtStore === 'gwangan' ? '광안점' : '🧪 테스트매장';
       const carriersToCopy = scope === 'all' ? ['SK', 'KT', 'LG'] : [activeInputCarrier];
       const carriersLabel = scope === 'all' ? '전체 통신사(SK·KT·LG)' : `${activeInputCarrier} 통신사만`;
 
@@ -4957,9 +4986,11 @@
       badge.classList.add('flex');
 
       if (currentRole === 'master') {
-        const activeLabel = currentStoreId === 'myeongji' ? '명지점' : '광안점';
+        const activeLabel = currentStoreId === 'myeongji' ? '명지점' : currentStoreId === 'gwangan' ? '광안점' : '🧪 테스트매장';
         badgeText.innerText = `관리자 계정 (${activeLabel} 관리 중)`;
-        badge.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black bg-purple-50 text-purple-700 border border-purple-200";
+        badge.className = (currentStoreId === 'test_store')
+          ? "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black bg-amber-50 text-amber-800 border border-amber-300"
+          : "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black bg-purple-50 text-purple-700 border border-purple-200";
         if (switcher) {
           switcher.classList.remove('hidden');
           switcher.classList.add('flex');
@@ -4969,6 +5000,13 @@
           copyBtn.classList.remove('hidden');
           copyBtn.classList.add('flex');
         }
+        // 제휴카드, 비교표, 히스토리 모달 내 테스트매장 버튼 노출
+        const cardTestBtn = document.getElementById('cardStoreBtn-test_store');
+        if (cardTestBtn) cardTestBtn.classList.remove('hidden');
+        const compTestBtn = document.getElementById('compStoreBtn-test_store');
+        if (compTestBtn) compTestBtn.classList.remove('hidden');
+        const histTestBtn = document.getElementById('histFilter-test_store');
+        if (histTestBtn) histTestBtn.classList.remove('hidden');
       } else {
         badgeText.innerText = currentStoreName;
         badge.className = currentStoreId === 'myeongji'
@@ -4982,6 +5020,13 @@
           copyBtn.classList.add('hidden');
           copyBtn.classList.remove('flex');
         }
+        // 일반 매장에서는 테스트매장 버튼 엄격 숨김
+        const cardTestBtn = document.getElementById('cardStoreBtn-test_store');
+        if (cardTestBtn) cardTestBtn.classList.add('hidden');
+        const compTestBtn = document.getElementById('compStoreBtn-test_store');
+        if (compTestBtn) compTestBtn.classList.add('hidden');
+        const histTestBtn = document.getElementById('histFilter-test_store');
+        if (histTestBtn) histTestBtn.classList.add('hidden');
       }
 
       // 관리자 vs 매장 AI 키 슬롯 제어 (관리자만 노출, 일반 매장은 미노출)
@@ -5044,13 +5089,20 @@
     function updateMasterSwitcherButtons() {
       const btnM = document.getElementById('switchBtn-myeongji');
       const btnG = document.getElementById('switchBtn-gwangan');
+      const btnT = document.getElementById('switchBtn-test_store');
       if (!btnM || !btnG) return;
+
+      const defaultClass = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-slate-500 hover:text-slate-900 font-bold transition";
+      btnM.className = defaultClass;
+      btnG.className = defaultClass;
+      if (btnT) btnT.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-amber-700 hover:text-amber-900 font-bold transition";
+
       if (currentStoreId === 'myeongji') {
-        btnM.className = "px-2.5 py-1 rounded-lg bg-white text-slate-900 shadow-2xs font-extrabold transition";
-        btnG.className = "px-2.5 py-1 rounded-lg text-slate-500 hover:text-slate-900 font-bold transition";
-      } else {
-        btnG.className = "px-2.5 py-1 rounded-lg bg-white text-slate-900 shadow-2xs font-extrabold transition";
-        btnM.className = "px-2.5 py-1 rounded-lg text-slate-500 hover:text-slate-900 font-bold transition";
+        btnM.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white text-slate-900 shadow-2xs font-extrabold transition";
+      } else if (currentStoreId === 'gwangan') {
+        btnG.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white text-slate-900 shadow-2xs font-extrabold transition";
+      } else if (currentStoreId === 'test_store' && btnT) {
+        btnT.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500 text-white shadow-2xs font-extrabold transition";
       }
     }
 
@@ -5200,7 +5252,7 @@
       isStoreDataLoaded = false; // 매장 전환 또는 신규 구독 시 플래그 리셋 (로딩 전 저장 차단)
       if (!db) return;
 
-      const storeLabel = currentStoreId === 'myeongji' ? '명지점' : '광안점';
+      const storeLabel = currentStoreId === 'myeongji' ? '명지점' : currentStoreId === 'gwangan' ? '광안점' : '🧪 테스트매장';
       setSyncStatus('syncing', `${storeLabel} 데이터 로딩...`);
 
       const storeDocRef = db.collection('stores').doc(currentStoreId);
@@ -5390,7 +5442,7 @@
 
       const storePayload = {
         storeId: storeId,
-        storeName: storeId === 'myeongji' ? '명지점' : '광안점',
+        storeName: storeId === 'myeongji' ? '명지점' : storeId === 'gwangan' ? '광안점' : '🧪 테스트매장',
         updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
         updatedBy: '시스템 초기 시드',
         allAddDiscounts: { SK: 15, KT: 15, LG: 15 },
@@ -5434,14 +5486,23 @@
           ads[d.id] = d.ad;
         });
 
-        const actor = currentRole === 'master' ? '본사 (마스터)' : currentStoreName;
+        const currentStoreLabel = currentStoreId === 'myeongji' ? '명지점' : currentStoreId === 'gwangan' ? '광안점' : '🧪 테스트매장';
+        const actor = currentRole === 'master' ? `본사 (마스터 - ${currentStoreLabel})` : currentStoreName;
+
+        // 최신 입력 데이터 실시간 로컬 안전 이중 백업 (단가, 단가처, 광고가, 기종 순서 보존)
+        try {
+          localStorage.setItem('phone_rates_backup_' + currentStoreId, JSON.stringify(rates));
+          localStorage.setItem('phone_locs_backup_' + currentStoreId, JSON.stringify(locs));
+          localStorage.setItem('phone_ads_backup_' + currentStoreId, JSON.stringify(ads));
+          localStorage.setItem('phone_calc_rows_backup_' + currentStoreId, JSON.stringify(calcRows));
+        } catch(e) {}
 
         const posterSettings = (typeof getAdPosterDataForSave === 'function') ? getAdPosterDataForSave() : null;
         const cardSettings = (typeof getCardSettingsForSave === 'function') ? getCardSettingsForSave() : null;
 
         const payload = {
           storeId: currentStoreId,
-          storeName: currentStoreId === 'myeongji' ? '명지점' : '광안점',
+          storeName: currentStoreLabel,
           updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
           updatedBy: actor,
           allAddDiscounts: allAddDiscounts,
@@ -5577,7 +5638,7 @@
 
     function filterHistory(filter) {
       currentHistoryFilter = filter;
-      ['all', 'myeongji', 'gwangan', 'master'].forEach(f => {
+      ['all', 'myeongji', 'gwangan', 'test_store', 'master'].forEach(f => {
         const btn = document.getElementById(`histFilter-${f}`);
         if (!btn) return;
         if (f === filter) {
@@ -5604,6 +5665,8 @@
           filtered = filtered.filter(r => r.storeId === 'myeongji' || (r.description && r.description.includes('명지')));
         } else if (currentHistoryFilter === 'gwangan') {
           filtered = filtered.filter(r => r.storeId === 'gwangan' || (r.description && r.description.includes('광안')));
+        } else if (currentHistoryFilter === 'test_store') {
+          filtered = filtered.filter(r => r.storeId === 'test_store' || (r.description && r.description.includes('테스트')));
         } else if (currentHistoryFilter === 'master') {
           filtered = filtered.filter(r => r.role === 'master' || (r.storeName && r.storeName.includes('본사')));
         }
@@ -5627,10 +5690,12 @@
       tbody.innerHTML = filtered.map(item => {
         let roleBadge = '';
         if (item.role === 'master' || (item.storeName && item.storeName.includes('본사'))) {
-          const storeSub = item.storeId === 'myeongji' ? ' (명지)' : item.storeId === 'gwangan' ? ' (광안)' : '';
+          const storeSub = item.storeId === 'myeongji' ? ' (명지)' : item.storeId === 'gwangan' ? ' (광안)' : item.storeId === 'test_store' ? ' (테스트)' : '';
           roleBadge = `<span class="px-2 py-0.5 rounded-md text-[11px] font-extrabold bg-purple-50 text-purple-700 border border-purple-200">👑 본사 관리자${storeSub}</span>`;
         } else if (item.storeId === 'myeongji' || (item.storeName && item.storeName.includes('명지'))) {
           roleBadge = `<span class="px-2 py-0.5 rounded-md text-[11px] font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-200">명지점</span>`;
+        } else if (item.storeId === 'test_store' || (item.storeName && item.storeName.includes('테스트'))) {
+          roleBadge = `<span class="px-2 py-0.5 rounded-md text-[11px] font-extrabold bg-amber-50 text-amber-800 border border-amber-300">🧪 테스트매장</span>`;
         } else {
           roleBadge = `<span class="px-2 py-0.5 rounded-md text-[11px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200">광안점</span>`;
         }
@@ -6178,6 +6243,14 @@
         mobile: "010-8688-1524",
         address: "부산 수영구 수영로 582 (광안역 1번 출구 앞)",
         tagline: "17년 전통의 성지 매장! 정직한 할부원금 투명 공개",
+        cardPromiseText: DEFAULT_CARD_PROMISE
+      },
+      test_store: {
+        name: "원조폰 테스트점",
+        phone: "010-0000-0000",
+        mobile: "010-0000-0000",
+        address: "온라인 테스트 샌드박스",
+        tagline: "관리자 전용 업데이트 테스트 샌드박스",
         cardPromiseText: DEFAULT_CARD_PROMISE
       }
     };
@@ -8871,14 +8944,25 @@ function handleSelectAffiliateCard(cardId) {
       cardStoreId = sId;
       const btnMj = document.getElementById('cardStoreBtn-myeongji');
       const btnGw = document.getElementById('cardStoreBtn-gwangan');
-      if (btnMj && btnGw) {
-        if (sId === 'myeongji') {
-          btnMj.className = "px-3.5 py-1.5 rounded-lg bg-indigo-600 text-white shadow-2xs transition font-black";
-          btnGw.className = "px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition font-black";
+      const btnTs = document.getElementById('cardStoreBtn-test_store');
+
+      const defaultClass = "px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition font-black";
+      if (btnMj) btnMj.className = defaultClass;
+      if (btnGw) btnGw.className = defaultClass;
+      if (btnTs) {
+        if (currentRole !== 'master') {
+          btnTs.className = "hidden";
         } else {
-          btnMj.className = "px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition font-black";
-          btnGw.className = "px-3.5 py-1.5 rounded-lg bg-indigo-600 text-white shadow-2xs transition font-black";
+          btnTs.className = defaultClass;
         }
+      }
+
+      if (sId === 'myeongji' && btnMj) {
+        btnMj.className = "px-3.5 py-1.5 rounded-lg bg-indigo-600 text-white shadow-2xs transition font-black";
+      } else if (sId === 'gwangan' && btnGw) {
+        btnGw.className = "px-3.5 py-1.5 rounded-lg bg-indigo-600 text-white shadow-2xs transition font-black";
+      } else if (sId === 'test_store' && btnTs && currentRole === 'master') {
+        btnTs.className = "px-3.5 py-1.5 rounded-lg bg-amber-500 text-white shadow-2xs transition font-black";
       }
       loadCardSettings(sId);
       syncStoreInputsToActive();
@@ -10822,14 +10906,25 @@ JSON 키 구조:
       currentCompareStore = sId;
       const btnMj = document.getElementById('compStoreBtn-myeongji');
       const btnGw = document.getElementById('compStoreBtn-gwangan');
-      if (btnMj && btnGw) {
-        if (sId === 'myeongji') {
-          btnMj.className = "px-3 py-1.5 rounded-lg bg-indigo-600 text-white shadow-2xs transition font-bold";
-          btnGw.className = "px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition font-bold";
+      const btnTs = document.getElementById('compStoreBtn-test_store');
+
+      const defaultClass = "px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition font-bold";
+      if (btnMj) btnMj.className = defaultClass;
+      if (btnGw) btnGw.className = defaultClass;
+      if (btnTs) {
+        if (currentRole !== 'master') {
+          btnTs.className = "hidden";
         } else {
-          btnGw.className = "px-3 py-1.5 rounded-lg bg-emerald-600 text-white shadow-2xs transition font-bold";
-          btnMj.className = "px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition font-bold";
+          btnTs.className = defaultClass;
         }
+      }
+
+      if (sId === 'myeongji' && btnMj) {
+        btnMj.className = "px-3 py-1.5 rounded-lg bg-indigo-600 text-white shadow-2xs transition font-bold";
+      } else if (sId === 'gwangan' && btnGw) {
+        btnGw.className = "px-3 py-1.5 rounded-lg bg-emerald-600 text-white shadow-2xs transition font-bold";
+      } else if (sId === 'test_store' && btnTs && currentRole === 'master') {
+        btnTs.className = "px-3 py-1.5 rounded-lg bg-amber-500 text-white shadow-2xs transition font-bold";
       }
       renderCompareDashboard();
     }
@@ -12383,7 +12478,7 @@ JSON 규격:
     function loadAdPosterSettings(storeId = currentStoreId) {
       try {
         const sId = storeId || 'myeongji';
-        const storeLabel = (sId === 'myeongji') ? '명지원조폰' : '광안원조폰';
+        const storeLabel = (sId === 'myeongji') ? '명지원조폰' : (sId === 'gwangan') ? '광안원조폰' : '테스트원조폰';
         const defaultTitle = `${storeLabel} 특가 시세표`;
 
         const saved = localStorage.getItem(`phone_ad_poster_custom_${sId}`);
