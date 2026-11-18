@@ -2417,6 +2417,7 @@
     let currentStoreName = '';       // '명지점' | '광안점' | '본사 (마스터)'
     let enteredPin = "";
     let isUnlocked = false;
+    let isStoreDataLoaded = false; // 클라우드 매장 데이터(리베이트/단가 등) 최초 로딩 완료 여부 플래그
 
     // ==================== 사용자 인터랙션 추적 및 클라우드 원복 방지 락 ====================
     let lastUserActionTime = 0;
@@ -3932,6 +3933,12 @@
         if (currentTab === 'ad') {
           updateActiveAdMarginsOnly();
         }
+        // 최신 리베이트 데이터 로컬스토리지 즉시 안전 백업 (네트워크 지연이나 리로드 시 롤백 원천 차단)
+        try {
+          const backupRates = {};
+          devices.forEach(item => { if (item.rate) backupRates[item.id] = item.rate; });
+          localStorage.setItem('phone_rates_backup_' + currentStoreId, JSON.stringify(backupRates));
+        } catch(e) {}
         scheduleStoreSave('', '');
       }
     }
@@ -3980,6 +3987,12 @@
         if (currentTab === 'ad') {
           updateActiveAdMarginsOnly();
         }
+        // 최신 리베이트 데이터 로컬스토리지 즉시 안전 백업
+        try {
+          const backupRates = {};
+          devices.forEach(item => { if (item.rate) backupRates[item.id] = item.rate; });
+          localStorage.setItem('phone_rates_backup_' + currentStoreId, JSON.stringify(backupRates));
+        } catch(e) {}
         const typeKo = type === 'mnp' ? '번이' : '기변';
         scheduleStoreSave('대리점 단가 입력', `${d.name} (${activeInputCarrier} ${typeKo}) 단가: ${origVal || '-'} → ${val}만`);
         if (inputEl) inputEl.dataset.origVal = val;
@@ -5184,6 +5197,7 @@
         unsubscribeStoreData();
         unsubscribeStoreData = null;
       }
+      isStoreDataLoaded = false; // 매장 전환 또는 신규 구독 시 플래그 리셋 (로딩 전 저장 차단)
       if (!db) return;
 
       const storeLabel = currentStoreId === 'myeongji' ? '명지점' : '광안점';
@@ -5193,6 +5207,7 @@
       unsubscribeStoreData = storeDocRef.onSnapshot((doc) => {
         if (!doc.exists) {
           seedStoreData(currentStoreId);
+          isStoreDataLoaded = true;
         } else {
           // 로컬에서 방금 저장한 pending write 스냅샷은 중복 렌더링으로 인한 포커스 해제를 막기 위해 건너뜁니다
           if (doc.metadata && doc.metadata.hasPendingWrites) {
@@ -5249,7 +5264,11 @@
               }
             });
 
-            // 사용자가 글을 작성 중이거나 버튼/탭을 클릭하여 작업 중일 때 로컬 상태 보존
+            // ★ 리베이트/단가(rates), 단가처(locs), 광고가(ads) 데이터 복원
+            // 최초 스냅샷(!isStoreDataLoaded)일 때는 반드시 메모리에 최신 실데이터를 100% 동기화 (PIN 입력 인터랙션 간섭 원천 배제)
+            const isFirstLoadForStore = !isStoreDataLoaded;
+            isStoreDataLoaded = true;
+
             const activeEl = document.activeElement;
             const isTyping = activeEl && (
               activeEl.tagName === 'INPUT' ||
@@ -5258,17 +5277,36 @@
               activeEl.isContentEditable ||
               activeEl.getAttribute('contenteditable') === 'true'
             );
-            const isUserInteracting = isTyping || (Date.now() - lastUserActionTime < 3000) || !!storeSaveTimer;
+            const isUserInteracting = !isFirstLoadForStore && (isTyping || (Date.now() - lastUserActionTime < 3000) || !!storeSaveTimer);
 
-            if (!isUserInteracting) {
-              // rates, locs, ads 데이터 복원 (사용자가 유휴 상태일 때만 안전하게 적용하여 입력값 원복 원천 방지)
-              if (data.rates) {
+            if (isFirstLoadForStore || !isUserInteracting) {
+              // rates, locs, ads 데이터 복원
+              if (data.rates && Object.keys(data.rates).length > 0) {
                 Object.keys(data.rates).forEach(deviceId => {
                   const localD = devices.find(d => d.id === deviceId);
                   if (localD && data.rates[deviceId]) {
                     localD.rate = data.rates[deviceId];
                   }
                 });
+                // 최신 단가 데이터를 localStorage에 로컬 안전 백업으로 보관
+                try {
+                  localStorage.setItem('phone_rates_backup_' + currentStoreId, JSON.stringify(data.rates));
+                } catch(e) {}
+              } else {
+                // 만약 Firestore의 rates가 비어있다면 로컬 백업에서 긴급 복원 시도
+                try {
+                  const localBackup = localStorage.getItem('phone_rates_backup_' + currentStoreId);
+                  if (localBackup) {
+                    const parsedBackup = JSON.parse(localBackup);
+                    Object.keys(parsedBackup).forEach(deviceId => {
+                      const localD = devices.find(d => d.id === deviceId);
+                      if (localD && parsedBackup[deviceId]) {
+                        localD.rate = parsedBackup[deviceId];
+                      }
+                    });
+                    console.info("[데이터 복원] 로컬스토리지 백업으로부터 최신 리베이트 데이터를 성공적으로 복원했습니다.");
+                  }
+                } catch(e) {}
               }
               if (data.locs) {
                 Object.keys(data.locs).forEach(deviceId => {
@@ -5297,7 +5335,16 @@
 
               render();
             } else {
-              // 사용자가 작업 중일 때는 현재 포커스를 해치지 않고 넷가 계산표/마진만 실시간 갱신
+              // 사용자가 다른 칸을 작업 중일 때: 현재 수정 중인 기기 외의 최신 단가 데이터는 백그라운드 반영
+              if (data.rates) {
+                Object.keys(data.rates).forEach(deviceId => {
+                  if (activeEl && activeEl.dataset && activeEl.dataset.deviceId === deviceId) return;
+                  const localD = devices.find(d => d.id === deviceId);
+                  if (localD && data.rates[deviceId]) {
+                    localD.rate = data.rates[deviceId];
+                  }
+                });
+              }
               if (activeEl && activeEl.closest && activeEl.closest('#dailyTableBody')) {
                 renderCalcTable();
               } else if (activeEl && activeEl.closest && activeEl.closest('#adTableBody')) {
@@ -5369,6 +5416,11 @@
 
     function scheduleStoreSave(category = '', description = '') {
       if (!db) return;
+      // 매장 데이터가 클라우드에서 아직 로딩되지 않았을 때는 저장 시도를 원천 차단 (하드코딩된 더미 단가로 덮어쓰기 방지)
+      if (!isStoreDataLoaded) {
+        console.warn("[데이터 보호] 클라우드 매장 데이터가 아직 완전히 로딩되지 않아 저장을 차단합니다 (리베이트 롤백 방지).");
+        return;
+      }
       setSyncStatus('syncing', '클라우드 저장 중...');
 
       if (storeSaveTimer) clearTimeout(storeSaveTimer);
@@ -8753,7 +8805,25 @@ function handleSelectAffiliateCard(cardId) {
         const sId = cardStoreId || currentStoreId || 'myeongji';
         const settings = getCardSettingsForSave();
         localStorage.setItem('phone_card_settings_' + sId, JSON.stringify(settings));
-        scheduleStoreSave('제휴카드 진행', `제휴카드 상담 진행내용 저장 (${currentAffiliateCarrier} ${currentAffiliateCardId})`);
+
+        // 리베이트(단가) 데이터와 분리하여 cardSettings 필드만 단독으로 안전하게 머지 저장
+        if (db) {
+          setSyncStatus('syncing', '제휴카드 클라우드 저장 중...');
+          const actor = currentRole === 'master' ? '본사 (마스터)' : currentStoreName;
+          db.collection('stores').doc(sId).set({
+            cardSettings: settings,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            updatedBy: actor
+          }, { merge: true })
+            .then(() => {
+              setSyncStatus('online', '클라우드 동기화 완료');
+              logAudit('제휴카드 진행', `제휴카드 상담 진행내용 저장 (${currentAffiliateCarrier} ${currentAffiliateCardId})`);
+            })
+            .catch(err => {
+              console.error("Save card settings cloud error:", err);
+              setSyncStatus('error', '제휴카드 저장 실패');
+            });
+        }
         if (showAlert) {
           alert("✅ 제휴카드 진행 내역이 클라우드에 실시간 저장되었습니다!");
         }
@@ -12282,8 +12352,24 @@ JSON 규격:
         localStorage.setItem(`phone_ad_poster_vas_etc_${storeKey}`, posterVasEtcText);
         localStorage.setItem(`adPosterThemeColor_${storeKey}`, currentPosterThemeColor);
 
-        // Firestore stores/${currentStoreId}에 실시간 동기화!
-        scheduleStoreSave('성지특가 시세표', `시세표 포스터 설정 및 부가서비스 저장 (${currentStoreName})`);
+        // Firestore stores/${currentStoreId}에 독립 격리 동기화 (리베이트/단가 데이터 간섭 100% 원천 차단)
+        if (db) {
+          setSyncStatus('syncing', '시세표 설정 클라우드 저장 중...');
+          const actor = currentRole === 'master' ? '본사 (마스터)' : currentStoreName;
+          db.collection('stores').doc(storeKey).set({
+            posterSettings: settings,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            updatedBy: actor
+          }, { merge: true })
+            .then(() => {
+              setSyncStatus('online', '클라우드 동기화 완료');
+              logAudit('성지특가 시세표', `시세표 포스터 설정 및 부가서비스 저장 (${currentStoreName})`);
+            })
+            .catch(err => {
+              console.error("Save poster settings cloud error:", err);
+              setSyncStatus('error', '시세표 설정 저장 실패');
+            });
+        }
 
         if (showAlert) {
           alert(`✅ [${currentStoreName}] 시세표 상호명, 유의사항, 테마 설정이 클라우드에 안전하게 저장되었습니다!`);

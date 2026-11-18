@@ -49,10 +49,14 @@ try {
     Write-Output "Unlocking app with PIN 152411..."
     EvalJs "['1','5','2','4','1','1'].forEach(d => inputPin(d));"
     Start-Sleep -Milliseconds 500
+
+    # ★ 테스트 중 실서버 Firebase Firestore 데이터 오염 및 리베이트 덮어쓰기 원천 차단!
+    EvalJs "window.db = null; window.scheduleStoreSave = function() {};"
+
     $unlocked = EvalJs "isUnlocked"
     $role = EvalJs "currentRole"
     $store = EvalJs "currentStoreName"
-    Write-Output "App Unlocked: $unlocked, Role: $role, Store: $store"
+    Write-Output "App Unlocked: $unlocked, Role: $role, Store: $store (Cloud Save Disabled for Sandbox Test)"
     
     # 2. Test typing in daily rate
     Write-Output "Testing daily rate input..."
