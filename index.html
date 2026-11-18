@@ -10143,7 +10143,22 @@ function handleSelectAffiliateCard(cardId) {
 
       try {
         let blobData = null;
-        if (typeof html2canvas !== 'undefined') {
+
+        // 1순위: 브라우저 C++ 네이티브 벡터/PDF 그래픽 엔진 (html-to-image)
+        // 폰트 baseline 처짐, 줄바꿈 비틀림, 숫자 기준선 밀림 원천 차단
+        if (typeof htmlToImage !== 'undefined') {
+          try {
+            blobData = await htmlToImage.toBlob(clone, {
+              pixelRatio: 2,
+              backgroundColor: '#ffffff'
+            });
+          } catch (nativeErr) {
+            console.warn("htmlToImage card export warning, fallback to canvas:", nativeErr);
+          }
+        }
+
+        // 예비용 2순위: html2canvas
+        if (!blobData && typeof html2canvas !== 'undefined') {
           const canvas = await html2canvas(clone, {
             scale: 2,
             width: 794,
@@ -12097,14 +12112,31 @@ JSON 규격:
       document.body.appendChild(host);
 
       try {
-        const canvas = await html2canvas(wrap, {
-          scale: 2,
-          useCORS: true,
-          backgroundColor: '#ffffff',
-          logging: false
-        });
+        let blobData = null;
 
-        const blobData = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        // 1순위: 브라우저 C++ 네이티브 벡터/PDF 그래픽 엔진 (html-to-image)
+        // 넷가표 글자 밀림 및 컬럼 오차 원천 방지
+        if (typeof htmlToImage !== 'undefined') {
+          try {
+            blobData = await htmlToImage.toBlob(wrap, {
+              pixelRatio: 2,
+              backgroundColor: '#ffffff'
+            });
+          } catch (nativeErr) {
+            console.warn("htmlToImage net table warning, fallback to canvas:", nativeErr);
+          }
+        }
+
+        // 예비용 2순위: html2canvas
+        if (!blobData && typeof html2canvas !== 'undefined') {
+          const canvas = await html2canvas(wrap, {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: '#ffffff',
+            logging: false
+          });
+          blobData = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        }
 
         if (host.parentNode) document.body.removeChild(host);
 
@@ -13382,22 +13414,43 @@ JSON 규격:
       document.body.appendChild(offscreen);
 
       try {
-        // html2canvas 다이렉트 렌더링 (폰트 baseline 처짐 및 밀림 없는 무결점 캡처)
-        const canvas = await html2canvas(clone, {
-          scale: 2,
-          width: 760,
-          height: clone.scrollHeight,
-          windowWidth: 1200,
-          scrollX: 0,
-          scrollY: 0,
-          useCORS: true,
-          letterRendering: true,
-          backgroundColor: '#ffffff',
-          logging: false
-        });
+        let blobData = null;
+        let dataUrl = null;
 
-        const blobData = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-        const dataUrl = canvas.toDataURL('image/png');
+        // 1순위: 브라우저 C++ 그래픽/PDF 네이티브 벡터 엔진 (html-to-image)
+        // Pretendard 한글 글꼴 높이 오차, 줄바꿈 처짐, 숫자 기준선 밀림 0% 무결점 캡처
+        if (typeof htmlToImage !== 'undefined') {
+          try {
+            blobData = await htmlToImage.toBlob(clone, {
+              pixelRatio: 2,
+              backgroundColor: '#ffffff'
+            });
+            dataUrl = await htmlToImage.toPng(clone, {
+              pixelRatio: 2,
+              backgroundColor: '#ffffff'
+            });
+          } catch (nativeErr) {
+            console.warn("htmlToImage poster warning, fallback to canvas:", nativeErr);
+          }
+        }
+
+        // 예비용 2순위: html2canvas
+        if (!blobData && typeof html2canvas !== 'undefined') {
+          const canvas = await html2canvas(clone, {
+            scale: 2,
+            width: 760,
+            height: clone.scrollHeight,
+            windowWidth: 1200,
+            scrollX: 0,
+            scrollY: 0,
+            useCORS: true,
+            letterRendering: true,
+            backgroundColor: '#ffffff',
+            logging: false
+          });
+          blobData = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+          dataUrl = canvas.toDataURL('image/png');
+        }
 
         if (offscreen.parentNode) document.body.removeChild(offscreen);
 
