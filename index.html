@@ -567,9 +567,13 @@
             <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
             <span>전체 기종 초기화</span>
           </button>
-          <button onclick="captureNetTableImage()" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs sm:text-sm font-extrabold shadow-sm flex items-center gap-1.5 transition">
-            <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
-            <span>넷가표 이미지 캡처/저장</span>
+          <button onclick="copyNetTableToClipboard()" class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs sm:text-sm font-extrabold shadow-sm flex items-center gap-1.5 transition cursor-pointer" title="클립보드에 이미지 복사 (Ctrl+V 붙여넣기)">
+            <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            <span>📋 넷가표 클립보드 복사</span>
+          </button>
+          <button onclick="printNetTablePdf()" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs sm:text-sm font-extrabold shadow-sm flex items-center gap-1.5 transition cursor-pointer" title="브라우저 무오차 고화질 PDF 저장 및 인쇄">
+            <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+            <span>🖨️ PDF / 고화질 인쇄</span>
           </button>
         </div>
         <span class="text-xs text-slate-400">
@@ -963,23 +967,24 @@
             </div>
           </div>
 
-          <!-- 3. 브랜드 색상 셀렉트 박스 -->
-          <div class="flex items-center gap-2">
-            <span class="text-xs font-bold text-slate-600">브랜드 색상:</span>
-            <select id="posterBrandColorSelect" onchange="if(this.value) applyPosterThemeColor(this.value)" class="text-xs font-bold px-3 py-1.5 border border-slate-300 rounded-xl bg-white text-slate-800 focus:ring-1 focus:ring-blue-500">
-              <option value="">-- 브랜드 테마 선택 --</option>
-              <option value="#e60012">🔥 원조폰 시그니처 레드 (#E60012)</option>
-              <option value="#ff6b00">🟠 SK텔레콤 오렌지 (#FF6B00)</option>
-              <option value="#ed1c24">🔴 KT 레드 (#ED1C24)</option>
-              <option value="#e6007e">🟣 LGU+ 마젠타 핑크 (#E6007E)</option>
-              <option value="#1428a0">🔵 삼성 갤럭시 블루 (#1428A0)</option>
-              <option value="#1d1d1f">⚫ 애플 미드나잇 블랙 (#1D1D1F)</option>
-              <option value="#03c75a">🟢 네이버 스마트 그린 (#03C75A)</option>
-              <option value="#fee500">🟡 카카오 옐로우 (#FEE500)</option>
-              <option value="#0f172a">🌌 다크 네이비 (#0F172A)</option>
-              <option value="#059669">🌲 딥 에메랄드 (#059669)</option>
-              <option value="#6b21a8">🔮 로열 퍼플 (#6B21A8)</option>
-            </select>
+          <!-- 3. 시세표 수기 수정 On/Off 토글 스위치 -->
+          <div class="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
+            <span class="text-xs font-bold text-slate-700 flex items-center gap-1">
+              <span>✏️</span> 수기 수정:
+            </span>
+            <button type="button" id="posterManualEditToggleBtn" onclick="togglePosterManualEdit()" class="px-2.5 py-1 rounded-lg text-xs font-black transition cursor-pointer bg-slate-200 text-slate-600 hover:bg-slate-300">
+              OFF (잠금)
+            </button>
+          </div>
+
+          <!-- 4. 시세표 할인/강조 설명 배너 On/Off 토글 스위치 -->
+          <div class="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
+            <span class="text-xs font-bold text-slate-700 flex items-center gap-1">
+              <span>💡</span> 특가 강조 설명:
+            </span>
+            <button type="button" id="posterDiscountNoticeToggleBtn" onclick="togglePosterDiscountNotice()" class="px-2.5 py-1 rounded-lg text-xs font-black transition cursor-pointer bg-emerald-600 text-white shadow-2xs">
+              ON (표시)
+            </button>
           </div>
 
           <!-- 4. 풀부가 / 기본부가 모드 선택 세그먼트 -->
@@ -1015,6 +1020,12 @@
             </div>
           </div>
 
+          <!-- 1.5. 출고가 대비 할인 / 마이너스 금액 빨간색 강조 설명 배너 (On/Off 토글 연동) -->
+          <div id="posterDiscountNoticeBanner" class="flex items-center justify-center gap-2 py-2 px-3 bg-rose-50/90 border border-rose-200 rounded-2xl text-xs sm:text-[13px] font-extrabold text-rose-700 shadow-2xs text-center transition">
+            <span class="text-base select-none">💡</span>
+            <span>출고가 대비 130만원 이상 할인 또는 마이너스(-) 표기 금액은 <b class="underline decoration-rose-400 font-black text-rose-800">빨간색 강조 특가</b>입니다. (마이너스 금액은 개통 시 차비/현금 지급)</span>
+          </div>
+
           <!-- 2. 메인 시세표 테이블 (드롭다운 기종 선택 & 실시간 광고가 연동 & 드래그 순서변경) -->
           <div class="bg-white rounded-2xl border-4 border-slate-950 overflow-hidden shadow-xs">
             <table class="w-full text-center border-collapse" style="table-layout: fixed; width: 100%;">
@@ -1042,7 +1053,7 @@
                   <th colspan="2" class="p-2 sm:p-2.5 bg-white border-r-4 border-slate-950 text-center align-middle">
                     <span class="text-2xl sm:text-3xl font-black tracking-tight" style="color: #e60012;">KT</span>
                   </th>
-                  <th colspan="2" class="p-2 sm:p-2.5 bg-white text-center align-middle">
+                  <th colspan="2" class="p-2 sm:p-2.5 bg-white border-r-4 border-slate-950 text-center align-middle">
                     <span class="text-2xl sm:text-3xl font-black tracking-tight" style="color: #d90077;">LG</span>
                   </th>
                   <th class="poster-ui-action p-1 bg-rose-50/50 text-rose-500 font-bold text-xs text-center align-middle">삭제</th>
@@ -1055,7 +1066,7 @@
                   <th class="p-1.5 sm:p-2 border-r border-slate-300 text-center align-middle">이동</th>
                   <th class="p-1.5 sm:p-2 border-r-2 border-slate-400 text-center align-middle">기변</th>
                   <th class="p-1.5 sm:p-2 border-r border-slate-300 text-center align-middle">이동</th>
-                  <th class="p-1.5 sm:p-2 text-center align-middle">기변</th>
+                  <th class="p-1.5 sm:p-2 border-r-2 border-slate-400 text-center align-middle">기변</th>
                   <th class="poster-ui-action p-1 text-center text-xs font-bold text-rose-500 bg-rose-50/50 align-middle">삭제</th>
                 </tr>
               </thead>
@@ -1073,7 +1084,30 @@
             </button>
           </div>
 
-          <!-- 3. [필수확인] 필수 안내 유의사항 (단일 1칸 박스) -->
+          <!-- [필수확인] 체크박스 선택기 (UI 전용 - 캡처/인쇄 시 자동 제외) -->
+          <div class="poster-ui-action bg-white border border-rose-200 rounded-2xl p-3.5 space-y-2.5 shadow-xs">
+            <div class="flex items-center justify-between flex-wrap gap-2 border-b border-slate-100 pb-2">
+              <div class="flex items-center gap-1.5">
+                <span class="text-xs font-black text-slate-800 flex items-center gap-1">
+                  <span>📋</span> [필수확인] 표기 항목 선택
+                </span>
+                <span class="text-[11px] text-slate-500 font-bold">(체크한 항목만 시세표 [필수확인]에 표시됩니다)</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="selectAllPosterNotices(true)" class="text-[11px] font-bold text-slate-600 hover:text-slate-900 underline cursor-pointer">전체 선택</button>
+                <span class="text-slate-300 text-xs">|</span>
+                <button type="button" onclick="selectAllPosterNotices(false)" class="text-[11px] font-bold text-slate-600 hover:text-slate-900 underline cursor-pointer">전체 해제</button>
+                <button type="button" id="masterNoticeManageBtn" onclick="openMasterPosterNoticeModal()" class="hidden px-2.5 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 rounded-lg text-xs font-black transition cursor-pointer items-center gap-1">
+                  ⚙️ 마스터 항목 관리
+                </button>
+              </div>
+            </div>
+            <div id="posterNoticeChecklistContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs">
+              <!-- renderPosterNoticeChecklist()에 의해 동적 렌더링 -->
+            </div>
+          </div>
+
+          <!-- 3. [필수확인] 필수 안내 유의사항 (단일 1칸 박스 - 수기 수정 불가, 체크박스 선택 연동) -->
           <div class="bg-rose-50/40 rounded-2xl border-2 poster-theme-border border-[#e60012]/40 p-4 sm:p-5 space-y-2.5 shadow-2xs">
             <div class="text-center font-black text-sm sm:text-base text-slate-900 tracking-tight flex items-center justify-center gap-2">
               <span class="poster-theme-text text-[#e60012] font-black select-none">📢</span>
@@ -1081,15 +1115,7 @@
               <span class="poster-theme-text text-[#e60012] font-black select-none">📢</span>
             </div>
             <div class="text-[11px] sm:text-xs text-slate-800 font-bold leading-relaxed">
-              <div id="posterNoticeText" contenteditable="true" oninput="saveAdPosterSettings(false)" onblur="saveAdPosterSettings(false)" class="whitespace-pre-wrap cursor-text hover:bg-white/90 hover:ring-1 hover:ring-rose-300 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white rounded-lg p-2.5 transition border border-transparent hover:border-rose-200" title="클릭하여 내용을 직접 수정할 수 있습니다 (실시간 자동 저장)">- 부가서비스 및 결합은 필수 의무사항이 아니며 고객님 의사로 변경 가능합니다.
-- 부가서비스 혜택 기간은 기종 통신사별로 상이합니다 문의 부탁드립니다.
-- 휴대폰+인터넷+TV 결합기준 동시가입 지원금 포함된 가격입니다
-- 공통지원금 기준으로 안내드린 금액이나 선택약정으로 고객님 선택 가능합니다
-- 요금제는 필수조건이 아니시며 고객님 의사에 따라 변경가능합니다
-- 현금개통 및 할부개통 선택가능 합니다
-- 할부 개통시 할부이자 5.9% 발생됩니다 (24개월 할부기준)
-- 선택약정은 공통지원금이 포함되지 않습니다
-- 휴대폰 보험 미가입시 추가금 5만원 (3사 공통 6개월 사용조건 / sk=M+1개월, kt=M+3개월, LG=99일 유지조건)</div>
+              <div id="posterNoticeText" contenteditable="false" class="whitespace-pre-wrap select-text rounded-lg p-2.5 transition"></div>
             </div>
           </div>
 
@@ -1283,13 +1309,13 @@
         </div>
 
         <div class="flex items-center gap-2 flex-wrap">
-          <button onclick="downloadCardPng()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black shadow-xs transition flex items-center gap-1.5">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-            <span>💾 고화질 이미지(PNG) 저장</span>
+          <button onclick="copyCardToClipboard()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-black shadow-xs transition flex items-center gap-1.5 cursor-pointer" title="클립보드에 안내서 이미지 복사 (Ctrl+V 붙여넣기)">
+            <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            <span>📋 안내서 클립보드 복사</span>
           </button>
-          <button onclick="printCardA4()" class="px-5 py-2.5 bg-slate-900 hover:bg-black text-white rounded-xl text-xs font-black shadow-sm transition flex items-center gap-2 ring-2 ring-slate-900/10">
+          <button onclick="printCardA4()" class="px-5 py-2.5 bg-slate-900 hover:bg-black text-white rounded-xl text-xs font-black shadow-sm transition flex items-center gap-2 ring-2 ring-slate-900/10 cursor-pointer" title="브라우저 공식 그래픽 엔진으로 오차 0% 고화질 A4 인쇄 및 PDF 저장">
             <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
-            <span>🖨️ A4 용지 바로 출력 (PDF 인쇄)</span>
+            <span>🖨️ A4 고화질 인쇄 / PDF 저장</span>
           </button>
         </div>
       </div>
@@ -2377,6 +2403,47 @@
       </div>
     </div>
 
+    <!-- 저장 중 & 완료 애니메이션 모달 (화면 어두워짐 + 로딩 점 애니메이션 + 완료 체크) -->
+    <div id="saveProgressModal" class="fixed inset-0 z-[10000] bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 hidden pointer-events-auto transition-opacity duration-200">
+      <div class="bg-white rounded-3xl p-6 sm:p-7 max-w-xs w-full shadow-2xl border border-slate-200 text-center space-y-3.5 transform transition-transform duration-200 scale-95" id="saveProgressCard">
+        <div id="saveProgressIcon" class="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto text-2xl font-black shadow-inner">
+          <svg class="w-7 h-7 text-indigo-600 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" class="opacity-20"></circle><path class="opacity-90" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+        </div>
+        <div>
+          <h4 id="saveProgressTitle" class="text-base sm:text-lg font-black text-slate-900 tracking-tight">저장 중<span id="saveProgressDots">.</span></h4>
+          <p id="saveProgressSubtitle" class="text-xs font-bold text-slate-500 mt-1">고화질 이미지를 생성하고 있습니다</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 관리자 전용 시세표 필수안내 마스터 관리 모달 -->
+    <div id="masterPosterNoticeModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-4 hidden">
+      <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4 max-h-[90vh] flex flex-col">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-sm">⚙️</span>
+            <div>
+              <h3 class="text-base font-black text-slate-900">시세표 [필수확인] 마스터 항목 관리</h3>
+              <p class="text-[11px] text-slate-500 font-bold">수정/추가/삭제 시 모든 매장 시세표 선택 항목에 즉시 공통 반영됩니다.</p>
+            </div>
+          </div>
+          <button onclick="closeMasterPosterNoticeModal()" class="w-8 h-8 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-700 font-black text-base flex items-center justify-center cursor-pointer">✕</button>
+        </div>
+        <div class="flex-1 overflow-y-auto space-y-2 pr-1" id="masterNoticeItemsList">
+          <!-- 마스터 항목들이 동적으로 렌더링됨 -->
+        </div>
+        <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+          <button type="button" onclick="addMasterNoticeItem()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-xl flex items-center gap-1 transition cursor-pointer">
+            ➕ 새 항목 추가
+          </button>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="closeMasterPosterNoticeModal()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition cursor-pointer">닫기</button>
+            <button type="button" onclick="saveMasterPosterNotices()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-black rounded-xl shadow-xs transition cursor-pointer">전매장 저장 & 클라우드 반영</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
     <!-- ==================== 플로팅 도움말 툴팁 풍선 (전역) ==================== -->
     <div id="globalHelpTooltip" class="fixed z-[100] bg-slate-900/95 backdrop-blur text-white text-xs rounded-xl p-3 shadow-2xl pointer-events-none opacity-0 transition-opacity duration-150 border border-slate-700 leading-relaxed font-normal hidden">
@@ -2447,6 +2514,105 @@
     var draggedPosterRowIndex = null;
     var posterVasData = null;
     var posterVasEtcText = '통신사보험 가입, 기종별 금액상이 (KT, LG M+3개월 / SK M+1개월 미가입 추가 3만원)';
+
+    // 시세표 [필수확인] 기본 7대 항목
+    const DEFAULT_POSTER_NOTICES = [
+      { id: 'pn-1', text: '부가서비스 및 결합은 필수 의무사항이 아니며 고객님 의사로 변경 가능합니다' },
+      { id: 'pn-2', text: '부가서비스 혜택 기간은 기종 통신사별로 상이합니다 문의 부탁드립니다' },
+      { id: 'pn-3', text: '공통지원금 기준으로 안내드린 금액이나 선택약정으로 고객님 선택 가능합니다' },
+      { id: 'pn-4', text: '현금개통 및 할부개통 선택가능 합니다' },
+      { id: 'pn-5', text: '할부 개통시 할부이자 5.9% 발생됩니다 (24개월 할부기준)' },
+      { id: 'pn-6', text: '선택약정은 공통지원금이 포함되지 않습니다' },
+      { id: 'pn-7', text: '요금제는 필수조건이 아니시며 고객님 의사에 따라 변경가능합니다' }
+    ];
+
+    let masterNoticeItems = (function() {
+      try {
+        const saved = localStorage.getItem('phone_master_poster_notices');
+        if (saved) return JSON.parse(saved);
+      } catch (e) {}
+      return [...DEFAULT_POSTER_NOTICES];
+    })();
+
+    let checkedNoticeIds = ['pn-1', 'pn-2', 'pn-3', 'pn-4', 'pn-5', 'pn-6', 'pn-7'];
+    let isPosterManualEditEnabled = false;
+    let isPosterDiscountNoticeEnabled = true;
+
+    // 저장 중 & 완료 non-blocking 오버레이 관리자 (확인창 alert() 원천 차단)
+    let saveProgressTimer = null;
+    let saveProgressDotsCount = 0;
+
+    function showSaveProgress(title = '저장 중', subtitle = '고화질 이미지를 생성하고 있습니다') {
+      const modal = document.getElementById('saveProgressModal');
+      const card = document.getElementById('saveProgressCard');
+      const icon = document.getElementById('saveProgressIcon');
+      const titleEl = document.getElementById('saveProgressTitle');
+      const subEl = document.getElementById('saveProgressSubtitle');
+      if (!modal) return;
+
+      if (saveProgressTimer) clearInterval(saveProgressTimer);
+      saveProgressDotsCount = 0;
+
+      if (icon) {
+        icon.innerHTML = `<svg class="w-7 h-7 text-indigo-600 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" class="opacity-20"></circle><path class="opacity-90" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
+        icon.className = 'w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto text-2xl font-black shadow-inner';
+      }
+      if (titleEl) titleEl.innerHTML = `${title}<span id="saveProgressDots">.</span>`;
+      if (subEl) subEl.innerText = subtitle;
+
+      modal.classList.remove('hidden');
+      if (card) {
+        card.classList.remove('scale-95');
+        card.classList.add('scale-100');
+      }
+
+      saveProgressTimer = setInterval(() => {
+        saveProgressDotsCount = (saveProgressDotsCount + 1) % 4;
+        const dotsEl = document.getElementById('saveProgressDots');
+        if (dotsEl) {
+          dotsEl.innerText = '.'.repeat(saveProgressDotsCount === 0 ? 1 : saveProgressDotsCount);
+        }
+      }, 250);
+    }
+
+    function updateSaveProgressDone(title = '저장 완료!', subtitle = '성공적으로 처리되었습니다.') {
+      if (saveProgressTimer) {
+        clearInterval(saveProgressTimer);
+        saveProgressTimer = null;
+      }
+      const modal = document.getElementById('saveProgressModal');
+      const card = document.getElementById('saveProgressCard');
+      const icon = document.getElementById('saveProgressIcon');
+      const titleEl = document.getElementById('saveProgressTitle');
+      const subEl = document.getElementById('saveProgressSubtitle');
+      if (!modal) return;
+
+      if (icon) {
+        icon.innerHTML = `<span class="text-3xl">✅</span>`;
+        icon.className = 'w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto text-2xl font-black shadow-inner';
+      }
+      if (titleEl) titleEl.innerText = title;
+      if (subEl) subEl.innerText = subtitle;
+
+      setTimeout(() => {
+        hideSaveProgress();
+      }, 700);
+    }
+
+    function hideSaveProgress() {
+      if (saveProgressTimer) {
+        clearInterval(saveProgressTimer);
+        saveProgressTimer = null;
+      }
+      const modal = document.getElementById('saveProgressModal');
+      const card = document.getElementById('saveProgressCard');
+      if (!modal) return;
+      if (card) {
+        card.classList.remove('scale-100');
+        card.classList.add('scale-95');
+      }
+      modal.classList.add('hidden');
+    }
 
     function getDefaultPosterVasData() {
       return [
@@ -3673,16 +3839,57 @@
     // 마우스 드래그 앤 드롭 (순서 끌올 / 끌내림) 핸들러
     let dragSourceIndex = null;
     let dragSourceType = null;
+    let dragGhostRowEl = null;
 
     function onRowDragStart(e, idx, type) {
       dragSourceIndex = idx;
       dragSourceType = type;
       e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/plain', idx);
+      e.dataTransfer.setData('text/plain', String(idx));
 
       const tr = e.target.closest('tr');
       if (tr) {
-        tr.classList.add('opacity-40', 'bg-blue-50');
+        tr.classList.add('opacity-30', 'bg-slate-100');
+
+        // 구글 스프레드시트 스타일: 마우스 커서를 따라다니는 반투명 회색 행 플로팅 고스트
+        if (e.dataTransfer.setDragImage) {
+          if (dragGhostRowEl && dragGhostRowEl.parentNode) dragGhostRowEl.remove();
+          const rect = tr.getBoundingClientRect();
+          const ghost = document.createElement('div');
+          ghost.style.position = 'fixed';
+          ghost.style.top = '-9999px';
+          ghost.style.left = '-9999px';
+          ghost.style.width = `${Math.max(rect.width || 760, 480)}px`;
+          ghost.style.height = `${Math.max(rect.height || 40, 36)}px`;
+          ghost.style.backgroundColor = 'rgba(241, 245, 249, 0.92)';
+          ghost.style.border = '2px dashed #475569';
+          ghost.style.borderRadius = '8px';
+          ghost.style.boxShadow = '0 12px 28px rgba(15, 23, 42, 0.22), 0 4px 10px rgba(15, 23, 42, 0.12)';
+          ghost.style.display = 'flex';
+          ghost.style.alignItems = 'center';
+          ghost.style.padding = '0 16px';
+          ghost.style.fontSize = '13px';
+          ghost.style.fontWeight = '800';
+          ghost.style.color = '#1e293b';
+          ghost.style.pointerEvents = 'none';
+          ghost.style.zIndex = '99999';
+
+          const optSel = tr.querySelector('select');
+          const devText = optSel ? (optSel.selectedOptions?.[0]?.text || optSel.value) : (tr.querySelector('td:nth-child(2)')?.innerText || '기종 행');
+          ghost.innerHTML = `
+            <span style="display:inline-flex; align-items:center; gap:8px;">
+              <span style="font-size:16px; color:#64748b;">⠿</span>
+              <span>${devText}</span>
+            </span>
+            <span style="margin-left:auto; font-size:11px; color:#475569; font-weight:700; background:#e2e8f0; padding:2px 8px; border-radius:6px;">↕ 순서 이동 중</span>
+          `;
+          document.body.appendChild(ghost);
+          dragGhostRowEl = ghost;
+          e.dataTransfer.setDragImage(ghost, 40, 20);
+          setTimeout(() => {
+            if (ghost && ghost.parentNode) ghost.remove();
+          }, 0);
+        }
       }
     }
 
@@ -3692,20 +3899,21 @@
       e.dataTransfer.dropEffect = 'move';
       const tr = e.currentTarget;
       if (dragSourceIndex !== idx) {
-        tr.classList.add('border-t-2', 'border-blue-500', 'bg-blue-50/20');
+        tr.classList.add('border-t-4', 'border-indigo-600', 'bg-indigo-50/40');
       }
     }
 
     function onRowDragLeave(e) {
-      if (!e.currentTarget.contains(e.relatedTarget)) {
-        e.currentTarget.classList.remove('border-t-2', 'border-blue-500', 'bg-blue-50/20');
+      const tr = e.currentTarget;
+      if (!tr.contains(e.relatedTarget)) {
+        tr.classList.remove('border-t-4', 'border-indigo-600', 'bg-indigo-50/40');
       }
     }
 
     function onRowDrop(e, targetIdx, type) {
       e.preventDefault();
       const tr = e.currentTarget;
-      tr.classList.remove('border-t-2', 'border-blue-500', 'bg-blue-50/20');
+      tr.classList.remove('border-t-4', 'border-indigo-600', 'bg-indigo-50/40');
 
       if (dragSourceIndex === null || dragSourceIndex === targetIdx || dragSourceType !== type) return;
 
@@ -3735,8 +3943,12 @@
     function onRowDragEnd(e) {
       dragSourceIndex = null;
       dragSourceType = null;
+      if (dragGhostRowEl && dragGhostRowEl.parentNode) {
+        dragGhostRowEl.remove();
+        dragGhostRowEl = null;
+      }
       document.querySelectorAll('tr').forEach(tr => {
-        tr.classList.remove('opacity-40', 'bg-blue-50', 'border-t-2', 'border-blue-500', 'bg-blue-50/20');
+        tr.classList.remove('opacity-30', 'opacity-40', 'bg-slate-100', 'bg-blue-50', 'border-t-2', 'border-t-4', 'border-blue-500', 'border-indigo-600', 'bg-blue-50/20', 'bg-indigo-50/40');
       });
     }
 
@@ -5007,6 +5219,11 @@
         if (compTestBtn) compTestBtn.classList.remove('hidden');
         const histTestBtn = document.getElementById('histFilter-test_store');
         if (histTestBtn) histTestBtn.classList.remove('hidden');
+        const masterNoticeBtn = document.getElementById('masterNoticeManageBtn');
+        if (masterNoticeBtn) {
+          masterNoticeBtn.classList.remove('hidden');
+          masterNoticeBtn.classList.add('inline-flex');
+        }
       } else {
         badgeText.innerText = currentStoreName;
         badge.className = currentStoreId === 'myeongji'
@@ -5027,6 +5244,11 @@
         if (compTestBtn) compTestBtn.classList.add('hidden');
         const histTestBtn = document.getElementById('histFilter-test_store');
         if (histTestBtn) histTestBtn.classList.add('hidden');
+        const masterNoticeBtn = document.getElementById('masterNoticeManageBtn');
+        if (masterNoticeBtn) {
+          masterNoticeBtn.classList.add('hidden');
+          masterNoticeBtn.classList.remove('inline-flex');
+        }
       }
 
       // 관리자 vs 매장 AI 키 슬롯 제어 (관리자만 노출, 일반 매장은 미노출)
@@ -5230,6 +5452,21 @@
       }, (err) => {
         console.error("Master config snapshot error:", err);
         setSyncStatus('error', '동기화 연결 실패');
+      });
+
+      // 1.5. 시세표 [필수확인] 마스터 항목 실시간 리스너 (전매장 공통 동기화)
+      db.collection('global_config').doc('poster_notices').onSnapshot(doc => {
+        if (doc && doc.exists) {
+          const data = doc.data();
+          if (data && Array.isArray(data.items) && data.items.length > 0) {
+            masterNoticeItems = data.items;
+            localStorage.setItem('phone_master_poster_notices', JSON.stringify(masterNoticeItems));
+            renderPosterNoticeChecklist();
+            updatePosterNoticeTextFromChecklist();
+          }
+        }
+      }, err => {
+        console.warn("Poster notices snapshot notice:", err);
       });
 
       // 2. 매장별 독립 데이터 리스너
@@ -8890,7 +9127,6 @@ function handleSelectAffiliateCard(cardId) {
           }, { merge: true })
             .then(() => {
               setSyncStatus('online', '클라우드 동기화 완료');
-              logAudit('제휴카드 진행', `제휴카드 상담 진행내용 저장 (${currentAffiliateCarrier} ${currentAffiliateCardId})`);
             })
             .catch(err => {
               console.error("Save card settings cloud error:", err);
@@ -8898,7 +9134,7 @@ function handleSelectAffiliateCard(cardId) {
             });
         }
         if (showAlert) {
-          alert("✅ 제휴카드 진행 내역이 클라우드에 실시간 저장되었습니다!");
+          updateSaveProgressDone("저장 완료!", "제휴카드 설정이 클라우드에 안전하게 저장되었습니다.");
         }
       } catch (e) {
         console.error("Save card settings error:", e);
@@ -9779,23 +10015,19 @@ function handleSelectAffiliateCard(cardId) {
       }, 450);
     }
 
-    // ==================== [글자 처짐/컬럼 찌그러짐 원천 방지] 794px 고화질 PNG 저장 ====================
-    async function downloadCardPng() {
+    // ==================== 제휴카드 안내서 고화질 클립보드 복사 전용 ====================
+    async function copyCardToClipboard() {
       // 1. 필수 지급 혜택 입력 여부 사전 검증
       if (!validateCardBeforePrintOrDownload()) return;
 
       const sheet = document.getElementById('cardA4Sheet');
       if (!sheet) return;
-      if (typeof html2canvas === 'undefined') {
-        alert("이미지 변환 라이브러리가 로드되지 않았습니다. 잠시 후 다시 시도해 주세요.");
-        return;
-      }
+
+      showSaveProgress('안내서 복사 중', 'A4 제휴카드 안내서 고화질 이미지를 생성하고 있습니다');
 
       if (document.fonts && document.fonts.ready) {
-        await document.fonts.ready;
+        try { await document.fonts.ready; } catch(e) {}
       }
-
-      const st = storeContacts[cardStoreId] || storeContacts['myeongji'];
 
       // A4 96DPI 표준 규격(794px)의 오프스크린 클론 생성
       const clone = sheet.cloneNode(true);
@@ -9823,7 +10055,7 @@ function handleSelectAffiliateCard(cardId) {
       offscreen.style.zIndex = '-9999';
       offscreen.style.pointerEvents = 'none';
       offscreen.style.width = '794px';
-      offscreen.style.padding = '0'; // 여백으로 인한 컬럼 찌그러짐 및 글자 줄바꿈 처짐 원천 방지!
+      offscreen.style.padding = '0';
       offscreen.style.backgroundColor = '#ffffff';
 
       clone.style.width = '794px';
@@ -9834,10 +10066,10 @@ function handleSelectAffiliateCard(cardId) {
       document.body.appendChild(offscreen);
 
       try {
-        let dataUrl = null;
+        let blobData = null;
         if (typeof htmlToImage !== 'undefined') {
           try {
-            dataUrl = await htmlToImage.toPng(clone, {
+            blobData = await htmlToImage.toBlob(clone, {
               pixelRatio: 2,
               backgroundColor: '#ffffff'
             });
@@ -9846,7 +10078,7 @@ function handleSelectAffiliateCard(cardId) {
           }
         }
 
-        if (!dataUrl) {
+        if (!blobData && typeof html2canvas !== 'undefined') {
           const canvas = await html2canvas(clone, {
             scale: 2,
             width: 794,
@@ -9858,21 +10090,30 @@ function handleSelectAffiliateCard(cardId) {
             backgroundColor: '#ffffff',
             logging: false
           });
-          dataUrl = canvas.toDataURL('image/png');
+          blobData = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
         }
 
         if (offscreen.parentNode) document.body.removeChild(offscreen);
-        const link = document.createElement('a');
-        const safeCardName = (cardData.cardName || '제휴카드안내서').replace(/[^a-zA-Z0-9가-힣_-]/g, '_');
-        link.download = `제휴카드안내서_${safeCardName}_${st.name}.png`;
-        link.href = dataUrl;
-        link.click();
-        alert(`✅ [제휴카드 안내서 고화질 PNG 저장 완료]\n\n${safeCardName} 안내서가 잘림/왜곡 없이 브라우저 원본 그대로 고해상도 이미지로 다운로드되었습니다.`);
+
+        if (blobData && navigator.clipboard && navigator.clipboard.write) {
+          await navigator.clipboard.write([
+            new ClipboardItem({ 'image/png': blobData })
+          ]);
+          updateSaveProgressDone('✅ 복사 완료!', '카카오톡이나 메신저에 바로 붙여넣기(Ctrl+V) 하실 수 있습니다.');
+        } else {
+          hideSaveProgress();
+          alert('클립보드 복사 권한이 차단되어 있습니다.');
+        }
       } catch (err) {
         if (offscreen.parentNode) document.body.removeChild(offscreen);
-        console.error("PNG 저장 에러:", err);
-        alert("이미지 저장 중 오류가 발생했습니다: " + err.message);
+        hideSaveProgress();
+        console.error("Card copy error:", err);
+        alert("이미지 복사 중 오류가 발생했습니다: " + err.message);
       }
+    }
+
+    async function downloadCardPng() {
+      return copyCardToClipboard();
     }
 
 
@@ -11624,8 +11865,8 @@ JSON 규격:
     } catch(e) {}
 
   
-        // ==================== 넷가표 이미지 캡처/저장 기능 (항목 2) ====================
-    async function captureNetTableImage() {
+    // ==================== 넷가표 클립보드 복사 & PDF 인쇄 기능 ====================
+    async function copyNetTableToClipboard() {
       const modeKo = (netDisplayMode === 'both') 
         ? '전체보기 (기본 + 올부가)' 
         : (netDisplayMode === 'basic') 
@@ -11635,11 +11876,11 @@ JSON 규격:
       const now = new Date();
       const days = ['일', '월', '화', '수', '목', '금', '토'];
       const todayStr = `${now.getFullYear()}년 ${now.getMonth() + 1}월 ${now.getDate()}일 (${days[now.getDay()]})`;
+      const targetStoreLabel = (currentStoreId === 'gwangan') ? '광안점' : (currentStoreId === 'test_store') ? '테스트매장' : '명지점';
 
-      // 계정명이 아닌 현재 활성 매장(명지점 / 광안점) 기준으로 표기
-      const targetStoreLabel = (currentStoreId === 'gwangan') ? '광안점' : '명지점';
+      showSaveProgress('넷가표 복사 중', '선택된 기종의 넷가표 고해상도 이미지를 생성하고 있습니다');
 
-      // 캡처용 전용 오프스크린 컨테이너 생성 (화면 밖 -10000px 배치로 화면 깜빡임 및 잔상 오버레이 원천 차단)
+      // 캡처용 전용 오프스크린 컨테이너 생성
       const wrap = document.createElement('div');
       wrap.style.position = 'fixed';
       wrap.style.left = '-10000px';
@@ -11650,7 +11891,6 @@ JSON 규격:
       wrap.style.padding = '28px';
       wrap.style.fontFamily = '"Pretendard Variable", Pretendard, sans-serif';
 
-      // 상단 헤더: 매장명, 넷가표 타이틀, 보기 모드, 기준일시
       wrap.innerHTML = `
         <div style="background: linear-gradient(135deg, #0f172a, #1e293b); color: white; padding: 22px 26px; border-radius: 16px; margin-bottom: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.12);">
           <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -11676,24 +11916,20 @@ JSON 규격:
         </div>
       `;
 
-      // 넷가 테이블 복제 및 불필요한 컨트롤 제거 (순수 기종명 및 가격만 보존)
       const origTable = document.querySelector('#calcTableContainer table');
       if (!origTable) {
+        hideSaveProgress();
         alert("넷가 산출표를 찾을 수 없습니다.");
         return;
       }
       const clonedTable = origTable.cloneNode(true);
-
-      // 드래그 핸들, 버튼, ? 도움말 제거
       clonedTable.querySelectorAll('.drag-handle, button, .help-btn').forEach(el => el.remove());
 
-      // 첫 번째 헤더 "기종 선택 (드롭다운)" -> 깔끔한 "기종 및 모델명"으로 변경
       const firstTh = clonedTable.querySelector('thead tr th:first-child');
       if (firstTh) {
         firstTh.innerHTML = '<div style="font-size: 13px; font-weight: 900; color: #334155;">기종 및 모델명</div>';
       }
 
-      // 모퉁이 색 분리 방지 및 통신사 헤더 정돈
       const theadRows = clonedTable.querySelectorAll('thead tr');
       if (theadRows.length >= 2) {
         const topThs = theadRows[0].querySelectorAll('th');
@@ -11744,7 +11980,6 @@ JSON 규격:
         }
       }
 
-      // 드롭다운 select 요소를 순수 기종명(태그 중복 제외)으로 치환
       clonedTable.querySelectorAll('tbody tr').forEach(tr => {
         const sel = tr.querySelector('select');
         if (!sel) return;
@@ -11759,7 +11994,6 @@ JSON 규격:
           sepSpan.innerText = '— 구분선 —';
           parent.replaceChild(sepSpan, sel);
         } else {
-          // #태그 제외한 순수 기종명만 단독 표시 (예: "갤럭시 S26 256G")
           const nameDiv = document.createElement('div');
           nameDiv.style.fontWeight = '900';
           nameDiv.style.fontSize = '14px';
@@ -11770,7 +12004,6 @@ JSON 규격:
         }
       });
 
-      // 출고가 글자 여백 정돈
       clonedTable.querySelectorAll('td div.text-\\[10px\\]').forEach(el => {
         el.style.paddingLeft = '0';
         el.style.marginTop = '4px';
@@ -11778,7 +12011,6 @@ JSON 규격:
         el.style.color = '#64748b';
       });
 
-      // 둥근 모서리와 깔끔한 테두리로 감싸기
       clonedTable.style.width = '100%';
       clonedTable.style.borderCollapse = 'collapse';
       clonedTable.style.textAlign = 'center';
@@ -11796,15 +12028,9 @@ JSON 규격:
       document.body.appendChild(wrap);
 
       try {
-        let dataUrl = null;
         let blobData = null;
-
         if (typeof htmlToImage !== 'undefined') {
           try {
-            dataUrl = await htmlToImage.toPng(wrap, {
-              pixelRatio: 2,
-              backgroundColor: '#ffffff'
-            });
             blobData = await htmlToImage.toBlob(wrap, {
               pixelRatio: 2,
               backgroundColor: '#ffffff'
@@ -11814,7 +12040,7 @@ JSON 규격:
           }
         }
 
-        if (!dataUrl) {
+        if (!blobData && typeof html2canvas !== 'undefined') {
           const canvas = await html2canvas(wrap, {
             scale: 2,
             useCORS: true,
@@ -11824,30 +12050,83 @@ JSON 규격:
             windowWidth: 1200,
             logging: false
           });
-          dataUrl = canvas.toDataURL('image/png');
+          blobData = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
         }
 
-        // PNG 파일 자동 다운로드
-        const cleanMode = modeKo.replace(/[^가-힣a-zA-Z0-9]/g, '');
-        const filename = `넷가표_${targetStoreLabel}_${cleanMode}_${now.toISOString().slice(0,10)}.png`;
-
-        const link = document.createElement('a');
-        link.download = filename;
-        link.href = dataUrl;
-        link.click();
-
-        // 클립보드 복사 시도
-        if (blobData && navigator.clipboard && navigator.clipboard.write) {
-          navigator.clipboard.write([new ClipboardItem({ 'image/png': blobData })]).catch(() => {});
-        }
-
-        alert(`✅ [넷가표 캡처 완료]\n\n[${targetStoreLabel}] [${modeKo}] 넷가표 이미지가 고해상도 PNG 파일로 저장되었습니다!\n(카카오톡이나 카페에 바로 Ctrl+V 붙여넣기도 가능합니다)`);
-      } catch (err) {
-        console.error("Net table capture error:", err);
-        alert("넷가표 캡처 중 오류가 발생했습니다: " + err.message);
-      } finally {
         if (wrap.parentNode) document.body.removeChild(wrap);
+
+        if (blobData && navigator.clipboard && navigator.clipboard.write) {
+          await navigator.clipboard.write([new ClipboardItem({ 'image/png': blobData })]);
+          updateSaveProgressDone('✅ 넷가표 복사 완료!', '클립보드에 복사되었습니다. (Ctrl+V로 바로 붙여넣기)');
+        } else {
+          hideSaveProgress();
+          alert('클립보드 복사 권한이 차단되어 있습니다.');
+        }
+      } catch (err) {
+        if (wrap.parentNode) document.body.removeChild(wrap);
+        hideSaveProgress();
+        console.error("Net table capture error:", err);
+        alert("넷가표 복사 중 오류가 발생했습니다: " + err.message);
       }
+    }
+
+    async function captureNetTableImage() {
+      return copyNetTableToClipboard();
+    }
+
+    function printNetTablePdf() {
+      const origTable = document.querySelector('#calcTableContainer');
+      if (!origTable) return;
+      const printIframe = document.createElement('iframe');
+      printIframe.style.position = 'fixed';
+      printIframe.style.right = '0';
+      printIframe.style.bottom = '0';
+      printIframe.style.width = '0';
+      printIframe.style.height = '0';
+      printIframe.style.border = '0';
+      document.body.appendChild(printIframe);
+
+      const targetStoreLabel = (currentStoreId === 'gwangan') ? '광안점' : (currentStoreId === 'test_store') ? '테스트매장' : '명지점';
+      const now = new Date();
+      const todayStr = `${now.getFullYear()}년 ${now.getMonth() + 1}월 ${now.getDate()}일`;
+
+      const clone = origTable.cloneNode(true);
+      clone.querySelectorAll('.drag-handle, button, .help-btn').forEach(el => el.remove());
+      clone.querySelectorAll('select').forEach(sel => {
+        const val = sel.value;
+        const dev = devices.find(x => x.id === val);
+        const parent = sel.parentNode;
+        const nameDiv = document.createElement('span');
+        nameDiv.style.fontWeight = 'bold';
+        nameDiv.innerText = dev ? dev.name : '—';
+        parent.replaceChild(nameDiv, sel);
+      });
+
+      const iframeDoc = printIframe.contentDocument || printIframe.contentWindow.document;
+      iframeDoc.open();
+      iframeDoc.write(`<!DOCTYPE html><html><head><title>넷가 산출표</title>
+        <style>
+          @page { size: A4 landscape; margin: 12mm 10mm; }
+          body { font-family: 'Pretendard Variable', Pretendard, sans-serif; margin: 0; padding: 10px; }
+          table { width: 100%; border-collapse: collapse; text-align: center; font-size: 11px; }
+          th, td { border: 1px solid #cbd5e1; padding: 6px; }
+          th { background-color: #f1f5f9; font-weight: bold; }
+          .header-box { margin-bottom: 12px; padding: 10px 14px; background: #0f172a; color: white; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
+        </style>
+      </head><body>
+        <div class="header-box">
+          <h2 style="margin:0; font-size:16px;">[${targetStoreLabel}] 실시간 넷가 산출표</h2>
+          <span style="font-size:12px;">기준일: ${todayStr}</span>
+        </div>
+        ${clone.innerHTML}
+      </body></html>`);
+      iframeDoc.close();
+
+      setTimeout(() => {
+        printIframe.contentWindow.focus();
+        printIframe.contentWindow.print();
+        setTimeout(() => printIframe.remove(), 1000);
+      }, 400);
     }
 
     // ==================== 통신 3사 성지특가 통합 시세표 포스터 기능 ====================
@@ -11892,9 +12171,8 @@ JSON 규격:
         html += `<optgroup label="${g.label}">`;
         g.items.forEach(d => {
           if (d.id === 'empty') return;
-          const label = (d.tag || d.name || '').replace(/^#/, '');
           const isSel = (d.id === selectedId) ? 'selected' : '';
-          const optText = (d.name && d.name !== label) ? `${label} (${d.name})` : label;
+          const optText = d.name || (d.tag || '').replace(/^#/, '');
           html += `<option value="${d.id}" ${isSel}>${optText}</option>`;
         });
         html += `</optgroup>`;
@@ -12166,6 +12444,7 @@ JSON 규격:
         tr.setAttribute('draggable', 'true');
         tr.setAttribute('ondragstart', `onPosterRowDragStart(event, ${rowIndex})`);
         tr.setAttribute('ondragover', `onPosterRowDragOver(event, ${rowIndex})`);
+        tr.setAttribute('ondragleave', 'onPosterRowDragLeave(event)');
         tr.setAttribute('ondrop', `onPosterRowDrop(event, ${rowIndex})`);
         tr.setAttribute('ondragend', 'onPosterRowDragEnd(event)');
 
@@ -12201,6 +12480,11 @@ JSON 규격:
         `;
         tbody.appendChild(tr);
       });
+
+      applyPosterManualEditState();
+      applyPosterDiscountNoticeState();
+      renderPosterNoticeChecklist();
+      updatePosterNoticeTextFromChecklist();
     }
 
     
@@ -12218,19 +12502,275 @@ JSON 규격:
       saveAdPosterSettings(false);
     }
 
+    function togglePosterManualEdit() {
+      isPosterManualEditEnabled = !isPosterManualEditEnabled;
+      applyPosterManualEditState();
+      const storeKey = currentStoreId || 'myeongji';
+      localStorage.setItem(`phone_poster_manual_edit_${storeKey}`, isPosterManualEditEnabled ? '1' : '0');
+    }
+
+    function applyPosterManualEditState() {
+      const btn = document.getElementById('posterManualEditToggleBtn');
+      if (btn) {
+        if (isPosterManualEditEnabled) {
+          btn.innerText = 'ON (수정 가능)';
+          btn.className = 'px-2.5 py-1 rounded-lg text-xs font-black transition cursor-pointer bg-rose-600 text-white shadow-2xs ring-2 ring-rose-300';
+        } else {
+          btn.innerText = 'OFF (잠금)';
+          btn.className = 'px-2.5 py-1 rounded-lg text-xs font-black transition cursor-pointer bg-slate-200 text-slate-600 hover:bg-slate-300';
+        }
+      }
+
+      const priceCells = document.querySelectorAll('#adPosterTableBody td[class*="cell-"]');
+      priceCells.forEach(td => {
+        td.contentEditable = isPosterManualEditEnabled ? 'true' : 'false';
+        if (isPosterManualEditEnabled) {
+          td.classList.add('cursor-pointer');
+          td.classList.remove('cursor-default');
+        } else {
+          td.classList.remove('cursor-pointer');
+          td.classList.add('cursor-default');
+        }
+      });
+
+      const planCells = document.querySelectorAll('#posterPlanTableBody td');
+      planCells.forEach(td => {
+        if (td.classList.contains('poster-ui-action')) return;
+        td.contentEditable = isPosterManualEditEnabled ? 'true' : 'false';
+      });
+
+      const titleEl = document.getElementById('posterStoreTitle');
+      const subEl = document.getElementById('posterSubtitle');
+      const dateEl = document.getElementById('posterDateText');
+      if (titleEl) titleEl.contentEditable = isPosterManualEditEnabled ? 'true' : 'false';
+      if (subEl) subEl.contentEditable = isPosterManualEditEnabled ? 'true' : 'false';
+      if (dateEl) dateEl.contentEditable = isPosterManualEditEnabled ? 'true' : 'false';
+
+      // 필수확인 박스는 온오프 상관없이 수기수정 불가!
+      const noticeEl = document.getElementById('posterNoticeText');
+      if (noticeEl) noticeEl.contentEditable = 'false';
+    }
+
+    function togglePosterDiscountNotice() {
+      isPosterDiscountNoticeEnabled = !isPosterDiscountNoticeEnabled;
+      applyPosterDiscountNoticeState();
+      const storeKey = currentStoreId || 'myeongji';
+      localStorage.setItem(`phone_poster_discount_notice_${storeKey}`, isPosterDiscountNoticeEnabled ? '1' : '0');
+      saveAdPosterSettings(false);
+    }
+
+    function applyPosterDiscountNoticeState() {
+      const banner = document.getElementById('posterDiscountNoticeBanner');
+      const btn = document.getElementById('posterDiscountNoticeToggleBtn');
+      if (banner) {
+        banner.style.display = isPosterDiscountNoticeEnabled ? 'flex' : 'none';
+      }
+      if (btn) {
+        if (isPosterDiscountNoticeEnabled) {
+          btn.innerText = 'ON (표시)';
+          btn.className = 'px-2.5 py-1 rounded-lg text-xs font-black transition cursor-pointer bg-emerald-600 text-white shadow-2xs';
+        } else {
+          btn.innerText = 'OFF (숨김)';
+          btn.className = 'px-2.5 py-1 rounded-lg text-xs font-black transition cursor-pointer bg-slate-200 text-slate-600 hover:bg-slate-300';
+        }
+      }
+    }
+
+    // ==================== [필수확인] 체크박스 시스템 & 마스터 관리 ====================
+    function renderPosterNoticeChecklist() {
+      const container = document.getElementById('posterNoticeChecklistContainer');
+      if (!container) return;
+
+      container.innerHTML = masterNoticeItems.map(item => {
+        const isChecked = checkedNoticeIds.includes(item.id);
+        return `
+          <label class="flex items-start gap-2 p-1.5 rounded-xl hover:bg-slate-50 border border-slate-100 bg-white transition cursor-pointer text-slate-800 select-none">
+            <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="onPosterNoticeToggle('${item.id}', this.checked)" class="mt-0.5 rounded text-rose-600 focus:ring-rose-500 w-4 h-4 cursor-pointer shrink-0">
+            <span class="text-xs font-bold leading-tight">${item.text}</span>
+          </label>
+        `;
+      }).join('');
+    }
+
+    function onPosterNoticeToggle(id, isChecked) {
+      if (isChecked) {
+        if (!checkedNoticeIds.includes(id)) checkedNoticeIds.push(id);
+      } else {
+        checkedNoticeIds = checkedNoticeIds.filter(x => x !== id);
+      }
+      const storeKey = currentStoreId || 'myeongji';
+      localStorage.setItem(`phone_poster_checked_notices_${storeKey}`, JSON.stringify(checkedNoticeIds));
+      updatePosterNoticeTextFromChecklist();
+      saveAdPosterSettings(false);
+    }
+
+    function selectAllPosterNotices(all) {
+      if (all) {
+        checkedNoticeIds = masterNoticeItems.map(it => it.id);
+      } else {
+        checkedNoticeIds = [];
+      }
+      const storeKey = currentStoreId || 'myeongji';
+      localStorage.setItem(`phone_poster_checked_notices_${storeKey}`, JSON.stringify(checkedNoticeIds));
+      renderPosterNoticeChecklist();
+      updatePosterNoticeTextFromChecklist();
+      saveAdPosterSettings(false);
+    }
+
+    function updatePosterNoticeTextFromChecklist() {
+      const noticeEl = document.getElementById('posterNoticeText');
+      if (!noticeEl) return;
+      const selectedItems = masterNoticeItems.filter(it => checkedNoticeIds.includes(it.id));
+      if (selectedItems.length === 0) {
+        noticeEl.innerText = '- 별도 필수 안내 사항이 없습니다.';
+      } else {
+        noticeEl.innerText = selectedItems.map(it => '- ' + it.text).join('\n');
+      }
+    }
+
+    // 마스터 관리자 전용: 필수확인 마스터 모달
+    function openMasterPosterNoticeModal() {
+      if (currentRole !== 'master') return;
+      renderMasterNoticeItemsList();
+      const modal = document.getElementById('masterPosterNoticeModal');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeMasterPosterNoticeModal() {
+      const modal = document.getElementById('masterPosterNoticeModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function renderMasterNoticeItemsList() {
+      const listEl = document.getElementById('masterNoticeItemsList');
+      if (!listEl) return;
+      listEl.innerHTML = masterNoticeItems.map((item, idx) => `
+        <div class="flex items-center gap-2 p-2 bg-slate-50 border border-slate-200 rounded-xl" data-id="${item.id}">
+          <span class="text-xs font-mono font-bold text-slate-400 w-6 text-center">${idx + 1}</span>
+          <input type="text" class="master-notice-input flex-1 px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-900 focus:outline-none focus:ring-1 focus:ring-purple-500" value="${item.text.replace(/"/g, '&quot;')}" />
+          <button type="button" onclick="deleteMasterNoticeItem(${idx})" class="p-1.5 text-rose-500 hover:bg-rose-100 rounded-lg text-xs font-bold transition cursor-pointer" title="항목 삭제">✕</button>
+        </div>
+      `).join('');
+    }
+
+    function addMasterNoticeItem() {
+      const newId = 'pn_' + Date.now();
+      masterNoticeItems.push({ id: newId, text: '신규 안내 사항 문구를 입력하세요' });
+      if (!checkedNoticeIds.includes(newId)) checkedNoticeIds.push(newId);
+      renderMasterNoticeItemsList();
+    }
+
+    function deleteMasterNoticeItem(idx) {
+      if (masterNoticeItems.length <= 1) {
+        alert("최소 1개 이상의 필수 안내 항목이 있어야 합니다.");
+        return;
+      }
+      const removed = masterNoticeItems.splice(idx, 1)[0];
+      checkedNoticeIds = checkedNoticeIds.filter(x => x !== removed.id);
+      renderMasterNoticeItemsList();
+    }
+
+    async function saveMasterPosterNotices() {
+      if (currentRole !== 'master') return;
+      const inputs = document.querySelectorAll('#masterNoticeItemsList .master-notice-input');
+      const updatedList = [];
+      inputs.forEach((input, i) => {
+        const val = input.value.trim();
+        if (val) {
+          const old = masterNoticeItems[i] || {};
+          updatedList.push({ id: old.id || ('pn_' + i), text: val });
+        }
+      });
+      if (updatedList.length === 0) {
+        alert("최소 1개 이상의 안내 항목 문구를 입력해주세요.");
+        return;
+      }
+
+      masterNoticeItems = updatedList;
+      localStorage.setItem('phone_master_poster_notices', JSON.stringify(masterNoticeItems));
+
+      if (db) {
+        try {
+          await db.collection('global_config').doc('poster_notices').set({
+            items: masterNoticeItems,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            updatedBy: '관리자 마스터'
+          }, { merge: true });
+          logAudit('시세표 필수안내 마스터 수정', `[필수확인] 마스터 ${masterNoticeItems.length}개 항목 수정 및 전매장 배포`);
+        } catch(e) {
+          console.error("Save master notices error:", e);
+        }
+      }
+
+      renderPosterNoticeChecklist();
+      updatePosterNoticeTextFromChecklist();
+      closeMasterPosterNoticeModal();
+      updateSaveProgressDone('마스터 설정 저장 완료', '모든 매장에 [필수확인] 마스터 항목이 동기화되었습니다.');
+    }
+
     function onPosterRowDragStart(e, idx) {
       draggedPosterRowIndex = idx;
       e.dataTransfer.effectAllowed = 'move';
-      e.currentTarget.classList.add('opacity-50', 'bg-blue-50');
+      e.currentTarget.classList.add('opacity-30', 'bg-slate-100');
+
+      if (e.dataTransfer.setDragImage) {
+        if (dragGhostRowEl && dragGhostRowEl.parentNode) dragGhostRowEl.remove();
+        const tr = e.currentTarget;
+        const rect = tr.getBoundingClientRect();
+        const ghost = document.createElement('div');
+        ghost.style.position = 'fixed';
+        ghost.style.top = '-9999px';
+        ghost.style.left = '-9999px';
+        ghost.style.width = `${Math.max(rect.width || 760, 480)}px`;
+        ghost.style.height = `${Math.max(rect.height || 40, 36)}px`;
+        ghost.style.backgroundColor = 'rgba(241, 245, 249, 0.92)';
+        ghost.style.border = '2px dashed #475569';
+        ghost.style.borderRadius = '8px';
+        ghost.style.boxShadow = '0 12px 28px rgba(15, 23, 42, 0.22), 0 4px 10px rgba(15, 23, 42, 0.12)';
+        ghost.style.display = 'flex';
+        ghost.style.alignItems = 'center';
+        ghost.style.padding = '0 16px';
+        ghost.style.fontSize = '13px';
+        ghost.style.fontWeight = '800';
+        ghost.style.color = '#1e293b';
+        ghost.style.pointerEvents = 'none';
+        ghost.style.zIndex = '99999';
+
+        const optSel = tr.querySelector('.poster-model-select');
+        const devText = optSel ? (optSel.selectedOptions?.[0]?.text || optSel.value) : '시세표 기종 행';
+        ghost.innerHTML = `
+          <span style="display:inline-flex; align-items:center; gap:8px;">
+            <span style="font-size:16px; color:#e60012;">📱</span>
+            <span>${devText}</span>
+          </span>
+          <span style="margin-left:auto; font-size:11px; color:#475569; font-weight:700; background:#e2e8f0; padding:2px 8px; border-radius:6px;">↕ 순서 이동 중</span>
+        `;
+        document.body.appendChild(ghost);
+        dragGhostRowEl = ghost;
+        e.dataTransfer.setDragImage(ghost, 40, 20);
+        setTimeout(() => {
+          if (ghost && ghost.parentNode) ghost.remove();
+        }, 0);
+      }
     }
 
     function onPosterRowDragOver(e, idx) {
       e.preventDefault();
       e.dataTransfer.dropEffect = 'move';
+      if (draggedPosterRowIndex !== null && draggedPosterRowIndex !== idx) {
+        e.currentTarget.classList.add('border-t-4', 'border-rose-600', 'bg-rose-50/40');
+      }
+    }
+
+    function onPosterRowDragLeave(e) {
+      if (!e.currentTarget.contains(e.relatedTarget)) {
+        e.currentTarget.classList.remove('border-t-4', 'border-rose-600', 'bg-rose-50/40');
+      }
     }
 
     function onPosterRowDrop(e, targetIdx) {
       e.preventDefault();
+      e.currentTarget.classList.remove('border-t-4', 'border-rose-600', 'bg-rose-50/40');
       if (draggedPosterRowIndex === null || draggedPosterRowIndex === targetIdx) return;
       const item = posterDeviceRows.splice(draggedPosterRowIndex, 1)[0];
       posterDeviceRows.splice(targetIdx, 0, item);
@@ -12242,8 +12782,12 @@ JSON 규격:
 
     function onPosterRowDragEnd(e) {
       draggedPosterRowIndex = null;
+      if (dragGhostRowEl && dragGhostRowEl.parentNode) {
+        dragGhostRowEl.remove();
+        dragGhostRowEl = null;
+      }
       document.querySelectorAll('#adPosterTableBody tr').forEach(r => {
-        r.classList.remove('opacity-50', 'bg-blue-50');
+        r.classList.remove('opacity-30', 'opacity-50', 'bg-slate-100', 'bg-blue-50', 'border-t-4', 'border-rose-600', 'bg-rose-50/40');
       });
     }
 
@@ -12286,8 +12830,9 @@ JSON 규격:
       updateCell('.cell-kt-mnp', 'KT', 'mnp', ktAd.mnp, false);
       updateCell('.cell-kt-chg', 'KT', 'chg', ktAd.chg, true);
       updateCell('.cell-lg-mnp', 'LG', 'mnp', lgAd.mnp, false);
-      updateCell('.cell-lg-chg', 'LG', 'chg', lgAd.chg, false);
+      updateCell('.cell-lg-chg', 'LG', 'chg', lgAd.chg, true);
 
+      applyPosterManualEditState();
       saveAdPosterSettings(false);
     }
 
@@ -12348,16 +12893,20 @@ JSON 규격:
         .replace(/\[.*?\]/g, '')
         .trim();
       
-      setAdValue(d, carrier, type, cleanVal, posterMarginMode);
-      renderAdPosterTable();
-      saveAdPosterSettings(false);
+      const oldVal = getAdData(d, carrier, posterMarginMode)[type];
+      if (String(oldVal || '').trim() !== cleanVal) {
+        setAdValue(d, carrier, type, cleanVal, posterMarginMode);
+        renderAdPosterTable();
+        saveAdPosterSettings(false);
+        logAudit('시세표 가격 수정', `[${currentStoreName}] ${d.name} (${carrier} ${type === 'mnp' ? '번이' : '기변'}): ${oldVal || '-'} -> ${cleanVal || '-'}만원`);
+      }
     }
 
     
 
     function syncAdPosterPrices() {
       renderAdPosterTable();
-      alert("✅ 광고가격(문구) 탭에 등록된 최신 시세표 가격을 성공적으로 다시 불러왔습니다!");
+      updateSaveProgressDone("가격 불러오기 완료", "최신 시세표 가격이 성공적으로 반영되었습니다.");
     }
 
     function applyPosterThemeColor(color) {
@@ -12375,19 +12924,6 @@ JSON 규격:
 
       const hexInput = document.getElementById('posterHexInput');
       if (hexInput) hexInput.value = color.replace('#', '').toUpperCase();
-
-      const brandSelect = document.getElementById('posterBrandColorSelect');
-      if (brandSelect) {
-        let matched = false;
-        for (let i = 0; i < brandSelect.options.length; i++) {
-          if (brandSelect.options[i].value.toLowerCase() === color.toLowerCase()) {
-            brandSelect.selectedIndex = i;
-            matched = true;
-            break;
-          }
-        }
-        if (!matched) brandSelect.selectedIndex = 0;
-      }
 
       document.querySelectorAll('.poster-theme-text').forEach(el => {
         el.style.color = color;
@@ -12417,13 +12953,17 @@ JSON 규격:
     function getAdPosterDataForSave() {
       const noticeEl = document.getElementById('posterNoticeText');
       const noticeVal = noticeEl ? noticeEl.innerText : '';
+      const todayKey = new Date().toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' });
       return {
         title: document.getElementById('posterStoreTitle')?.innerText || '',
         subtitle: document.getElementById('posterSubtitle')?.innerText || '',
-        date: document.getElementById('posterDateText')?.innerText || '',
+        date: document.getElementById('posterDateText')?.innerText || getKstTodayString(),
+        savedDayKey: todayKey,
         noticeText: noticeVal,
         noticeLeft: noticeVal,
         noticeRight: '',
+        checkedNoticeIds: checkedNoticeIds || [],
+        showDiscountNotice: isPosterDiscountNoticeEnabled,
         planHtml: document.getElementById('posterPlanTableBody')?.innerHTML || '',
         themeColor: currentPosterThemeColor || '#e60012',
         marginMode: posterMarginMode || 'basic',
@@ -12458,7 +12998,6 @@ JSON 규격:
           }, { merge: true })
             .then(() => {
               setSyncStatus('online', '클라우드 동기화 완료');
-              logAudit('성지특가 시세표', `시세표 포스터 설정 및 부가서비스 저장 (${currentStoreName})`);
             })
             .catch(err => {
               console.error("Save poster settings cloud error:", err);
@@ -12467,7 +13006,7 @@ JSON 규격:
         }
 
         if (showAlert) {
-          alert(`✅ [${currentStoreName}] 시세표 상호명, 유의사항, 테마 설정이 클라우드에 안전하게 저장되었습니다!`);
+          updateSaveProgressDone("저장 완료!", `[${currentStoreName}] 시세표 설정이 클라우드에 안전하게 저장되었습니다.`);
         }
       } catch (err) {
         console.error("Failed to save poster settings:", err);
@@ -12480,6 +13019,7 @@ JSON 규격:
         const sId = storeId || 'myeongji';
         const storeLabel = (sId === 'myeongji') ? '명지원조폰' : (sId === 'gwangan') ? '광안원조폰' : '테스트원조폰';
         const defaultTitle = `${storeLabel} 특가 시세표`;
+        const todayKey = new Date().toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' });
 
         const saved = localStorage.getItem(`phone_ad_poster_custom_${sId}`);
         let themeColor = localStorage.getItem(`adPosterThemeColor_${sId}`) || '#e60012';
@@ -12488,8 +13028,33 @@ JSON 규격:
           const s = JSON.parse(saved);
           if (document.getElementById('posterStoreTitle')) document.getElementById('posterStoreTitle').innerText = s.title || defaultTitle;
           if (document.getElementById('posterSubtitle')) document.getElementById('posterSubtitle').innerText = s.subtitle || '성지매장 눈속임 원조폰에서는 끝!!';
-          if (document.getElementById('posterDateText') && s.date) document.getElementById('posterDateText').innerText = s.date;
           
+          // 매일 최신 당일 날짜 자동 갱신 (당일 저장된 날짜만 유지)
+          if (document.getElementById('posterDateText')) {
+            if (s.savedDayKey === todayKey && s.date) {
+              document.getElementById('posterDateText').innerText = s.date;
+            } else {
+              document.getElementById('posterDateText').innerText = getKstTodayString();
+            }
+          }
+          
+          if (s.checkedNoticeIds && Array.isArray(s.checkedNoticeIds)) {
+            checkedNoticeIds = s.checkedNoticeIds;
+            localStorage.setItem(`phone_poster_checked_notices_${sId}`, JSON.stringify(checkedNoticeIds));
+          } else {
+            const localChecked = localStorage.getItem(`phone_poster_checked_notices_${sId}`);
+            if (localChecked) {
+              try { checkedNoticeIds = JSON.parse(localChecked); } catch(e) {}
+            }
+          }
+
+          if (s.showDiscountNotice !== undefined) {
+            isPosterDiscountNoticeEnabled = !!s.showDiscountNotice;
+          } else {
+            const localDisc = localStorage.getItem(`phone_poster_discount_notice_${sId}`);
+            if (localDisc !== null) isPosterDiscountNoticeEnabled = (localDisc === '1');
+          }
+
           const noticeEl = document.getElementById('posterNoticeText');
           if (noticeEl) {
             if (s.noticeText) {
@@ -12506,7 +13071,13 @@ JSON 규격:
         } else {
           if (document.getElementById('posterStoreTitle')) document.getElementById('posterStoreTitle').innerText = defaultTitle;
           if (document.getElementById('posterSubtitle')) document.getElementById('posterSubtitle').innerText = '성지매장 눈속임 원조폰에서는 끝!!';
+          if (document.getElementById('posterDateText')) document.getElementById('posterDateText').innerText = getKstTodayString();
         }
+
+        applyPosterDiscountNoticeState();
+        renderPosterNoticeChecklist();
+        updatePosterNoticeTextFromChecklist();
+        applyPosterManualEditState();
 
         if (themeColor) {
           currentPosterThemeColor = themeColor;
@@ -12568,6 +13139,7 @@ JSON 규격:
           <svg class="w-4 h-4 text-white animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
           <span>고화질 복사 중...</span>
         `;
+        showSaveProgress('시세표 복사 중', '선명한 고화질 시세표 이미지를 생성하고 있습니다');
       }
 
       // 폰트 메트릭 계산 오차 방지를 위해 웹 폰트(Pretendard) 로딩 완료 보장 대기
@@ -12598,13 +13170,10 @@ JSON 규격:
         cloneSubtitle.style.textAlign = 'center';
       }
 
-      // 드롭다운 select 요소를 뒤 괄호 제거된 순수 대표 모델명 텍스트로 치환 및 td 내부 완벽 정규화 (좌측 쏠림 원천 차단)
+      // 드롭다운 select 요소를 풀네임 대표 모델명 텍스트로 치환 및 td 내부 완벽 정규화 (좌측 쏠림 원천 차단)
       clone.querySelectorAll('.poster-model-select').forEach(sel => {
         const selectedOption = sel.options[sel.selectedIndex];
         let modelText = selectedOption ? selectedOption.text : '';
-        if (modelText.includes(' (')) {
-          modelText = modelText.split(' (')[0].trim();
-        }
         const td = sel.closest('td');
         if (td) {
           td.innerHTML = `<span class="text-xs sm:text-sm font-black text-slate-950 text-center block whitespace-nowrap px-1" style="display:block; text-align:center; width:100%;">${modelText}</span>`;
@@ -12790,17 +13359,20 @@ JSON 규격:
               await navigator.clipboard.write([
                 new ClipboardItem({ 'image/png': blobData })
               ]);
-              alert("✅ 시세표 이미지가 클립보드에 복사되었습니다!\n\n카카오톡 대화방이나 네이버 카페/밴드에 바로 Ctrl+V (붙여넣기) 하시면 됩니다.");
+              updateSaveProgressDone('✅ 복사 완료!', '시세표 이미지가 클립보드에 복사되었습니다. (Ctrl+V로 바로 붙여넣기)');
             } catch (clipboardErr) {
               console.warn("Clipboard write error:", clipboardErr);
+              hideSaveProgress();
               alert("⚠️ 클립보드 복사 권한이 차단되어 있습니다.\n브라우저 주소창 왼쪽의 자물쇠/설정 아이콘에서 클립보드 권한을 '허용'해주세요.");
             }
           } else {
+            hideSaveProgress();
             alert("⚠️ 현재 브라우저 환경에서 이미지 클립보드 복사 기능을 지원하지 않거나 권한이 차단되어 있습니다.\n최신 Chrome 또는 Edge 브라우저를 이용해주세요.");
           }
         }
       } catch (err) {
         if (offscreen.parentNode) document.body.removeChild(offscreen);
+        hideSaveProgress();
         console.error("Poster capture error:", err);
         alert("시세표 이미지 캡처 중 오류가 발생했습니다: " + err.message);
       } finally {
@@ -12833,7 +13405,6 @@ JSON 규격:
       printClone.querySelectorAll('.poster-model-select').forEach(sel => {
         const selectedOption = sel.options[sel.selectedIndex];
         let modelText = selectedOption ? selectedOption.text : '';
-        if (modelText.includes(' (')) modelText = modelText.split(' (')[0].trim();
         const td = sel.closest('td');
         if (td) {
           td.innerHTML = `<span style="font-weight:900; font-size:13px; text-align:center; display:block; width:100%;">${modelText}</span>`;
