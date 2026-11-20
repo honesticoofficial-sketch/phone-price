@@ -3548,7 +3548,7 @@
         }
       }
 
-      // 0원이 가능(N <= 0)한데 상위 후보에 0원이 아직 안 들어갔다면 (예: N=-15 등), 0원(공짜폰) 옵션 필수 추가
+      // 0원이 가능(N <= 0)한데 상위 후보에 0원이 아직 안 들어갔다면 (예: N=-15 등), 0원 옵션 추가
       if (N <= 0 && !zeroIncluded) {
         results.push({
           price: 0,
@@ -3600,25 +3600,13 @@
         const isCurrent = (curVal === pStr);
         const marginStr = (c.margin >= 0 ? `+${c.margin}` : `${c.margin}`).replace(/\.0$/, '');
 
-        let label = '';
-        if (c.isZero) {
-          label = '0원(공짜)';
-        } else {
-          label = `${c.price}만`;
-        }
+        const label = (c.price === 0) ? '0원' : `${c.price}만`;
 
         if (isCurrent) {
           buttonsHtml += `
             <button type="button" onmousedown="applyAdRecommendedPrice(event, '${c.price}', '${deviceId}', '${type}')" class="px-2.5 py-1 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black text-xs rounded-lg shadow-xs ring-2 ring-emerald-300 transition flex items-center gap-1 cursor-pointer shrink-0" title="현재 적용된 금액 (${label})">
               <span>✓ ${label}</span>
               <span class="text-[10px] text-emerald-100 font-extrabold">(마진 +${marginStr}만)</span>
-            </button>
-          `;
-        } else if (c.isZero) {
-          buttonsHtml += `
-            <button type="button" onmousedown="applyAdRecommendedPrice(event, '${c.price}', '${deviceId}', '${type}')" class="px-2.5 py-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 active:scale-95 text-white font-black text-xs rounded-lg shadow-xs ring-1 ring-amber-300 transition flex items-center gap-1 cursor-pointer shrink-0" title="클릭 시 0원(공짜폰) 자동 입력">
-              <span>⭐ ${label}</span>
-              <span class="text-[10px] text-amber-100 font-extrabold">(+${marginStr}만)</span>
             </button>
           `;
         } else if (idx === 0) {
