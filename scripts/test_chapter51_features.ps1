@@ -247,7 +247,7 @@ try {
             const calculated = getRecommendedPrice(t.net);
             const marginOk = calculated >= t.net;
             const endDigit = Math.abs(calculated) % 10;
-            const endDigitOk = (endDigit === 5 || endDigit === 9);
+            const endDigitOk = (calculated === 0 || endDigit === 5 || endDigit === 9);
             return {
                 net: t.net,
                 calculated: calculated,

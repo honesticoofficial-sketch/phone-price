@@ -3520,30 +3520,61 @@
       saveAdPosterSettings(false);
     }
 
-    // ==================== 💡 광고가격 추천금액 (끝자리 5·9 & 마진 흑자 근접가) ====================
+    // ==================== 💡 광고가격 추천금액 (끝자리 5·9, 0원 가능 시 0원 포함 & 마진 흑자 근접가) ====================
     let activeAdPriceInput = null;
     let activeAdPriceDeviceId = null;
     let activeAdPriceType = null;
+    let adPriceBlurTimer = null;
 
-    function getRecommendedPrice(netPrice) {
-      if (netPrice === null || netPrice === undefined || isNaN(netPrice)) return null;
+    function getRecommendedPriceList(netPrice, maxCount = 3) {
+      if (netPrice === null || netPrice === undefined || isNaN(netPrice)) return [];
       const N = Number(netPrice);
       const start = Math.ceil(N);
-      for (let p = start; p <= start + 30; p++) {
+      const results = [];
+      let zeroIncluded = false;
+
+      for (let p = start; p <= start + 60; p++) {
+        const isZero = (p === 0);
         const lastDigit = Math.abs(p) % 10;
-        if (lastDigit === 5 || lastDigit === 9) {
-          return p;
+        if (isZero || lastDigit === 5 || lastDigit === 9) {
+          const margin = p - N;
+          results.push({
+            price: p,
+            margin: Math.round(margin * 10) / 10,
+            isZero: isZero
+          });
+          if (isZero) zeroIncluded = true;
+          if (results.length >= maxCount) break;
         }
       }
-      return start;
+
+      // 0원이 가능(N <= 0)한데 상위 후보에 0원이 아직 안 들어갔다면 (예: N=-15 등), 0원(공짜폰) 옵션 필수 추가
+      if (N <= 0 && !zeroIncluded) {
+        results.push({
+          price: 0,
+          margin: Math.round((0 - N) * 10) / 10,
+          isZero: true
+        });
+      }
+      return results;
     }
 
-    function getNextRecommendedPrice(rec1) {
+    function getRecommendedPrice(netPrice) {
+      const list = getRecommendedPriceList(netPrice, 1);
+      return list.length > 0 ? list[0].price : null;
+    }
+
+    function getNextRecommendedPrice(rec1, netPrice) {
+      if (netPrice !== undefined) {
+        const list = getRecommendedPriceList(netPrice, 2);
+        return list.length > 1 ? list[1].price : null;
+      }
       if (rec1 === null || rec1 === undefined) return null;
       const start = Number(rec1) + 1;
       for (let p = start; p <= start + 30; p++) {
+        const isZero = (p === 0);
         const lastDigit = Math.abs(p) % 10;
-        if (lastDigit === 5 || lastDigit === 9) {
+        if (isZero || lastDigit === 5 || lastDigit === 9) {
           return p;
         }
       }
@@ -3554,36 +3585,78 @@
       const tooltip = document.getElementById('adPriceRecTooltip');
       if (!tooltip || netPrice === null || isNaN(netPrice)) return;
 
-      const rec1 = getRecommendedPrice(netPrice);
-      if (rec1 === null) return;
-      const rec2 = getNextRecommendedPrice(rec1);
-
-      const m1 = (rec1 - netPrice).toFixed(1).replace(/\.0$/, '');
-      const m2 = (rec2 - netPrice).toFixed(1).replace(/\.0$/, '');
+      const candidates = getRecommendedPriceList(netPrice, 3);
+      if (candidates.length === 0) return;
 
       const rect = targetEl.getBoundingClientRect();
       tooltip.style.top = `${rect.bottom + 6}px`;
-      tooltip.style.left = `${Math.max(10, rect.left - 25)}px`;
+      tooltip.style.left = `${Math.max(10, rect.left - 20)}px`;
+
+      const curVal = targetEl.value !== undefined ? String(targetEl.value).trim() : '';
+
+      let buttonsHtml = '';
+      candidates.forEach((c, idx) => {
+        const pStr = String(c.price);
+        const isCurrent = (curVal === pStr);
+        const marginStr = (c.margin >= 0 ? `+${c.margin}` : `${c.margin}`).replace(/\.0$/, '');
+
+        let label = '';
+        if (c.isZero) {
+          label = '0원(공짜)';
+        } else {
+          label = `${c.price}만`;
+        }
+
+        if (isCurrent) {
+          buttonsHtml += `
+            <button type="button" onmousedown="applyAdRecommendedPrice(event, '${c.price}', '${deviceId}', '${type}')" class="px-2.5 py-1 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black text-xs rounded-lg shadow-xs ring-2 ring-emerald-300 transition flex items-center gap-1 cursor-pointer shrink-0" title="현재 적용된 금액 (${label})">
+              <span>✓ ${label}</span>
+              <span class="text-[10px] text-emerald-100 font-extrabold">(마진 +${marginStr}만)</span>
+            </button>
+          `;
+        } else if (c.isZero) {
+          buttonsHtml += `
+            <button type="button" onmousedown="applyAdRecommendedPrice(event, '${c.price}', '${deviceId}', '${type}')" class="px-2.5 py-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 active:scale-95 text-white font-black text-xs rounded-lg shadow-xs ring-1 ring-amber-300 transition flex items-center gap-1 cursor-pointer shrink-0" title="클릭 시 0원(공짜폰) 자동 입력">
+              <span>⭐ ${label}</span>
+              <span class="text-[10px] text-amber-100 font-extrabold">(+${marginStr}만)</span>
+            </button>
+          `;
+        } else if (idx === 0) {
+          buttonsHtml += `
+            <button type="button" onmousedown="applyAdRecommendedPrice(event, '${c.price}', '${deviceId}', '${type}')" class="px-2.5 py-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 active:scale-95 text-white font-black text-xs rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer ring-1 ring-purple-300/40 shrink-0" title="클릭 시 ${label} 자동 입력">
+              <span>${label}</span>
+              <span class="text-[10px] text-emerald-300 font-extrabold">(마진 +${marginStr}만)</span>
+            </button>
+          `;
+        } else {
+          buttonsHtml += `
+            <button type="button" onmousedown="applyAdRecommendedPrice(event, '${c.price}', '${deviceId}', '${type}')" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 text-[11px] font-bold rounded-lg transition flex items-center gap-0.5 cursor-pointer border border-slate-700 shrink-0" title="클릭 시 ${label} 자동 입력">
+              <span>${label}</span>
+              <span class="text-[9px] text-slate-400 font-medium">(+${marginStr}만)</span>
+            </button>
+          `;
+        }
+      });
 
       tooltip.innerHTML = `
-        <div class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-900/95 backdrop-blur-md text-white rounded-xl shadow-2xl border border-purple-500/40 text-xs font-bold animate-in fade-in zoom-in-95 duration-150">
+        <div class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-900/95 backdrop-blur-md text-white rounded-xl shadow-2xl border border-purple-500/40 text-xs font-bold animate-in fade-in zoom-in-95 duration-150 select-none">
           <span class="text-[11px] text-amber-300 font-black flex items-center gap-1 shrink-0">
             <span>💡 추천금액:</span>
           </span>
-          <button type="button" onmousedown="applyAdRecommendedPrice(event, '${rec1}', '${deviceId}', '${type}')" class="px-2.5 py-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 active:scale-95 text-white font-black text-xs rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer ring-1 ring-purple-300/40" title="클릭 시 ${rec1}만 자동 입력">
-            <span>${rec1}만</span>
-            <span class="text-[10px] text-emerald-300 font-extrabold">(마진 +${m1}만)</span>
-          </button>
-          <button type="button" onmousedown="applyAdRecommendedPrice(event, '${rec2}', '${deviceId}', '${type}')" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 text-[11px] font-bold rounded-lg transition flex items-center gap-0.5 cursor-pointer border border-slate-700" title="클릭 시 ${rec2}만 자동 입력">
-            <span>${rec2}만</span>
-            <span class="text-[9px] text-slate-400 font-medium">(+${m2}만)</span>
-          </button>
+          <div class="flex items-center gap-1">
+            ${buttonsHtml}
+          </div>
+          <button type="button" onmousedown="event.preventDefault(); event.stopPropagation(); hideAdPriceRecTooltip();" class="text-slate-400 hover:text-white p-0.5 ml-1 rounded hover:bg-slate-800 transition cursor-pointer" title="닫기">✕</button>
         </div>
       `;
       tooltip.classList.remove('hidden');
     }
 
     function hideAdPriceRecTooltip() {
+      if (adPriceBlurTimer) {
+        clearTimeout(adPriceBlurTimer);
+        adPriceBlurTimer = null;
+      }
       const tooltip = document.getElementById('adPriceRecTooltip');
       if (tooltip) tooltip.classList.add('hidden');
     }
@@ -3593,18 +3666,33 @@
         event.preventDefault();
         event.stopPropagation();
       }
+      if (adPriceBlurTimer) {
+        clearTimeout(adPriceBlurTimer);
+        adPriceBlurTimer = null;
+      }
       if (activeAdPriceInput) {
         activeAdPriceInput.value = val;
       }
       updateAdValLive(deviceId, type, val);
       updateAdValCommit(deviceId, type, val, activeAdPriceInput);
-      hideAdPriceRecTooltip();
+
+      // ★ 클릭 시 팝업을 바로 닫지 않고, 해당 금액이 선택된 상태로 툴팁을 갱신 유지!
+      // (사용자가 한번 누르고 나서 바로 다른 추천금액(예: 0원)도 편하게 눌러볼 수 있도록 지원)
       if (activeAdPriceInput) {
+        const d = devices.find(x => x.id === deviceId);
+        if (d) {
+          const netPrice = calcNet(d, activeAdCarrier, type, adMarginBase);
+          showAdPriceRecTooltip(activeAdPriceInput, deviceId, type, netPrice);
+        }
         activeAdPriceInput.focus();
       }
     }
 
     function onAdPriceInputFocus(event, deviceId, type) {
+      if (adPriceBlurTimer) {
+        clearTimeout(adPriceBlurTimer);
+        adPriceBlurTimer = null;
+      }
       activeAdPriceInput = event.target;
       activeAdPriceDeviceId = deviceId;
       activeAdPriceType = type;
@@ -3617,12 +3705,27 @@
     }
 
     function onAdPriceInputBlur(event) {
-      setTimeout(() => {
+      if (adPriceBlurTimer) {
+        clearTimeout(adPriceBlurTimer);
+      }
+      adPriceBlurTimer = setTimeout(() => {
+        const active = document.activeElement;
+        const tooltip = document.getElementById('adPriceRecTooltip');
+        if (tooltip && tooltip.contains(active)) return;
+        if (active && active.classList.contains('ad-price-input')) return;
         hideAdPriceRecTooltip();
-      }, 200);
+      }, 250);
     }
 
-    window.addEventListener('scroll', () => { hideAdPriceRecTooltip(); }, { passive: true });
+    // 툴팁 외부 클릭 시에만 닫기
+    document.addEventListener('mousedown', (e) => {
+      const tooltip = document.getElementById('adPriceRecTooltip');
+      if (!tooltip || tooltip.classList.contains('hidden')) return;
+      if (tooltip.contains(e.target)) return;
+      if (e.target === activeAdPriceInput || (e.target && e.target.classList && e.target.classList.contains('ad-price-input'))) return;
+      hideAdPriceRecTooltip();
+    });
+
     window.addEventListener('resize', () => { hideAdPriceRecTooltip(); }, { passive: true });
 
     function buildModelOptions(selectedId) {
@@ -5097,7 +5200,7 @@
                    onkeydown="if(event.key==='Enter') this.blur(); if(event.key==='Escape'){this.value=this.dataset.origVal||''; this.blur();}"
                    oninput="updateAdValLive('${d.id}', 'mnp', this.value)"
                    onchange="updateAdValCommit('${d.id}', 'mnp', this.value, this)"
-                   class="w-full max-w-[85px] px-2 py-1 text-center font-black bg-white border border-slate-300 rounded text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none" />
+                   class="ad-price-input w-full max-w-[85px] px-2 py-1 text-center font-black bg-white border border-slate-300 rounded text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none" />
           </td>
 
           <!-- 기변가 입력 (추천금액 툴팁 연동) -->
@@ -5110,7 +5213,7 @@
                    onkeydown="if(event.key==='Enter') this.blur(); if(event.key==='Escape'){this.value=this.dataset.origVal||''; this.blur();}"
                    oninput="updateAdValLive('${d.id}', 'chg', this.value)"
                    onchange="updateAdValCommit('${d.id}', 'chg', this.value, this)"
-                   class="w-full max-w-[85px] px-2 py-1 text-center font-black bg-white border border-slate-300 rounded text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none" />
+                   class="ad-price-input w-full max-w-[85px] px-2 py-1 text-center font-black bg-white border border-slate-300 rounded text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none" />
           </td>
 
           <!-- 예상 마진 (번/기) 실시간 노출 -->
