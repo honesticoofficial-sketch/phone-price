@@ -9358,7 +9358,7 @@ function handleSelectAffiliateCard(cardId) {
   cardData.type = card.type;
   cardData.typeLabel = card.typeLabel;
   cardData.cardPlateImageUrl = card.cardPlateImageUrl || '';
-  cardData.cardPlateOrientation = 'horizontal';
+  cardData.cardPlateOrientation = card.cardPlateOrientation || 'horizontal';
   cardData.supports36Months = !!card.supports36Months;
   cardData.promo36Months = !!card.promo36Months;
   cardData.specs = JSON.parse(JSON.stringify(card.specs));
@@ -10062,16 +10062,23 @@ function handleSelectAffiliateCard(cardId) {
             <!-- 좌측 그룹: [실물 카드 사진] + [통신사/카드사 뱃지 & 카드 명칭 & 매장 안내] -->
             <div class="flex items-center gap-3.5 sm:gap-4 min-w-0 flex-1">
               
-              <!-- 실물 카드 사진 박스 (전체 통신사 일관된 고화질 세로형 규격 고정) -->
-              <div id="cardPlateBox" class="w-36 sm:w-44 h-22 sm:h-28 rounded-xl shadow-md border ${theme.isDark ? 'border-white/30' : 'border-slate-300/80'} overflow-hidden relative flex items-center justify-center shrink-0 bg-white/10 transition-all p-0.5">
-                ${cardData.cardPlateImageUrl 
-                  ? `<img src="${cardData.cardPlateImageUrl}" class="w-full h-full object-contain filter drop-shadow-md rounded-lg" alt="${cardData.cardName}" />` 
-                  : `<div class="w-full h-full rounded-lg bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 text-white p-2 flex flex-col justify-between shadow-inner">
-                       <div class="flex items-center justify-between text-[8px] tracking-wider text-slate-300 font-bold"><span>${cardData.cardCompany}</span><span class="w-3.5 h-2.5 bg-amber-400/90 rounded-xs inline-block"></span></div>
-                       <div class="text-[9.5px] font-black truncate text-amber-200 leading-tight">${cardData.cardName}</div>
-                       <div class="text-[7.5px] text-slate-400 font-mono tracking-widest leading-none">•••• ••••</div>
-                     </div>`}
-              </div>
+              <!-- 실물 카드 사진 박스 (가로형/세로형 원본 카드 비율에 맞춘 유동적 크기 최적화) -->
+              ${(() => {
+                const isVertical = (cardData.cardPlateOrientation === 'vertical');
+                const boxClasses = isVertical
+                  ? `w-[94px] sm:w-[108px] h-[148px] sm:h-[170px] rounded-xl shadow-md border ${theme.isDark ? 'border-white/30' : 'border-slate-300/80'} overflow-hidden relative flex items-center justify-center shrink-0 bg-white/10 transition-all p-0.5 cursor-pointer hover:opacity-95`
+                  : `w-36 sm:w-44 h-22 sm:h-28 rounded-xl shadow-md border ${theme.isDark ? 'border-white/30' : 'border-slate-300/80'} overflow-hidden relative flex items-center justify-center shrink-0 bg-white/10 transition-all p-0.5 cursor-pointer hover:opacity-95`;
+                return `
+                <div id="cardPlateBox" class="${boxClasses}" onclick="toggleCardOrientation(event)" title="클릭 시 카드 가로/세로 방향 전환 (${isVertical ? '세로형' : '가로형'})">
+                  ${cardData.cardPlateImageUrl 
+                    ? `<img src="${cardData.cardPlateImageUrl}" class="w-full h-full object-contain filter drop-shadow-md rounded-lg" alt="${cardData.cardName}" />` 
+                    : `<div class="w-full h-full rounded-lg bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 text-white p-2 flex flex-col justify-between shadow-inner">
+                         <div class="flex items-center justify-between text-[8px] tracking-wider text-slate-300 font-bold"><span>${cardData.cardCompany}</span><span class="w-3.5 h-2.5 bg-amber-400/90 rounded-xs inline-block"></span></div>
+                         <div class="text-[9.5px] font-black truncate text-amber-200 leading-tight">${cardData.cardName}</div>
+                         <div class="text-[7.5px] text-slate-400 font-mono tracking-widest leading-none">•••• ••••</div>
+                       </div>`}
+                </div>`;
+              })()}
 
               <!-- 카드 공식 명칭 & 매장 안내 -->
               <div class="space-y-1.5 min-w-0 flex-1">

@@ -2345,3 +2345,39 @@ Write-Host "Pushed Commit: $($res.commit.sha)"
 * `scratch/render_skt_woori_tlight.png`: 우리카드 T 정품 세로형 플레이트 렌더링 확인.
 * `scratch/render_skt_hyundai_m3.png`: 현대카드 M Edition 3 정방향 세로형 플레이트 렌더링 확인.
 * `scratch/render_skt_lotte_tello.png`: 롯데카드 TELLO NE 정품 챠콜 세로형 플레이트 렌더링 확인.
+
+---
+
+## 61. [Chapter 61] 제휴카드 안내서 가로형/세로형 플레이트 원본 비율 유동적 동적 렌더링(Dynamic Orientation Layout) 구현 완료
+
+### 1) 사용자 요구사항 및 원인 분석
+* **사용자 요청**: "원본 카드이미지가 세로로 긴 카드 이미지는 세로로 뜨게 해주고 가로로긴 카드이미지는 가로로 길게 나오게 유동적으로 해줄수있나? 가로칸에 세로로된 카드이미지가 들어가니 카드이미지가 엄청 작아지네"
+* **원인 분석**:
+  - 카드 선택 함수(`handleSelectAffiliateCard`) 내부에서 `cardData.cardPlateOrientation = 'horizontal'`로 무조건 하드코딩 덮어쓰기가 발생하여 카드의 세로형 orientation 속성이 무시됨.
+  - 상단 배너 카드 플레이트 박스(`#cardPlateBox`)가 고정된 가로형 비율(`w-36 sm:w-44 h-22 sm:h-28`)로 고정되어 있어, 세로형 카드(현대카드, 우리카드, TELLO NE 등)가 들어가면 높이 112px에 묶여 가로폭이 70px 수준으로 심하게 축소되고 양옆에 불필요한 휑한 여백이 발생함.
+
+---
+
+### 2) 유동적 동적 렌더링(Dynamic Orientation Layout) 구현
+* **수정 파일**: [`index.html`](file:///C:/Users/User01/.gemini/antigravity/scratch/phone-price/index.html)
+  1. `handleSelectAffiliateCard` 함수 내 orientation 복원:
+     - `cardData.cardPlateOrientation = card.cardPlateOrientation || 'horizontal';`
+  2. `#cardPlateBox` 동적 레이아웃 스위처:
+     - **세로형 카드 (`cardData.cardPlateOrientation === 'vertical'`)**:
+       * 규격: `w-[94px] sm:w-[108px] h-[148px] sm:h-[170px]`
+       * 세로 신용카드 표준 비율(0.63:1)에 최적화하여 상단 배너 높이에 꽉 차게 큼직하고 웅장하게 서 있도록 렌더링.
+       * 가로 너비는 108px만 점유하므로 오른쪽 카드명 및 제휴 프로모션 텍스트 영역이 대폭 넓어져 가독성 극대화.
+     - **가로형 카드 (`cardData.cardPlateOrientation === 'horizontal'`)**:
+       * 규격: `w-36 sm:w-44 h-22 sm:h-28` (가로 약 176px, 세로 112px)
+       * 가로 신용카드 표준 비율(1.58:1)에 맞춰 가로로 꽉 차게 렌더링.
+  3. 원클릭 가로/세로 방향 토글 지원:
+     - `#cardPlateBox`에 `onclick="toggleCardOrientation(event)"` 및 툴팁 안내 추가로 필요 시 즉시 방향 전환 가능.
+
+---
+
+### 3) 브라우저 실시간 렌더링 검증 결과
+* [`scripts/verify_dynamic_orientation_renders.ps1`](file:///C:/Users/User01/.gemini/antigravity/scratch/phone-price/scripts/verify_dynamic_orientation_renders.ps1) 실행:
+  - `scratch/dynamic_horizontal_skt_lotte.png`: 가로형 롯데카드 T라이트가 가로로 길고 시원하게 꽉 채워 렌더링 확인.
+  - `scratch/dynamic_vertical_skt_woori.png`: 세로형 우리카드 T라이트가 위아래 높이 170px로 큼직하고 반듯하게 렌더링 확인.
+  - `scratch/dynamic_vertical_skt_hyundai.png`: 세로형 현대카드 M3가 배너 전체 높이를 꽉 채워 축소감 없이 웅장하게 렌더링 확인.
+  - `scratch/dynamic_vertical_lgu_woori.png`: 세로형 LGU+ 36우리카드가 찌그러짐 없이 완벽한 세로 비율로 렌더링 확인.
