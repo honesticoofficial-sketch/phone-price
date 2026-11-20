@@ -69,7 +69,7 @@ try {
     Eval-JS "window.db = null; window.scheduleStoreSave = function() {}; ['1','0','3','1','0','5'].forEach(d => inputPin(d));" | Out-Null
     Start-Sleep -Milliseconds 600
 
-    Write-Host "--- Test A: 추천금액 알고리즘 (0원 포함 & -5/0원 후보 검증) ---"
+    Write-Host "--- Test A: 추천금액 알고리즘 (딱 2개만 추천 & 0원 포함 검증) ---"
     $algoTest = Eval-JS @"
     (function() {
         const testMinus5 = getRecommendedPriceList(-5);
@@ -77,17 +77,17 @@ try {
         const testMinus15 = getRecommendedPriceList(-15);
         const test23 = getRecommendedPriceList(23);
 
-        const m5Ok = testMinus5[0].price === -5 && testMinus5[1].price === 0;
-        const zeroOk = testZero[0].price === 0 && testZero[1].price === 5;
-        const m15HasZero = testMinus15.some(c => c.price === 0);
-        const p23NoZero = !test23.some(c => c.price === 0) && test23[0].price === 25;
+        const m5Ok = testMinus5.length === 2 && testMinus5[0].price === -5 && testMinus5[1].price === 0;
+        const zeroOk = testZero.length === 2 && testZero[0].price === 0 && testZero[1].price === 5;
+        const m15Ok = testMinus15.length === 2 && testMinus15[0].price === -15 && testMinus15[1].price === -9;
+        const p23Ok = test23.length === 2 && test23[0].price === 25 && test23[1].price === 29;
 
         return {
             minus5: testMinus5,
             zero: testZero,
             minus15: testMinus15,
             p23: test23,
-            allPassed: m5Ok && zeroOk && m15HasZero && p23NoZero
+            allPassed: m5Ok && zeroOk && m15Ok && p23Ok
         };
     })()
 "@
@@ -97,12 +97,12 @@ try {
     Write-Host "23 Candidates: $($algoTest.p23 | ConvertTo-Json -Compress)"
 
     if ($algoTest.allPassed) {
-        Write-Host ">>> SUCCESS: -5원에 대해 -5와 0원이 1·2순위 추천으로 완벽 도출됨!" -ForegroundColor Green
+        Write-Host ">>> SUCCESS: 모든 케이스에서 군더더기 없이 딱 2개만 추천 도출됨!" -ForegroundColor Green
     } else {
-        throw "Algorithm Test Failed!"
+        throw "Algorithm Test Failed: Candidates count not 2 or values incorrect!"
     }
 
-    Write-Host "`n--- Test B: 대화형 브라우저 클릭 후 팝업 유지 & 연속 클릭 검증 ---"
+    Write-Host "`n--- Test B: 대화형 브라우저 클릭 후 금액 자동입력 및 팝업 즉시 닫힘 검증 ---"
     # Switch to Ad tab
     Eval-JS "switchTab('ad'); renderAdSection();" | Out-Null
     Start-Sleep -Milliseconds 300
@@ -113,7 +113,6 @@ try {
         if (inputs.length < 2) return { error: 'Inputs not found' };
 
         const input1 = inputs[0];
-        const input2 = inputs[1];
 
         // 1. Focus input1
         input1.focus();
@@ -122,37 +121,27 @@ try {
         const buttons1 = tooltip.querySelectorAll('button[onmousedown^=\"applyAdRecommendedPrice\"]');
 
         if (buttons1.length === 0) return { error: 'No recommendation buttons' };
+        const buttonsCount = buttons1.length;
+        const targetVal = buttons1[0].querySelector('span').innerText.replace(/[^0-9\-]/g, '');
 
-        // 2. Click button 1 (첫번째 추천금액 클릭)
+        // 2. Click recommendation button
         buttons1[0].dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
-        const isVisibleAfterClick1 = !tooltip.classList.contains('hidden');
-        const valAfterClick1 = input1.value;
-
-        // 3. Click button 2 (다시 한번 다른 추천금액 클릭 - 예: 0원 등)
-        const buttons2 = tooltip.querySelectorAll('button[onmousedown^=\"applyAdRecommendedPrice\"]');
-        let valAfterClick2 = null;
-        let isVisibleAfterClick2 = false;
-        if (buttons2.length > 1) {
-            buttons2[1].dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
-            isVisibleAfterClick2 = !tooltip.classList.contains('hidden');
-            valAfterClick2 = input1.value;
-        }
+        const isClosedAfterClick = tooltip.classList.contains('hidden');
+        const valAfterClick = input1.value;
 
         return {
             isVisible1: isVisible1,
-            buttonsCount: buttons1.length,
-            isVisibleAfterClick1: isVisibleAfterClick1,
-            valAfterClick1: valAfterClick1,
-            isVisibleAfterClick2: isVisibleAfterClick2,
-            valAfterClick2: valAfterClick2
+            buttonsCount: buttonsCount,
+            isClosedAfterClick: isClosedAfterClick,
+            valAfterClick: valAfterClick
         };
     })()
 "@
     Write-Host "Interactive Click Test: $($interactiveTest | ConvertTo-Json -Compress)"
-    if ($interactiveTest.isVisibleAfterClick1 -and $interactiveTest.isVisibleAfterClick2) {
-        Write-Host ">>> SUCCESS: 추천금액을 클릭해도 팝업이 바로 꺼지지 않고 유지되며, 다른 추천금액도 즉시 연속 클릭 가능!" -ForegroundColor Green
+    if ($interactiveTest.buttonsCount -eq 2 -and $interactiveTest.isClosedAfterClick) {
+        Write-Host ">>> SUCCESS: 추천금액이 딱 2개 노출되며, 클릭 시 금액 자동 입력과 함께 팝업이 즉시 깔끔하게 닫힘!" -ForegroundColor Green
     } else {
-        throw "Interactive Test Failed: Tooltip was prematurely closed on click!"
+        throw "Interactive Test Failed: Buttons count not 2 or popup not closed on click!"
     }
 
     Write-Host "`n--- Test C: 다른 입력칸으로 이동 시 팝업 즉시 꺼짐 방지(Blur 레이스 컨디션 해결) 검증 ---"
