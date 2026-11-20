@@ -2016,3 +2016,93 @@ Write-Host "Pushed Commit: $($res.commit.sha)"
 - 추천금액 후보 수 검증: 모든 케이스에서 정확히 2개만 표출됨 확인 (PASS)
 - 추천금액 클릭 시 금액 입력 및 팝업 즉시 닫힘 확인 (PASS)
 - 다른 칸 포커스 이동 시 부드러운 위치 전환 및 외부 클릭 닫힘 정상 동작 (PASS)
+
+
+---
+
+## 55. 📚 [시스템 학습 완료] 단콕 제휴카드 안내서 100% 자동화 파이프라인 마스터 명세서
+
+### 1) 프로젝트 개요 및 운영 철학 (Context & TDD)
+*   **목적**: 휴대폰 매장 시세표 프로그램(단콕) 내 제휴카드 혜택 안내서를 수동 입력 없이 100% 자동 생성.
+*   **개발 방식 (TDD - Test Driven Development)**:
+    - 무작정 전체 코드를 한 번에 배포하지 않음.
+    - 기준이 되는 **'SKT 엑셀(정답지)'** 데이터와 **'카드사 홈페이지 크롤링(테스트 데이터)'** 결과를 1:1로 대조하여 크롤링 정확도를 먼저 100%로 끌어올린 뒤 실전에 투입.
+*   **공용 마스터 쉐어링 로직**:
+    - 프로모션 대상 확인(예: 행사월 기준 6개월 무실적 등)은 통신사 구분 없이 동일하므로, SKT 엑셀에서 추출한 QR URL을 '마스터(Master)'로 삼아 KT와 LGU+ 안내서 생성 시에도 공용으로 쉐어링.
+
+---
+
+### 2) 필수 데이터 스키마 (15종 JSON Type Definition)
+데이터베이스 및 프론트엔드에 전달될 표준 JSON 포맷 규격:
+
+```json
+{
+  "card_company": "string", // 예: "KB국민카드", "신한카드" (카드사명 통일)
+  "card_name": "string", // 예: "T라이트 KB국민카드"
+  "card_plate_image": "string", // 고화질 카드 이미지 원본 URL 또는 저장된 로컬 경로
+  "target_telecom": "string", // "SKT", "KT", "LGU+" 중 택 1
+  "target_device": "string", // 예: "전 단말기", "아이폰18/DUO 한정" (조건 없을 시 "전 단말기")
+  "min_installment_amount": "string", // 예: "5만원 이상", "10만원 이상" (라이트할부 최소결제액)
+  "autopay_required": "boolean", // 통신비 자동이체 필수 여부 (true/false)
+  "annual_fee": {
+    "domestic": "string", // 예: "25,000원"
+    "overseas": "string" // 예: "Master 25,000원"
+  },
+  "installment_interest": {
+    "24_months": "string", // 예: "5.9%"
+    "36_months": "string" // 예: "7.0%"
+  },
+  "discount_tiers": [
+    {
+      "required_performance": "string", // 예: "30만원 이상"
+      "base_discount": "number", // 예: 8000
+      "promo_discount": "number", // 예: 17000 (없으면 0)
+      "total_monthly_discount": "number", // 예: 25000
+      "benefit_duration": "string" // 예: "24개월"
+    }
+  ],
+  "special_promo": "string | null", // 예: "아이폰 10만 캐시백" (단발성 프로모션, 없으면 null)
+  "performance_criteria": {
+    "included": ["string"], // 실적 인정 항목 리스트 (예: ["대중교통", "통신비"])
+    "excluded": ["string"] // 실적 제외 항목 리스트 (예: ["국세", "공과금", "아파트관리비"])
+  },
+  "base_card_benefits": ["string"], // 카드 자체 부가 혜택 (예: ["놀이공원 50%", "스타벅스 20%"])
+  "promo_target_condition": "string", // 예: "행사월 기준 6개월 이상 당사 무실적 고객"
+  "urls": {
+    "apply_url": "string | null", // 카드 발급 신청 URL
+    "promo_url": "string | null" // 이벤트/대상자 확인 단축 URL (SKT 엑셀 공용 마스터)
+  }
+}
+```
+
+---
+
+### 3) 엄격한 통신사 필터링 규칙 (Negative Filtering)
+- **수집 대상**: 이동통신 순수 3사(`SKT`, `KT`, `LGU+`) 모바일 제휴 라이트할부/청구할인 카드만 엄격하게 수집.
+- **절대 제외 대상 (False Positive 차단)**:
+  - ❌ 유선/인터넷 제휴: `SK브로드밴드(B tv)`, `LG헬로비전`
+  - ❌ 가전/렌탈 제휴: `LG전자`, `삼성전자 렌탈`
+  - ❌ 알뜰폰(MVNO) 제휴: `SK 7mobile`, `KTM모바일`, `U+유모바일`, `헬로모바일`, `기타 모든 알뜰폰`
+
+---
+
+### 4) 8대 카드사별 크롤링 타깃 및 특이사항 분석
+
+| 카드사 | 타깃 URL | 크롤링 특이사항 및 접근 전략 |
+| :--- | :--- | :--- |
+| **신한카드** | `https://www.shinhancard.com/pconts/html/card/coalition/CONFM70007/CONFM70007R01.html?crustMenuId=ms592` | '더보기' 버튼을 반복 클릭하여 제휴 카드 리스트 동적 로드 후 모바일 3사 카드 추출 |
+| **KB국민카드** | `https://card.kbcard.com/cards/products/credit-cards?benefit=telecom` | 통신 제휴 탭 진입 시 카드가 나열되어 있어 즉시 수집 가능 |
+| **삼성카드** | `https://www.samsungcard.com/home/card/cardinfo/PGHPPDCCardCardinfoRecommendPC001?webViewFirstPage=true&tabIndex=7` | 페이지 스크롤 다운을 통해 지연 로딩되는 카드 목록 수집 |
+| **현대카드** | `https://www.hyundaicard.com/cpc/ma/CPCMA0101_01.hc?cardflag=J` | 제휴 카드 카테고리 중 '통신' 탭 필터링 후 추출 |
+| **롯데카드** | `https://www.lottecard.co.kr/app/LPCDADA_V100.lc?typeGubun=cco` | '통신/렌탈' 카테고리 중 렌탈·인터넷을 제외하고 순수 이동통신 3사 카드만 엄격 필터링 |
+| **우리카드** | `https://pc.wooricard.com/dcpc/yh1/crd/crd02/H1CRD202S00.do?ctgrCd=S000017&hiPrdCtgrCd=M110020` | '통신/금융' 카테고리 내 이동통신 카드 추출 |
+| **농협카드** | `https://nhpay.nonghyup.com/cd/CD101000F` | 검색 방식 적용 필수. 키워드 `SKT`, `KT`, `LGU+` 검색 진행. **(주의: KT 검색 시 단어 내 'T'가 겹쳐 SKT 카드가 함께 검색될 수 있으므로 통신사명 정확 필터링 필수)** |
+| **하나카드** | `https://www.hanacard.co.kr/` | 신용카드 대분류 $\to$ '통신/교통'. 통신사별 카드가 분리되지 않고 하나의 카드 안에 3사가 통합되어 있는 경우가 많으므로 상세페이지 내 통신사 조건 정밀 파싱 필요 |
+
+---
+
+### 5) 향후 추진 단계 (Roadmap)
+1. **1단계 (학습 및 기반 마련 - 완료)**: 명세서 100% 숙지, 인수인계 수첩 기록 및 검증 준비 완료.
+2. **2단계 (SKT 정답지 대조 크롤러 개발)**: 사용자 제공 SKT 엑셀 데이터 파싱 $\to$ 8개 카드사 SKT 카드 크롤링 $\to$ 15개 필드 1:1 대조 및 일치율 100% 달성.
+3. **3단계 (KT / LGU+ 확장 및 마스터 URL 쉐어링)**: 검증된 엔진으로 KT/LGU+ 크롤링 확장 및 SKT 엑셀 마스터 QR URL 공용 연동.
+4. **4단계 (단콕 시스템 최종 통합)**: 단콕 A4 안내서 탭과 원클릭 자동 연동 파이프라인 개통.
