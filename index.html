@@ -263,11 +263,11 @@
         <div id="masterStoreSwitcher" class="hidden items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-bold gap-1">
           <span class="text-[11px] text-slate-500 px-1 font-medium">매장 보기:</span>
           <button id="switchBtn-myeongji" onclick="masterSwitchStore('myeongji')" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white text-slate-900 shadow-2xs font-extrabold transition">
-            <svg class="w-3.5 h-3.5 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <svg class="w-3.5 h-3.5 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             <span>명지점</span>
           </button>
           <button id="switchBtn-gwangan" onclick="masterSwitchStore('gwangan')" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-slate-500 hover:text-slate-900 transition font-bold">
-            <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <svg class="w-3.5 h-3.5 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             <span>광안점</span>
           </button>
           <button id="switchBtn-test_store" onclick="masterSwitchStore('test_store')" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-amber-700 hover:text-amber-900 transition font-bold" title="관리자 전용 업데이트 테스트 샌드박스">
@@ -856,17 +856,17 @@
                       <span>순서</span>
                       <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
                     </th>
-                    <th class="relative p-2.5 text-center" style="width: 115px;">
+                    <th class="relative p-2.5 text-center" style="width: 70px;">
                       <span class="flex items-center justify-center gap-0.5">
-                        게시 / 매칭
-                        <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>게시 및 기종 매칭</b><br>• <b>게시/숨김</b>: 광고 문구 복사 시 포함 여부를 설정합니다.<br>• <b>매칭</b>: 클릭 시 팝업 알림이 떠서 리베이트 단가표의 원하는 기종과 1:1로 직접 연결(출고가·공시·기준넷가 자동 연동)합니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>게시 및 기종 매칭</b><br>• <b>게시/숨김</b>: 광고 문구 복사 시 포함 여부를 설정합니다.<br>• <b>매칭</b>: 클릭 시 팝업 알림이 떠서 리베이트 단가표의 원하는 기종과 1:1로 직접 연결(출고가·공시·기준넷가 자동 연동)합니다.')" title="게시 및 매칭 안내">?</button>
+                        게시
+                        <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>게시/숨김</b><br>광고 문구 복사 시 해당 기종의 포함 여부를 설정합니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>게시/숨김</b><br>광고 문구 복사 시 해당 기종의 포함 여부를 설정합니다.')" title="게시 안내">?</button>
                       </span>
                       <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
                     </th>
-                    <th class="relative p-2.5" style="width: 170px;">
+                    <th class="relative p-2.5" style="width: 220px;">
                       <span class="flex items-center">
-                        기종명 (직접수정)
-                        <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>광고용 기종명</b><br>광고 시세표 텍스트에 표기될 모델명을 직접 수정할 수 있습니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>광고용 기종명</b><br>광고 시세표 텍스트에 표기될 모델명을 직접 수정할 수 있습니다.')" title="기종명 안내">?</button>
+                        기종 선택 & 광고 표기명
+                        <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>기종 선택 & 표기명</b><br>• <b>기종 선택</b>: 드롭다운을 눌러 단가표 기종을 변경합니다.<br>• <b>표기명</b>: 최종 광고 시세표 문구에 출력될 단축 모델명입니다. 수정 시 매장 단축명으로 자동 보관됩니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>기종 선택 & 표기명</b><br>• <b>기종 선택</b>: 드롭다운을 눌러 단가표 기종을 변경합니다.<br>• <b>표기명</b>: 최종 광고 시세표 문구에 출력될 단축 모델명입니다. 수정 시 매장 단축명으로 자동 보관됩니다.')" title="기종 선택 및 표기명 안내">?</button>
                       </span>
                       <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
                     </th>
@@ -1054,8 +1054,8 @@
             </div>
           </div>
 
-          <!-- 1.5. 출고가 대비 할인 / 마이너스 금액 빨간색 강조 설명 배너 (On/Off 토글 연동) -->
-          <div id="posterDiscountNoticeBanner" class="flex items-center justify-center gap-2 py-2 px-3 bg-rose-50/90 border border-rose-200 rounded-2xl text-xs sm:text-[13px] font-extrabold text-rose-700 shadow-2xs text-center transition">
+          <!-- 1.5. 출고가 대비 할인 / 마이너스 금액 빨간색 강조 설명 배너 (On/Off 토글 연동 & 캡처/인쇄 제외) -->
+          <div id="posterDiscountNoticeBanner" class="poster-ui-action flex items-center justify-center gap-2 py-2 px-3 bg-rose-50/90 border border-rose-200 rounded-2xl text-xs sm:text-[13px] font-extrabold text-rose-700 shadow-2xs text-center transition">
             <svg class="w-4 h-4 text-rose-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
             <span>출고가 대비 130만원 이상 할인 또는 마이너스(-) 표기 금액은 <b class="underline decoration-rose-400 font-black text-rose-800">빨간색 강조 특가</b>입니다. (마이너스 금액은 개통 시 차비/현금 지급)</span>
           </div>
@@ -1124,14 +1124,11 @@
 
           <!-- 3. [필수확인] 필수 안내 유의사항 (단일 일체형 박스 - 체크박스 항목 연동) -->
           <div id="posterNoticeBox" class="bg-rose-50/40 rounded-2xl border-2 poster-theme-border border-[#e60012]/40 p-3.5 sm:p-4 space-y-2.5 shadow-2xs transition">
-            <div class="flex items-center justify-between border-b border-rose-200/60 pb-1.5">
-              <div class="w-16"></div>
-              <div class="text-center font-black text-sm sm:text-base text-slate-900 tracking-tight flex items-center justify-center gap-1.5">
-                <svg class="w-4 h-4 poster-theme-text text-[#e60012]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            <div class="relative flex items-center justify-center border-b border-rose-200/60 pb-1.5 w-full">
+              <div class="text-center font-black text-sm sm:text-base text-slate-900 tracking-tight flex items-center justify-center">
                 <span class="border-b-2 poster-theme-border border-[#e60012] pb-0.5 px-1 font-black">[필수확인]</span>
-                <svg class="w-4 h-4 poster-theme-text text-[#e60012]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
               </div>
-              <div class="poster-ui-action flex items-center justify-end w-16">
+              <div class="poster-ui-action absolute right-0 flex items-center justify-end">
                 <button type="button" id="masterNoticeManageBtn" onclick="openMasterPosterNoticeModal()" class="hidden px-2 py-0.5 bg-white hover:bg-purple-50 text-purple-700 border border-purple-200 rounded-md text-[11px] font-black transition cursor-pointer shadow-2xs whitespace-nowrap items-center gap-1" title="마스터 전용 필수안내 마스터 항목 관리">
                   <svg class="w-3 h-3 text-purple-600 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                   <span>관리</span>
@@ -2521,6 +2518,48 @@
     </div>
 
 
+    <!-- ==================== 📱 프리미엄 공통 기종 선택기 모달 (Custom Device Picker) ==================== -->
+    <div id="customDevicePickerModal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-3 transition-all" onclick="if(event.target===this) closeCustomDevicePicker()">
+      <div class="bg-white rounded-3xl shadow-2xl border border-purple-100 w-full max-w-lg overflow-hidden flex flex-col max-h-[85vh] animate-in fade-in zoom-in-95 duration-150">
+        <!-- 헤더 -->
+        <div class="px-5 py-4 bg-gradient-to-r from-purple-700 via-indigo-700 to-purple-800 text-white flex items-center justify-between shrink-0">
+          <div class="flex items-center gap-2.5">
+            <span class="w-8 h-8 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center font-black text-sm shadow-xs">📱</span>
+            <div>
+              <h3 class="font-black text-base tracking-tight leading-tight">기종 선택</h3>
+              <p class="text-[11px] text-purple-200 font-bold" id="devicePickerContextLabel">원하는 기종을 선택하면 표에 즉시 반영됩니다.</p>
+            </div>
+          </div>
+          <button type="button" onclick="closeCustomDevicePicker()" class="w-8 h-8 rounded-xl hover:bg-white/20 text-white/80 hover:text-white font-black text-lg flex items-center justify-center transition cursor-pointer">✕</button>
+        </div>
+
+        <!-- 검색창 & 필터 탭 -->
+        <div class="p-3 bg-slate-50 border-b border-slate-200/80 space-y-2 shrink-0">
+          <div class="relative">
+            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input type="text" id="devicePickerSearchInput" oninput="filterDevicePickerList(this.value)" placeholder="기종명 검색 (예: S26, 16프로, 플립, A16...)" class="w-full pl-9 pr-8 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 shadow-2xs" />
+            <button type="button" onclick="document.getElementById('devicePickerSearchInput').value=''; filterDevicePickerList('');" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs font-bold">✕</button>
+          </div>
+          <!-- 시리즈 카테고리 필터 버튼들 -->
+          <div class="flex items-center gap-1.5 overflow-x-auto pb-0.5 no-scrollbar text-xs font-bold">
+            <button type="button" onclick="setDevicePickerCategory('ALL')" class="device-picker-cat-btn px-2.5 py-1 rounded-lg bg-purple-600 text-white font-black shadow-2xs transition cursor-pointer" data-cat="ALL">전체</button>
+            <button type="button" onclick="setDevicePickerCategory('S')" class="device-picker-cat-btn px-2.5 py-1 rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 transition cursor-pointer" data-cat="S">갤럭시 S</button>
+            <button type="button" onclick="setDevicePickerCategory('FOLD')" class="device-picker-cat-btn px-2.5 py-1 rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 transition cursor-pointer" data-cat="FOLD">Z 플립·폴드</button>
+            <button type="button" onclick="setDevicePickerCategory('IPHONE')" class="device-picker-cat-btn px-2.5 py-1 rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 transition cursor-pointer" data-cat="IPHONE">아이폰</button>
+            <button type="button" onclick="setDevicePickerCategory('ETC')" class="device-picker-cat-btn px-2.5 py-1 rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 transition cursor-pointer" data-cat="ETC">기타/여백</button>
+          </div>
+        </div>
+
+        <!-- 기종 목록 (스크롤 영역) -->
+        <div id="devicePickerListContainer" class="p-3 overflow-y-auto space-y-2 flex-1 divide-y divide-slate-100">
+          <!-- renderDevicePickerList()로 동적 렌더링 -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 💡 광고가격 추천금액 플로팅 툴팁 ==================== -->
+    <div id="adPriceRecTooltip" class="hidden fixed z-[9999] pointer-events-auto"></div>
+
     <!-- ==================== 플로팅 도움말 툴팁 풍선 (전역) ==================== -->
     <div id="globalHelpTooltip" class="fixed z-[100] bg-slate-900/95 backdrop-blur text-white text-xs rounded-xl p-3 shadow-2xl pointer-events-none opacity-0 transition-opacity duration-150 border border-slate-700 leading-relaxed font-normal hidden">
       <div class="flex items-start gap-2">
@@ -3186,11 +3225,425 @@
       saveLayouts();
     }
 
+    // ==================== 📱 단축명 & 매장별 커스텀 표기명 관리 ====================
+    function getDefaultShortName(d) {
+      if (!d) return '';
+      const name = (d.name || '').trim();
+      const id = (d.id || '').toLowerCase();
+
+      // 1. 갤럭시 S 시리즈
+      if (name.includes('S26') || id.startsWith('s26')) {
+        if (name.includes('Ultra') || name.includes('울트라') || id.includes('u')) return '#S26U';
+        if (name.includes('+') || name.includes('플러스') || id.includes('p')) return '#S26+';
+        return '#S26';
+      }
+      if (name.includes('S25') || id.startsWith('s25')) {
+        if (name.includes('Ultra') || name.includes('울트라') || id.includes('u')) return '#S25U';
+        if (name.includes('+') || name.includes('플러스') || id.includes('p')) return '#S25+';
+        if (name.includes('엣지') || name.includes('Edge') || id.includes('e')) return '#S25엣지';
+        return '#S25';
+      }
+      if (name.includes('S27') || id.startsWith('s27')) {
+        if (name.includes('Ultra') || name.includes('울트라') || id.includes('u')) return '#S27U';
+        if (name.includes('+') || name.includes('플러스') || id.includes('p')) return '#S27+';
+        return '#S27';
+      }
+
+      // 2. 아이폰 시리즈 (사용자 규칙: 아이폰17->아17, 아이폰18프로->18프로, 16프맥 등)
+      if (name.includes('아이폰') || name.includes('iPhone') || id.startsWith('ip')) {
+        const numMatch = name.match(/1[3-9]/) || id.match(/1[3-9]/);
+        const num = numMatch ? numMatch[0] : '';
+        if (name.includes('Max') || name.includes('맥스') || name.includes('프맥') || id.includes('promax')) {
+          return `${num}프맥`;
+        }
+        if (name.includes('Pro') || name.includes('프로') || id.includes('pro')) {
+          return `${num}프로`;
+        }
+        if (name.includes('+') || name.includes('Plus') || name.includes('플러스') || id.includes('p_') || id.includes('plus')) {
+          return `${num}플`;
+        }
+        return `아${num}`;
+      }
+
+      // 3. 갤럭시 Z 시리즈 (폴드 / 플립)
+      if (name.includes('폴드') || id.includes('fold')) {
+        const num = (name.match(/\d+/) || id.match(/\d+/))?.[0] || '';
+        return `#폴드${num}`;
+      }
+      if (name.includes('플립') || id.includes('flip')) {
+        const num = (name.match(/\d+/) || id.match(/\d+/))?.[0] || '';
+        return `#플립${num}`;
+      }
+
+      // 4. 갤럭시 A 시리즈
+      if (name.includes('A16') || id === 'a16') return '#A16';
+      if (name.includes('A15') || id === 'a15') return '#A15';
+
+      return d.tag || d.name || '';
+    }
+
+    function saveStoreCustomTag(storeId, devId, val) {
+      try {
+        const key = `phone_custom_tags_${storeId || 'myeongji'}`;
+        let customTags = JSON.parse(localStorage.getItem(key) || '{}');
+        customTags[devId] = val;
+        localStorage.setItem(key, JSON.stringify(customTags));
+      } catch(e) {}
+    }
+
+    function getStoreCustomTag(storeId, devId) {
+      try {
+        const key = `phone_custom_tags_${storeId || 'myeongji'}`;
+        const customTags = JSON.parse(localStorage.getItem(key) || '{}');
+        return customTags[devId] || null;
+      } catch(e) {
+        return null;
+      }
+    }
+
+    // ==================== 📱 모던 커스텀 기종 선택기 모달 (Universal Device Picker) ====================
+    let activePickerContext = null; // 'calc', 'daily', 'ad', 'poster'
+    let activePickerIndex = -1;
+    let activePickerCurrentId = null;
+    let activePickerTriggerEl = null;
+    let activePickerCategory = 'ALL';
+    let activePickerSearch = '';
+
+    function openCustomDevicePicker(context, index, currentId, triggerEl) {
+      activePickerContext = context;
+      activePickerIndex = index;
+      activePickerCurrentId = currentId;
+      activePickerTriggerEl = triggerEl;
+      activePickerCategory = 'ALL';
+      activePickerSearch = '';
+
+      const modal = document.getElementById('customDevicePickerModal');
+      const label = document.getElementById('devicePickerContextLabel');
+      const searchInput = document.getElementById('devicePickerSearchInput');
+
+      if (label) {
+        if (context === 'calc') label.innerText = '📊 넷가 산출표에 표시할 기종을 선택하세요.';
+        else if (context === 'daily') label.innerText = `📝 ${activeInputCarrier} 대리점 단가표에 표시할 기종을 선택하세요.`;
+        else if (context === 'ad') label.innerText = `📢 ${activeAdCarrier} 광고 단가표에 연결할 기종을 선택하세요.`;
+        else if (context === 'poster') label.innerText = '📋 시세표 포스터에 노출할 기종을 선택하세요.';
+      }
+
+      if (searchInput) searchInput.value = '';
+
+      document.querySelectorAll('.device-picker-cat-btn').forEach(btn => {
+        if (btn.dataset.cat === 'ALL') {
+          btn.className = "device-picker-cat-btn px-2.5 py-1 rounded-lg bg-purple-600 text-white font-black shadow-2xs transition cursor-pointer";
+        } else {
+          btn.className = "device-picker-cat-btn px-2.5 py-1 rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 transition cursor-pointer";
+        }
+      });
+
+      renderDevicePickerList();
+      if (modal) {
+        modal.classList.remove('hidden');
+        setTimeout(() => { if (searchInput) searchInput.focus(); }, 50);
+      }
+    }
+
+    function closeCustomDevicePicker() {
+      const modal = document.getElementById('customDevicePickerModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function setDevicePickerCategory(cat) {
+      activePickerCategory = cat;
+      document.querySelectorAll('.device-picker-cat-btn').forEach(btn => {
+        if (btn.dataset.cat === cat) {
+          btn.className = "device-picker-cat-btn px-2.5 py-1 rounded-lg bg-purple-600 text-white font-black shadow-2xs transition cursor-pointer";
+        } else {
+          btn.className = "device-picker-cat-btn px-2.5 py-1 rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 transition cursor-pointer";
+        }
+      });
+      renderDevicePickerList();
+    }
+
+    function filterDevicePickerList(query) {
+      activePickerSearch = (query || '').trim().toLowerCase();
+      renderDevicePickerList();
+    }
+
+    function renderDevicePickerList() {
+      const container = document.getElementById('devicePickerListContainer');
+      if (!container) return;
+
+      const groups = [
+        { key: 'S', label: '갤럭시 S 시리즈', color: 'purple', badge: '🟣 S시리즈', items: devices.filter(d => d.group === 'S' || (!d.group && (d.name || '').includes('S'))) },
+        { key: 'FOLD', label: '갤럭시 Z 플립·폴드', color: 'blue', badge: '🔵 Z폴더블', items: devices.filter(d => d.group === 'FOLD' || (!d.group && ((d.name || '').includes('플립') || (d.name || '').includes('폴드')))) },
+        { key: 'IPHONE', label: '아이폰 시리즈', color: 'emerald', badge: '🍏 아이폰', items: devices.filter(d => d.group === 'IPHONE' || (!d.group && ((d.name || '').includes('아이폰') || (d.name || '').includes('15') || (d.name || '').includes('16') || (d.name || '').includes('17') || (d.name || '').includes('18')))) },
+        { key: 'ETC', label: '보급형 및 기타', color: 'amber', badge: '🟡 기타', items: devices.filter(d => d.group !== 'S' && d.group !== 'FOLD' && d.group !== 'IPHONE' && !(d.name || '').includes('S') && !(d.name || '').includes('플립') && !(d.name || '').includes('폴드') && !(d.name || '').includes('아이폰')) }
+      ];
+
+      let filteredGroups = groups;
+      if (activePickerCategory !== 'ALL') {
+        filteredGroups = groups.filter(g => g.key === activePickerCategory);
+      }
+
+      let html = '';
+
+      if (activePickerContext !== 'poster' && (activePickerCategory === 'ALL' || activePickerCategory === 'ETC')) {
+        if (!activePickerSearch || '구분선 여백 칸'.includes(activePickerSearch)) {
+          const isSel = (activePickerCurrentId === 'empty');
+          html += `
+            <div class="pt-1 pb-2">
+              <div onclick="onSelectDeviceFromPicker('empty')" class="p-2.5 rounded-2xl border-2 border-dashed transition cursor-pointer flex items-center justify-between ${isSel ? 'border-purple-500 bg-purple-50/70' : 'border-slate-300 hover:border-purple-300 hover:bg-slate-50'}">
+                <div class="flex items-center gap-2">
+                  <span class="w-7 h-7 rounded-lg bg-slate-200 text-slate-500 flex items-center justify-center font-bold text-xs">⬜</span>
+                  <div>
+                    <div class="font-black text-xs text-slate-700">-- 구분선 (여백 칸) --</div>
+                    <div class="text-[10px] text-slate-400">표 중간에 빈 구분선을 배치하여 행을 분리합니다.</div>
+                  </div>
+                </div>
+                ${isSel ? '<span class="px-2 py-0.5 rounded-md text-[11px] font-black bg-purple-600 text-white">✓ 선택됨</span>' : '<span class="text-xs text-slate-400 font-bold hover:text-purple-600">선택</span>'}
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      let totalMatches = 0;
+
+      filteredGroups.forEach(g => {
+        let matchingItems = g.items;
+        if (activePickerSearch) {
+          matchingItems = matchingItems.filter(d => {
+            const name = (d.name || '').toLowerCase();
+            const tag = (d.tag || '').toLowerCase();
+            const shortName = getDefaultShortName(d).toLowerCase();
+            return name.includes(activePickerSearch) || tag.includes(activePickerSearch) || shortName.includes(activePickerSearch);
+          });
+        }
+
+        if (matchingItems.length === 0) return;
+        totalMatches += matchingItems.length;
+
+        html += `
+          <div class="pt-2 pb-1">
+            <div class="flex items-center gap-1.5 px-1 pb-1.5 font-black text-xs text-slate-700">
+              <span>${g.badge}</span>
+              <span class="text-[11px] text-slate-400 font-normal">(${matchingItems.length}개)</span>
+            </div>
+            <div class="space-y-1.5">
+        `;
+
+        matchingItems.forEach(d => {
+          const isSel = (d.id === activePickerCurrentId);
+          const shortName = getDefaultShortName(d);
+          const relPrice = (d.prices && d.prices.SK !== undefined) ? d.prices.SK : (d.price || 0);
+
+          html += `
+            <div onclick="onSelectDeviceFromPicker('${d.id}')" class="p-2.5 rounded-2xl border transition cursor-pointer flex items-center justify-between group ${isSel ? 'border-2 border-purple-600 bg-purple-50/70 shadow-xs' : 'border-slate-200 hover:border-purple-300 hover:bg-purple-50/30'}">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="px-2 py-0.5 rounded-lg text-[10px] font-black shrink-0 bg-slate-100 group-hover:bg-purple-100 group-hover:text-purple-700 text-slate-600 transition border border-slate-200">${shortName}</span>
+                <div class="truncate">
+                  <div class="font-black text-xs text-slate-900 group-hover:text-purple-900 transition truncate">${d.name}</div>
+                  <div class="text-[10px] text-slate-400 font-medium">기본 출고가: ${d.coming ? '출시예정' : relPrice + '만'}</div>
+                </div>
+              </div>
+              <div class="shrink-0 pl-2">
+                ${isSel ? '<span class="px-2.5 py-1 rounded-xl text-xs font-black bg-purple-600 text-white shadow-2xs">✓ 선택됨</span>' : '<span class="px-2.5 py-1 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 group-hover:bg-purple-600 group-hover:text-white group-hover:border-purple-600 transition shadow-2xs">선택</span>'}
+              </div>
+            </div>
+          `;
+        });
+
+        html += `
+            </div>
+          </div>
+        `;
+      });
+
+      if (totalMatches === 0 && (!html || html.trim() === '')) {
+        html = `
+          <div class="py-12 text-center text-slate-400 space-y-1">
+            <svg class="w-8 h-8 mx-auto text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <div class="font-bold text-xs text-slate-600">검색된 기종이 없습니다.</div>
+            <div class="text-[11px]">다른 검색어를 입력하시거나 카테고리를 변경해 보세요.</div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = html;
+    }
+
+    function onSelectDeviceFromPicker(devId) {
+      if (activePickerContext === 'calc') {
+        updateCalcRow(activePickerIndex, devId);
+      } else if (activePickerContext === 'daily') {
+        updateDailyRow(activePickerIndex, devId);
+      } else if (activePickerContext === 'ad') {
+        updateAdRowDevice(activePickerIndex, devId);
+      } else if (activePickerContext === 'poster') {
+        onPosterDeviceSelectFromPicker(activePickerIndex, devId);
+      }
+      closeCustomDevicePicker();
+    }
+
+    // 광고표 행 기종 변경 (드롭다운 방식 & 단축명 자동 표기 & 커스텀 명칭 유지)
+    function updateAdRowDevice(idx, devId) {
+      if (!adCarrierOrders[activeAdCarrier]) {
+        adCarrierOrders[activeAdCarrier] = devices.map(d => d.id);
+      }
+      adCarrierOrders[activeAdCarrier][idx] = devId;
+
+      if (devId !== 'empty') {
+        const d = devices.find(x => x.id === devId);
+        if (d) {
+          if (!d.ad) d.ad = {};
+          if (!d.ad[activeAdCarrier]) d.ad[activeAdCarrier] = {};
+
+          const storeKey = currentStoreId || 'myeongji';
+          let customTag = getStoreCustomTag(storeKey, devId);
+          if (!customTag) {
+            customTag = getDefaultShortName(d);
+          }
+          d.ad[activeAdCarrier].tag = customTag;
+        }
+      }
+
+      saveAdCarrierOrders();
+      renderAdSection();
+    }
+
+    // 시세표 포스터 기종 변경 (피커 연동)
+    function onPosterDeviceSelectFromPicker(rowIndex, devId) {
+      if (devId === 'empty') return;
+      if (!posterDeviceRows) posterDeviceRows = [];
+      posterDeviceRows[rowIndex] = devId;
+      const storeKey = currentStoreId || 'myeongji';
+      localStorage.setItem(`phone_ad_poster_device_rows_${storeKey}`, JSON.stringify(posterDeviceRows));
+      renderAdPosterTable();
+      saveAdPosterSettings(false);
+    }
+
+    // ==================== 💡 광고가격 추천금액 (끝자리 5·9 & 마진 흑자 근접가) ====================
+    let activeAdPriceInput = null;
+    let activeAdPriceDeviceId = null;
+    let activeAdPriceType = null;
+
+    function getRecommendedPrice(netPrice) {
+      if (netPrice === null || netPrice === undefined || isNaN(netPrice)) return null;
+      const N = Number(netPrice);
+      const start = Math.ceil(N);
+      for (let p = start; p <= start + 30; p++) {
+        const lastDigit = Math.abs(p) % 10;
+        if (lastDigit === 5 || lastDigit === 9) {
+          return p;
+        }
+      }
+      return start;
+    }
+
+    function getNextRecommendedPrice(rec1) {
+      if (rec1 === null || rec1 === undefined) return null;
+      const start = Number(rec1) + 1;
+      for (let p = start; p <= start + 30; p++) {
+        const lastDigit = Math.abs(p) % 10;
+        if (lastDigit === 5 || lastDigit === 9) {
+          return p;
+        }
+      }
+      return start;
+    }
+
+    function showAdPriceRecTooltip(targetEl, deviceId, type, netPrice) {
+      const tooltip = document.getElementById('adPriceRecTooltip');
+      if (!tooltip || netPrice === null || isNaN(netPrice)) return;
+
+      const rec1 = getRecommendedPrice(netPrice);
+      if (rec1 === null) return;
+      const rec2 = getNextRecommendedPrice(rec1);
+
+      const m1 = (rec1 - netPrice).toFixed(1).replace(/\.0$/, '');
+      const m2 = (rec2 - netPrice).toFixed(1).replace(/\.0$/, '');
+
+      const rect = targetEl.getBoundingClientRect();
+      tooltip.style.top = `${rect.bottom + 6}px`;
+      tooltip.style.left = `${Math.max(10, rect.left - 25)}px`;
+
+      tooltip.innerHTML = `
+        <div class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-900/95 backdrop-blur-md text-white rounded-xl shadow-2xl border border-purple-500/40 text-xs font-bold animate-in fade-in zoom-in-95 duration-150">
+          <span class="text-[11px] text-amber-300 font-black flex items-center gap-1 shrink-0">
+            <span>💡 추천금액:</span>
+          </span>
+          <button type="button" onmousedown="applyAdRecommendedPrice(event, '${rec1}', '${deviceId}', '${type}')" class="px-2.5 py-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 active:scale-95 text-white font-black text-xs rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer ring-1 ring-purple-300/40" title="클릭 시 ${rec1}만 자동 입력">
+            <span>${rec1}만</span>
+            <span class="text-[10px] text-emerald-300 font-extrabold">(마진 +${m1}만)</span>
+          </button>
+          <button type="button" onmousedown="applyAdRecommendedPrice(event, '${rec2}', '${deviceId}', '${type}')" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 text-[11px] font-bold rounded-lg transition flex items-center gap-0.5 cursor-pointer border border-slate-700" title="클릭 시 ${rec2}만 자동 입력">
+            <span>${rec2}만</span>
+            <span class="text-[9px] text-slate-400 font-medium">(+${m2}만)</span>
+          </button>
+        </div>
+      `;
+      tooltip.classList.remove('hidden');
+    }
+
+    function hideAdPriceRecTooltip() {
+      const tooltip = document.getElementById('adPriceRecTooltip');
+      if (tooltip) tooltip.classList.add('hidden');
+    }
+
+    function applyAdRecommendedPrice(event, val, deviceId, type) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      if (activeAdPriceInput) {
+        activeAdPriceInput.value = val;
+      }
+      updateAdValLive(deviceId, type, val);
+      updateAdValCommit(deviceId, type, val, activeAdPriceInput);
+      hideAdPriceRecTooltip();
+      if (activeAdPriceInput) {
+        activeAdPriceInput.focus();
+      }
+    }
+
+    function onAdPriceInputFocus(event, deviceId, type) {
+      activeAdPriceInput = event.target;
+      activeAdPriceDeviceId = deviceId;
+      activeAdPriceType = type;
+
+      const d = devices.find(x => x.id === deviceId);
+      if (!d) return;
+
+      const netPrice = calcNet(d, activeAdCarrier, type, adMarginBase);
+      showAdPriceRecTooltip(event.target, deviceId, type, netPrice);
+    }
+
+    function onAdPriceInputBlur(event) {
+      setTimeout(() => {
+        hideAdPriceRecTooltip();
+      }, 200);
+    }
+
+    window.addEventListener('scroll', () => { hideAdPriceRecTooltip(); }, { passive: true });
+    window.addEventListener('resize', () => { hideAdPriceRecTooltip(); }, { passive: true });
+
     function buildModelOptions(selectedId) {
       let html = `<option value="empty" ${selectedId === 'empty' ? 'selected' : ''}>-- 구분선 (여백 칸) --</option>`;
-      devices.forEach(opt => {
-        const cleanName = (opt.name || '').replace(/^#[^\s]+\s*/, '').trim();
-        html += `<option value="${opt.id}" ${opt.id === selectedId ? 'selected' : ''}>${cleanName || opt.name}</option>`;
+      const groups = [
+        { label: '갤럭시 S시리즈', items: devices.filter(d => d.group === 'S' || (!d.group && (d.name || '').includes('S'))) },
+        { label: '갤럭시 Z 플립·폴드', items: devices.filter(d => d.group === 'FOLD' || (!d.group && ((d.name || '').includes('플립') || (d.name || '').includes('폴드')))) },
+        { label: '아이폰 시리즈', items: devices.filter(d => d.group === 'IPHONE' || (!d.group && ((d.name || '').includes('아이폰') || (d.name || '').includes('15') || (d.name || '').includes('16') || (d.name || '').includes('17') || (d.name || '').includes('18')))) },
+        { label: '기타 기종', items: devices.filter(d => d.group !== 'S' && d.group !== 'FOLD' && d.group !== 'IPHONE' && !(d.name || '').includes('S') && !(d.name || '').includes('플립') && !(d.name || '').includes('폴드') && !(d.name || '').includes('아이폰')) }
+      ];
+
+      groups.forEach(g => {
+        if (g.items.length === 0) return;
+        html += `<optgroup label="${g.label}">`;
+        g.items.forEach(d => {
+          if (d.id === 'empty') return;
+          const isSel = (d.id === selectedId) ? 'selected' : '';
+          const cleanName = (d.name || '').replace(/^#[^\s]+\s*/, '').trim();
+          html += `<option value="${d.id}" ${isSel}>${cleanName || d.name}</option>`;
+        });
+        html += `</optgroup>`;
       });
       return html;
     }
@@ -4051,9 +4504,10 @@
                      ondragstart="onRowDragStart(event, ${idx}, 'calc')" ondragend="onRowDragEnd(event)">
                   <svg class="w-3.5 h-3.5 pointer-events-none" fill="currentColor" viewBox="0 0 20 20"><path d="M7 2a2 2 0 10.001 4.001A2 2 0 007 2zm0 6a2 2 0 10.001 4.001A2 2 0 007 8zm0 6a2 2 0 10.001 4.001A2 2 0 007 14zm6-12a2 2 0 10.001 4.001A2 2 0 0013 2zm0 6a2 2 0 10.001 4.001A2 2 0 0013 8zm0 6a2 2 0 10.001 4.001A2 2 0 0013 14z"></path></svg>
                 </div>
-                <select onchange="updateCalcRow(${idx}, this.value)" class="w-full px-2 py-1 bg-white border border-dashed border-slate-300 rounded-lg text-xs font-semibold text-slate-500 focus:ring-1 focus:ring-blue-500">
-                  ${buildModelOptions('empty')}
-                </select>
+                <button type="button" onclick="openCustomDevicePicker('calc', ${idx}, 'empty', this)" class="device-picker-trigger flex items-center justify-between gap-1 w-full px-2.5 py-1 bg-white hover:bg-purple-50/50 border border-dashed border-slate-300 hover:border-purple-400 rounded-lg text-xs font-bold text-slate-500 transition shadow-2xs group cursor-pointer text-left" data-device-id="empty" title="클릭하여 기종 변경">
+                  <span class="truncate">-- 구분선 (여백 칸) --</span>
+                  <svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-purple-600 shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                </button>
                 <button onclick="deleteCalcRow(${idx})" class="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50 text-xs transition" title="행 삭제">✕</button>
               </div>
             </td>
@@ -4096,9 +4550,10 @@
                    ondragstart="onRowDragStart(event, ${idx}, 'calc')" ondragend="onRowDragEnd(event)">
                 <svg class="w-3.5 h-3.5 pointer-events-none" fill="currentColor" viewBox="0 0 20 20"><path d="M7 2a2 2 0 10.001 4.001A2 2 0 007 2zm0 6a2 2 0 10.001 4.001A2 2 0 007 8zm0 6a2 2 0 10.001 4.001A2 2 0 007 14zm6-12a2 2 0 10.001 4.001A2 2 0 0013 2zm0 6a2 2 0 10.001 4.001A2 2 0 0013 8zm0 6a2 2 0 10.001 4.001A2 2 0 0013 14z"></path></svg>
               </div>
-              <select onchange="updateCalcRow(${idx}, this.value)" class="w-full px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                ${buildModelOptions(d.id)}
-              </select>
+              <button type="button" onclick="openCustomDevicePicker('calc', ${idx}, '${d.id}', this)" class="device-picker-trigger flex items-center justify-between gap-1 w-full px-2.5 py-1 bg-white hover:bg-purple-50/50 border border-slate-300 hover:border-purple-400 rounded-lg text-xs font-bold text-slate-900 transition shadow-2xs group cursor-pointer text-left" data-device-id="${d.id}" data-device-name="${d.name}" title="클릭하여 기종 변경">
+                <span class="truncate">${d.name}</span>
+                <svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-purple-600 shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+              </button>
               <button onclick="deleteCalcRow(${idx})" class="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50 text-xs transition" title="행 삭제">✕</button>
             </div>
             <div class="text-[10px] text-slate-400 font-normal pl-6">출고가: ${d.coming ? '출시전' : priceSummary}</div>
@@ -4144,9 +4599,10 @@
               </div>
             </td>
             <td class="p-2">
-              <select onchange="updateDailyRow(${idx}, this.value)" class="w-full px-2 py-1 bg-white border border-dashed border-slate-300 rounded-lg text-xs font-semibold text-slate-500 focus:ring-1 focus:ring-blue-500">
-                ${buildModelOptions('empty')}
-              </select>
+              <button type="button" onclick="openCustomDevicePicker('daily', ${idx}, 'empty', this)" class="device-picker-trigger flex items-center justify-between gap-1 w-full px-2.5 py-1 bg-white hover:bg-purple-50/50 border border-dashed border-slate-300 hover:border-purple-400 rounded-lg text-xs font-bold text-slate-500 transition shadow-2xs group cursor-pointer text-left" data-device-id="empty" title="클릭하여 기종 변경">
+                <span class="truncate">-- 구분선 (여백 칸) --</span>
+                <svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-purple-600 shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+              </button>
             </td>
             <td colspan="4" class="p-2.5 bg-slate-50/40 text-slate-400 text-center select-none text-xs font-medium tracking-widest">
               <span class="inline-flex items-center gap-2 text-slate-400">
@@ -4186,9 +4642,10 @@
             </div>
           </td>
           <td class="p-2 font-bold text-slate-800 overflow-hidden">
-            <select onchange="updateDailyRow(${idx}, this.value)" class="w-full px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-800 focus:ring-1 focus:ring-blue-500">
-              ${buildModelOptions(d.id)}
-            </select>
+            <button type="button" onclick="openCustomDevicePicker('daily', ${idx}, '${d.id}', this)" class="device-picker-trigger flex items-center justify-between gap-1 w-full px-2.5 py-1 bg-white hover:bg-purple-50/50 border border-slate-300 hover:border-purple-400 rounded-lg text-xs font-bold text-slate-800 transition shadow-2xs group cursor-pointer text-left" data-device-id="${d.id}" data-device-name="${d.name}" title="클릭하여 기종 변경">
+              <span class="truncate">${d.name}</span>
+              <svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-purple-600 shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+            </button>
           </td>
           <!-- 번이 단가 -->
           <td class="p-2 text-center overflow-hidden">
@@ -4492,6 +4949,8 @@
         : (d.ad[activeAdCarrier]?.tag || d.tag || '');
 
       if (String(origVal).trim() !== String(val).trim()) {
+        const storeKey = currentStoreId || 'myeongji';
+        saveStoreCustomTag(storeKey, id, val);
         scheduleStoreSave('성지특가 광고', `${d.name} (${activeAdCarrier}) 태그명: ${origVal} → ${val}`);
       }
       if (inputEl) inputEl.dataset.origVal = val;
@@ -4535,9 +4994,9 @@
             <td class="p-2 text-center">
               <div class="flex items-center justify-center gap-1">
                 <button onclick="deleteAdRow('${activeAdCarrier}', ${idx})" class="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50 text-xs transition" title="구분선 삭제">✕</button>
-                <button onclick="openAdDeviceMatchModal('${activeAdCarrier}', ${idx})" class="px-2 py-1 rounded-lg text-xs font-black bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-300 shadow-2xs transition flex items-center gap-0.5" title="이 구분선을 특정 기종과 1:1 매칭">
-                  <svg class="w-3 h-3 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
-                  <span>매칭</span>
+                <button type="button" onclick="openCustomDevicePicker('ad', ${idx}, 'empty', this)" class="px-2 py-1 rounded-lg text-xs font-black bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 shadow-2xs transition flex items-center gap-0.5 cursor-pointer" title="이 구분선을 특정 기종으로 변경">
+                  <svg class="w-3 h-3 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                  <span>기종선택</span>
                 </button>
               </div>
             </td>
@@ -4566,7 +5025,8 @@
         const marginMnp = calcAdMargin(d, activeAdCarrier, 'mnp');
         const marginChg = calcAdMargin(d, activeAdCarrier, 'chg');
 
-        const currentTag = (adData.tag !== undefined && adData.tag !== null && adData.tag !== '') ? adData.tag : d.tag;
+        const storeKey = currentStoreId || 'myeongji';
+        const currentTag = (adData.tag !== undefined && adData.tag !== null && adData.tag !== '') ? adData.tag : (getStoreCustomTag(storeKey, d.id) || getDefaultShortName(d));
 
         tr.innerHTML = `
           <!-- 순서 (드래그 핸들 ⠿ & ▲/▼ 끌올 지원) -->
@@ -4588,39 +5048,36 @@
             </div>
           </td>
 
-          <!-- 숨김 / 게시 토글 및 기종 매칭 버튼 -->
+          <!-- 숨김 / 게시 토글 -->
           <td class="p-2 text-center overflow-hidden">
-            <div class="flex items-center justify-center gap-1">
-              <button onclick="toggleAdHidden('${d.id}')"
-                      class="px-2 py-1 rounded-lg text-xs font-bold border transition ${isHidden ? 'bg-slate-100 text-slate-400 border-slate-300' : 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100'}"
-                      title="${isHidden ? '현재 광고 문구에서 숨김' : '현재 광고 문구에 게시 중'}">
-                ${isHidden ? '숨김' : '게시'}
-              </button>
-              <button onclick="openAdDeviceMatchModal('${activeAdCarrier}', ${idx})"
-                      class="px-2 py-1 rounded-lg text-xs font-black bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-300 shadow-2xs transition flex items-center gap-0.5"
-                      title="리베이트 단가표 기종과 1:1 매칭 (출고가·공시·리베이트 자동연동)">
-                <svg class="w-3 h-3 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
-                <span>매칭</span>
-              </button>
-            </div>
+            <button onclick="toggleAdHidden('${d.id}')"
+                    class="px-2.5 py-1 rounded-lg text-xs font-black border transition ${isHidden ? 'bg-slate-100 text-slate-400 border-slate-300' : 'bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100'}"
+                    title="${isHidden ? '현재 광고 문구에서 숨김' : '현재 광고 문구에 게시 중'}">
+              ${isHidden ? '숨김' : '게시'}
+            </button>
           </td>
 
-          <!-- 기종명 직접 수정 (광고 홍보용 표기명) -->
+          <!-- 기종 선택 드롭다운 & 광고 표기명 직접 수정 -->
           <td class="p-2 overflow-hidden">
-            <div class="space-y-0.5">
-              <input type="text"
-                     value="${currentTag}"
-                     data-orig-val="${currentTag}"
-                     placeholder="${d.tag}"
-                     title="광고 문구에 표시될 홍보명 (기종 변경은 좌측 [매칭] 버튼 클릭)"
-                     onfocus="this.select(); if(this.dataset.origVal===undefined) this.dataset.origVal = this.value"
-                     onkeydown="if(event.key==='Enter') this.blur(); if(event.key==='Escape'){this.value=this.dataset.origVal||''; this.blur();}"
-                     oninput="updateAdTagLive('${d.id}', this.value)"
-                     onchange="updateAdTagCommit('${d.id}', this.value, this)"
-                     class="w-full px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
-              <div class="text-[10px] text-slate-400 pl-0.5 truncate select-none flex items-center justify-between">
-                <span>연동: ${d.name}</span>
-                <span class="text-amber-600 font-semibold cursor-pointer hover:underline" onclick="openAdDeviceMatchModal('${activeAdCarrier}', ${idx})" title="리베이트 기종 변경">기종변경 ❯</span>
+            <div class="space-y-1">
+              <!-- 기종 선택 드롭다운 버튼 (모던 디바이스 피커 연동) -->
+              <button type="button" onclick="openCustomDevicePicker('ad', ${idx}, '${d.id}', this)" class="device-picker-trigger flex items-center justify-between gap-1 w-full px-2 py-1 bg-slate-50 hover:bg-purple-50/50 border border-slate-200 hover:border-purple-300 rounded-lg text-xs font-black text-slate-800 transition text-left shadow-2xs group cursor-pointer" data-device-id="${d.id}" data-device-name="${d.name}" title="클릭하여 기종 변경">
+                <span class="truncate">${d.name}</span>
+                <svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-purple-600 shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+              </button>
+              <!-- 최종문구 반영 기기명 (단축명) 직접 수정 input -->
+              <div class="flex items-center gap-1">
+                <span class="text-[10px] text-purple-700 font-extrabold shrink-0 bg-purple-50 px-1 py-0.5 rounded border border-purple-200">표기명</span>
+                <input type="text"
+                       value="${currentTag}"
+                       data-orig-val="${currentTag}"
+                       placeholder="${getDefaultShortName(d)}"
+                       title="최종 광고 문구에 반영되는 단축 기기명 (수정 시 매장 단축명으로 자동 보관)"
+                       onfocus="this.select(); if(this.dataset.origVal===undefined) this.dataset.origVal = this.value"
+                       onkeydown="if(event.key==='Enter') this.blur(); if(event.key==='Escape'){this.value=this.dataset.origVal||''; this.blur();}"
+                       oninput="updateAdTagLive('${d.id}', this.value)"
+                       onchange="updateAdTagCommit('${d.id}', this.value, this)"
+                       class="flex-1 min-w-0 px-2 py-0.5 bg-white border border-slate-300 rounded text-xs font-black text-slate-900 focus:ring-2 focus:ring-purple-500 focus:outline-none" />
               </div>
             </div>
           </td>
@@ -4630,28 +5087,30 @@
             ${netMnp !== null ? netMnp : '품절'} / ${netChg !== null ? netChg : '품절'}
           </td>
 
-          <!-- 번이가 입력 -->
-          <td class="p-2 text-center overflow-hidden">
+          <!-- 번이가 입력 (추천금액 툴팁 연동) -->
+          <td class="p-2 text-center overflow-visible relative">
             <input type="text"
                    value="${adData.mnp}"
                    data-orig-val="${adData.mnp}"
-                   onfocus="this.select(); if(this.dataset.origVal===undefined) this.dataset.origVal = this.value"
+                   onfocus="onAdPriceInputFocus(event, '${d.id}', 'mnp')"
+                   onblur="onAdPriceInputBlur(event)"
                    onkeydown="if(event.key==='Enter') this.blur(); if(event.key==='Escape'){this.value=this.dataset.origVal||''; this.blur();}"
                    oninput="updateAdValLive('${d.id}', 'mnp', this.value)"
                    onchange="updateAdValCommit('${d.id}', 'mnp', this.value, this)"
-                   class="w-full max-w-[80px] px-2 py-1 text-center font-black bg-white border border-slate-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+                   class="w-full max-w-[85px] px-2 py-1 text-center font-black bg-white border border-slate-300 rounded text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none" />
           </td>
 
-          <!-- 기변가 입력 -->
-          <td class="p-2 text-center overflow-hidden">
+          <!-- 기변가 입력 (추천금액 툴팁 연동) -->
+          <td class="p-2 text-center overflow-visible relative">
             <input type="text"
                    value="${adData.chg}"
                    data-orig-val="${adData.chg}"
-                   onfocus="this.select(); if(this.dataset.origVal===undefined) this.dataset.origVal = this.value"
+                   onfocus="onAdPriceInputFocus(event, '${d.id}', 'chg')"
+                   onblur="onAdPriceInputBlur(event)"
                    onkeydown="if(event.key==='Enter') this.blur(); if(event.key==='Escape'){this.value=this.dataset.origVal||''; this.blur();}"
                    oninput="updateAdValLive('${d.id}', 'chg', this.value)"
                    onchange="updateAdValCommit('${d.id}', 'chg', this.value, this)"
-                   class="w-full max-w-[80px] px-2 py-1 text-center font-black bg-white border border-slate-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+                   class="w-full max-w-[85px] px-2 py-1 text-center font-black bg-white border border-slate-300 rounded text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none" />
           </td>
 
           <!-- 예상 마진 (번/기) 실시간 노출 -->
@@ -5402,6 +5861,12 @@
       } else if (currentStoreId === 'test_store' && btnT) {
         btnT.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500 text-white shadow-2xs font-extrabold transition";
       }
+
+      // 명지점과 광안점 집 모양 아이콘을 모두 세련된 보라색(단콕 퍼플 테마)으로 완벽 통일
+      const svgM = btnM.querySelector('svg');
+      const svgG = btnG.querySelector('svg');
+      if (svgM) svgM.setAttribute('class', 'w-3.5 h-3.5 text-purple-600');
+      if (svgG) svgG.setAttribute('class', 'w-3.5 h-3.5 text-purple-600');
     }
 
     function masterSwitchStore(targetStoreId) {
@@ -9877,8 +10342,8 @@ function handleSelectAffiliateCard(cardId) {
             </p>
           ` : `
             <h2 class="text-base sm:text-lg font-black tracking-tight leading-tight px-2 ${theme.titleText}">
-              매월 약 <span id="installmentMonthlyAmt" contenteditable="true" onblur="handleCustomInstallmentAmount('monthly', this.innerText)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}" class="underline decoration-2 font-bold cursor-pointer hover:bg-black/10 rounded px-1 transition-colors" title="클릭하여 월 결제액 직접 수정">${monthlyFormatted}원</span> 상당 청구할인으로 
-              총 <span id="installmentTotalAmt" contenteditable="true" onblur="handleCustomInstallmentAmount('total', this.innerText)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}" class="underline decoration-2 font-black cursor-pointer hover:bg-black/10 rounded px-1 transition-colors" title="클릭하여 총 결제액 직접 수정">${totalFormatted}원</span> 할인 혜택
+              매월 약 <span id="installmentMonthlyAmt" contenteditable="true" onblur="handleCustomInstallmentAmount('monthly', this.innerText)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}" class="inline-block border-b-2 border-current pb-[1px] font-bold cursor-pointer hover:bg-black/10 rounded px-1 transition-colors" title="클릭하여 월 결제액 직접 수정">${monthlyFormatted}원</span> 상당 청구할인으로 
+              총 <span id="installmentTotalAmt" contenteditable="true" onblur="handleCustomInstallmentAmount('total', this.innerText)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}" class="inline-block border-b-2 border-current pb-[1px] font-black cursor-pointer hover:bg-black/10 rounded px-1 transition-colors" title="클릭하여 총 결제액 직접 수정">${totalFormatted}원</span> 할인 혜택
             </h2>
             <p class="text-xs font-bold opacity-90 ${theme.subText}">
               ${cardData.summary?.installmentSub || '※ 단말기 잔여 할부원금은 아래 매월 카드 이용 실적 청구할인 혜택으로 전액 상쇄됩니다.'}
@@ -12575,9 +13040,10 @@ JSON 규격:
                 <button type="button" onclick="movePosterDeviceRow(${rowIndex}, -1)" ${rowIndex === 0 ? 'disabled' : ''} class="w-3 h-2.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[7px] flex items-center justify-center cursor-pointer" title="위로 한 칸">▲</button>
                 <button type="button" onclick="movePosterDeviceRow(${rowIndex}, 1)" ${rowIndex === posterDeviceRows.length - 1 ? 'disabled' : ''} class="w-3 h-2.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[7px] flex items-center justify-center cursor-pointer" title="아래로 한 칸">▼</button>
               </div>
-              <select class="poster-model-select flex-1 min-w-0 bg-transparent font-black text-slate-950 text-xs sm:text-[13px] text-center focus:outline-none focus:ring-1 focus:ring-rose-500 rounded py-1 px-0.5 cursor-pointer" onchange="onPosterDeviceRowSelect(this, ${rowIndex})">
-                ${buildPosterDeviceOptions(d.id)}
-              </select>
+              <button type="button" onclick="openCustomDevicePicker('poster', ${rowIndex}, '${d.id}', this)" class="poster-model-select poster-model-btn flex-1 min-w-0 font-black text-slate-950 text-xs sm:text-[13px] text-center rounded py-1 px-1 hover:bg-slate-100 transition flex items-center justify-center gap-1 cursor-pointer" data-model-text="${d.name}" data-device-id="${d.id}" title="기종 변경">
+                <span class="truncate">${d.name}</span>
+                <svg class="w-3 h-3 text-slate-400 poster-ui-action shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+              </button>
             </div>
           </td>
           <!-- SK 번이 / 기변 -->
@@ -12707,13 +13173,13 @@ JSON 규격:
             <span class="text-base select-none">💡</span>
             <span>출고가 대비 130만원 이상 할인 또는 마이너스(-) 표기 금액은 <b class="underline decoration-rose-400 font-black text-rose-800">빨간색 강조 특가</b>입니다. (마이너스 금액은 개통 시 차비/현금 지급)</span>
           `;
-          banner.className = 'flex items-center justify-center gap-2 py-2 px-3 bg-rose-50/90 border border-rose-200 rounded-2xl text-xs sm:text-[13px] font-extrabold text-rose-700 shadow-2xs text-center transition';
+          banner.className = 'poster-ui-action flex items-center justify-center gap-2 py-2 px-3 bg-rose-50/90 border border-rose-200 rounded-2xl text-xs sm:text-[13px] font-extrabold text-rose-700 shadow-2xs text-center transition';
         } else {
           banner.innerHTML = `
             <span class="text-base select-none">💡</span>
             <span class="text-slate-600">특가 강조가 OFF 상태입니다. (모든 가격이 기본 단일 색상으로 표출됩니다)</span>
           `;
-          banner.className = 'flex items-center justify-center gap-2 py-2 px-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-[13px] font-extrabold text-slate-600 shadow-2xs text-center transition';
+          banner.className = 'poster-ui-action flex items-center justify-center gap-2 py-2 px-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-[13px] font-extrabold text-slate-600 shadow-2xs text-center transition';
         }
       }
     }
@@ -12861,7 +13327,7 @@ JSON 규격:
         ghost.style.zIndex = '99999';
 
         const optSel = tr.querySelector('.poster-model-select');
-        const devText = optSel ? (optSel.selectedOptions?.[0]?.text || optSel.value) : '시세표 기종 행';
+        const devText = optSel ? (optSel.getAttribute('data-model-text') || optSel.innerText?.trim() || optSel.selectedOptions?.[0]?.text || optSel.value || '기종') : '시세표 기종 행';
         ghost.innerHTML = `
           <span style="display:inline-flex; align-items:center; gap:8px;">
             <span style="font-size:16px; color:#e60012;">📱</span>
@@ -13301,8 +13767,13 @@ JSON 규격:
 
       // 드롭다운 select 요소를 풀네임 대표 모델명 텍스트로 치환 및 td 내부 완벽 정규화 (좌측 쏠림 원천 차단)
       clone.querySelectorAll('.poster-model-select').forEach(sel => {
-        const selectedOption = sel.options[sel.selectedIndex];
-        let modelText = selectedOption ? selectedOption.text : '';
+        let modelText = '';
+        if (sel.tagName === 'SELECT') {
+          const selectedOption = sel.options ? sel.options[sel.selectedIndex] : null;
+          modelText = selectedOption ? selectedOption.text : '';
+        } else {
+          modelText = sel.getAttribute('data-model-text') || sel.innerText.trim();
+        }
         const td = sel.closest('td');
         if (td) {
           td.innerHTML = `<span class="text-xs sm:text-sm font-black text-slate-950 text-center block whitespace-nowrap px-1" style="display:block; text-align:center; width:100%;">${modelText}</span>`;
@@ -13328,6 +13799,8 @@ JSON 규격:
       clone.querySelectorAll('.poster-ui-action').forEach(el => el.remove());
       clone.querySelectorAll('.poster-ui-warning').forEach(el => el.remove());
       clone.querySelectorAll('button').forEach(el => el.remove());
+      const discountBanner = clone.querySelector('#posterDiscountNoticeBanner');
+      if (discountBanner) discountBanner.remove();
 
       // colgroup 보정 (UI 액션 열이 빠진 후 남은 컬럼 비율 100% 완전 밀착)
       const mainColgroup = clone.querySelector('#posterMainColGroup');
@@ -13514,8 +13987,13 @@ JSON 규격:
       const printClone = sheet.cloneNode(true);
       printClone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
       printClone.querySelectorAll('.poster-model-select').forEach(sel => {
-        const selectedOption = sel.options[sel.selectedIndex];
-        let modelText = selectedOption ? selectedOption.text : '';
+        let modelText = '';
+        if (sel.tagName === 'SELECT') {
+          const selectedOption = sel.options ? sel.options[sel.selectedIndex] : null;
+          modelText = selectedOption ? selectedOption.text : '';
+        } else {
+          modelText = sel.getAttribute('data-model-text') || sel.innerText.trim();
+        }
         const td = sel.closest('td');
         if (td) {
           td.innerHTML = `<span style="font-weight:900; font-size:13px; text-align:center; display:block; width:100%;">${modelText}</span>`;
@@ -13539,6 +14017,8 @@ JSON 규격:
       printClone.querySelectorAll('.poster-ui-action').forEach(el => el.remove());
       printClone.querySelectorAll('.poster-ui-warning').forEach(el => el.remove());
       printClone.querySelectorAll('button').forEach(el => el.remove());
+      const printDiscountBanner = printClone.querySelector('#posterDiscountNoticeBanner');
+      if (printDiscountBanner) printDiscountBanner.remove();
 
       const cTitle = printClone.querySelector('#posterStoreTitle');
       if (cTitle) {
