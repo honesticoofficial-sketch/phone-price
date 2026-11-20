@@ -2298,3 +2298,50 @@ Write-Host "Pushed Commit: $($res.commit.sha)"
   - `scratch/verified_lgu_woori_36.png`: 세로 비율이 완벽한 **WOORI CARD 분홍 U+ 로고** 카드 렌더링 확인.
   - `scratch/verified_kt_shinhan.png`: **KT 가족만족 신한카드 (라이트할부)** 정식 명칭 및 정품 수영장 카드 렌더링 확인.
 * 통신사 간 이미지 혼용율 **0%** 달성 확인.
+
+---
+
+## 60. [Chapter 60] 통신 3사 기준 자료 기반 카드 디자인 일치율 검증 엔진 구축 및 SKT 15종 전면 정품 교체 (35종 전수 100% 일치율 달성)
+
+### 1) 사용자 요구사항 및 작업 배경
+* **사용자 지시**: "아직 sk쪽이나 카드 이미지 매칭 제대로 안된거있는데 홈페이지에서 이미지 땡길때 통신사별로 내가 줬던 자료에 카드이미지랑 카드디자인 일치율 확인후 땡길수있게 프로세스짜서 문제안생기게 원천차단하자"
+* **감사 결과 밝혀진 SKT 카드 결함 실태**:
+  - SKT 15종 중 무려 12종이 오매핑되어 있었음:
+    1. 하나카드 T다운 자리에 엉뚱한 해외여행 스티커 카드(트래블로그) 주입되어 있음.
+    2. 롯데카드 T라이트 자리에 요금할인형 TELLO 카드 중복 주입되어 있음.
+    3. 현대카드 M3 T라이트와 M3 통신할인형 2종이 방향 왜곡 및 중복 매핑되어 있음.
+    4. 우리카드 T라이트 앞/뒷면 통합 이미지 방향 왜곡.
+    5. KB국민카드 T-economy 자리에 엉뚱한 일반 카드 주입.
+
+---
+
+### 2) 카드 디자인 일치율 검증 & 원천 차단 게이트키퍼 파이프라인 구축
+* **엔진 구현**: [`scripts/verify_card_image_match.ps1`](file:///C:/Users/User01/.gemini/antigravity/scratch/phone-price/scripts/verify_card_image_match.ps1)
+* **검증 알고리즘**:
+  1. **종횡비(Aspect Ratio) 및 방향 정합성**: 신용카드 표준 비율(가로형 ~1.58, 세로형 ~0.63) 엄격 검증.
+  2. **디자인 유사도 & 피어슨 상관계수 (Pearson Correlation)**: 32x32 그레이스케일 정규화 후 픽셀 강도 상관계수 및 Mean Absolute Error 계산.
+  3. **원천 차단 게이트키퍼(Gatekeeper)**: 기준 일치율 **80% 미만**이거나 방향 불일치 시 시스템 주입 즉시 차단(FAIL).
+* **마스터 레퍼런스 볼트(Vault) 구축**:
+  - `data/references/skt/`: SKT 엑셀 공문 미디어에서 15종 정품 카드 플레이트 추출 및 인덱싱 완료.
+  - `data/references/kt/`: KT 세이브드림 공식 카드 8종 인덱싱 완료.
+  - `data/references/lgu/`: LGU+ 11월 공식 PDF 정품 카드 12종 인덱싱 완료.
+
+---
+
+### 3) 통신 3사 총 35종 전수 일치율 100% PASS 검증 완료 ([`scripts/audit_all_35_cards.ps1`](file:///C:/Users/User01/.gemini/antigravity/scratch/phone-price/scripts/audit_all_35_cards.ps1))
+
+| 통신사 | 카드 수 | 검증 대상 카드 목록 | 일치율 검증 결과 |
+| :---: | :---: | :--- | :---: |
+| **SKT** | **15종** | 삼성 T PREMIUM, 현대 M3 T라이트2, NH T라이트, 삼성 T라이트, 하나 T-Zero, 우리 T라이트, KB T라이트, 롯데 T라이트, 신한 T라이트, 신한 파인애플, 신한 T&LIFE, KB T-economy, 현대 M3 통신2.0, 롯데 TELLO NE, 삼성 T나는혜택 | **15 / 15 전수 100% PASS** |
+| **KT** | **8종** | KT KB 할부 Plus, KT 롯데 할부, KT BC바로 Super DC, KT 삼성 S, KT 현대 M3, KT 신한 가족만족, KT 우리 Super DC, KT 롯데 DC | **8 / 8 전수 100% PASS** |
+| **LGU+** | **12종** | 신한 스마트플랜+, 신한 Bora, KB 라이트할부II, 현대 M3 2.0, 우리 36, 삼성 라이트, 롯데 LOCA 라이트, 삼성 요금, 롯데 DC, 롯데 LOCA, 하나 family, NH 올원 | **12 / 12 전수 100% PASS** |
+| **전체** | **총 35종** | **통신 3사 전체 제휴카드 풀** | **35 / 35 전수 100% PASS (무결점 달성)** |
+
+---
+
+### 4) 브라우저(Edge CDP) 헤드리스 실시간 렌더링 검증 완료
+* `scratch/render_skt_lotte_tlight.png`: 롯데카드 T라이트 로즈골드 메탈 정품 렌더링 확인.
+* `scratch/render_skt_hana_tdown.png`: 하나카드 정품 T-Zero 플레이트 렌더링 확인 (트래블로그 완벽 퇴출).
+* `scratch/render_skt_woori_tlight.png`: 우리카드 T 정품 세로형 플레이트 렌더링 확인.
+* `scratch/render_skt_hyundai_m3.png`: 현대카드 M Edition 3 정방향 세로형 플레이트 렌더링 확인.
+* `scratch/render_skt_lotte_tello.png`: 롯데카드 TELLO NE 정품 챠콜 세로형 플레이트 렌더링 확인.
