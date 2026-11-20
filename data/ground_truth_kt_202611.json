@@ -259,7 +259,7 @@
         "min_installment_amount":  "5만원 이상",
         "card_company":  "현대카드",
         "target_device":  "전 단말기",
-        "special_promo":  "월 최대 35,000원 청구할인 \u0026 현대카드 쿠폰팩",
+        "special_promo":  "신규/6개월 무실적 고객 전월 50만 33,000원 / 100만 35,000원 청구할인 (24개월)",
         "target_telecom":  "KT",
         "base_card_benefits":  [
                                    "Apple Pay 지원",

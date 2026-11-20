@@ -59,7 +59,7 @@
     cardCompany: "현대카드",
     cardName: "현대카드 M3 T라이트2",
     theme: "theme-teal",
-    highlightBadge: "SKT x 현대카드 쿠폰팩 프로모션 (투썸/다이소/CU/올리브영/포인트샵 쿠폰 월 최대 22,700원) & 최대 35,000원 할인 & 24/36개월 자유할부",
+    highlightBadge: "월 최대 35,000원 청구할인 (신규/무실적 24개월) & 24/36개월 자유할부",
     phone: "현대카드 고객센터 02-2655-6033",
     applyUrl: "http://m.site.naver.com/0QwRn",
     eventTarget: "현대카드 신규 또는 행사월 기준 6개월 이상 무실적 고객 (M3 T라이트2 최초 발급)",
@@ -88,12 +88,6 @@
           { label: "전월 50만원 이상", amount: "월 33,000원 할인", amountNum: 33000, baseAmount: "15,000", promoAmount: "18,000", sub: "기본 15,000원 + 프로모션 18,000원", total24: "24개월 총 792,000원 할인", total24Num: 792000, total36: "36개월 총 972,000원 할인", total36Num: 972000, total36Note: "1~24회차: 월 33,000원 / 25~36회차: 기본 월 15,000원" },
           { label: "전월 100만원 이상", amount: "월 35,000원 할인", amountNum: 35000, baseAmount: "25,000", promoAmount: "10,000", sub: "기본 25,000원 + 프로모션 10,000원", total24: "24개월 총 840,000원 할인", total24Num: 840000, total36: "36개월 총 1,140,000원 할인", total36Num: 1140000, total36Note: "1~24회차: 월 35,000원 / 25~36회차: 기본 월 25,000원" }
         ]
-      },
-      {
-        badge: "추가 프로모션",
-        title: "SKT x 현대카드 쿠폰팩 프로모션 (투썸/다이소/CU/올리브영/포인트샵 쿠폰 월 최대 22,700원)",
-        condition: "행사 기간 내 대상 조건 충족 시",
-        benefit: "SKT x 현대카드 쿠폰팩 프로모션 (투썸/다이소/CU/올리브영/포인트샵 쿠폰 월 최대 22,700원)"
       }
     ],
     basicBenefits: [
@@ -633,7 +627,7 @@
     cardCompany: "현대카드",
     cardName: "현대카드 M3 통신할인형2.0",
     theme: "theme-teal",
-    highlightBadge: "SKT x 현대카드 쿠폰팩 프로모션 (투썸/다이소/CU/올리브영/포인트샵 쿠폰 월 최대 22,700원) & 매월 최대 35,000원 통신요금 자동이체 할인",
+    highlightBadge: "매월 최대 35,000원 통신요금 자동이체 청구할인 (신규/무실적 24개월)",
     phone: "현대카드 고객센터 02-2655-6033",
     applyUrl: "https://www.hyundaicard.com/cpc/cr/CPCCR0201_01.hc?cardWcd=MSKTE3TP",
     eventTarget: "현대카드 신규 또는 행사월 기준 6개월 이상 무실적 고객 (M3 통신할인형2.0 최초 발급, SKT 자동이체 필수)",
@@ -662,12 +656,6 @@
           { label: "전월 50만원 이상", amount: "월 33,000원 할인", amountNum: 33000, baseAmount: "15,000", promoAmount: "18,000", sub: "기본 15,000원 + 프로모션 18,000원", total24: "24개월 총 792,000원 할인", total24Num: 792000, total36: "36개월 총 972,000원 할인", total36Num: 972000, total36Note: "1~24회차: 월 33,000원 / 25~36회차: 기본 월 15,000원" },
           { label: "전월 100만원 이상", amount: "월 35,000원 할인", amountNum: 35000, baseAmount: "25,000", promoAmount: "10,000", sub: "기본 25,000원 + 프로모션 10,000원", total24: "24개월 총 840,000원 할인", total24Num: 840000, total36: "36개월 총 1,140,000원 할인", total36Num: 1140000, total36Note: "1~24회차: 월 35,000원 / 25~36회차: 기본 월 25,000원" }
         ]
-      },
-      {
-        badge: "추가 프로모션",
-        title: "SKT x 현대카드 쿠폰팩 프로모션 (투썸/다이소/CU/올리브영/포인트샵 쿠폰 월 최대 22,700원)",
-        condition: "행사 기간 내 대상 조건 충족 시",
-        benefit: "SKT x 현대카드 쿠폰팩 프로모션 (투썸/다이소/CU/올리브영/포인트샵 쿠폰 월 최대 22,700원)"
       }
     ],
     basicBenefits: [

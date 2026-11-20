@@ -110,7 +110,7 @@
         "min_installment_amount":  "5만원 이상",
         "card_company":  "현대카드",
         "target_device":  "전 단말기",
-        "special_promo":  "SKT x 현대카드 쿠폰팩 프로모션 (투썸/다이소/CU/올리브영/포인트샵 쿠폰 월 최대 22,700원)",
+        "special_promo":  "신규/6개월 무실적 고객 전월 50만 33,000원 / 100만 35,000원 청구할인 (24개월)",
         "target_telecom":  "SKT",
         "base_card_benefits":  [
                                    "코스트코 이용 가능",
@@ -806,7 +806,7 @@
         "min_installment_amount":  "해당없음",
         "card_company":  "현대카드",
         "target_device":  "전 단말기 (요금할인형)",
-        "special_promo":  "SKT x 현대카드 쿠폰팩 프로모션 (투썸/다이소/CU/올리브영/포인트샵 쿠폰 월 최대 22,700원)",
+        "special_promo":  "신규/6개월 무실적 고객 전월 50만 33,000원 / 100만 35,000원 통신요금 청구할인 (24개월)",
         "target_telecom":  "SKT",
         "base_card_benefits":  [
                                    "코스트코 이용 가능",

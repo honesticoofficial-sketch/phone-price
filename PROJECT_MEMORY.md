@@ -2381,3 +2381,61 @@ Write-Host "Pushed Commit: $($res.commit.sha)"
   - `scratch/dynamic_vertical_skt_woori.png`: 세로형 우리카드 T라이트가 위아래 높이 170px로 큼직하고 반듯하게 렌더링 확인.
   - `scratch/dynamic_vertical_skt_hyundai.png`: 세로형 현대카드 M3가 배너 전체 높이를 꽉 채워 축소감 없이 웅장하게 렌더링 확인.
   - `scratch/dynamic_vertical_lgu_woori.png`: 세로형 LGU+ 36우리카드가 찌그러짐 없이 완벽한 세로 비율로 렌더링 확인.
+
+
+---
+
+## 62. [Chapter 62] 제휴카드 추가 프로모션 "공식 공문 독점 원칙(Document-Only Truth)" 확립 및 외부 웹 비공식 프로모션(현대카드 쿠폰팩 등) 전수 정제 완료
+
+### 1) 사용자 피드백 및 비즈니스 원칙 확립
+* **사용자 제안/질문**:
+  > "그리고 카드 확인중인데 추가프로모션중에서 해당 카드에는 없는 추가 프로모션인데 있는경우가 있어. 현대카드가 보면 쿠폰팩 프로모션이라는거 엑셀에 찾아봐도 없는데 추가 프로모션은 아무래도 홈페이지에서 땡기면 안되고 내가 처음준 엑셀,pdf,링크에서만 뽑아야할거같은데 어떻게 생각해?"
+* **원칙 확립 및 비즈니스 관점의 전적 찬동 (100% Agreement)**:
+  1. **불완전 판매 및 매장 민원 원천 차단**:
+     - 카드사 공식 홈페이지에는 일반 개인 회원을 유치하기 위한 단발성 마케팅(투썸/다이소/CU/올리브영 쿠폰팩, 스타벅스 기프티콘, 룰렛 이벤트 등)이 빈번하게 노출되나, 이는 통신사 공식 제휴(단말기 할부 청구할인, 요금 자동이체 할인, 통신사 공식 캐시백)와 전혀 무관함.
+     - 매장 안내서에 카드사 일반 쿠폰팩을 제휴 혜택인 양 기재했다가 고객이 특정 마케팅 동의 미충족이나 이벤트 조기 종료로 쿠폰을 받지 못하면 매장에 심각한 불완전 판매 민원(컴플레인)이 발생함.
+  2. **파이프라인 역할 분담 확립 (Single Source of Truth)**:
+     - **공식 공문 (SKT 엑셀, KT 세이브드림, LGU+ PDF)**: 카드명, 기본할인, 프로모션 추가할인, 전월실적 구간, 캐시백, 무실적 조건 등 **모든 금액과 프로모션 조건의 100% 독점 출처**. 웹 크롤링에서는 프로모션 정보를 절대 가져오지 않음.
+     - **공식 홈페이지 크롤링**: 카드 플레이트 원본 이미지, 온라인 신청 URL, 전월실적 포함/제외 대상(기본 안내사항) 등 **기본 카드 정보 보강용**으로만 엄격히 제한.
+
+---
+
+### 2) 전수 조사 및 오염 데이터 색출
+* **전수 조사 스크립트 실행**:
+  - [`scripts/inspect_highlight_badges.ps1`](file:///C:/Users/User01/.gemini\antigravity\scratch\phone-price\scripts\inspect_highlight_badges.ps1): 35종 전체 카드의 배지 전수 추출.
+  - [`scripts/search_promo_words.ps1`](file:///C:/Users/User01/.gemini\antigravity\scratch\phone-price\scripts\search_promo_words.ps1): 프로젝트 전체 파일 내 `쿠폰/다이소/투썸/올리브영` 키워드 전수 스캔.
+* **색출 결과**:
+  - `skt_hyundai_m3` (현대카드 M3 T라이트2): 과거 웹 크롤링 잔재인 "SKT x 현대카드 쿠폰팩 프로모션 (투썸/다이소/CU/올리브영/포인트샵 쿠폰 월 최대 22,700원)" 삽입 확인.
+  - `skt_hyundai_m3_bill` (현대카드 M3 통신할인형2.0): 동일 쿠폰팩 문구 삽입 확인.
+  - `kt_hyundai_m3_2` (KT-현대카드M Edition3): "월 최대 35,000원 청구할인 & 현대카드 쿠폰팩" 삽입 확인.
+  - ※ 참고: `skt_shinhan_tlife`의 올리브영/다이소/편의점 5% 할인은 SKT 11월 공식 엑셀 공문 Row 14에 정식으로 기재된 제휴카드 고유 혜택임이 확인되어 정상 유지.
+
+---
+
+### 3) 100% 공문 일치 전수 정제 내역
+1. **SKT 현대카드 M3 2종 정제**:
+   - `skt_hyundai_m3`:
+     * `highlightBadge`: `"월 최대 35,000원 청구할인 (신규/무실적 24개월) & 24/36개월 자유할부"`
+     * `promotions`: 웹 크롤링 쿠폰팩 객체 완전 삭제, 공문 정품 프로모션(50만 실적 3.3만 / 100만 실적 3.5만)만 단독 유지.
+   - `skt_hyundai_m3_bill`:
+     * `highlightBadge`: `"매월 최대 35,000원 통신요금 자동이체 청구할인 (신규/무실적 24개월)"`
+     * `promotions`: 쿠폰팩 객체 완전 삭제, 공문 정품 프로모션만 단독 유지.
+2. **KT 현대카드 M3 정제**:
+   - `kt_hyundai_m3_2`:
+     * `highlightBadge`: `"월 최대 35,000원 청구할인 (신규/무실적 24개월) & 24/36개월 라이트할부"`
+     * `promotions`: `& 현대카드 쿠폰팩` 객체 완전 삭제.
+3. **KT 및 LGU+ 전체 카드의 highlightBadge 중복 문자열 정갈화**:
+   - `& 최대 OO원 할인 & 24/36개월 자유할부` 가 중복으로 이어붙어 있던 20종 카드의 배지 문구를 시세표/안내서 규격에 맞게 깔끔하고 선명하게 정비.
+4. **동기화 파일**:
+   - [`skt_cards_data.js`](file:///C:/Users/User01/.gemini\antigravity\scratch\phone-price\skt_cards_data.js)
+   - [`index.html`](file:///C:/Users/User01/.gemini\antigravity\scratch\phone-price\index.html)
+   - [`data/ground_truth_skt_202611.json`](file:///C:/Users/User01/.gemini\antigravity\scratch\phone-price\data\ground_truth_skt_202611.json)
+   - [`data/ground_truth_kt_202611.json`](file:///C:/Users/User01/.gemini\antigravity\scratch\phone-price\data\ground_truth_kt_202611.json)
+
+---
+
+### 4) Edge CDP 헤드리스 브라우저 실시간 렌더링 검증 완료
+* [`scripts/verify_promos_render.ps1`](file:///C:/Users/User01/.gemini\antigravity\scratch\phone-price\scripts\verify_promos_render.ps1) 실행:
+  - `scratch/verified_skt_hyundai_m3.png`: SKT 현대카드 M3 T라이트2에서 쿠폰팩 문구가 완전히 제거되고, 공문에 기반한 "신규 또는 행사월 기준 6개월 이상 무실적 고객 (M3 T라이트2 최초 발급)" 및 50만 33,000원 / 100만 35,000원 할인 안내만 정갈하게 노출됨을 실시간 캡처로 육안 검증 완료.
+  - `scratch/verified_skt_hyundai_m3_bill.png`: SKT 현대카드 M3 통신할인형2.0에서 쿠폰팩 문구 없이 통신요금 자동이체 할인 안내만 정갈하게 노출됨을 실시간 캡처로 확인.
+  - `scratch/verified_kt_hyundai_m3.png`: KT 현대카드 M Edition3에서 쿠폰팩 없이 50만 33,000원 / 100만 35,000원 할인이 깔끔하게 렌더링됨을 실시간 캡처로 확인.
