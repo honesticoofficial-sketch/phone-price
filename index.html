@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -10986,40 +10986,45 @@ function handleSelectAffiliateCard(cardId) {
                 <span>📊</span> 전월실적 산정 기준 (포함 / 미포함 종합 안내)
               </span>
 
-              <!-- 상단: 🟢 전월실적 인정 (포함) 항목 -->
-              <div class="p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200/80 space-y-1">
-                <span class="font-black text-[11px] text-emerald-800 flex items-center gap-1">
-                  <span>🟢</span> <strong>실적 인정 (포함) 항목</strong>
-                </span>
-                <ul class="text-[10.5px] text-emerald-950 font-medium space-y-0.5 leading-snug">
-                  ${(cardData.performanceIncludes && cardData.performanceIncludes.length > 0)
-                    ? cardData.performanceIncludes.map(it => `<li>• ${it}</li>`).join('')
-                    : `
-                      <li>• 이동통신요금 자동이체 결제금액</li>
-                      <li>• 대중교통(버스/지하철), 택시 이용금액</li>
-                      <li>• 주유, 마트, 편의점, 외식, 병원 등 일상 생활 결제</li>
-                      <li>• 온라인 쇼핑 및 국내/해외 일시불 및 유이자할부 이용액 전액</li>
-                    `}
-                </ul>
-              </div>
+              ${(!cardData.performanceIncludes || cardData.performanceIncludes.length === 0) && (!cardData.performanceExcludes || cardData.performanceExcludes.length === 0) ? `
+                <!-- 전월실적 미확인 시: 가짜 정보 생성 절대 금지 & 카드사 공식 문의 안내 -->
+                <div class="p-3.5 rounded-xl bg-amber-50/80 border border-amber-200/90 text-center space-y-1.5 my-auto">
+                  <div class="text-amber-800 font-black text-xs flex items-center justify-center gap-1.5">
+                    <span>⚠️</span> <span>전월실적 산정기준 카드사 공식 문의</span>
+                  </div>
+                  <p class="text-[11px] text-amber-950 font-medium leading-relaxed">
+                    본 카드의 전월실적 세부 인정/제외 항목은<br>
+                    <strong>${cardData.phone || '해당 카드사 고객센터'}</strong> 또는 공식 상품설명서에서 확인하시기 바랍니다.
+                  </p>
+                  <span class="inline-block text-[9.5px] text-amber-700 bg-amber-100/90 px-2 py-0.5 rounded-md font-bold">
+                    ※ 미확인 항목 임의 안내 불가 (공식 약관 확인 원칙)
+                  </span>
+                </div>
+              ` : `
+                <!-- 상단: 🟢 전월실적 인정 (포함) 항목 -->
+                <div class="p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200/80 space-y-1">
+                  <span class="font-black text-[11px] text-emerald-800 flex items-center gap-1">
+                    <span>🟢</span> <strong>실적 인정 (포함) 항목</strong>
+                  </span>
+                  <ul class="text-[10.5px] text-emerald-950 font-medium space-y-0.5 leading-snug">
+                    ${(cardData.performanceIncludes && cardData.performanceIncludes.length > 0)
+                      ? cardData.performanceIncludes.map(it => `<li>• ${it}</li>`).join('')
+                      : `<li class="text-slate-500 py-0.5">• 세부 인정 항목은 카드사 고객센터(${cardData.phone || '공식 문의'})를 확인해 주세요.</li>`}
+                  </ul>
+                </div>
 
-              <!-- 하단: 🔴 전월실적 제외 (미포함) 주의사항 -->
-              <div class="p-2.5 rounded-xl bg-rose-50/70 border border-rose-200/80 space-y-1">
-                <span class="font-black text-[11px] text-rose-800 flex items-center gap-1">
-                  <span>🔴</span> <strong>실적 제외 (미포함) 항목</strong>
-                </span>
-                <ul class="text-[10.5px] text-rose-950 font-medium space-y-0.5 leading-snug">
-                  ${(cardData.performanceExcludes && cardData.performanceExcludes.length > 0)
-                    ? cardData.performanceExcludes.map(it => `<li>• ${it}</li>`).join('')
-                    : `
-                      <li>• 국세, 지방세, 공과금, 4대보험, 과태료/벌금</li>
-                      <li>• 초·중·고교 납입금, 대학(대학원) 등록금</li>
-                      <li>• 상품권 및 선불카드 충전/구매금액, 기프트카드</li>
-                      <li>• 아파트관리비, 도시가스요금 (카드사별 기준 상이)</li>
-                      <li>• 단기/장기카드대출(현금서비스/카드론), 무이자할부 이용액</li>
-                    `}
-                </ul>
-              </div>
+                <!-- 하단: 🔴 전월실적 제외 (미포함) 주의사항 -->
+                <div class="p-2.5 rounded-xl bg-rose-50/70 border border-rose-200/80 space-y-1">
+                  <span class="font-black text-[11px] text-rose-800 flex items-center gap-1">
+                    <span>🔴</span> <strong>실적 제외 (미포함) 항목</strong>
+                  </span>
+                  <ul class="text-[10.5px] text-rose-950 font-medium space-y-0.5 leading-snug">
+                    ${(cardData.performanceExcludes && cardData.performanceExcludes.length > 0)
+                      ? cardData.performanceExcludes.map(it => `<li>• ${it}</li>`).join('')
+                      : `<li class="text-slate-500 py-0.5">• 세부 제외 항목은 카드사 고객센터(${cardData.phone || '공식 문의'})를 확인해 주세요.</li>`}
+                  </ul>
+                </div>
+              `}
             </div>
           </div>
 
