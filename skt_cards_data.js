@@ -1,4 +1,4 @@
-const SKT_AFFILIATE_CARDS = [
+﻿const SKT_AFFILIATE_CARDS = [
   {
     id: "skt_samsung_premium",
     carrier: "SKT",
@@ -554,7 +554,7 @@ const SKT_AFFILIATE_CARDS = [
     theme: "theme-blue",
     highlightBadge: "최대 24,000원 할인 & 24/36개월 자유할부",
     phone: "신한카드 고객센터 1544-7000",
-    applyUrl: "https://www.shinhancard.com/pconts/html/card/apply/credit/1221484_2207.html",
+    applyUrl: "https://www.shinhancard.com/pconts/html/card/apply/credit/1195357_2207.html",
     isEventApplyRequired: false,
     eventUrl: "https://shcard.io/pineapple6m",
     eventTarget: "신한카드 신규 또는 행사월 기준 6개월 이상 무실적 고객 (신한 파인애플 최초발급, 해외브랜드 VISA 한정, ARS 080-850-0488 전용)",
@@ -621,7 +621,7 @@ const SKT_AFFILIATE_CARDS = [
     theme: "theme-blue",
     highlightBadge: "T라이프 추가 혜택 (올리브영/다이소/편의점/커피/T우주/넷플릭스 등 5% 할인, 실적별 최대 5천~1.2만원 추가할인) & 매월 최대 21,000원 통신요금 자동이체 할인",
     phone: "신한카드 고객센터 1544-7000",
-    applyUrl: "https://www.shinhancard.com/pconts/html/card/apply/credit/1223352_2207.html",
+    applyUrl: "https://www.shinhancard.com/pconts/html/card/apply/credit/2013495_2207.html",
     isEventApplyRequired: false,
     eventUrl: "https://shcard.io/tandlife6m",
     eventTarget: "신한카드 신규 또는 행사월 기준 6개월 이상 무실적 고객 (신한 T&LIFE 최초발급, 해외브랜드 Master 한정, SKT 통신요금 자동이체 필수)",
