@@ -2767,3 +2767,59 @@ Write-Host "Pushed Commit: $($res.commit.sha)"
   - `KT KB 할부 Plus` (KT 세로형 카드) ➡️ 세로형 규격(`w-[94px]`) 자동 일치: **True**
   - `SKT 삼성 T PREMIUM` (SKT 가로형 카드) ➡️ 가로형 규격(`w-36`) 자동 일치: **True**
   - 불일치 건수: **0건 (ALL PASS)**
+
+---
+
+## 69. [Chapter 69] LGU+ 삼성 라이트 180도 반전 교정, KT KB국민카드 상하 여백 크롭 및 가로 플레이트 정규화, 클릭 수동 전환 토글 영구 삭제
+
+### 1) 비즈니스 배경 및 핵심 요구사항 (CEO 지침)
+* **지침**:
+  1. *"엘지에 라이트 삼성카드 이미지 뒤집어져있고 kt dc플러스 국민카드 이미지 가로형인데 세로형 플래이트에 붙여져있네"*
+  2. *"해결하기전에 왜 이렇게 되었는가 문제부터 찾아보고 해결해줘"*
+  3. *"그리고 카드이미지 클릭하면 가로 세로 플레이트가 넘어가려다가 다시 원복되고 하는데 아예 가로세로 바뀌는 기능을 없애는게 맞는듯"*
+
+---
+
+### 2) 문제 발생 원인 정밀 분석 (원인 규명)
+1. **LGU+ 삼성 라이트 카드 (`lgu_samsung_light`) 상하 반전(뒤집힘) 원인**:
+   - 원본 카드가 반시계방향 90도로 누워있던 것을 이전 작업에서 시계방향 90도(`Rotate90FlipNone`)로 회전시켰기 때문에, 결과적으로 상하가 180도 뒤집힌 상태(upside down)로 렌더링되었습니다.
+   - 시각 검독 결과 `Samsung Card`와 `U+` 텍스트가 거꾸로 뒤집혀 있었음을 확인하였습니다.
+2. **KT DC Plus KB국민카드 (`kt_kb_dc_plus`) 가로 카드가 세로 플레이트에 붙은 원인**:
+   - 카드 실물 자체는 완벽한 가로형 카드이나, 통신사 서버(`savedream.co.kr`)의 원본 파일 상하에 거대한 투명/흰색 여백이 포함되어 있어 파일 전체 해상도가 `456x570` 세로형으로 저장되어 있었습니다.
+   - 데이터 파일(`kt_cards_data.js`)에도 `cardPlateOrientation: "vertical"`로 잘못 설정되어 있었습니다.
+   - 브라우저의 2차 자동 크롭(`autoAdaptCardPlate`)에서 HTML5 Canvas를 통해 상하 여백을 자르려 시도했으나, 외부 도메인(`savedream.co.kr`) 이미지의 CORS(Cross-Origin Resource Sharing) 보안 제한으로 인해 `ctx.getImageData()` 호출이 차단되어 크롭 로직이 건너뛰어졌습니다.
+   - 그 결과 이미지의 파일 전체 해상도(`570 > 456`)만 보고 "세로가 더 길다"고 판정하여 세로형 박스(`w-[94px]`)에 욱여넣으면서 카드가 찌그러지고 상하 여백이 남게 되었습니다.
+   - 전수 조사 결과 동일한 KB국민카드인 `kt_kb_light_plus` (KT 할부 Plus KB국민카드) 역시 상하 여백으로 인한 동일한 왜곡 문제를 겪고 있음을 함께 발견하였습니다.
+3. **카드 이미지 클릭 시 가로/세로 바뀌려다 원복되는 현상 원인**:
+   - 카드를 클릭하면 `toggleCardOrientation`이 실행되어 일시적으로 가로 플레이트로 바뀌지만, 화면이 다시 렌더링되면서 `<img>`의 `onload` 이벤트가 재발동하고 `autoAdaptCardPlate` 함수가 다시 실행되었습니다.
+   - `autoAdaptCardPlate`가 원본 파일의 456x570(세로형) 치수를 읽고 즉시 세로형 박스로 강제 원복시켜버리면서 화면이 덜컹거리는 깜빡임 현상이 발생했습니다.
+
+---
+
+### 3) 구현 및 해결 내역
+1. **LGU+ 삼성 라이트 180도 회전 교정 (`lgu_cards_data.js`)**:
+   - `Rotate180FlipNone`을 적용하여 `Samsung Card` 문구가 좌측 상단에, `U+` 로고와 마젠타 곡선이 하단에 똑바로 위치하도록 완벽하게 교정된 정품 Base64 이미지로 교체.
+2. **KT KB국민카드 2종 상하 여백 정밀 크롭 및 가로 플레이트 정규화 (`kt_cards_data.js`)**:
+   - `kt_kb_dc_plus` (KT DC Plus KB국민카드) & `kt_kb_light_plus` (KT 할부 Plus KB국민카드):
+     * 상하의 불필요한 투명/흰색 여백을 픽셀 단위로 완전히 잘라내어 `456x290` (표준 가로 신용카드 비율 1.58:1) 순수 플레이트 이미지로 추출.
+     * 외부 CORS 문제의 영향을 받지 않도록 최적화된 Base64 데이터 URI로 직접 임베딩.
+     * `cardPlateOrientation: "horizontal"`로 완벽 교정.
+3. **카드 클릭 수동 전환 토글 영구 삭제 (`index.html`)**:
+   - 대표님 요청에 따라 카드 클릭 시 플레이트가 바뀌려다 원복되는 혼선을 방지하기 위해:
+     * `#cardPlateBox`의 `onclick="toggleCardOrientation(event)"`, 툴팁(`title`), 마우스 포인터 스타일(`cursor-pointer hover:opacity-95`) 완전 삭제.
+     * `toggleCardOrientation` 함수를 안전한 no-op으로 변경.
+     * 시스템이 100% 완벽한 이미지 종횡비를 스스로 판단하여 고정 렌더링하도록 완성.
+4. **전사 데이터 동기화 (`scripts/sync_cards_to_index.ps1`)**:
+   - SKT, KT, LGU+ 3사 41종 전체 데이터셋 및 `index.html` 일원화 동기화 완료.
+
+---
+
+### 4) 실시간 Edge CDP 브라우저 검증 결과 (100% ALL PASS)
+* **검증 스크립트**: [`scripts/verify_chapter69_live.ps1`](file:///C:/Users/User01/.gemini/antigravity/scratch/phone-price/scripts/verify_chapter69_live.ps1)
+  - `LGU+ 삼성 라이트`: 세로형 규격(`w-[94px]`) 일치: **True** / 클릭 후 세로 박스 불변: **True**
+  - `KT DC Plus KB국민카드`: 가로형 규격(`w-36`) 일치: **True** / 클릭 후 가로 박스 불변: **True**
+  - `KT 할부 Plus KB국민카드`: 가로형 규격(`w-36`) 일치: **True**
+  - `KT 롯데 라이트 (대조군)`: 세로형 규격(`w-[94px]`) 정상 유지: **True**
+  - `SKT 삼성 프리미엄 (대조군)`: 가로형 규격(`w-36`) 정상 유지: **True**
+  - **불일치 건수**: **0건 (ALL PASS)**
+
