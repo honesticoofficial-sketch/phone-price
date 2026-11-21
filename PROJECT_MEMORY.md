@@ -2948,3 +2948,95 @@ Write-Host "Pushed Commit: $($res.commit.sha)"
 
 
 
+
+
+---
+
+## 📅 [2026-11-21] Chapter 72: 공식 발급 QR 전면 복원, 추가 캐시백 독립 카드 분리, 이벤트 응모/확인 배너 정밀 분기, 윈도우 이모지 미관 정제, 전월실적 8대 핵심 우선순위화 및 고객센터 안내 신설
+
+### 1) 개요 및 사용자 요구사항 (CEO 5대 핵심 지침)
+1. **전화신청 QR ➡️ 카드발급 QR 전면 복원 및 공식 웹 발급 URL 연결**:
+   - 기존에 전화번호(`tel:`, `ARS:`)로 들어가 있어 '전화신청 QR (스캔 시 통화연결)'로 표기되던 카드를 카드사 공식 모바일/웹 발급 페이지로 연결되는 **'발급신청 QR (스캔 시 공식발급)'**으로 전면 통일.
+2. **추가 프로모션(캐시백/지원금) 개별 칸(독립 블록) 분리 표기**:
+   - 여러 혜택이 합산되어 하나의 뭉뚱그려진 문구(예: 아이폰18 구매 시 최대 8만원 + KB Pay 결제 시 2만원 캐시백인데 결과창에 '10만원 추가 캐시백'으로 뭉뚱그려진 문제)를 바로잡고, 돈 주는 추가 프로모션들은 **각각 독립된 별도의 카드 칸**으로 분리 표기.
+3. **이벤트 응모 필수 카드 vs 이벤트 확인 필수 카드 배너 정밀 분기**:
+   - 실제로 사전에 '응모' 버튼 클릭이 필수인 카드(현대카드 3종)만 **`★ 이벤트 응모 필수`** 배너를 띄우고,
+   - 그 외의 대상자 여부 확인용 카드는 **`★ 이벤트 확인 필수`** 배너로 명확히 분기.
+4. **윈도우 기본 이모티콘(`🟢`, `🔴`) 미관 개선**:
+   - 서식지(A4)에 노출되던 OS 특유의 어색하고 투박한 윈도우 기본 이모지(`🟢`, `🔴`)를 완전 제거하고, 감각적인 Tailwind CSS 뱃지(`[인정]`, `[제외]`)와 정돈된 SVG/불릿 디자인으로 고급화.
+5. **전월실적 산정기준 핵심 8대 우선순위 항목화 및 고객센터 문의 문구 신설**:
+   - 핵심 8대 항목: `아파트관리비`, `도시가스`, `무이자할부`, `유이자할부`, `초중고납입금(학교납입금)`, `4대보험`, `학원비`, `주유비`의 인정/제외 여부를 목록 최상단에 우선 배치 (공홈 확인된 확실한 항목 위주).
+   - 실적산정기준 박스 하단에 **"※ 실적 산정 기준에 대한 자세한 문의는 카드사 고객센터로 문의 부탁드립니다."** 안내 문구 필수 배치.
+
+---
+
+### 2) 상세 구현 내역
+
+#### ① `applyUrl` 전면 공식 웹 URL화 및 QR 라벨 고정
+- **LGU+ 제휴카드 12종 전수 모바일 웹 발급 링크 연결**:
+  * `lgu_shinhan_bora` & `lgu_shinhan_smartplan`: `https://www.shinhancard.com/pconts/html/card/apply/credit/1221484_2207.html`
+  * `lgu_kb_light2`: `https://m.kbcard.com/CRD/DVIEW/MCAMCXHIACRC0002?mainCC=b&allianceCode=01507`
+  * `lgu_woori_36`: `https://m.wooricard.com/dcmw/yh1/crd/crd01/M1CRD101S02.do?cdPrdCd=104168`
+  * `lgu_samsung_bill`: `https://www.samsungcard.com/home/card/cardinfo/PGHPPCCCardCardinfoDetails001?code=AAP1665`
+  * `lgu_samsung_light`: `https://www.samsungcard.com/home/card/cardinfo/PGHPPCCCardCardinfoDetails001?code=AAP1839`
+  * `lgu_lotte_light`, `lgu_lotte_dc`, `lgu_lotte_loca`: `http://m.lottecard.co.kr/spa/card/booth?bId=106378`
+  * `lgu_hana_family`: `https://m.hanacard.co.kr/MPACMM101M.web?_frame=no&CD_PD_SEQ=17454`
+  * `lgu_nh_allone`: `https://go.nhcard.com/LkMCWj6`
+- **SKT 제휴카드 전화번호/텍스트 URL 정비**:
+  * `skt_shinhan_pineapple`: `https://www.shinhancard.com/pconts/html/card/apply/credit/1221484_2207.html`
+  * `skt_shinhan_tlife`: `https://www.shinhancard.com/pconts/html/card/apply/credit/1223352_2207.html`
+- **`index.html` QR 라벨 완전 통일**:
+  * 메인 QR 라벨을 `isArsApply` 분기 없이 무조건 **`발급신청 QR` / `스캔 시 공식발급`**으로 고정 표기.
+
+#### ② 추가 프로모션(캐시백/지원금) 개별 칸 분리
+- `skt_kb_tlight` 및 `lgu_kb_light2`의 `promotions` 배열을 3개 객체로 분리 구성:
+  * [메인 1] `매월 통신요금 프로모션할인 (최대 24개월)` (월 2.5만 ~ 2.7만 할인)
+  * [추가 프로모션 1] `아이폰18 / DUO 구매 캐시백`: 행사 기간 내 대상 단말기 라이트할부 승인 시 ➡️ **최대 80,000원 캐시백**
+  * [추가 프로모션 2] `KB Pay 결제 추가 캐시백`: KB Pay 신규 등록 후 2만원 이상 결제 충족 시 ➡️ **20,000원 추가 캐시백**
+- A4 견적서 렌더링 시 `grid-cols-2`로 자동 배치되어 좌우 2개의 독립된 카드 블록으로 명확하게 노출.
+
+#### ③ 이벤트 응모 필수 vs 이벤트 확인 필수 정밀 분기
+- 41종 전체 카드 스키마에 `isEventApplyRequired: boolean` 필드 추가:
+  * 현대카드 3종(`skt_hyundai_m3`, `skt_hyundai_m3_bill`, `lgu_hyundai_m3` 등): `isEventApplyRequired: true`
+  * 그 외 카드: `isEventApplyRequired: false`
+- `index.html` 렌더링 엔진 분기:
+  * `isApplyRequired === true` ➡️ **`<span class="bg-rose-500 text-white animate-pulse">★ 이벤트 응모 필수</span>`** + 듀얼 QR 라벨: **`이벤트응모 QR (스캔 시 필수응모)`**
+  * `isApplyRequired === false` ➡️ **`<span class="bg-amber-600 text-white">★ 이벤트 확인 필수</span>`** + 듀얼 QR 라벨: **`이벤트확인 QR (스캔 시 대상확인)`**
+
+#### ④ 윈도우 기본 이모티콘(`🟢`, `🔴`) 완전 제거 및 디자인 고도화
+- 텍스트 내부의 `(실적 인정 🟢)`, `(실적 제외 🔴)` 및 `🟢`, `🔴` 문자열을 정규식으로 전면 제거.
+- A4 서식지 실적 박스 헤더에 감각적인 Tailwind CSS 뱃지 적용:
+  * 실적 인정: `<span class="px-1.5 py-0.5 rounded text-[9.5px] font-black bg-emerald-600 text-white shadow-2xs">인정</span> <strong class="text-emerald-900">실적 인정 (포함) 항목</strong>`
+  * 실적 제외: `<span class="px-1.5 py-0.5 rounded text-[9.5px] font-black bg-rose-600 text-white shadow-2xs">제외</span> <strong class="text-rose-900">실적 제외 (미포함) 항목</strong>`
+- 각 리스트 항목 앞에 세련된 불릿(`text-emerald-500`, `text-rose-500`) 적용.
+
+#### ⑤ 전월실적 산정기준 핵심 8대 우선순위 정렬 및 고객센터 안내 문구 배치
+- `cleanAndSortPerformance()` 엔진 탑재:
+  * 8대 핵심 키워드(`아파트관리비`, `도시가스`, `무이자할부`, `유이자할부`, `초중고납입금(학교납입금)`, `4대보험`, `학원비`, `주유비`)를 탐색하여 인정/제외 목록의 최상단에 자동 우선 정렬.
+  * 카드사 공식 설명서에 없는 항목은 임의로 지어내지 않고 생략하는 원칙 준수.
+- 실적 산정 기준 박스 하단 푸터에 안내 문구 필수 배치:
+  * **`※ 실적 산정 기준에 대한 자세한 문의는 카드사 고객센터로 문의 부탁드립니다.`**
+
+---
+
+### 3) 실시간 Edge CDP 브라우저 검증 결과 (100% ALL PASS)
+* **검증 스크립트**: [`scripts/verify_chapter72_cdp.ps1`](file:///C:/Users/User01/.gemini/antigravity/scratch/phone-price/scripts/verify_chapter72_cdp.ps1)
+  - `skt_kb_tlight`:
+    * QR: **`isApplyQr: True, isPhoneQr: False`** (발급신청 QR 완벽)
+    * 배너: **`[확인필수: True, 응모필수: False]`** (★ 이벤트 확인 필수 배너)
+    * 추가 프로모션: **`2개 독립 카드 (아이폰 8만원 캐시백 | KB Pay 2만원 캐시백)`**
+    * 이모지: **`Green: False, Red: False`** (윈도우 이모지 0건)
+    * 고객센터 안내: **`hasInquiryNotice: True`** (정상 노출)
+    * 우선순위: 상위에 `유이자할부`, `아파트 관리비`, `4대보험`, `초중고납입금`, `무이자할부` 우선 배치 ➡️ **ALL PASS**
+  - `lgu_kb_light2`:
+    * QR: **`isApplyQr: True, isPhoneQr: False`** (과거 전화신청 QR ➡️ 공식 발급신청 QR로 완벽 복원)
+    * 배너: **`[확인필수: True, 응모필수: False]`** (★ 이벤트 확인 필수 배너)
+    * 추가 프로모션: **`2개 독립 카드 (아이폰 8만원 캐시백 | KB Pay 2만원 캐시백)`** ➡️ **ALL PASS**
+  - `skt_hyundai_m3`:
+    * 배너: **`[응모필수: True, 확인필수: False]`** (★ 이벤트 응모 필수 배너 + 이벤트응모 QR 완벽 분기) ➡️ **ALL PASS**
+  - `lgu_shinhan_bora` & `kt_lotte_light`:
+    * QR: **`isApplyQr: True, isPhoneQr: False`** ➡️ **ALL PASS**
+* **실화면 검독 증빙 스크린샷**:
+  - `scratch/card_screen_a4.png` (SKT T라이트 KB국민카드 서식지 전체 실사)
+  - `scratch/card_screen_lgu.png` (LGU+ KB국민 U+ 라이트할부II 서식지 전체 실사)
+  - `scratch/card_screen_hyundai.png` (현대카드 M3 T라이트2 이벤트 응모 필수 서식지 전체 실사)
