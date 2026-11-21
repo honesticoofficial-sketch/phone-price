@@ -57,7 +57,18 @@
                                    "total_monthly_discount":  27000
                                }
                            ],
-        "card_name":  "KT 할부 Plus KB국민카드"
+        "card_name":  "KT 할부 Plus KB국민카드",
+        "performance_includes":  [
+                                     "이동통신요금 자동이체 결제금액 (실적 인정 🟢)",
+                                     "일상 생활 가맹점(마트, 편의점, 외식, 병원, 약국 등) 결제액",
+                                     "대중교통, 주유, 온라인 쇼핑 등 일시불 및 유이자할부 이용액"
+                                 ],
+        "performance_excludes":  [
+                                     "아파트 관리비 납부금액 (실적 제외 🔴)",
+                                     "국세, 지방세, 공과금, 4대보험, 초중고납입금, 대학등록금",
+                                     "상품권 및 선불카드 충전/구매 금액",
+                                     "단기/장기카드대출, 연회비, 무이자할부 이용액"
+                                 ]
     },
     {
         "card_plate_image":  "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/3dab1f98-3e05-4452-bc7f-54574612b7e3",
@@ -108,7 +119,17 @@
                                    "total_monthly_discount":  35000
                                }
                            ],
-        "card_name":  "KT 할부 롯데카드"
+        "card_name":  "KT 할부 롯데카드",
+        "performance_includes":  [
+                                     "국내외 일시불 및 유이자할부 이용금액",
+                                     "마트, 편의점, 쇼핑, 외식, 병원 등 일상 가맹점 결제"
+                                 ],
+        "performance_excludes":  [
+                                     "통신요금 결제금액 (실적 제외 🔴)",
+                                     "아파트 관리비 납부금액 (실적 제외 🔴)",
+                                     "국세, 지방세, 4대보험, 초중고납입금, 대학등록금",
+                                     "상품권 및 기프트카드 구매/충전, 단기/장기카드대출, 연회비"
+                                 ]
     },
     {
         "card_plate_image":  "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/3541547b-0d33-48f2-b5f6-571644d55899",
@@ -166,7 +187,17 @@
                                    "total_monthly_discount":  15000
                                }
                            ],
-        "card_name":  "KT SUPER DC BC바로카드"
+        "card_name":  "KT SUPER DC BC바로카드",
+        "performance_includes":  [
+                                     "이동통신요금 자동이체 결제금액 (실적 인정 🟢)",
+                                     "국내외 일시불 및 유이자할부 이용금액",
+                                     "마트, 편의점, 외식, 쇼핑, 주유 등 일상 생활 가맹점 결제액"
+                                 ],
+        "performance_excludes":  [
+                                     "아파트 관리비 납부금액 (실적 제외 🔴)",
+                                     "국세, 지방세, 공과금, 4대보험, 대학등록금, 초중고납입금",
+                                     "상품권 및 선불카드 구입·충전 금액, 단기/장기카드대출, 연회비"
+                                 ]
     },
     {
         "card_plate_image":  "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/3541547b-0d33-48f2-b5f6-571644d55899",
@@ -227,7 +258,18 @@
                                    "total_monthly_discount":  24000
                                }
                            ],
-        "card_name":  "KT 할부 S 삼성카드"
+        "card_name":  "KT 할부 S 삼성카드",
+        "performance_includes":  [
+                                     "이동통신요금 자동이체 결제금액 (실적 인정 🟢)",
+                                     "일상 생활 가맹점(마트, 편의점, 주유, 병원, 약국, 외식 등) 결제액",
+                                     "국내외 일시불 및 유이자할부 이용금액"
+                                 ],
+        "performance_excludes":  [
+                                     "아파트 관리비 납부금액 (실적 제외 🔴)",
+                                     "국세, 지방세, 공과금, 4대보험, 학교납입금(초중고/대학등록금)",
+                                     "상품권 및 선불전자지급수단 구매·충전금액",
+                                     "단기/장기카드대출, 연회비, 각종 수수료, 무이자할부 이용액"
+                                 ]
     },
     {
         "card_plate_image":  "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/46d651ec-5640-421d-b78a-cc09054e04e6",
@@ -281,7 +323,18 @@
                                    "total_monthly_discount":  35000
                                }
                            ],
-        "card_name":  "KT-현대카드M Edition3 (라이트할부형)"
+        "card_name":  "KT-현대카드M Edition3 (라이트할부형)",
+        "performance_includes":  [
+                                     "일반 가맹점 일시불 및 유이자할부 이용금액",
+                                     "마트, 편의점, 백화점, 온라인 쇼핑, 외식, 병원 등 일상 생활 결제"
+                                 ],
+        "performance_excludes":  [
+                                     "통신요금 결제금액 (실적 제외 🔴)",
+                                     "아파트 관리비 납부금액 (실적 제외 🔴)",
+                                     "초·중·고교 납입금, 대학 등록금 (실적 제외 🔴)",
+                                     "대중교통(버스/지하철), 택시, 고속도로 통행료",
+                                     "국세, 지방세, 공과금, 4대보험, 상품권 및 선불카드 충전액"
+                                 ]
     },
     {
         "card_plate_image":  "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/8977114b-2dfd-4a11-827c-9b578c94625b",
@@ -334,7 +387,19 @@
                                    "total_monthly_discount":  24000
                                }
                            ],
-        "card_name":  "KT 가족만족 신한카드 (라이트할부)"
+        "card_name":  "KT 가족만족 신한카드 (라이트할부)",
+        "performance_includes":  [
+                                     "이동통신요금 자동이체 결제금액 (실적 인정 🟢)",
+                                     "아파트 관리비 납부금액 (실적 인정 🟢)",
+                                     "일상 생활 가맹점(마트, 편의점, 외식, 병원, 약국 등) 결제액",
+                                     "국내외 일시불 및 일반 할부 이용금액"
+                                 ],
+        "performance_excludes":  [
+                                     "단기카드대출(현금서비스), 장기카드대출(카드론)",
+                                     "연회비, 제수수료(할부수수료, SMS수수료 등), 연체이자",
+                                     "국세, 지방세, 공과금, 4대보험(국민연금/건강보험/고용보험/산재보험)",
+                                     "상품권 및 선불카드 구입·충전 금액"
+                                 ]
     },
     {
         "card_plate_image":  "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/8e4587ba-ef34-451d-b8da-75bdfd27806a",
@@ -392,7 +457,18 @@
                                    "total_monthly_discount":  31000
                                }
                            ],
-        "card_name":  "KT 우리카드 카드의정석 SUPER DC"
+        "card_name":  "KT 우리카드 카드의정석 SUPER DC",
+        "performance_includes":  [
+                                     "이동통신요금 자동이체 결제금액 (실적 인정 🟢)",
+                                     "마트, 백화점, 온라인쇼핑, 외식, 병원, 약국 등 일상 결제액",
+                                     "대중교통, 주유 등 국내 일시불 및 유이자할부 이용액"
+                                 ],
+        "performance_excludes":  [
+                                     "아파트 관리비 납부금액 (실적 제외 🔴)",
+                                     "국세, 지방세, 공과금, 4대보험, 대학등록금, 초중고납입금",
+                                     "상품권, 기프트카드, 선불카드 충전/구매액",
+                                     "단기/장기카드대출, 연회비, 각종 수수료, 무이자할부 이용액"
+                                 ]
     },
     {
         "card_plate_image":  "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/3dab1f98-3e05-4452-bc7f-54574612b7e3",
@@ -445,6 +521,16 @@
                                    "total_monthly_discount":  29000
                                }
                            ],
-        "card_name":  "KT DC 롯데카드"
+        "card_name":  "KT DC 롯데카드",
+        "performance_includes":  [
+                                     "국내외 일시불 및 유이자할부 이용금액",
+                                     "마트, 편의점, 쇼핑, 외식, 병원 등 일상 가맹점 결제"
+                                 ],
+        "performance_excludes":  [
+                                     "통신요금 결제금액 (실적 제외 🔴)",
+                                     "아파트 관리비 납부금액 (실적 제외 🔴)",
+                                     "국세, 지방세, 4대보험, 초중고납입금, 대학등록금",
+                                     "상품권 및 기프트카드 구매/충전, 단기/장기카드대출, 연회비"
+                                 ]
     }
 ]

@@ -11,6 +11,7 @@
     highlightBadge: "최대 27,000원 할인 & 24/36개월 장기할부 지원",
     phone: "KB국민카드 고객센터 1577-9900",
     applyUrl: "https://m.kbcard.com/CRD/DVIEW/MCAMCXHIACRC0002?mainCC=b&allianceCode=01507&solicitorcode=7021507000",
+    eventUrl: "https://m.site.naver.com/1it3e",
     eventTarget: "직전 6개월 무실적 고객 프로모션 (24/36개월 장기할부 5.9%/7.0%)",
     cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/2425de02-e741-4b82-84c1-947049d1b989",
     cardPlateOrientation: "horizontal",
@@ -49,6 +50,19 @@
       "신규 발급 회원은 승인 익월 전월실적 미충족 시에도 1회차 기본 및 프로모션 할인 제공",
       "전월실적 산정: 통신비 자동이체금, 장기할부 약정금액, 일반 일시불/할부 이용금액 합산",
       "출처: 세이브드림 KT 공식 정책"
+    ],
+    performanceIncludes: 
+    [
+      "이동통신요금 자동이체 결제금액 (실적 인정 🟢)",
+      "일상 생활 가맹점(마트, 편의점, 외식, 병원, 약국 등) 결제액",
+      "대중교통, 주유, 온라인 쇼핑 등 일시불 및 유이자할부 이용액"
+    ],
+    performanceExcludes: 
+    [
+      "아파트 관리비 납부금액 (실적 제외 🔴)",
+      "국세, 지방세, 공과금, 4대보험, 초중고납입금, 대학등록금",
+      "상품권 및 선불카드 충전/구매 금액",
+      "단기/장기카드대출, 연회비, 무이자할부 이용액"
     ]
   },
 
@@ -63,6 +77,7 @@
     highlightBadge: "50만 실적 3.4만 / 100만 실적 3.5만원 최대 24개월 캐시백",
     phone: "롯데카드 고객센터 1588-8100",
     applyUrl: "http://m.lottecard.co.kr/spa/card/booth?bId=106378&vtCdKndC=P15912-A15912",
+    eventUrl: "https://m.site.naver.com/2gcOy",
     eventTarget: "직전 6개월 무실적 고객 프로모션 참여 후 장기할부 수납 완료 시",
     cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/3dab1f98-3e05-4452-bc7f-54574612b7e3",
     cardPlateOrientation: "horizontal",
@@ -99,6 +114,18 @@
       "추가 캐시백은 프로모션 익월부터 최대 24개월 적용",
       "전월실적 제외: 단기/장기카드대출, 연회비, 국세, 지방세, 아파트관리비, 상품권",
       "출처: 세이브드림 KT 공식 정책"
+    ],
+    performanceIncludes: 
+    [
+      "국내외 일시불 및 유이자할부 이용금액",
+      "마트, 편의점, 쇼핑, 외식, 병원 등 일상 가맹점 결제"
+    ],
+    performanceExcludes: 
+    [
+      "통신요금 결제금액 (실적 제외 🔴)",
+      "아파트 관리비 납부금액 (실적 제외 🔴)",
+      "국세, 지방세, 4대보험, 초중고납입금, 대학등록금",
+      "상품권 및 기프트카드 구매/충전, 단기/장기카드대출, 연회비"
     ]
   },
 
@@ -150,6 +177,19 @@
       "본 카드는 24개월 라이트할부 전용 상품입니다",
       "전월실적 제외: 상품권, 세금, 연회비 등",
       "출처: 세이브드림 KT 공식 정책"
+    ],
+    performanceIncludes: 
+    [
+      "일반 가맹점 일시불 및 유이자할부 이용금액",
+      "마트, 편의점, 백화점, 온라인 쇼핑, 외식, 병원 등 일상 생활 결제"
+    ],
+    performanceExcludes: 
+    [
+      "통신요금 결제금액 (실적 제외 🔴)",
+      "아파트 관리비 납부금액 (실적 제외 🔴)",
+      "초·중·고교 납입금, 대학 등록금 (실적 제외 🔴)",
+      "대중교통(버스/지하철), 택시, 고속도로 통행료",
+      "국세, 지방세, 공과금, 4대보험, 상품권 및 선불카드 충전액"
     ]
   },
 
@@ -164,6 +204,7 @@
     highlightBadge: "월 2.2만/2.3만/2.4만원 청구할인 (기본+프로모션)",
     phone: "삼성카드 고객센터 1588-8700",
     applyUrl: "https://www.samsungcard.com/home/card/cardinfo/PGHPPCCCardCardinfoDetails001?code=AAP1839&alncmpC=QKKTLITE&affcode=QKKTLITE",
+    eventUrl: "https://m.site.naver.com/282hO",
     eventTarget: "전월 40/80/120만원 이상 이용 시 프로모션 적용",
     cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/46d651ec-5640-421d-b78a-cc09054e04e6",
     cardPlateOrientation: "horizontal",
@@ -200,6 +241,19 @@
     details: [
       "24개월/36개월 라이트할부 수납 시 적용",
       "출처: 세이브드림 KT 공식 정책"
+    ],
+    performanceIncludes: 
+    [
+      "이동통신요금 자동이체 결제금액 (실적 인정 🟢)",
+      "일상 생활 가맹점(마트, 편의점, 주유, 병원, 약국, 외식 등) 결제액",
+      "국내외 일시불 및 유이자할부 이용금액"
+    ],
+    performanceExcludes: 
+    [
+      "아파트 관리비 납부금액 (실적 제외 🔴)",
+      "국세, 지방세, 공과금, 4대보험, 학교납입금(초중고/대학등록금)",
+      "상품권 및 선불전자지급수단 구매·충전금액",
+      "단기/장기카드대출, 연회비, 각종 수수료, 무이자할부 이용액"
     ]
   },
 
@@ -250,6 +304,20 @@
     details: [
       "승인 익월 1회차 실적유예 적용, 24회차까지 청구할인",
       "출처: 세이브드림 KT 공식 정책"
+    ],
+    performanceIncludes: 
+    [
+      "이동통신요금 자동이체 결제금액 (실적 인정 🟢)",
+      "아파트 관리비 납부금액 (실적 인정 🟢)",
+      "일상 생활 가맹점(마트, 편의점, 외식, 병원, 약국 등) 결제액",
+      "국내외 일시불 및 일반 할부 이용금액"
+    ],
+    performanceExcludes: 
+    [
+      "단기카드대출(현금서비스), 장기카드대출(카드론)",
+      "연회비, 제수수료(할부수수료, SMS수수료 등), 연체이자",
+      "국세, 지방세, 공과금, 4대보험(국민연금/건강보험/고용보험/산재보험)",
+      "상품권 및 선불카드 구입·충전 금액"
     ]
   },
 
@@ -264,6 +332,7 @@
     highlightBadge: "최대 36개월 3.1만원 청구할인 & 36개월 장기할부",
     phone: "우리카드 고객센터 1588-9955",
     applyUrl: "https://m.wooricard.com/dcmw/yh1/crd/crd01/M1CRD101S02.do?cdPrdCd=104168&canvasser=88936106",
+    eventUrl: "https://m.site.naver.com/1gafU",
     eventTarget: "직전 6개월 무실적 고객 (최대 36개월 청구할인)",
     cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/004cc44c-9ca5-478e-87d1-7c24cb39e9eb",
     cardPlateOrientation: "horizontal",
@@ -300,6 +369,19 @@
     details: [
       "36개월 장기할부 선택 시 36개월간 할인 유지",
       "출처: 세이브드림 KT 공식 정책"
+    ],
+    performanceIncludes: 
+    [
+      "이동통신요금 자동이체 결제금액 (실적 인정 🟢)",
+      "마트, 백화점, 온라인쇼핑, 외식, 병원, 약국 등 일상 결제액",
+      "대중교통, 주유 등 국내 일시불 및 유이자할부 이용액"
+    ],
+    performanceExcludes: 
+    [
+      "아파트 관리비 납부금액 (실적 제외 🔴)",
+      "국세, 지방세, 공과금, 4대보험, 대학등록금, 초중고납입금",
+      "상품권, 기프트카드, 선불카드 충전/구매액",
+      "단기/장기카드대출, 연회비, 각종 수수료, 무이자할부 이용액"
     ]
   },
 
@@ -350,6 +432,18 @@
     details: [
       "24개월 라이트할부 수납 시 최대 24개월 적용",
       "출처: 세이브드림 KT 공식 정책"
+    ],
+    performanceIncludes: 
+    [
+      "국내외 일시불 및 유이자할부 이용금액",
+      "마트, 편의점, 쇼핑, 외식, 병원, 주유 등 일상 생활 결제"
+    ],
+    performanceExcludes: 
+    [
+      "통신요금 결제금액 (실적 제외 🔴)",
+      "아파트 관리비 납부금액 (실적 제외 🔴)",
+      "국세, 지방세, 공과금, 4대보험, 대학등록금, 초중고납입금",
+      "상품권 및 기프트카드 구매/충전, 연회비, 제수수료"
     ]
   },
 
@@ -399,6 +493,18 @@
     details: [
       "24개월 장기할부 필수",
       "출처: 세이브드림 KT 공식 정책"
+    ],
+    performanceIncludes: 
+    [
+      "이동통신요금 자동이체 결제금액 (실적 인정 🟢)",
+      "국내외 일시불 및 유이자할부 이용금액",
+      "마트, 편의점, 외식, 쇼핑, 주유 등 일상 생활 가맹점 결제액"
+    ],
+    performanceExcludes: 
+    [
+      "아파트 관리비 납부금액 (실적 제외 🔴)",
+      "국세, 지방세, 공과금, 4대보험, 대학등록금, 초중고납입금",
+      "상품권 및 선불카드 구입·충전 금액, 단기/장기카드대출, 연회비"
     ]
   },
 
@@ -450,6 +556,18 @@
     details: [
       "자동이체 필수 등록, 24개월 청구할인",
       "출처: 세이브드림 KT 공식 정책"
+    ],
+    performanceIncludes: 
+    [
+      "국내외 일시불 및 유이자할부 이용금액",
+      "마트, 편의점, 쇼핑, 외식, 병원 등 일상 가맹점 결제"
+    ],
+    performanceExcludes: 
+    [
+      "통신요금 결제금액 (실적 제외 🔴)",
+      "아파트 관리비 납부금액 (실적 제외 🔴)",
+      "국세, 지방세, 4대보험, 초중고납입금, 대학등록금",
+      "상품권 및 기프트카드 구매/충전, 단기/장기카드대출, 연회비"
     ]
   },
 
@@ -464,6 +582,7 @@
     highlightBadge: "30만 실적 2.2만 / 70만 실적 2.7만원 36개월 청구할인",
     phone: "신한카드 고객센터 1544-7000",
     applyUrl: "https://www.shinhancard.com/pconts/html/card/apply/credit/1223352_2207.html?empSeq=501&btnApp=dp01",
+    eventUrl: "https://shcard.io/tlight6m",
     eventTarget: "직전 6개월 무실적 고객 프로모션",
     cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/074b0e83-5f28-4167-b895-fea12fdef0a2",
     cardPlateOrientation: "horizontal",
@@ -499,6 +618,20 @@
     details: [
       "자동이체 필수 등록, 최대 36개월간 청구할인",
       "출처: 세이브드림 KT 공식 정책"
+    ],
+    performanceIncludes: 
+    [
+      "이동통신요금 자동이체 결제금액 (실적 인정 🟢)",
+      "아파트 관리비 납부금액 (실적 인정 🟢)",
+      "일상 생활 가맹점(마트, 편의점, 외식, 병원, 약국 등) 결제액",
+      "국내외 일시불 및 일반 할부 이용금액"
+    ],
+    performanceExcludes: 
+    [
+      "단기카드대출(현금서비스), 장기카드대출(카드론)",
+      "연회비, 제수수료(할부수수료, SMS수수료 등), 연체이자",
+      "국세, 지방세, 공과금, 4대보험(국민연금/건강보험/고용보험/산재보험)",
+      "상품권 및 선불카드 구입·충전 금액"
     ]
   },
 
@@ -513,6 +646,7 @@
     highlightBadge: "최대 2.5만원 청구할인 & 30만/70만/120만 실적 혜택",
     phone: "삼성카드 고객센터 1588-8700",
     applyUrl: "https://www.samsungcard.com/home/card/cardinfo/PGHPPCCCardCardinfoDetails001?code=AAP1665&alncmpC=QKKT&affcode=QKKT",
+    eventUrl: "https://m.site.naver.com/282hO",
     eventTarget: "직전 6개월 무실적 고객 프로모션",
     cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/c04ea319-cf93-421f-b8fa-20b9f4857c1e",
     cardPlateOrientation: "horizontal",
@@ -549,6 +683,19 @@
     details: [
       "통신요금 자동이체 필수",
       "출처: 세이브드림 KT 공식 정책"
+    ],
+    performanceIncludes: 
+    [
+      "이동통신요금 자동이체 결제금액 (실적 인정 🟢)",
+      "일상 생활 가맹점(마트, 편의점, 주유, 병원, 약국, 외식 등) 결제액",
+      "국내외 일시불 및 유이자할부 이용금액"
+    ],
+    performanceExcludes: 
+    [
+      "아파트 관리비 납부금액 (실적 제외 🔴)",
+      "국세, 지방세, 공과금, 4대보험, 학교납입금(초중고/대학등록금)",
+      "상품권 및 선불전자지급수단 구매·충전금액",
+      "단기/장기카드대출, 연회비, 각종 수수료, 무이자할부 이용액"
     ]
   },
 
@@ -597,6 +744,18 @@
     details: [
       "자동이체 필수 등록, 36개월간 청구할인",
       "출처: 세이브드림 KT 공식 정책"
+    ],
+    performanceIncludes: 
+    [
+      "이동통신요금 자동이체 결제금액 (실적 인정 🟢)",
+      "국내외 일시불 및 유이자할부 이용금액",
+      "마트, 편의점, 외식, 쇼핑, 주유 등 일상 생활 가맹점 결제액"
+    ],
+    performanceExcludes: 
+    [
+      "아파트 관리비 납부금액 (실적 제외 🔴)",
+      "국세, 지방세, 공과금, 4대보험, 대학등록금, 초중고납입금",
+      "상품권 및 선불카드 구입·충전 금액, 단기/장기카드대출, 연회비"
     ]
   },
 
@@ -611,6 +770,7 @@
     highlightBadge: "30만 실적 7천원 / 70만 실적 1.1만원 청구할인",
     phone: "KB국민카드 고객센터 1577-9900",
     applyUrl: "https://m.kbcard.com/CRD/DVIEW/MCAMCXHIACRC0002?mainCC=b&allianceCode=04293&solicitorcode=7024293000",
+    eventUrl: "https://m.site.naver.com/1it3e",
     eventTarget: "직전 6개월 무실적 고객 프로모션",
     cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/ff5f788d-a86d-4e6f-bf24-5c42faec81c8",
     cardPlateOrientation: "horizontal",
@@ -646,6 +806,19 @@
     details: [
       "자동이체 필수 등록",
       "출처: 세이브드림 KT 공식 정책"
+    ],
+    performanceIncludes: 
+    [
+      "이동통신요금 자동이체 결제금액 (실적 인정 🟢)",
+      "일상 생활 가맹점(마트, 편의점, 외식, 병원, 약국 등) 결제액",
+      "대중교통, 주유, 온라인 쇼핑 등 일시불 및 유이자할부 이용액"
+    ],
+    performanceExcludes: 
+    [
+      "아파트 관리비 납부금액 (실적 제외 🔴)",
+      "국세, 지방세, 공과금, 4대보험, 초중고납입금, 대학등록금",
+      "상품권 및 선불카드 충전/구매 금액",
+      "단기/장기카드대출, 연회비, 무이자할부 이용액"
     ]
   },
 
@@ -695,6 +868,18 @@
     details: [
       "통신요금 자동이체 필수 등록",
       "출처: 세이브드림 KT 공식 정책"
+    ],
+    performanceIncludes: 
+    [
+      "국내외 일시불 및 유이자할부 이용금액",
+      "마트, 편의점, 쇼핑, 외식, 병원, 약국 등 일상 생활 결제"
+    ],
+    performanceExcludes: 
+    [
+      "통신요금 결제금액 (실적 제외 🔴)",
+      "아파트 관리비 납부금액 (실적 제외 🔴)",
+      "국세, 지방세, 공과금, 4대보험, 초중고납입금, 대학등록금",
+      "상품권 및 선불카드 충전/구매, 연회비, 수수료"
     ]
   },
 
@@ -709,6 +894,7 @@
     highlightBadge: "50만 실적 2.8만 / 200만 실적 5.8만원 최대 60개월 혜택",
     phone: "신한카드 고객센터 1544-7000",
     applyUrl: "https://www.shinhancard.com/pconts/html/card/apply/credit/1235115_2207.html?empSeq=501&btnApp=dp01",
+    eventUrl: "https://shcard.io/tlight6m",
     eventTarget: "신한은행 결제계좌 등록 및 Master 프로모션 (최대 60개월 청구할인)",
     cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/ed7ee762-199c-4ee6-adc9-ba259a64ee98",
     cardPlateOrientation: "horizontal",
@@ -744,6 +930,20 @@
     details: [
       "신한은행 결제계좌 등록 시 추가 캐시백 제공",
       "출처: 세이브드림 KT 공식 정책"
+    ],
+    performanceIncludes: 
+    [
+      "이동통신요금 자동이체 결제금액 (실적 인정 🟢)",
+      "아파트 관리비 납부금액 (실적 인정 🟢)",
+      "일상 생활 가맹점(마트, 편의점, 외식, 병원, 약국 등) 결제액",
+      "국내외 일시불 및 일반 할부 이용금액"
+    ],
+    performanceExcludes: 
+    [
+      "단기카드대출(현금서비스), 장기카드대출(카드론)",
+      "연회비, 제수수료(할부수수료, SMS수수료 등), 연체이자",
+      "국세, 지방세, 공과금, 4대보험(국민연금/건강보험/고용보험/산재보험)",
+      "상품권 및 선불카드 구입·충전 금액"
     ]
   }
 ];
