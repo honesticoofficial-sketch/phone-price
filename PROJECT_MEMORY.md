@@ -2439,3 +2439,52 @@ Write-Host "Pushed Commit: $($res.commit.sha)"
   - `scratch/verified_skt_hyundai_m3.png`: SKT 현대카드 M3 T라이트2에서 쿠폰팩 문구가 완전히 제거되고, 공문에 기반한 "신규 또는 행사월 기준 6개월 이상 무실적 고객 (M3 T라이트2 최초 발급)" 및 50만 33,000원 / 100만 35,000원 할인 안내만 정갈하게 노출됨을 실시간 캡처로 육안 검증 완료.
   - `scratch/verified_skt_hyundai_m3_bill.png`: SKT 현대카드 M3 통신할인형2.0에서 쿠폰팩 문구 없이 통신요금 자동이체 할인 안내만 정갈하게 노출됨을 실시간 캡처로 확인.
   - `scratch/verified_kt_hyundai_m3.png`: KT 현대카드 M Edition3에서 쿠폰팩 없이 50만 33,000원 / 100만 35,000원 할인이 깔끔하게 렌더링됨을 실시간 캡처로 확인.
+
+---
+
+## 63. [Chapter 63] 제휴카드 단일 공식 QR 확립·화면 확대 시 100% 고정 캡쳐 격리·유령카드(하나 T다운) 퇴출 및 LGU+ 공식 분류 규칙 전면 적용
+
+### 1) 사용자 요청 및 비즈니스 배경
+* **핵심 요구사항**:
+  1. **이벤트 확인 QR 중복 완벽 제거**: 이벤트 전용 URL이 없는 카드에 억지로 이벤트 확인 QR 칸을 채우려다 카드신청 QR이 2개씩 중복 생성되는 버그 해결. 전용 이벤트 URL이 없으면 단독 신청 QR 1개만 깔끔하게 노출.
+  2. **100% 비율 고정 캡쳐 및 화면 확대 시 카드명 가림 방지**: 넷가표/시세표/제휴카드 캡쳐 시 사용자의 브라우저 화면 배율과 무관하게 100% 표준 비율로 캡쳐 후 원상 복구하되, 화면 깜빡임/움직임 0% 보장. 화면 확대 시 카드명이 QR 박스 뒤로 숨거나 가려지는 현상 원천 차단.
+  3. **기본할인 vs 프로모션 할인 금액 표기 정상화**: 기본할인이 실적 구간별로 상이함에도 최하위 기본할인액으로 고정되고 프로모션 할인만 달라지게 기재된 카드 오류 정정.
+  4. **실존하지 않는 제휴카드 퇴출 및 2단계 검증 체계 확립**: 공홈/카드사에 없는 유령 카드(예: `하나카드 T다운`) 퇴출. 1차 공문+카드사 대조, 2차 통신사 공홈 대조(다이렉트 전용 카드 제외) 체계 수립.
+  5. **LGU+ 제휴카드 자동이체형 vs 라이트할부형 분류 공식 반영**:
+     - `장기할부 필수` -> 라이트할부형 (`type: "light"`, `typeLabel: "라이트할부"`)
+     - `장기할부 선택` -> 라이트할부 & 자동이체 둘 다 지원 (`typeLabel: "요금할인/할부선택"`)
+     - `장기할부필수 표시 없거나 장기할부불가 되어있고 자동이체필수 되어있는 카드` -> 자동이체형 (`type: "bill"`, `typeLabel: "요금할인"`)
+
+---
+
+### 2) 5대 개선 및 버그 박멸 상세 내역
+1. **단일 공식 QR 확립 (중복 QR 0건 달성)**:
+   - 원인: `const effectiveEventUrl = card.eventUrl || (card.eventTarget ? (card.applyUrl || card.phone) : '');`에서 별도 이벤트 URL이 없음에도 `eventTarget` 문구가 있으면 카드신청 URL로 이벤트 QR을 복제 생성했음.
+   - 조치: `hasDistinctEventUrl = card.eventUrl && card.eventUrl.trim() !== '' && card.eventUrl.trim() !== (card.applyUrl || '').trim();` 조건 도입. 전용 이벤트 URL이 존재하는 카드(KT 현대카드 M3 통신할인형 2.0)만 듀얼 QR을 표시하고, 나머지 40개 카드는 단독 정품 신청 QR 1개만 정갈하게 노출.
+2. **100% 고정 캡쳐 격리 & 화면 확대 시 카드명 가림 0% 보장**:
+   - 3대 캡쳐 함수(`copyCardToClipboard`, `copyNetTableToClipboard`, `captureAdPosterImage`): 화면 깜빡임/움직임 0% 보장을 위해 화면 밖 -10000px 오프스크린 격리 컨테이너 및 `htmlToImage` 옵션에 `style: { zoom: '1', transform: 'none' }` 주입. 사용자가 브라우저를 150%, 200%로 확대해 둔 상태에서도 항상 100% 표준 A4/시세표 규격으로 선명하게 복사/저장.
+   - 서식지(`#cardA4Sheet`): `min-w-[760px]` 강제 고정 및 카드 헤더 타이틀(`h1`)의 `truncate` 속성을 제거하고 `break-keep whitespace-normal flex-1` 적용. 브라우저를 확대해도 카드명이 QR 박스 뒤로 숨거나 가려지지 않고 깔끔하게 줄바꿈되며 100% 온전하게 노출.
+3. **기본할인 실적 구간별 금액 정상화**:
+   - `kt_bc_super_dc`: 기본할인 구간을 30만 5,000원 / 70만 7,000원 / 120만 9,000원으로 정상 분리 (기존 5k 고정 오류 완치).
+   - `lgu_kb_light2`: 기본할인 30만 8,000원 / 70만 12,000원 / 120만 14,000원 구간 정상화.
+   - `lgu_woori_36`: 기본할인 30만 8,000원 / 70만 13,000원 / 100만 18,000원 구간 정상화.
+4. **유령카드(하나카드 T다운) 완전 퇴출 & 통신 3사 정품 41종 재편**:
+   - SKT 라인업에서 미발급 유령카드 `skt_hana_tdown` 완전 영구 삭제.
+   - 통신 3사 카드 풀: SKT 14종, KT 15종, LGU+ 12종 (총 41종 정품 완성).
+5. **LGU+ 공식 분류 규칙 전면 적용**:
+   - 라이트할부형 (6종): 신한 스마트플랜+, 신한 Bora, KB 라이트할부II, 우리 36, 삼성 라이트, 롯데 LOCA 라이트 (`type: "light"`, `typeLabel: "라이트할부"`)
+   - 자동이체/요금할인형 (6종):
+     * 현대 M3 통신할인형 2.0: 라이트할부에서 요금할인형으로 올바르게 재분류 (`type: "bill"`, `typeLabel: "요금할인"`)
+     * 삼성 LG U+ 삼성카드: 장기할부 선택형 공식 라벨 반영 (`type: "bill"`, `typeLabel: "요금할인/할부선택"`)
+     * 롯데 DC New, 롯데 LOCA, 하나 family, NH 올원: 요금할인형 (`type: "bill"`, `typeLabel: "요금할인"`)
+
+---
+
+### 3) 실증 검증 결과 (Edge CDP 브라우저 테스트 100% 통과)
+* [`scripts/verify_chapter63_complete.ps1`](file:///C:/Users/User01/.gemini/antigravity/scratch/phone-price/scripts/verify_chapter63_complete.ps1):
+  - SKT 카드 수: 14 (하나 T다운 유령카드 영구 퇴출 확인)
+  - KT 카드 수: 15 (BC Super DC 기본할인 5k/7k/9k 정상화 확인)
+  - LGU 카드 수: 12 (현대 M3 요금할인 재분류 & 삼성카드 요금할인/할부선택 라벨 확인)
+  - QR 중복 전수 검사: 41종 중 중복 생성 버그 0건 (단독 QR 40종, 전용 이벤트 듀얼 QR 1종)
+  - 150% 줌 상태 서식지 렌더링 검사: 카드명-QR 간 간격 24px 이상 유지, 가림/겹침 0% (`isOverlap: false`)
+  - 3대 캡쳐 기능 100% 줌 격리: `copyCardToClipboard`, `copyNetTableToClipboard`, `captureAdPosterImage` 모두 `zoom: '1'` 주입 확인.

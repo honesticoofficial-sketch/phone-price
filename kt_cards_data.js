@@ -385,9 +385,9 @@
         condition: "신규 발급 또는 6개월 무실적 고객",
         highlight: "매월 최대 15,000원",
         tiers: [
-          { label: "전월 40만원 이상", amount: "월 13,000원 할인", amountNum: 13000, baseAmount: "8,000", promoAmount: "5,000", sub: "기본 8,000원 + 프로모션 5,000원", total24: "24개월 총 312,000원 할인", total24Num: 312000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 },
-          { label: "전월 80만원 이상", amount: "월 14,000원 할인", amountNum: 14000, baseAmount: "10,000", promoAmount: "4,000", sub: "기본 10,000원 + 프로모션 4,000원", total24: "24개월 총 336,000원 할인", total24Num: 336000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 },
-          { label: "전월 120만원 이상", amount: "월 15,000원 할인", amountNum: 15000, baseAmount: "12,000", promoAmount: "3,000", sub: "기본 12,000원 + 프로모션 3,000원", total24: "24개월 총 360,000원 할인", total24Num: 360000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 }
+          { label: "전월 40만원 이상", amount: "월 13,000원 할인", amountNum: 13000, baseAmount: "5,000", promoAmount: "8,000", sub: "기본 5,000원 + 프로모션 8,000원", total24: "24개월 총 312,000원 할인", total24Num: 312000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 },
+          { label: "전월 80만원 이상", amount: "월 14,000원 할인", amountNum: 14000, baseAmount: "7,000", promoAmount: "7,000", sub: "기본 7,000원 + 프로모션 7,000원", total24: "24개월 총 336,000원 할인", total24Num: 336000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 },
+          { label: "전월 120만원 이상", amount: "월 15,000원 할인", amountNum: 15000, baseAmount: "9,000", promoAmount: "6,000", sub: "기본 9,000원 + 프로모션 6,000원", total24: "24개월 총 360,000원 할인", total24Num: 360000, total36: "36개월 미지원 (24개월 전용)", total36Num: 0 }
         ]
       }
     ],

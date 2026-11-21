@@ -145,22 +145,22 @@
                                {
                                    "required_performance":  "30만원 이상",
                                    "benefit_duration":  "24개월",
-                                   "base_discount":  4000,
-                                   "promo_discount":  21000,
+                                   "base_discount":  8000,
+                                   "promo_discount":  17000,
                                    "total_monthly_discount":  25000
                                },
                                {
                                    "required_performance":  "70만원 이상",
                                    "benefit_duration":  "24개월",
-                                   "base_discount":  4000,
-                                   "promo_discount":  22000,
+                                   "base_discount":  12000,
+                                   "promo_discount":  14000,
                                    "total_monthly_discount":  26000
                                },
                                {
                                    "required_performance":  "100만원 이상",
                                    "benefit_duration":  "24개월",
-                                   "base_discount":  4000,
-                                   "promo_discount":  23000,
+                                   "base_discount":  14000,
+                                   "promo_discount":  13000,
                                    "total_monthly_discount":  27000
                                }
                            ],
@@ -257,22 +257,22 @@
                                {
                                    "required_performance":  "40만원 이상",
                                    "benefit_duration":  "36개월",
-                                   "base_discount":  5000,
-                                   "promo_discount":  19000,
+                                   "base_discount":  8000,
+                                   "promo_discount":  16000,
                                    "total_monthly_discount":  24000
                                },
                                {
                                    "required_performance":  "80만원 이상",
                                    "benefit_duration":  "36개월",
-                                   "base_discount":  5000,
-                                   "promo_discount":  24000,
+                                   "base_discount":  13000,
+                                   "promo_discount":  16000,
                                    "total_monthly_discount":  29000
                                },
                                {
                                    "required_performance":  "120만원 이상",
                                    "benefit_duration":  "36개월",
-                                   "base_discount":  5000,
-                                   "promo_discount":  26000,
+                                   "base_discount":  18000,
+                                   "promo_discount":  13000,
                                    "total_monthly_discount":  31000
                                }
                            ],
