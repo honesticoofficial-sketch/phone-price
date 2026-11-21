@@ -2728,3 +2728,42 @@ Write-Host "Pushed Commit: $($res.commit.sha)"
   - **실적 미확인 카드 시뮬레이션 (`performanceIncludes: []`, `performanceExcludes: []`)**:
     * ⚠️ "전월실적 산정기준 카드사 공식 문의" 전용 박스 노출: `True`
     * 🚫 가짜 하드코딩 리스트 생성 차단: `True`
+
+
+---
+
+## 68. [Chapter 68] 카드 플레이트 이미지 외곽 단색 배경 자동 크롭(Trim) 및 실제 픽셀 비율 기반 가로/세로 판(박스) 규격 100% 자동 맞춤(Self-Adapting Orientation) 완성
+
+### 1) 비즈니스 배경 및 핵심 요구사항 (CEO 지침)
+* **지침**: *"카드 이미지 아직도 작게나오거나 세로형 판에 가로형 이미지가 들어가있거나 한데, 카드 이미지 뽑아올때 해당카드가 세로길이가 가로길이보다 길다면 세로형으로 딱맞춰서 삽입되고 가로길이가 세로길이보다 길다면 가로형으로 딱맞춰서 삽입되게 가능해? 그리고 카드이미지 추출간에 배경때문에 명확히 카드 이미지 규격을 알기어렵다면 1차로 카드 이미지추출 ➡️ 2차로 배경제거(단색바탕만 삭제 내부 카드규격 크기만큼의 색상만 구별) ➡️ 3차로 길이 확인후 가로형 또는 세로형 구분후 삽입. 이렇게하면 문제가 해결되지 않을까?"*
+* **원인 규명**:
+  1. `lgu_samsung_light`: 원본 이미지가 반시계 90도로 누워있는 상태(507x320)로 세로 박스에 들어가서 납작하고 작게 보임.
+  2. `lgu_lotte_loca`: 실물 플레이트가 반듯한 가로형(511x322)임에도 세로 박스로 설정되어 있어서 축소되어 보임.
+  3. `KT 15종 카드`: 실제 원격 이미지가 전부 세로형(456x570, 706x1117 등)인데 설정이 전부 `horizontal`로 되어 있어 가로 박스 안에서 작아 보이고 좌우 여백이 발생함.
+  4. 원본 이미지 외곽에 붙어 있는 불필요한 흰색/투명 배경 패딩으로 인해 실제 카드 내용물이 작아 보이는 문제.
+
+---
+
+### 2) 3단계 해결 프로세스 구현 내역
+1. **[1단계] 카드 이미지 데이터 자체의 회전 및 종횡비 정규화**:
+   - `lgu_samsung_light`: 90도 누워있던 Base64 이미지를 시계방향 90도 회전(`Rotate90FlipNone`)하여 똑바로 선 정품 세로형(`320x507`)으로 완전 교체.
+   - `lgu_lotte_loca`: 가로형 카드 규격에 맞춰 `cardPlateOrientation: "horizontal"`로 수정.
+   - `kt_cards_data.js`: 15종 카드 전수의 실제 세로형 이미지에 맞춰 `cardPlateOrientation: "vertical"`로 전면 일괄 교정.
+2. **[2단계] 외곽 단색/투명 배경 자동 크롭 (Trim Bounding Box Engine)**:
+   - 브라우저 렌더링 시 HTML5 캔버스를 통해 이미지 외곽 4변의 투명도 및 단색(흰색/연회색) 여백을 실시간 스캔.
+   - 불필요한 테두리 여백이 4% 이상 존재하는 경우 타이트하게 크롭하여 순수 카드 플레이트만 박스에 꽉 차고 크게 렌더링.
+3. **[3단계] 실제 픽셀 가로/세로 길이 비교 및 판(박스) 규격 100% 자동 맞춤 (`autoAdaptCardPlate`)**:
+   - 이미지 로드 시 실제 자연 해상도(`naturalHeight` vs `naturalWidth`)를 측정하여:
+     * `naturalHeight > naturalWidth * 1.05`: 부모 `#cardPlateBox`에 세로형 규격(`w-[94px] sm:w-[108px] h-[148px] sm:h-[170px]`) 자동 적용.
+     * `naturalWidth >= naturalHeight * 0.95`: 부모 `#cardPlateBox`에 가로형 규격(`w-36 sm:w-44 h-22 sm:h-28`) 자동 적용.
+   - 데이터 설정값의 오차가 있더라도 **브라우저가 실제 이미지의 실물 비율을 직접 보고 실시간으로 판 크기를 100% 맞춤(Self-Healing)**하여 왜곡과 축소 현상을 영구 박멸.
+
+---
+
+### 3) 실시간 Edge CDP 브라우저 검증 결과 (100% ALL PASS)
+* **검증 스크립트**: [`scripts/verify_plate_autoadapt_live.ps1`](file:///C:/Users/User01/.gemini/antigravity/scratch/phone-price/scripts/verify_plate_autoadapt_live.ps1)
+  - `LGU+ 삼성 라이트` (90도 회전된 세로형 카드) ➡️ 세로형 규격(`w-[94px]`) 자동 일치: **True**
+  - `LGU+ 롯데 LOCA` (가로형 실물 카드) ➡️ 가로형 규격(`w-36`) 자동 일치: **True**
+  - `KT KB 할부 Plus` (KT 세로형 카드) ➡️ 세로형 규격(`w-[94px]`) 자동 일치: **True**
+  - `SKT 삼성 T PREMIUM` (SKT 가로형 카드) ➡️ 가로형 규격(`w-36`) 자동 일치: **True**
+  - 불일치 건수: **0건 (ALL PASS)**

@@ -14,7 +14,7 @@
     eventUrl: "https://m.site.naver.com/1it3e",
     eventTarget: "직전 6개월 무실적 고객 프로모션 (24/36개월 장기할부 5.9%/7.0%)",
     cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/2425de02-e741-4b82-84c1-947049d1b989",
-    cardPlateOrientation: "horizontal",
+    cardPlateOrientation: "vertical",
     supports36Months: true,
     promo36Months: false,
     specs: {
@@ -80,7 +80,7 @@
     eventUrl: "https://m.site.naver.com/2gcOy",
     eventTarget: "직전 6개월 무실적 고객 프로모션 참여 후 장기할부 수납 완료 시",
     cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/3dab1f98-3e05-4452-bc7f-54574612b7e3",
-    cardPlateOrientation: "horizontal",
+    cardPlateOrientation: "vertical",
     supports36Months: false,
     promo36Months: false,
     specs: {
@@ -143,7 +143,7 @@
     eventUrl: "https://www.hyundaicard.com/cpc/cr/CPCCR0201_01.hc?cardWcd=MKTE3TP&eventCode=KTP9N",
     eventTarget: "직전 6개월 무실적 고객 프로모션 (장기할부 결제 시)",
     cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/056b253d-354e-4f10-bbdd-9472ffc5c190",
-    cardPlateOrientation: "horizontal",
+    cardPlateOrientation: "vertical",
     supports36Months: false,
     promo36Months: false,
     specs: {
@@ -207,7 +207,7 @@
     eventUrl: "https://m.site.naver.com/282hO",
     eventTarget: "전월 40/80/120만원 이상 이용 시 프로모션 적용",
     cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/46d651ec-5640-421d-b78a-cc09054e04e6",
-    cardPlateOrientation: "horizontal",
+    cardPlateOrientation: "vertical",
     supports36Months: true,
     promo36Months: true,
     specs: {
@@ -271,7 +271,7 @@
     eventUrl: "https://shcard.io/tlight6m",
     eventTarget: "직전 6개월 무실적 고객 프로모션 (30만 이상 이용 시)",
     cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/4cec261f-497f-4be8-941c-5759f0a48aa8",
-    cardPlateOrientation: "horizontal",
+    cardPlateOrientation: "vertical",
     supports36Months: false,
     promo36Months: false,
     specs: {
@@ -335,7 +335,7 @@
     eventUrl: "https://m.site.naver.com/1gafU",
     eventTarget: "직전 6개월 무실적 고객 (최대 36개월 청구할인)",
     cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/004cc44c-9ca5-478e-87d1-7c24cb39e9eb",
-    cardPlateOrientation: "horizontal",
+    cardPlateOrientation: "vertical",
     supports36Months: true,
     promo36Months: true,
     specs: {
@@ -398,7 +398,7 @@
     applyUrl: "https://go.nhcard.com/LkMCWj6",
     eventTarget: "라이트할부 수납 고객 프로모션 (캐시백 + 청구할인)",
     cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/c6389d85-e974-4857-9532-fffc5b89e0bf",
-    cardPlateOrientation: "horizontal",
+    cardPlateOrientation: "vertical",
     supports36Months: false,
     promo36Months: false,
     specs: {
@@ -459,7 +459,7 @@
     phone: "BC카드 고객센터 1588-4000",
     applyUrl: "https://web.paybooc.co.kr/web/evnt/evnt-dts?pybcUnifEvntNo=2025030014&affiCd=K001",
     cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/3541547b-0d33-48f2-b5f6-571644d55899",
-    cardPlateOrientation: "horizontal",
+    cardPlateOrientation: "vertical",
     supports36Months: false,
     promo36Months: false,
     specs: {
@@ -523,7 +523,7 @@
     eventUrl: "https://m.site.naver.com/2gcOy",
     eventTarget: "직전 6개월 무실적 고객 프로모션",
     cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/b9dd0721-6d77-446f-968f-1169fdd01cda",
-    cardPlateOrientation: "horizontal",
+    cardPlateOrientation: "vertical",
     supports36Months: false,
     promo36Months: false,
     specs: {
@@ -585,7 +585,7 @@
     eventUrl: "https://shcard.io/tlight6m",
     eventTarget: "직전 6개월 무실적 고객 프로모션",
     cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/074b0e83-5f28-4167-b895-fea12fdef0a2",
-    cardPlateOrientation: "horizontal",
+    cardPlateOrientation: "vertical",
     supports36Months: true,
     promo36Months: true,
     specs: {
@@ -649,7 +649,7 @@
     eventUrl: "https://m.site.naver.com/282hO",
     eventTarget: "직전 6개월 무실적 고객 프로모션",
     cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/c04ea319-cf93-421f-b8fa-20b9f4857c1e",
-    cardPlateOrientation: "horizontal",
+    cardPlateOrientation: "vertical",
     supports36Months: false,
     promo36Months: false,
     specs: {
@@ -711,7 +711,7 @@
     phone: "BC카드 고객센터 1588-4000",
     applyUrl: "https://web.paybooc.co.kr/web/evnt/evnt-dts?pybcUnifEvntNo=2023090043&affiCd=K001",
     cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/3b366cc2-5db0-4b8e-9ab9-5ac4a28b0f0c",
-    cardPlateOrientation: "horizontal",
+    cardPlateOrientation: "vertical",
     supports36Months: true,
     promo36Months: true,
     specs: {
@@ -773,7 +773,7 @@
     eventUrl: "https://m.site.naver.com/1it3e",
     eventTarget: "직전 6개월 무실적 고객 프로모션",
     cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/ff5f788d-a86d-4e6f-bf24-5c42faec81c8",
-    cardPlateOrientation: "horizontal",
+    cardPlateOrientation: "vertical",
     supports36Months: false,
     promo36Months: false,
     specs: {
@@ -835,7 +835,7 @@
     applyUrl: "https://m.hanacard.co.kr/MPACMM101M.web?_frame=no&CD_PD_SEQ=17454",
     eventTarget: "직전 6개월 무실적 고객 프로모션",
     cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/814b8298-ea83-4b29-ae81-48b9f42f895c",
-    cardPlateOrientation: "horizontal",
+    cardPlateOrientation: "vertical",
     supports36Months: false,
     promo36Months: false,
     specs: {
@@ -897,7 +897,7 @@
     eventUrl: "https://shcard.io/tlight6m",
     eventTarget: "신한은행 결제계좌 등록 및 Master 프로모션 (최대 60개월 청구할인)",
     cardPlateImageUrl: "https://savedream.co.kr/api/v1/resources/categories/PRODUCT/item/ed7ee762-199c-4ee6-adc9-ba259a64ee98",
-    cardPlateOrientation: "horizontal",
+    cardPlateOrientation: "vertical",
     supports36Months: true,
     promo36Months: true,
     specs: {
