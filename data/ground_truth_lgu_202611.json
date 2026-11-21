@@ -8,7 +8,7 @@
         "autopay_required":  true,
         "urls":  {
                      "apply_url":  "tel:080-700-3103",
-                     "promo_url":  "http://m.site.naver.com/0JM2M"
+                     "promo_url":  "https://shcard.io/tlight6m"
                  },
         "annual_fee":  {
                            "overseas":  "Master 25,000원",
@@ -61,7 +61,7 @@
         "autopay_required":  true,
         "urls":  {
                      "apply_url":  "tel:080-850-8853",
-                     "promo_url":  "http://m.site.naver.com/0JM2M"
+                     "promo_url":  "https://shcard.io/tlight6m"
                  },
         "annual_fee":  {
                            "overseas":  "Master 25,000원",
@@ -114,7 +114,7 @@
         "autopay_required":  false,
         "urls":  {
                      "apply_url":  "https://card.kbcard.com/cards/products/credit-cards?benefit=telecom",
-                     "promo_url":  "http://m.site.naver.com/18fKy"
+                     "promo_url":  "https://m.site.naver.com/1it3e"
                  },
         "annual_fee":  {
                            "overseas":  "20,000원",
@@ -175,7 +175,7 @@
         "autopay_required":  true,
         "urls":  {
                      "apply_url":  "https://www.hyundaicard.com/cpc/ma/CPCMA0101_01.hc?cardflag=J",
-                     "promo_url":  "http://m.site.naver.com/0QwRn"
+                     "promo_url":  "https://card.hyundaicard.com/EVENT?id=LGUAPGG\u0026agentCode=L600100000000\u0026eventCode=KTT6S\u0026pmotDtlCn=LGUAPGG\u0026pmotClasCd=C0\u0026tmYn=N\u0026seprStagCd=X2"
                  },
         "annual_fee":  {
                            "overseas":  "20,000원",
@@ -229,7 +229,7 @@
         "autopay_required":  true,
         "urls":  {
                      "apply_url":  "https://pc.wooricard.com",
-                     "promo_url":  "https://m.wooricard.com"
+                     "promo_url":  "https://m.site.naver.com/1gafU"
                  },
         "annual_fee":  {
                            "overseas":  "25,000원",
@@ -287,7 +287,7 @@
         "autopay_required":  true,
         "urls":  {
                      "apply_url":  "tel:1800-1068",
-                     "promo_url":  "http://m.site.naver.com/0JM14"
+                     "promo_url":  "https://m.site.naver.com/282hO"
                  },
         "annual_fee":  {
                            "overseas":  "20,000원",
@@ -346,7 +346,7 @@
         "autopay_required":  false,
         "urls":  {
                      "apply_url":  "https://www.samsungcard.com",
-                     "promo_url":  "http://m.site.naver.com/0JM14"
+                     "promo_url":  "https://m.site.naver.com/282hO"
                  },
         "annual_fee":  {
                            "overseas":  "25,000원",
@@ -405,7 +405,7 @@
         "autopay_required":  false,
         "urls":  {
                      "apply_url":  "https://www.lottecard.co.kr",
-                     "promo_url":  "http://s.lottecard.co.kr/1vkTrqN"
+                     "promo_url":  "https://m.site.naver.com/2gcOy"
                  },
         "annual_fee":  {
                            "overseas":  "25,000원",
@@ -456,7 +456,7 @@
         "autopay_required":  true,
         "urls":  {
                      "apply_url":  "https://www.lottecard.co.kr",
-                     "promo_url":  "http://s.lottecard.co.kr/1vkTrqN"
+                     "promo_url":  "https://m.site.naver.com/2gcOy"
                  },
         "annual_fee":  {
                            "overseas":  "25,000원",
@@ -509,7 +509,7 @@
         "autopay_required":  true,
         "urls":  {
                      "apply_url":  "https://www.lottecard.co.kr",
-                     "promo_url":  "http://s.lottecard.co.kr/1vkTrqN"
+                     "promo_url":  "https://m.site.naver.com/2gcOy"
                  },
         "annual_fee":  {
                            "overseas":  "20,000원",

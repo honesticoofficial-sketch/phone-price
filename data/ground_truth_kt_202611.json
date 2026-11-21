@@ -292,7 +292,7 @@
         "autopay_required":  false,
         "urls":  {
                      "apply_url":  "tel:080-850-8853",
-                     "promo_url":  "http://m.site.naver.com/0JM2M"
+                     "promo_url":  "https://shcard.io/tlight6m"
                  },
         "annual_fee":  {
                            "overseas":  "Master 25,000원",
@@ -403,7 +403,7 @@
         "autopay_required":  true,
         "urls":  {
                      "apply_url":  "https://www.lottecard.co.kr",
-                     "promo_url":  "http://s.lottecard.co.kr/1vkTrqN"
+                     "promo_url":  "https://m.site.naver.com/2gcOy"
                  },
         "annual_fee":  {
                            "overseas":  "Master/Amex 25,000원",

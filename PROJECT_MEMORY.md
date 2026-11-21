@@ -2488,3 +2488,75 @@ Write-Host "Pushed Commit: $($res.commit.sha)"
   - QR 중복 전수 검사: 41종 중 중복 생성 버그 0건 (단독 QR 40종, 전용 이벤트 듀얼 QR 1종)
   - 150% 줌 상태 서식지 렌더링 검사: 카드명-QR 간 간격 24px 이상 유지, 가림/겹침 0% (`isOverlap: false`)
   - 3대 캡쳐 기능 100% 줌 격리: `copyCardToClipboard`, `copyNetTableToClipboard`, `captureAdPosterImage` 모두 `zoom: '1'` 주입 확인.
+
+---
+
+## 64. [Chapter 64] SKT 공식 엑셀 공문 기반 카드사별 6개월 무실적 대상확인·응모 공식 URL 정품 듀얼 QR 시스템 완성
+
+### 1) 사용자 요청 및 비즈니스 배경
+* **대표님 핵심 지시사항**:
+  > "이벤트 응모 QR은 SK 엑셀 파일에 있는 이벤트 QR을 사용하면 돼. 예를 들어 신한카드들 중에서 6개월간 무실적 이용 시 최초 신규 발급 조건 프로모션 적용 카드라면, 그냥 엑셀상 이벤트 응모 QR을 사용하는 거야. 어차피 해당 카드사에 6개월 이력 여부만 확인하는 거니 상관없잖아."
+* **매장 영업 관점의 비즈니스 배경**:
+  - 통신사 제휴카드의 프로모션 추가할인(매월 1만~2만 원 추가 할인 등)은 대부분 **"해당 카드사 직전 6개월간 결제 이력이 없는 최초 신규/무실적 회원"**을 대상으로 지급됩니다.
+  - 고객이 6개월 내에 해당 카드사를 이용한 이력이 있으면 발급을 받더라도 프로모션 혜택을 받지 못하여 매장에 항의하거나 분쟁이 발생하는 경우가 많았습니다.
+  - 이에 따라 SKT 공식 제휴카드 안내 공문 엑셀에 탑재된 **"카드사별 6개월 무실적 프로모션 대상 여부 사전 확인 QR"**을 완벽하게 추출하여, 프로모션 혜택 카드는 **[카드발급신청 QR]**과 **[이벤트확인 QR / 이벤트응모 QR]**이 나란히 노출되는 정품 듀얼 QR 시스템을 확립하였습니다.
+
+---
+
+### 2) SKT 공식 엑셀 공문 역분석 및 공식 URL 디코딩 실증
+* **분석 대상 공문**: `2. 26.11월 제휴카드 안내_1호.xlsx` (Sheet 2: `26년11월`)
+  - Row 2: 제휴카드 공식 명칭 및 실물 플레이트 이미지
+  - **Row 12: 프로모션 대상 여부 사전 확인 QR코드 (카드사별 6개월 무실적 조회 QR)**
+  - Row 35: 카드 발급 온라인 신청 QR코드
+  - Row 37~38: 발급 신청 온라인 공식 단축 URL (네이버 단축링크 및 카드사 직링크)
+* **`jsQR` 엔진 기반 실증 디코딩 및 카드사별 대상확인 공식 URL 규명**:
+  1. **신한카드 (카드사 공통 6개월 무실적 조회 시스템)**:
+     - 디코딩 URL: `https://shcard.io/tlight6m`, `https://shcard.io/pineapple6m`, `https://shcard.io/tandlife6m`
+     - 실제 연결 페이지: 신한카드 공식 모바일 이벤트 대상 확인 페이지 (`https://www.shinhancard.com/...nxtLocUrl=/evt/MOBEVENTN/MOBEVT026R20.shc`)
+  2. **KB국민카드 (카드사 공통 비대면 신규 판별 시스템)**:
+     - 디코딩 URL: `https://m.site.naver.com/1it3e`
+     - 실제 연결 페이지: KB국민카드 공식 `비대면용 신규회원 이벤트 대상여부 판별` (`https://m.kbcard.com/BON/DVIEW/MBVM0004`)
+  3. **삼성카드 (카드사 공통 프로모션 대상 사전 확인 시스템)**:
+     - 디코딩 URL: `https://m.site.naver.com/282hO`, `https://m.site.naver.com/282ih`
+     - 실제 연결 페이지: 삼성카드 공식 `프로모션 대상 여부 사전 확인` (`https://www.samsungcard.com/home/card/promotion/PGHPPCCCardPromotionCheck001...`)
+  4. **우리카드**:
+     - 디코딩 URL: `https://m.site.naver.com/1gafU` (우리카드 프로모션 대상 확인 모바일 페이지)
+  5. **롯데카드**:
+     - 디코딩 URL: `https://m.site.naver.com/2gcOy` (롯데카드 프로모션 대상 확인 모바일 페이지)
+  6. **현대카드 (통신사별 공식 이벤트 응모 시스템)**:
+     - SKT: `https://www.hyundaicard.com/cpa/am/CPAAM0201_01.hc?eventCode=SKT7K`
+     - LGU+: `https://www.hyundaicard.com/cpa/am/CPAAM0201_01.hc?eventCode=LGUAPGG`
+     - KT: `https://www.hyundaicard.com/cpa/am/CPAAM0201_01.hc?eventCode=MKTE3TP&eventCode=KTP9N`
+
+---
+
+### 3) 3사 41종 제휴카드 데이터셋 및 UI/UX 정비 완료
+1. **정품 듀얼 QR 체계 확립 (총 41종 중 26종 듀얼 QR / 15종 단독 QR)**:
+   - **듀얼 QR (26종)**:
+     * 프로모션 조건(6개월 무실적 등)이 있는 제휴카드는 좌측에 **[발급신청 QR]**(스캔 시 공식 발급 페이지 직행), 우측에 **[이벤트확인 QR]**(스캔 시 카드사 6개월 무실적 대상 판별 페이지 직행)이 나란히 렌더링.
+     * 현대카드 3종은 **[이벤트응모 QR]**(필수 응모 페이지)로 직관적 라벨링.
+   - **단독 QR (15종)**:
+     * 별도의 무실적 조건이 없거나 기본할인 위주인 카드는 단독 [발급신청 QR] 1개만 정갈하게 중앙 렌더링.
+   - **중복 URL 버그 0건 완치 (`identicalUrlBugCount: 0`)**:
+     * 신청 QR과 이벤트확인 QR이 동일한 링크로 생성되어 혼란을 주던 현상 완전 박멸.
+2. **동기화 파일 목록**:
+   - [`skt_cards_data.js`](file:///C:/Users/User01/.gemini/antigravity/scratch/phone-price/skt_cards_data.js) (13종 카드 `eventUrl` 주입)
+   - [`lgu_cards_data.js`](file:///C:/Users/User01/.gemini/antigravity/scratch/phone-price/lgu_cards_data.js) (10종 카드 `eventUrl` 주입)
+   - [`kt_cards_data.js`](file:///C:/Users/User01/.gemini/antigravity/scratch/phone-price/kt_cards_data.js) (3종 카드 `eventUrl` 주입)
+   - [`index.html`](file:///C:/Users/User01/.gemini/antigravity/scratch/phone-price/index.html) (3사 카드 데이터셋 완전 일치 동기화)
+   - [`data/ground_truth_skt_202611.json`](file:///C:/Users/User01/.gemini/antigravity/scratch/phone-price/data/ground_truth_skt_202611.json)
+   - [`data/ground_truth_lgu_202611.json`](file:///C:/Users/User01/.gemini/antigravity/scratch/phone-price/data/ground_truth_lgu_202611.json)
+   - [`data/ground_truth_kt_202611.json`](file:///C:/Users/User01/.gemini/antigravity/scratch/phone-price/data/ground_truth_kt_202611.json)
+
+---
+
+### 4) Edge CDP 브라우저 실시간 실증 검증 완료
+* **전체 41종 정밀 검증 ([`scripts/verify_dual_qrs_live.ps1`](file:///C:/Users/User01/.gemini/antigravity/scratch/phone-price/scripts/verify_dual_qrs_live.ps1))**:
+  - 총 카드 수: 41종 (SKT 14종, KT 15종, LGU+ 12종)
+  - 듀얼 QR 카드: 26종
+  - 단독 QR 카드: 15종
+  - 동일 URL 중복 생성 버그: 0건
+* **비동기 DOM 렌더링 검증 ([`scripts/test_dom_async_qr.ps1`](file:///C:/Users/User01/.gemini/antigravity/scratch/phone-price/scripts/test_dom_async_qr.ps1))**:
+  - `hasApplyQrImg`: `true` (발급신청 QR 정상 생성)
+  - `hasEventQrImg`: `true` (이벤트확인 QR 정상 생성)
+  - `eventLabelText`: `"이벤트확인 QR"` (정확한 안내 문구 렌더링 확인)

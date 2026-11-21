@@ -8,7 +8,7 @@
         "autopay_required":  false,
         "urls":  {
                      "apply_url":  "https://www.samsungcard.com/home/card/cardinfo/PGHPPCCCardCardinfoDetails001?code=AAP1869",
-                     "promo_url":  null
+                     "promo_url":  "https://m.site.naver.com/282hO"
                  },
         "annual_fee":  {
                            "overseas":  "50,000원 (AMEX)",
@@ -79,7 +79,7 @@
         "autopay_required":  false,
         "urls":  {
                      "apply_url":  "http://m.site.naver.com/0QwRn",
-                     "promo_url":  "http://m.site.naver.com/0QwRn"
+                     "promo_url":  "https://card.hyundaicard.com/EVENT?id=SKT7K\u0026agentCode=L600100000000\u0026eventCode=KTT02\u0026pmotDtlCn=SKT7K\u0026pmotClasCd=C0\u0026tmYn=N\u0026seprStagcd=X2"
                  },
         "annual_fee":  {
                            "overseas":  "20,000원 (국내, VISA, AMEX)",
@@ -209,7 +209,7 @@
         "autopay_required":  false,
         "urls":  {
                      "apply_url":  "http://m.site.naver.com/0JM14",
-                     "promo_url":  "http://m.site.naver.com/0JM14"
+                     "promo_url":  "https://m.site.naver.com/282hO"
                  },
         "annual_fee":  {
                            "overseas":  "25,000원 (국내, VISA)",
@@ -335,7 +335,7 @@
         "autopay_required":  false,
         "urls":  {
                      "apply_url":  "https://m.wooricard.com/dcmw/yh1/crd/crd01/M1CRD101S02.do?cdPrdCd=103749\u0026canvasser=88936105",
-                     "promo_url":  "https://m.wooricard.com/dcmw/yh1/crd/crd01/M1CRD101S02.do?cdPrdCd=103749\u0026canvasser=88936105"
+                     "promo_url":  "https://m.site.naver.com/1gafU"
                  },
         "annual_fee":  {
                            "overseas":  "25,000원 (국내, VISA, Master)",
@@ -401,7 +401,7 @@
         "autopay_required":  false,
         "urls":  {
                      "apply_url":  "http://m.site.naver.com/18fKy",
-                     "promo_url":  "http://m.site.naver.com/18fKy"
+                     "promo_url":  "https://m.site.naver.com/1it3e"
                  },
         "annual_fee":  {
                            "overseas":  "20,000원 (국내, JCB, Master)",
@@ -472,7 +472,7 @@
         "autopay_required":  false,
         "urls":  {
                      "apply_url":  "https://m.site.naver.com/2gcGP",
-                     "promo_url":  "https://m.site.naver.com/2gcGP"
+                     "promo_url":  "https://m.site.naver.com/2gcOy"
                  },
         "annual_fee":  {
                            "overseas":  "25,000원 (국내, Master, Amex)",
@@ -533,7 +533,7 @@
         "autopay_required":  false,
         "urls":  {
                      "apply_url":  "http://m.site.naver.com/0JM2M",
-                     "promo_url":  "http://m.site.naver.com/0JM2M"
+                     "promo_url":  "https://shcard.io/tlight6m"
                  },
         "annual_fee":  {
                            "overseas":  "25,000원 (Master Only)",
@@ -589,7 +589,7 @@
         "autopay_required":  false,
         "urls":  {
                      "apply_url":  "ARS: 080-850-0488",
-                     "promo_url":  null
+                     "promo_url":  "https://shcard.io/pineapple6m"
                  },
         "annual_fee":  {
                            "overseas":  "15,000원 (Visa Only)",
@@ -643,7 +643,7 @@
         "autopay_required":  true,
         "urls":  {
                      "apply_url":  "홈페이지 / 모바일 신청",
-                     "promo_url":  null
+                     "promo_url":  "https://shcard.io/tandlife6m"
                  },
         "annual_fee":  {
                            "overseas":  "30,000원 (Master Only)",
@@ -706,7 +706,7 @@
         "autopay_required":  true,
         "urls":  {
                      "apply_url":  "http://m.site.naver.com/1KYxS",
-                     "promo_url":  "http://m.site.naver.com/1KYxS"
+                     "promo_url":  "https://m.site.naver.com/1it3e"
                  },
         "annual_fee":  {
                            "overseas":  "15,000원 (Master, JCB, 로컬)",
@@ -774,7 +774,7 @@
         "autopay_required":  true,
         "urls":  {
                      "apply_url":  "https://www.hyundaicard.com/cpc/cr/CPCCR0201_01.hc?cardWcd=MSKTE3TP",
-                     "promo_url":  "https://www.hyundaicard.com/cpc/cr/CPCCR0201_01.hc?cardWcd=MSKTE3TP"
+                     "promo_url":  "https://card.hyundaicard.com/EVENT?id=SKT7K\u0026agentCode=L600100000000\u0026eventCode=KTT02\u0026pmotDtlCn=SKT7K\u0026pmotClasCd=C0\u0026tmYn=N\u0026seprStagcd=X2"
                  },
         "annual_fee":  {
                            "overseas":  "20,000원 (국내, VISA)",
@@ -839,7 +839,7 @@
         "autopay_required":  true,
         "urls":  {
                      "apply_url":  "http://s.lottecard.co.kr/1vkTrqN",
-                     "promo_url":  "http://s.lottecard.co.kr/1vkTrqN"
+                     "promo_url":  "https://m.site.naver.com/2gcOy"
                  },
         "annual_fee":  {
                            "overseas":  "25,000원 (국내, Master, Amex)",
@@ -901,7 +901,7 @@
         "autopay_required":  true,
         "urls":  {
                      "apply_url":  "http://m.site.naver.com/0Uysh",
-                     "promo_url":  "http://m.site.naver.com/0Uysh"
+                     "promo_url":  "https://m.site.naver.com/282ih"
                  },
         "annual_fee":  {
                            "overseas":  "20,000원 (국내, Master)",
