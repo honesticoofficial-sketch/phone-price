@@ -2864,4 +2864,87 @@ Write-Host "Pushed Commit: $($res.commit.sha)"
     * 종횡비: **`1.583 : 1`** (기존 2.99:1 왜곡 ➡️ 표준 신용카드 비율 100% 복원)
     * 가로형 플레이트 박스(`w-36`): **True (정상 장착 및 여백 없이 선명하게 렌더링)**
 
+---
+
+## 71. [Chapter 71] 제휴카드 3대 할부 기간 지원 유형(36개월 전용 / 24·36개월 지원 / 24개월 전용) 철저 분리 및 36개월 프로모션 할인 총액 공문 100% 일치화
+
+### 1) 비즈니스 배경 및 핵심 요구사항 (CEO 지침)
+* **지침 1 (36개월 프로모션 할인 총액 오류 정정)**:
+  - *"프로모션할인이 36개월까지 가능한 카드가 24개월만 반영되어서 36개월 할인 적용시 결과에 나온 총 할인가격이 다른경우가 있어 각 공문에 보면 sk의 경우 '할인적용 개시일 및 제공횟수' 부분에 기재되어있고 kt는 공문 링크(세이브드림) 들어가면 유의사항쪽에 나와있어 프로모션 지원가능기간도 혜택상세 부분에 프로모션 최대 몇개월이라고 명시되어있으니 참고하고 lg는 공문 pdf파일에 보면 요금할인금액에 최대 몇개월이라고 적혀잇어"*
+* **지침 2 (3대 할부 기간 지원 유형 분류 및 36개월 미지원 카드 24개월 단독 고정)**:
+  - *"카드중에서 주의할게 24개월 지원이 안되고 36개월만 신청가능한카드랑 24/36 둘다지원되는카드 24개월만 진행가능한 카드 이렇게 다양하게 있어서 주의해야해. 36개월 지원이 안되는 카드는 그냥 표기에 36개월 할인적용을 넣지말고 24개월만 선택가능하게 하는게 맞는거같아"*
+
+---
+
+### 2) 통신 3사 공식 공문 전수 분석 및 카드 분류 결과
+1. **공식 공문 대조 결과**:
+   - **SKT (11월 공식 엑셀 `2. 26.11월 제휴카드 안내_1호.xlsx`)**:
+     * `sheet2.xml` Row 17 (`할인적용 개시일 및 제공횟수`), Row 19/20 (`할부 지원 기간`), Row 23/24 (`24개월/36개월 할부이자율`) 정밀 전수 분석.
+     * `skt_samsung_tlight` (삼성카드 T라이트): Row 17에 "기본할인 및 프로모션 할인 모두 라이트할부 승인 익월부터 최대 36개월 ※ 할인제공 기간은 할부개월과 동일하게 적용" 명시 ➡️ **36개월 전액 프로모션 적용 (`promo36Months: true`)**!
+     * `skt_shinhan_pineapple` (신한카드 파인애플): Row 17에 "프로모션 할인: 라이트할부 승인월 또는 익월부터 최대 24회 또는 36회" 명시 ➡️ **36개월 전액 프로모션 적용 (`promo36Months: true`)**!
+     * `skt_hyundai_m3` (현대카드 M3 T라이트2): Row 19에 "36개월 할부 없음", Row 24에 "불가" 명시 ➡️ **24개월 전용 (`24_only`)**!
+     * `skt_shinhan_tlight` (신한카드 T라이트): Row 19에 "36개월 할부 없음", Row 24에 "불가", Row 17 "최대 24회" 명시 ➡️ **24개월 전용 (`24_only`)**!
+     * 통신요금 자동이체 할인형 5종: 단말기 할부 약정 없음 ➡️ **24개월 전용 (`24_only`)**!
+   - **KT (세이브드림 공식 공문)**:
+     * `kt_woori_36_plus` (KT 36 Plus 우리카드): 카드 상품명 자체가 36 Plus이며 공문에 36개월 단독 장기할부 상품으로 명시 ➡️ **36개월 전용 (`36_only`)**!
+     * `kt_samsung_light_s` (KT 할부 S 삼성카드): 24/36개월 지원, 프로모션 36개월 전액 명시 ➡️ **both & promo36Months: true**!
+     * `kt_kb_light_plus` (KT 할부 Plus KB국민카드): 24/36개월 지원, 프로모션 24회차 제한 ➡️ **both & promo36Months: false**!
+     * KT 기타 라이트할부 5종 및 요금할인형 7종: 36개월 미지원 ➡️ **24개월 전용 (`24_only`)**!
+   - **LGU+ (공식 PDF `엘지 제휴카드.pdf`)**:
+     * `lgu_woori_36` (U+ × 36우리카드): 36개월 장기할부 전용, 최대 111.6만원 할인 명시 ➡️ **36개월 전용 (`36_only`)**!
+     * `lgu_samsung_light` (U+ 라이트 삼성카드) & `lgu_lotte_loca` (LG U+ × LOCA): 24/36개월 지원, 프로모션 36개월 전액 명시 ➡️ **both & promo36Months: true**!
+     * LGU+ 기타 라이트할부 4종 및 요금할인형 5종: 36개월 미지원 ➡️ **24개월 전용 (`24_only`)**!
+
+2. **통신 3사 41종 3대 유형 총괄 분류표**:
+   - **유형 1: 36개월 전용 (`36_only`, 2종)**: `lgu_woori_36`, `kt_woori_36_plus`
+   - **유형 2: 24/36개월 둘 다 지원 (`both`, 12종)**:
+     * 36회차 전액 프로모션 적용 (5종): `skt_samsung_tlight`, `skt_shinhan_pineapple`, `kt_samsung_light_s`, `lgu_samsung_light`, `lgu_lotte_loca`
+     * 24회차 제한 프로모션 적용 (7종): `skt_samsung_premium`, `skt_nh_tlight`, `skt_woori_tlight`, `skt_kb_tlight`, `skt_lotte_tlight`, `kt_kb_light_plus`
+   - **유형 3: 24개월 전용 (`24_only`, 27종)**: 36개월 미지원 라이트할부 카드 및 통신 3사 요금할인형 카드 전수
+
+---
+
+### 3) 구현 및 시스템 개편 내역
+1. **데이터셋 41종 전체 스키마 확장 (`skt_cards_data.js`, `kt_cards_data.js`, `lgu_cards_data.js`)**:
+   - `installmentPlanType: "36_only" | "both" | "24_only"` 속성 전수 추가.
+   - `supports36Months: boolean`, `promo36Months: boolean` 정확한 불리언 매핑.
+   - 36개월 전액 프로모션 카드(`skt_samsung_tlight`, `skt_shinhan_pineapple`)의 `tiers` `total36`을 `amountNum * 36` 공식 금액으로 일치화:
+     * `skt_samsung_tlight`: 40만 792,000원 / 80만 828,000원 / 120만 864,000원 (기존 648k, 732k, 816k 오류 완치).
+     * `skt_shinhan_pineapple`: 30만 792,000원 / 70만 864,000원 (기존 648k, 756k 오류 완치).
+2. **`index.html` UI 드롭다운 및 상태 제어 엔진 개편**:
+   - `cardData.installmentPlanType = card.installmentPlanType;` 완전 복사 및 동기화 보정.
+   - `handleSelectAffiliateCard(cardId)`:
+     * `card.installmentPlanType === '36_only'`: `currentAffiliateMonths = 36;` 강제 고정. 드롭다운 `<option value="36" selected>36개월 라이트할부 전용 (24개월 신청 불가)</option>` (disabled 잠금). 안내 문구 "본 카드는 36개월 장기할부 전용 상품입니다 (24개월 신청 불가 / 36개월 프로모션 전액 적용)".
+     * `card.installmentPlanType === 'both'`: 24개월 / 36개월 선택 드롭다운 활성화. `promo36Months`에 따른 정확한 안내 문구 표시.
+     * `card.installmentPlanType === '24_only'`: `currentAffiliateMonths = 24;` 강제 고정. 드롭다운 `<option value="24" selected>24개월 전용 (36개월 미지원)</option>` (disabled 잠금). 안내 문구 "본 카드는 24개월 라이트할부 전용 상품입니다 (36개월 할부 미지원)."
+   - `setAffiliateMonths(m)`: 36_only 카드에 24개월을 넣으려 하거나 24_only 카드에 36개월을 넣으려 할 때 원천 방어 및 안내 알림.
+3. **A4 견적서 렌더링 (`renderCardPreview`) 내 36개월 표기 분리**:
+   - **대표님 핵심 지침 100% 반영**: `cardData.installmentPlanType === '24_only'` 카드는 A4 서식지 3열 실적 카드 그리드 하단에 **오직 `24개월 총 OOO원 할인`만 표기**하며, 36개월 언급 자체를 원천 배제!
+   - `cardData.installmentPlanType === '36_only'` 카드는 하단에 **`36개월 총 OOO원 할인`** 단독 표기 및 상단 배너에 **`36개월 라이트할부`** 결제금액 자동 연동.
+   - `cardData.installmentPlanType === 'both'` 카드는 사용자의 24/36 선택 상태에 따라 `t.total24` vs `t.total36` 정확 연동.
+4. **전사 데이터 일원화 동기화**:
+   - `scripts/sync_cards_to_index.ps1` 실행으로 `index.html` 내부 인라인 데이터셋 완전 일치화.
+
+---
+
+### 4) 실시간 Edge CDP 브라우저 검증 결과 (100% ALL PASS)
+* **검증 스크립트**: [`scripts/step4_deep_verify_cdp.ps1`](file:///C:/Users/User01/.gemini/antigravity/scratch/phone-price/scripts/step4_deep_verify_cdp.ps1)
+  - `lgu_woori_36` (36개월 전용):
+    * PlanType: **`36_only`** | 개월수: **`36`** | 드롭다운: **`disabled=True (36개월 라이트할부 전용)`** | 3열 총할인: **`864k / 1,044k / 1,116k`** ➡️ **100% PASS**
+  - `kt_woori_36_plus` (36개월 전용):
+    * PlanType: **`36_only`** | 개월수: **`36`** | 드롭다운: **`disabled=True (36개월 라이트할부 전용)`** | 3열 총할인: **`864k / 1,044k / 1,116k`** ➡️ **100% PASS**
+  - `skt_samsung_tlight` (both & 36m 전액 프로모션):
+    * PlanType: **`both`** | 36개월 선택 시 3열 총할인: **`792,000원 / 828,000원 / 864,000원`** (공문 1원도 오차 없이 일치!) ➡️ **100% PASS**
+  - `skt_samsung_premium` (both & 24m 제한 프로모션):
+    * PlanType: **`both`** | 36개월 선택 시 3열 총할인: **`1,140,000원 / 1,680,000원 / 2,400,000원`** (기본할인 연장 계산식 완벽 일치!) ➡️ **100% PASS**
+  - `skt_hyundai_m3` (24개월 전용):
+    * PlanType: **`24_only`** | 드롭다운: **`disabled=True (24개월 전용)`** | 서식지: **36개월 표기 1글자도 없이 24개월 총액만 출력** ➡️ **100% PASS**
+  - `lgu_kb_light2` (24개월 전용):
+    * PlanType: **`24_only`** | 드롭다운: **`disabled=True (24개월 전용)`** | 서식지: **24개월 총액만 깔끔하게 출력** ➡️ **100% PASS**
+* **실화면 검독 통과 증빙 스크린샷**:
+  - `scratch/verified_36_only_lgu_woori.png` (36개월 전용 잠금 및 864k/1044k/1116k 출력)
+  - `scratch/verified_both_promo36_skt_tlight.png` (36개월 선택 및 792k/828k/864k 전액 적용 출력)
+  - `scratch/verified_24_only_skt_m3.png` (24개월 전용 잠금 및 36개월 표기 완전 배제 출력)
+
+
 
