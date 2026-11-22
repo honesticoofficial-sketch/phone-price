@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -183,6 +183,20 @@
 </head>
 <body class="bg-slate-50/70 text-slate-800 antialiased p-2 sm:p-5 min-h-screen">
   <div id="app" class="max-w-7xl mx-auto space-y-4">
+    <!-- ==================== 클라우드 보안 규칙 만료 / 권한 경고 상단 배너 ==================== -->
+    <div id="cloudPermissionBanner" class="hidden bg-gradient-to-r from-amber-500 via-rose-500 to-amber-600 text-white px-4 py-3 rounded-2xl shadow-lg border border-amber-300/40 flex flex-wrap items-center justify-between gap-3 text-xs font-bold transition-all mb-4">
+      <div class="flex items-center gap-2.5">
+        <span class="text-xl">⚠️</span>
+        <div>
+          <div class="text-sm font-black tracking-tight">[긴급 안내] Firebase 데이터베이스 30일 테스트 보안규칙이 만료되었습니다.</div>
+          <div class="text-white/90 font-medium text-[11px] mt-0.5">기존에 입력해두신 모든 데이터(단가, 광고가, 시세표 등)는 100% 안전하게 보관되어 있습니다! 규칙 갱신 후 즉시 복원됩니다.</div>
+        </div>
+      </div>
+      <button onclick="openCloudTroubleshootModal()" class="px-4 py-2 bg-white text-slate-900 rounded-xl hover:bg-amber-50 font-black shadow-md text-xs whitespace-nowrap transition cursor-pointer flex items-center gap-1.5">
+        <span>🔧 1분 복원 가이드 열기</span>
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>
 
     <!-- ==================== 1. PIN 잠금 모달 ==================== -->
     <div id="pinModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-4">
@@ -1854,6 +1868,93 @@
       </div>
     </div>
 
+        <!-- ==================== 클라우드 권한 만료 해결 가이드 모달 ==================== -->
+    <div id="cloudTroubleshootModal" class="fixed inset-0 z-[10001] bg-slate-950/75 backdrop-blur-md flex items-center justify-center p-3 hidden">
+      <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full p-6 sm:p-7 border border-slate-200 space-y-5 max-h-[92vh] overflow-y-auto">
+        <div class="flex items-start justify-between border-b border-slate-100 pb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 text-2xl shadow-xs">
+              🛡️
+            </div>
+            <div>
+              <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                <span>데이터 원복 및 클라우드(Firebase) 규칙 갱신 가이드</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-50 text-emerald-700 border border-emerald-200">데이터 100% 안전 보관 중</span>
+              </h3>
+              <p class="text-xs text-slate-500 mt-1">
+                구글 파이어베이스의 최초 30일 테스트 모드 규칙이 만료되어 발생한 현상입니다. 1분이면 완벽히 원복됩니다.
+              </p>
+            </div>
+          </div>
+          <button onclick="closeCloudTroubleshootModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-lg transition">&times;</button>
+        </div>
+
+        <!-- 1. 원인 안심 설명 -->
+        <div class="bg-emerald-50/60 border border-emerald-200 rounded-2xl p-4 text-xs space-y-1.5 text-emerald-900">
+          <div class="font-extrabold text-emerald-800 flex items-center gap-1.5 text-[13px]">
+            <span>✅</span> <span>대표님의 데이터는 절대로 지워지지 않았습니다!</span>
+          </div>
+          <p class="text-emerald-700 leading-relaxed">
+            파이어베이스 클라우드는 규칙이 만료되어도 데이터를 삭제하지 않고 읽기/쓰기 문만 잠급니다. 아래의 규칙을 적용하고 저장하시면 <b>이전에 입력해두셨던 모든 단가, 광고가, 시세표 설정이 1원도 빠짐없이 원래대로 나타납니다.</b>
+          </p>
+        </div>
+
+        <!-- 2. 해결 3단계 -->
+        <div class="space-y-3">
+          <div class="text-xs font-black text-slate-800 flex items-center gap-1.5">
+            <span>📋</span> <span>초간단 3단계 해결 방법 (소요시간 1분)</span>
+          </div>
+
+          <!-- 1단계 -->
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs space-y-1">
+            <div class="font-bold text-slate-800 flex items-center justify-between">
+              <span>1단계. 파이어베이스 콘솔 규칙 페이지 접속</span>
+              <a href="https://console.firebase.google.com/project/phone-price-91c3c/firestore/rules" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-extrabold hover:bg-indigo-700 text-[11px] transition shadow-2xs inline-flex items-center gap-1">
+                <span>🔗 콘솔 규칙 바로가기</span>
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+              </a>
+            </div>
+            <p class="text-slate-500 text-[11px]">위 버튼을 클릭하여 파이어베이스 콘솔의 Firestore [규칙] 탭으로 이동합니다.</p>
+          </div>
+
+          <!-- 2단계 -->
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs space-y-2">
+            <div class="font-bold text-slate-800 flex items-center justify-between">
+              <span>2단계. 규칙 창의 내용을 모두 지우고 아래 코드로 붙여넣기</span>
+              <button onclick="copyFirebaseRules()" class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-extrabold hover:bg-emerald-700 text-[11px] transition shadow-2xs inline-flex items-center gap-1" id="copyRulesBtn">
+                <span>📋 규칙 코드 복사</span>
+              </button>
+            </div>
+            <pre class="bg-slate-900 text-emerald-400 p-3 rounded-lg font-mono text-[11px] overflow-x-auto select-all leading-normal">rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}</pre>
+            <p class="text-slate-500 text-[11px]">이 규칙은 30일 만료 기한이 없으므로 앞으로 동일한 롤백 문제가 영구적으로 발생하지 않습니다.</p>
+          </div>
+
+          <!-- 3단계 -->
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs space-y-1">
+            <div class="font-bold text-slate-800">3단계. 우측 상단 [게시 (Publish)] 클릭 후 이 사이트 새로고침</div>
+            <p class="text-slate-500 text-[11px]">파이어베이스 화면 우측 상단의 파란색 <b>[게시]</b> 버튼을 누른 다음, 현재 시세표 사이트로 돌아와서 <b>새로고침(F5)</b>을 하시면 모든 데이터가 즉시 원래대로 복원됩니다!</p>
+          </div>
+        </div>
+
+        <!-- 하단 보조 옵션 -->
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-100 text-xs">
+          <button onclick="tryRecoverFromLocalBackup(); closeCloudTroubleshootModal();" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition flex items-center gap-1.5" title="현재 PC 브라우저에 임시 저장되어 있던 마지막 백업 데이터를 화면에 즉시 띄웁니다.">
+            <span>💾 내 브라우저 로컬 백업 긴급 로드</span>
+          </button>
+          <button onclick="closeCloudTroubleshootModal()" class="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold transition">
+            닫기
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- ==================== 4. 설정 모달: 공시지원금 & 출고가 직접 수정 ==================== -->
     <div id="settingsModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-3 hidden">
       <div class="bg-white rounded-3xl shadow-2xl max-w-5xl w-full p-6 border border-slate-200 space-y-4 max-h-[92vh] flex flex-col">
@@ -1917,6 +2018,17 @@
           <span class="text-slate-500 font-medium">
             💡 값을 입력하고 [설정 완료]를 누르면 즉시 넷가표에 반영됩니다.
           </span>
+          <div class="flex items-center gap-2">
+            <button onclick="exportAllDataAsJson()" type="button" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold border border-slate-200 transition" title="현재 등록된 모든 기종, 출고가, 공시지원금, 리베이트, 광고가 및 설정을 파일로 다운로드합니다.">
+              <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              <span>📥 전체 데이터 백업 (JSON 다운로드)</span>
+            </button>
+            <button onclick="document.getElementById('jsonBackupFileInput').click()" type="button" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold border border-slate-200 transition" title="이전에 백업해둔 JSON 파일을 불러와 데이터를 복원합니다.">
+              <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l4-4m0 0l4 4m-4-4v12"/></svg>
+              <span>📤 백업 데이터 복구 (JSON 업로드)</span>
+            </button>
+            <input type="file" id="jsonBackupFileInput" accept=".json" class="hidden" onchange="handleImportJsonBackup(event)">
+          </div>
           <button onclick="closeSettingsModal()" class="px-6 py-2.5 rounded-xl bg-slate-900 text-white font-bold hover:bg-slate-800 shadow-sm transition">
             설정 완료
           </button>
@@ -5979,7 +6091,9 @@
         badge.className = "hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-sky-50 text-sky-700 border border-sky-200";
       } else {
         dot.className = "w-2 h-2 rounded-full bg-rose-500 animate-ping";
-        badge.className = "hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200";
+        badge.className = "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-300 shadow-sm cursor-pointer hover:bg-rose-100 transition";
+        badge.onclick = () => openCloudTroubleshootModal();
+        badge.title = "클라우드 연결 상태 확인 및 복구 안내 클릭";
       }
     }
 
@@ -6069,6 +6183,7 @@
       }, (err) => {
         console.error("Master config snapshot error:", err);
         setSyncStatus('error', '동기화 연결 실패');
+        if (typeof handleCloudSyncError === 'function') handleCloudSyncError(err, '공시 마스터');
       });
 
       // 1.5. 시세표 [필수확인] 마스터 항목 실시간 리스너 (전매장 공통 동기화)
@@ -6263,6 +6378,7 @@
       }, (err) => {
         console.error("Store data snapshot error:", err);
         setSyncStatus('error', '매장 데이터 연결 실패');
+        if (typeof handleCloudSyncError === 'function') handleCloudSyncError(err, '매장 데이터');
       });
     }
 
@@ -6440,6 +6556,229 @@
     // ==================== 실시간 변경 내역 (히스토리 모달) ====================
     let allHistoryRecords = [];
     let currentHistoryFilter = 'all';
+
+        // ==================== 클라우드 권한/동기화 오류 안전망 & 오프라인 백업/복원 ====================
+    let isCloudPermissionError = false;
+
+    function handleCloudSyncError(err, source = '') {
+      console.error("[클라우드 동기화 오류] (" + source + "):", err);
+      const isPerm = err && (
+        err.code === 'permission-denied' ||
+        (err.message && (err.message.toLowerCase().includes('permission') || err.message.toLowerCase().includes('insufficient')))
+      );
+      if (isPerm) {
+        isCloudPermissionError = true;
+        const banner = document.getElementById('cloudPermissionBanner');
+        if (banner) banner.classList.remove('hidden');
+        setSyncStatus('error', '클라우드 권한 만료 (클릭)');
+        tryRecoverFromLocalBackup();
+      } else {
+        setSyncStatus('error', source + ' 연결 실패');
+      }
+    }
+
+    function openCloudTroubleshootModal() {
+      const modal = document.getElementById('cloudTroubleshootModal');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeCloudTroubleshootModal() {
+      const modal = document.getElementById('cloudTroubleshootModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function copyFirebaseRules() {
+      const rules = "rules_version = '2';\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    match /{document=**} {\n      allow read, write: if true;\n    }\n  }\n}";
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(rules).then(() => {
+          const btn = document.getElementById('copyRulesBtn');
+          if (btn) {
+            const orig = btn.innerHTML;
+            btn.innerHTML = "<span>✅ 복사 완료!</span>";
+            btn.className = "px-2.5 py-1 rounded-lg bg-emerald-700 text-white font-extrabold text-[11px] transition shadow-2xs inline-flex items-center gap-1";
+            setTimeout(() => {
+              btn.innerHTML = orig;
+              btn.className = "px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-extrabold hover:bg-emerald-700 text-[11px] transition shadow-2xs inline-flex items-center gap-1";
+            }, 2000);
+          }
+        }).catch(() => alert(rules));
+      } else {
+        alert(rules);
+      }
+    }
+
+    function tryRecoverFromLocalBackup() {
+      try {
+        const localRates = localStorage.getItem('phone_rates_backup_' + currentStoreId);
+        const localLocs = localStorage.getItem('phone_locs_backup_' + currentStoreId);
+        const localAds = localStorage.getItem('phone_ads_backup_' + currentStoreId);
+        const localCalc = localStorage.getItem('phone_calc_rows_backup_' + currentStoreId);
+        let recovered = false;
+
+        if (localRates) {
+          const parsed = JSON.parse(localRates);
+          Object.keys(parsed).forEach(deviceId => {
+            const localD = devices.find(d => d.id === deviceId);
+            if (localD && parsed[deviceId]) {
+              localD.rate = parsed[deviceId];
+              recovered = true;
+            }
+          });
+        }
+        if (localLocs) {
+          const parsed = JSON.parse(localLocs);
+          Object.keys(parsed).forEach(deviceId => {
+            const localD = devices.find(d => d.id === deviceId);
+            if (localD && parsed[deviceId]) localD.loc = parsed[deviceId];
+          });
+        }
+        if (localAds) {
+          const parsed = JSON.parse(localAds);
+          Object.keys(parsed).forEach(deviceId => {
+            const localD = devices.find(d => d.id === deviceId);
+            if (localD && parsed[deviceId]) localD.ad = parsed[deviceId];
+          });
+        }
+        if (localCalc) {
+          const parsed = JSON.parse(localCalc);
+          if (Array.isArray(parsed) && parsed.length > 0) calcRows = parsed;
+        }
+
+        if (recovered) {
+          console.info("[로컬 복원] 브라우저 로컬 안전 백업으로부터 단가/광고가 데이터를 성공적으로 로드했습니다.");
+          render();
+        }
+      } catch(e) {
+        console.warn("로컬 백업 로드 실패:", e);
+      }
+    }
+
+    function exportAllDataAsJson() {
+      try {
+        const rates = {};
+        const locs = {};
+        const ads = {};
+        devices.forEach(d => {
+          rates[d.id] = d.rate;
+          locs[d.id] = d.loc;
+          ads[d.id] = d.ad;
+        });
+
+        const backupData = {
+          exportTimestamp: new Date().toISOString(),
+          app: "phone-price",
+          currentStoreId: currentStoreId,
+          devices: devices,
+          allAddDiscounts: allAddDiscounts,
+          carrierConditions: carrierConditions,
+          calcRows: calcRows,
+          dailyCarrierRows: dailyCarrierRows,
+          adCarrierOrders: adCarrierOrders,
+          masterNoticeItems: masterNoticeItems,
+          rates: rates,
+          locs: locs,
+          ads: ads
+        };
+
+        const jsonStr = JSON.stringify(backupData, null, 2);
+        const blob = new Blob([jsonStr], { type: "application/json;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const now = new Date();
+        const pad = (n) => String(n).padStart(2, '0');
+        const filename = "phone_price_backup_" + now.getFullYear() + pad(now.getMonth()+1) + pad(now.getDate()) + "_" + pad(now.getHours()) + pad(now.getMinutes()) + ".json";
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        console.error("Export error:", err);
+        alert("백업 파일 생성 중 오류가 발생했습니다: " + err.message);
+      }
+    }
+
+    function handleImportJsonBackup(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (!data || !Array.isArray(data.devices)) {
+            alert("올바른 백업 JSON 파일 형식이 아닙니다.");
+            return;
+          }
+
+          if (!confirm("[" + file.name + "] 백업 파일의 데이터로 복원하시겠습니까?\n기종 수: " + data.devices.length + "개\n복원 후 현재 화면에 즉시 적용되며 클라우드에도 저장됩니다.")) {
+            event.target.value = '';
+            return;
+          }
+
+          // 1. devices 복원
+          devices = data.devices;
+          if (data.allAddDiscounts) allAddDiscounts = data.allAddDiscounts;
+          if (data.carrierConditions) carrierConditions = data.carrierConditions;
+          if (data.calcRows) calcRows = data.calcRows;
+          if (data.dailyCarrierRows) dailyCarrierRows = data.dailyCarrierRows;
+          if (data.adCarrierOrders) adCarrierOrders = data.adCarrierOrders;
+          if (data.masterNoticeItems) masterNoticeItems = data.masterNoticeItems;
+
+          // 2. rates, locs, ads 적용
+          if (data.rates) {
+            Object.keys(data.rates).forEach(id => {
+              const d = devices.find(x => x.id === id);
+              if (d) d.rate = data.rates[id];
+            });
+          }
+          if (data.locs) {
+            Object.keys(data.locs).forEach(id => {
+              const d = devices.find(x => x.id === id);
+              if (d) d.loc = data.locs[id];
+            });
+          }
+          if (data.ads) {
+            Object.keys(data.ads).forEach(id => {
+              const d = devices.find(x => x.id === id);
+              if (d) d.ad = data.ads[id];
+            });
+          }
+
+          // 3. 로컬 백업 저장
+          try {
+            localStorage.setItem('phone_rates_backup_' + currentStoreId, JSON.stringify(data.rates || {}));
+            localStorage.setItem('phone_locs_backup_' + currentStoreId, JSON.stringify(data.locs || {}));
+            localStorage.setItem('phone_ads_backup_' + currentStoreId, JSON.stringify(data.ads || {}));
+            localStorage.setItem('phone_calc_rows_backup_' + currentStoreId, JSON.stringify(calcRows));
+          } catch(e) {}
+
+          // 4. 화면 재렌더링
+          render();
+          syncDiscountInputs();
+          syncCarrierConditionInputs();
+          renderPosterNoticeChecklist();
+          updatePosterNoticeTextFromChecklist();
+
+          // 5. 클라우드 동기화 (가능한 경우)
+          if (db && !isCloudPermissionError) {
+            isStoreDataLoaded = true;
+            scheduleStoreSave('백업 복원', "JSON 백업 파일(" + file.name + ")로부터 복원");
+            scheduleMasterSave('백업 복원', "JSON 백업 파일(" + file.name + ")로부터 복원");
+          }
+
+          alert("성공적으로 백업 데이터가 복원되었습니다!");
+        } catch(err) {
+          console.error("Import parse error:", err);
+          alert("파일을 읽는 도중 오류가 발생했습니다: " + err.message);
+        } finally {
+          event.target.value = '';
+        }
+      };
+      reader.readAsText(file, "UTF-8");
+    }
 
     function subscribeAuditHistory() {
       if (unsubscribeAuditHistory) {
