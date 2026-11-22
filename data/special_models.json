@@ -1,0 +1,24 @@
+{
+  "description": "특수 출고가 변동 및 수기 관리 모델",
+  "specialModels": [
+    {
+      "id": "s26_new",
+      "model": "갤럭시 S26 NEW",
+      "factoryPrice": 1403600,
+      "subsidy": {
+        "mnp": 750000,
+        "chg": 750000,
+        "new": 750000
+      },
+      "carriers": ["SKT", "KT", "LGU+"],
+      "createdDate": "2026-11-22",
+      "note": "S26 출고가 인상 특수 모델 (출고가 1,403,600원 / 공시 번이·기변·신규 750,000원)",
+      "autoRetireRule": {
+        "enabled": true,
+        "targetBaseModel": "갤럭시 S26 256G",
+        "targetFactoryPrice": 1403600,
+        "condition": "통신 3사(SKT, KT, LGU+) 공식 출고가가 모두 1,403,600원으로 변경 시 S26 NEW 자동 삭제"
+      }
+    }
+  ]
+}

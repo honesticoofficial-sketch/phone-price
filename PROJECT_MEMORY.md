@@ -3196,3 +3196,36 @@ service cloud.firestore {
   - 클라우드 동기화 배지: **syncText: '클라우드 동기화 완료' (PASS)**
   - 매장 데이터 로딩 상태: **isStoreDataLoaded: true (PASS)**
   - 실제 입력 단가 확인 (S26 Ultra LG 번이/기변): **mnp: 104, chg: 73 (100% 실데이터 완벽 복원 확인!)**
+
+
+---
+
+## 75. 🤖 [2026-11-22] 통신 3사 공시지원금 자동 크롤링 엔진 & 'S26 NEW' 특수 인상 모델 등록 및 자동 삭제 조건 구축
+
+### 1) 통신 3사 공시지원금 & 출고가 크롤링 엔진 구축
+- **수집 대상 링크**:
+  1. **SKT**: `https://shop.tworld.co.kr/notice`
+     - 단말 192종 전수 크롤링 (HTML 내 `_this.products` 데이터 파싱)
+     - `telecomSaleAmt`(공통지원금) 추출, `dsnetSupmAmt`(추가지원금) 배제.
+  2. **KT**: `https://shop.kt.com/m/smart/supportAmtList.do`
+     - 모바일 공시 지원금 목록에서 주요 12종 추출 (다이렉트요금할인 배제, 순수 공통지원금 추출).
+  3. **LG U+**: `https://www.lguplus.com/mobile/financing-model`
+     - 5개 페이지 페이징 크롤링을 통해 50종 추출 (유통망지원금 배제, 이통사지원금 추출).
+- **데이터 저장 파일**:
+  - `data/crawled_subsidies_latest.json` (총 254건 단말 데이터 보관)
+  - `scripts/crawl_carrier_subsidies.ps1` (통신 3사 자동 크롤링 스크립트)
+  - `scripts/search_subsidies.ps1` (기종명/키워드별 3사 출고가/공시지원금 비교 조회 도구)
+
+### 2) 'S26 NEW' 특수 출고가 인상 모델 신설 및 자동 삭제 조건 수립
+- **배경**: 통신사 공식 웹페이지 반영 전 또는 특정 채널의 출고가 인상 발생 시 유연하게 대처하기 위한 특수 모델 분리 운용.
+- **등록 스펙**:
+  - 모델명: **갤럭시 S26 NEW** (id: `s26_new`)
+  - 출고가: **1,403,600원** (140.36 만원)
+  - 공시지원금: **번호이동 750,000원 / 기기변경 750,000원 / 신규개통 750,000원** (75 만원)
+- **자동 삭제 조건 (Auto-Retire Rule)**:
+  - 통신 3사(SKT, KT, LGU+)의 공식 일반 `갤럭시 S26 256G` 모델 출고가가 모두 **1,403,600원**으로 일괄 변경되면, 별도 포함해 둔 `S26 NEW` 모델을 자동으로 삭제/정리.
+  - `scripts/check_subsidy_variations.ps1`을 통해 "공시지원금 변동 확인해줘" 요청 시 3사 출고가를 모니터링하여 조건 달성 시 즉시 알림 및 자동 정리 지원.
+- **실서버 및 로컬 반영 완료**:
+  - `data/special_models.json` 특수 관리 데이터베이스 구축
+  - Firestore `global_config/devices_master`에 `s26_new` 실시간 반영 (총 17종)
+  - `index.html` 내 기본 기종 마스터 데이터에 `s26_new` 안전 반영 완료 (매장별 단가/광고 무결성 유지)

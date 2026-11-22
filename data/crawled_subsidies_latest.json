@@ -1,0 +1,2369 @@
+﻿{
+    "summary":  {
+                    "totalCount":  254,
+                    "sktCount":  192,
+                    "lguCount":  50,
+                    "ktCount":  12
+                },
+    "lgu":  [
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 A37 5G SM-A376N",
+                    "factoryPrice":  598400,
+                    "subsidy":  400000,
+                    "date":  "2026-06-19"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 S26 Ultra 512GB SM-S948N512",
+                    "factoryPrice":  2050400,
+                    "subsidy":  600000,
+                    "date":  "2026-10-24"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 S25 Edge 256GB SM-S937N256",
+                    "factoryPrice":  1254000,
+                    "subsidy":  600000,
+                    "date":  "2026-10-29"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 S26+ 256GB SM-S947N256",
+                    "factoryPrice":  1452000,
+                    "subsidy":  600000,
+                    "date":  "2026-10-24"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 Z Fold8 256GB SM-F971N256",
+                    "factoryPrice":  2278100,
+                    "subsidy":  600000,
+                    "date":  "2026-10-22"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 S26 512GB SM-S942N512",
+                    "factoryPrice":  1507000,
+                    "subsidy":  600000,
+                    "date":  "2026-10-24"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 Z Fold8 1TB SM-F971N1TB",
+                    "factoryPrice":  3152600,
+                    "subsidy":  600000,
+                    "date":  "2026-10-22"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 S26+ 512GB SM-S947N512",
+                    "factoryPrice":  1705000,
+                    "subsidy":  600000,
+                    "date":  "2026-10-24"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 Z Fold8 512GB SM-F971N512",
+                    "factoryPrice":  2531100,
+                    "subsidy":  600000,
+                    "date":  "2026-10-22"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 S26 256GB SM-S942N256",
+                    "factoryPrice":  1254000,
+                    "subsidy":  600000,
+                    "date":  "2026-10-24"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 S26 Ultra 1TB SM-S948N1TB",
+                    "factoryPrice":  2545400,
+                    "subsidy":  600000,
+                    "date":  "2026-10-24"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 S26 Ultra 256GB SM-S948N256",
+                    "factoryPrice":  1797400,
+                    "subsidy":  600000,
+                    "date":  "2026-10-24"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 S25 Edge 512GB SM-S937N512",
+                    "factoryPrice":  1496000,
+                    "subsidy":  600000,
+                    "date":  "2026-10-29"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "iPhone 17 256GB UIP17-256-NP",
+                    "factoryPrice":  1452000,
+                    "subsidy":  550000,
+                    "date":  "2026-09-24"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "iPhone 17 512GB UIP17-512-NP",
+                    "factoryPrice":  1760000,
+                    "subsidy":  550000,
+                    "date":  "2026-09-24"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 S25 Ultra 512GB SM-S938N512",
+                    "factoryPrice":  1841400,
+                    "subsidy":  500000,
+                    "date":  "2026-06-23"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 S25 256GB SM-S931N256",
+                    "factoryPrice":  1155000,
+                    "subsidy":  500000,
+                    "date":  "2026-06-23"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 Z Fold8 Ultra 1TB SM-F976N1TB",
+                    "factoryPrice":  3451800,
+                    "subsidy":  500000,
+                    "date":  "2026-07-28"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 Z Flip8 512GB SM-F776N512",
+                    "factoryPrice":  1936000,
+                    "subsidy":  500000,
+                    "date":  "2026-07-28"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 Z Fold8 Ultra 256GB SM-F976N256",
+                    "factoryPrice":  2577300,
+                    "subsidy":  500000,
+                    "date":  "2026-07-28"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 S25 512GB SM-S931N512",
+                    "factoryPrice":  1298000,
+                    "subsidy":  500000,
+                    "date":  "2026-06-23"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 S25+ 512GB SM-S936N512",
+                    "factoryPrice":  1496000,
+                    "subsidy":  500000,
+                    "date":  "2026-06-23"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 Z Flip7 256GB SM-F766N256",
+                    "factoryPrice":  1485000,
+                    "subsidy":  500000,
+                    "date":  "2026-06-02"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 Z Flip6 256GB SM-F741N256",
+                    "factoryPrice":  1485000,
+                    "subsidy":  500000,
+                    "date":  "2026-05-29"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 S25+ 256GB SM-S936N256",
+                    "factoryPrice":  1353000,
+                    "subsidy":  500000,
+                    "date":  "2026-06-23"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 S25 Ultra 1TB SM-S938N1TB",
+                    "factoryPrice":  2127400,
+                    "subsidy":  500000,
+                    "date":  "2026-06-23"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 S25 Ultra 256GB SM-S938N256",
+                    "factoryPrice":  1698400,
+                    "subsidy":  500000,
+                    "date":  "2026-06-23"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 S26 FE SM-S741N",
+                    "factoryPrice":  1045000,
+                    "subsidy":  500000,
+                    "date":  "2026-09-04"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 Z Flip8 256GB SM-F776N256",
+                    "factoryPrice":  1683000,
+                    "subsidy":  500000,
+                    "date":  "2026-07-28"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 Z Fold8 Ultra 512GB SM-F976N512",
+                    "factoryPrice":  2830300,
+                    "subsidy":  500000,
+                    "date":  "2026-07-28"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "iPhone 17 Pro 256GB UIP17PR-256",
+                    "factoryPrice":  1782000,
+                    "subsidy":  450000,
+                    "date":  "2026-05-29"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "iPhone Air 256GB UIPA-256",
+                    "factoryPrice":  1584000,
+                    "subsidy":  450000,
+                    "date":  "2026-05-29"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 워치 Ultra2025 SM-L705N2025",
+                    "factoryPrice":  899800,
+                    "subsidy":  450000,
+                    "date":  "2026-05-29"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "iPhone 16 Pro Max 512GB UIP16PM-512",
+                    "factoryPrice":  2200000,
+                    "subsidy":  450000,
+                    "date":  "2026-05-29"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "iPhone 16 Pro 1TB UIP16PR-1T",
+                    "factoryPrice":  2299000,
+                    "subsidy":  450000,
+                    "date":  "2026-05-29"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "iPhone 16 512GB UIP16-512",
+                    "factoryPrice":  1694000,
+                    "subsidy":  450000,
+                    "date":  "2026-05-29"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "iPhone 16 128GB UIP16-128",
+                    "factoryPrice":  1243000,
+                    "subsidy":  450000,
+                    "date":  "2026-05-29"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "iPhone 16 Pro Max 1TB UIP16PM-1T",
+                    "factoryPrice":  2497000,
+                    "subsidy":  450000,
+                    "date":  "2026-05-29"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "iPhone 16 Pro 512GB UIP16PR-512",
+                    "factoryPrice":  1991000,
+                    "subsidy":  450000,
+                    "date":  "2026-05-29"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "iPhone 16 256GB UIP16-256",
+                    "factoryPrice":  1397000,
+                    "subsidy":  450000,
+                    "date":  "2026-05-29"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "iPhone 15 Pro Max_256GB A3106-256",
+                    "factoryPrice":  1892000,
+                    "subsidy":  450000,
+                    "date":  "2026-05-29"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 워치 Ultra2 SM-L715N",
+                    "factoryPrice":  969100,
+                    "subsidy":  450000,
+                    "date":  "2026-08-01"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "iPhone 16 Pro 128GB UIP16PR-128",
+                    "factoryPrice":  1540000,
+                    "subsidy":  450000,
+                    "date":  "2026-05-29"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "iPhone 16 Pro 256GB UIP16PR-256",
+                    "factoryPrice":  1694000,
+                    "subsidy":  450000,
+                    "date":  "2026-05-29"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "iPhone 15 Plus_128GB A3094-128",
+                    "factoryPrice":  1342000,
+                    "subsidy":  450000,
+                    "date":  "2026-05-29"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 Z Flip 6 중고폰 512GB RU-SM-F741N5",
+                    "factoryPrice":  568000,
+                    "subsidy":  410000,
+                    "date":  "2026-10-16"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 Z Flip 6 중고폰 256GB RU-SM-F741N2",
+                    "factoryPrice":  518000,
+                    "subsidy":  410000,
+                    "date":  "2026-10-16"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 S23+ 512GB 중고폰 RU-SM-S916N5",
+                    "factoryPrice":  575300,
+                    "subsidy":  372000,
+                    "date":  "2026-05-29"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "갤럭시 S23+ 중고폰 RU-SM-S916N",
+                    "factoryPrice":  555300,
+                    "subsidy":  372000,
+                    "date":  "2026-05-29"
+                },
+                {
+                    "carrier":  "LGU+",
+                    "model":  "iPhone 18 Pro 1TB UIP18PR-1T",
+                    "factoryPrice":  2893000,
+                    "subsidy":  400000,
+                    "date":  "2026-09-12"
+                }
+            ],
+    "skt":  [
+                {
+                    "modelCode":  "A543",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 15 128G",
+                    "subsidy":  650000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261101",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1243000
+                },
+                {
+                    "modelCode":  "A54E",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 15 512G",
+                    "subsidy":  650000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261101",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1694000
+                },
+                {
+                    "modelCode":  "A548",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 15 256G",
+                    "subsidy":  650000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261101",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1397000
+                },
+                {
+                    "modelCode":  "A6TX",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone Air 1T",
+                    "subsidy":  650000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261101",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2189000
+                },
+                {
+                    "modelCode":  "A6TT",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone Air 512G",
+                    "subsidy":  650000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261101",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1881000
+                },
+                {
+                    "modelCode":  "A6TP",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone Air 256G",
+                    "subsidy":  650000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261101",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1584000
+                },
+                {
+                    "modelCode":  "A5MY",
+                    "manufacturer":  "Apple",
+                    "model":  "RE iPhone 15 Pro 128G",
+                    "subsidy":  650000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261101",
+                    "carrier":  "SKT",
+                    "factoryPrice":  979000
+                },
+                {
+                    "modelCode":  "A5N1",
+                    "manufacturer":  "Apple",
+                    "model":  "RE iPhone 15 Pro 128G",
+                    "subsidy":  650000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261101",
+                    "carrier":  "SKT",
+                    "factoryPrice":  979000
+                },
+                {
+                    "modelCode":  "A5MZ",
+                    "manufacturer":  "Apple",
+                    "model":  "RE iPhone 15 Pro 128G",
+                    "subsidy":  650000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261101",
+                    "carrier":  "SKT",
+                    "factoryPrice":  979000
+                },
+                {
+                    "modelCode":  "A5MX",
+                    "manufacturer":  "Apple",
+                    "model":  "RE iPhone 15 Pro 128G",
+                    "subsidy":  650000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261101",
+                    "carrier":  "SKT",
+                    "factoryPrice":  979000
+                },
+                {
+                    "modelCode":  "A5N2",
+                    "manufacturer":  "Apple",
+                    "model":  "RE iPhone 15 Pro 256G",
+                    "subsidy":  650000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261101",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1067000
+                },
+                {
+                    "modelCode":  "A5N3",
+                    "manufacturer":  "Apple",
+                    "model":  "RE iPhone 15 Pro 256G",
+                    "subsidy":  650000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261101",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1067000
+                },
+                {
+                    "modelCode":  "A5N4",
+                    "manufacturer":  "Apple",
+                    "model":  "RE iPhone 15 Pro 256G",
+                    "subsidy":  650000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261101",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1067000
+                },
+                {
+                    "modelCode":  "A5N5",
+                    "manufacturer":  "Apple",
+                    "model":  "RE iPhone 15 Pro 256G",
+                    "subsidy":  650000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261101",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1067000
+                },
+                {
+                    "modelCode":  "A5MP",
+                    "manufacturer":  "Apple",
+                    "model":  "RE iPhone 15 128G",
+                    "subsidy":  650000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261101",
+                    "carrier":  "SKT",
+                    "factoryPrice":  770000
+                },
+                {
+                    "modelCode":  "A5MR",
+                    "manufacturer":  "Apple",
+                    "model":  "RE iPhone 15 128G",
+                    "subsidy":  650000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261101",
+                    "carrier":  "SKT",
+                    "factoryPrice":  770000
+                },
+                {
+                    "modelCode":  "A5MQ",
+                    "manufacturer":  "Apple",
+                    "model":  "RE iPhone 15 128G",
+                    "subsidy":  650000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261101",
+                    "carrier":  "SKT",
+                    "factoryPrice":  770000
+                },
+                {
+                    "modelCode":  "A5MN",
+                    "manufacturer":  "Apple",
+                    "model":  "RE iPhone 15 128G",
+                    "subsidy":  650000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261101",
+                    "carrier":  "SKT",
+                    "factoryPrice":  770000
+                },
+                {
+                    "modelCode":  "A5MT",
+                    "manufacturer":  "Apple",
+                    "model":  "RE iPhone 15 256G",
+                    "subsidy":  650000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261101",
+                    "carrier":  "SKT",
+                    "factoryPrice":  858000
+                },
+                {
+                    "modelCode":  "A551",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 15 Pro 128G",
+                    "subsidy":  650000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261101",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1540000
+                },
+                {
+                    "modelCode":  "A559",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 15 Pro 512G",
+                    "subsidy":  650000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261101",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1991000
+                },
+                {
+                    "modelCode":  "A555",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 15 Pro 256G",
+                    "subsidy":  650000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261101",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1694000
+                },
+                {
+                    "modelCode":  "A55E",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 15 Pro 1T",
+                    "subsidy":  650000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261101",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2299000
+                },
+                {
+                    "modelCode":  "A5CM",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S24 울트라 5G 256G",
+                    "subsidy":  630000,
+                    "scrbType":  "기기변경",
+                    "date":  "20250624",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1544400
+                },
+                {
+                    "modelCode":  "A7HJ",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 폴드8 256G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261022",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2278100
+                },
+                {
+                    "modelCode":  "A7CY",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 폴드8 256G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261022",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2278100
+                },
+                {
+                    "modelCode":  "A7HL",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 폴드8 256G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261022",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2278100
+                },
+                {
+                    "modelCode":  "A7HN",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 폴드8 512G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261022",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2531100
+                },
+                {
+                    "modelCode":  "A7HQ",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 폴드8 512G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261022",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2531100
+                },
+                {
+                    "modelCode":  "A7HS",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 폴드8 512G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261022",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2531100
+                },
+                {
+                    "modelCode":  "A7HU",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 폴드8 1T",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261022",
+                    "carrier":  "SKT",
+                    "factoryPrice":  3152600
+                },
+                {
+                    "modelCode":  "A7HY",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 폴드8 1T",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261022",
+                    "carrier":  "SKT",
+                    "factoryPrice":  3152600
+                },
+                {
+                    "modelCode":  "A711",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26 울트라 256G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261024",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1797400
+                },
+                {
+                    "modelCode":  "A73H",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26 울트라 256G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261024",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1797400
+                },
+                {
+                    "modelCode":  "A73J",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26 울트라 256G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261024",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1797400
+                },
+                {
+                    "modelCode":  "A73G",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26 울트라 256G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261024",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1797400
+                },
+                {
+                    "modelCode":  "A73X",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26 울트라 1T",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261024",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2545400
+                },
+                {
+                    "modelCode":  "A73Z",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26 울트라 1T",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261024",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2545400
+                },
+                {
+                    "modelCode":  "A73K",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26 울트라 512G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261024",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2050400
+                },
+                {
+                    "modelCode":  "A73L",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26 울트라 512G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261024",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2050400
+                },
+                {
+                    "modelCode":  "A73N",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26 울트라 512G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261024",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2050400
+                },
+                {
+                    "modelCode":  "A73Y",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26 울트라 1T",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261024",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2545400
+                },
+                {
+                    "modelCode":  "A741",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26 울트라 1T",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261024",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2545400
+                },
+                {
+                    "modelCode":  "A73M",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26 울트라 512G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261024",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2050400
+                },
+                {
+                    "modelCode":  "A713",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26+ 256G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261024",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1452000
+                },
+                {
+                    "modelCode":  "A74Y",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26+ 256G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261024",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1452000
+                },
+                {
+                    "modelCode":  "A751",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26+ 256G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261024",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1452000
+                },
+                {
+                    "modelCode":  "A752",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26+ 256G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261024",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1452000
+                },
+                {
+                    "modelCode":  "A758",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26+ 512G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261024",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1705000
+                },
+                {
+                    "modelCode":  "A759",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26+ 512G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261024",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1705000
+                },
+                {
+                    "modelCode":  "A756",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26+ 512G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261024",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1705000
+                },
+                {
+                    "modelCode":  "A757",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26+ 512G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261024",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1705000
+                },
+                {
+                    "modelCode":  "A74H",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26 256G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261024",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1254000
+                },
+                {
+                    "modelCode":  "A74M",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26 256G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261024",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1254000
+                },
+                {
+                    "modelCode":  "A74K",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26 256G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261024",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1254000
+                },
+                {
+                    "modelCode":  "A712",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26 256G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261024",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1254000
+                },
+                {
+                    "modelCode":  "A74T",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26 512G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261024",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1507000
+                },
+                {
+                    "modelCode":  "A74Q",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26 512G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261024",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1507000
+                },
+                {
+                    "modelCode":  "A74S",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26 512G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261024",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1507000
+                },
+                {
+                    "modelCode":  "A74V",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26 512G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261024",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1507000
+                },
+                {
+                    "modelCode":  "A5L9",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 플립6 256G",
+                    "subsidy":  600000,
+                    "scrbType":  "기기변경",
+                    "date":  "20241025",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1485000
+                },
+                {
+                    "modelCode":  "A6AS",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S25 엣지 256G",
+                    "subsidy":  580000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261101",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1254000
+                },
+                {
+                    "modelCode":  "A6DL",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S25 엣지 512G",
+                    "subsidy":  580000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261101",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1507000
+                },
+                {
+                    "modelCode":  "A7HG",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26 FE 256G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260904",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1045000
+                },
+                {
+                    "modelCode":  "A7PZ",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26 FE 256G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260904",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1045000
+                },
+                {
+                    "modelCode":  "A7Q1",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S26 FE 256G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260904",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1045000
+                },
+                {
+                    "modelCode":  "A7FX",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 플립8 256G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260804",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1683000
+                },
+                {
+                    "modelCode":  "A7FV",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 플립8 256G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260804",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1683000
+                },
+                {
+                    "modelCode":  "A7CZ",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 플립8 256G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260804",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1683000
+                },
+                {
+                    "modelCode":  "A7FZ",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 플립8 512G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260728",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1936000
+                },
+                {
+                    "modelCode":  "A7G4",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 플립8 512G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260728",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1936000
+                },
+                {
+                    "modelCode":  "A7G2",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 플립8 512G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260728",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1936000
+                },
+                {
+                    "modelCode":  "A7CX",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 폴드8 울트라 256G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260804",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2577300
+                },
+                {
+                    "modelCode":  "A7G9",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 폴드8 울트라 256G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260804",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2577300
+                },
+                {
+                    "modelCode":  "A7G7",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 폴드8 울트라 256G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260804",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2577300
+                },
+                {
+                    "modelCode":  "A7GL",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 폴드8 울트라 1T",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260728",
+                    "carrier":  "SKT",
+                    "factoryPrice":  3451800
+                },
+                {
+                    "modelCode":  "A7GG",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 폴드8 울트라 512G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260728",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2830300
+                },
+                {
+                    "modelCode":  "A7GE",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 폴드8 울트라 512G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260728",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2830300
+                },
+                {
+                    "modelCode":  "A7GJ",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 폴드8 울트라 1T",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260728",
+                    "carrier":  "SKT",
+                    "factoryPrice":  3451800
+                },
+                {
+                    "modelCode":  "A7GC",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 폴드8 울트라 512G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260728",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2830300
+                },
+                {
+                    "modelCode":  "A7GN",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 폴드8 울트라 1T",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260728",
+                    "carrier":  "SKT",
+                    "factoryPrice":  3451800
+                },
+                {
+                    "modelCode":  "A6R1",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S25 FE 256G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20251107",
+                    "carrier":  "SKT",
+                    "factoryPrice":  946000
+                },
+                {
+                    "modelCode":  "A6R2",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S25 FE 256G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20251107",
+                    "carrier":  "SKT",
+                    "factoryPrice":  946000
+                },
+                {
+                    "modelCode":  "A6PL",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S25 FE 256G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20251107",
+                    "carrier":  "SKT",
+                    "factoryPrice":  946000
+                },
+                {
+                    "modelCode":  "A6QZ",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S25 FE 256G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20251107",
+                    "carrier":  "SKT",
+                    "factoryPrice":  946000
+                },
+                {
+                    "modelCode":  "A6L3",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 플립7 FE 256G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20251107",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1199000
+                },
+                {
+                    "modelCode":  "A6N7",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 플립7 256G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260602",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1485000
+                },
+                {
+                    "modelCode":  "A6ND",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 플립7 512G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260602",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1643400
+                },
+                {
+                    "modelCode":  "A6L1",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 폴드7 256G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20250722",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2379300
+                },
+                {
+                    "modelCode":  "A6NT",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 폴드7 1T",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20250715",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2933700
+                },
+                {
+                    "modelCode":  "A6NQ",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 Z 폴드7 512G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20250715",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2537700
+                },
+                {
+                    "modelCode":  "A65X",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S25 울트라 256G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260623",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1698400
+                },
+                {
+                    "modelCode":  "A69G",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S25 울트라 1T",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260623",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2127400
+                },
+                {
+                    "modelCode":  "A697",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S25 울트라 512G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260623",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1841400
+                },
+                {
+                    "modelCode":  "A65Z",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S25+ 256G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260623",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1353000
+                },
+                {
+                    "modelCode":  "A68R",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S25+ 512G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260623",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1496000
+                },
+                {
+                    "modelCode":  "A65Y",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S25 256G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260623",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1155000
+                },
+                {
+                    "modelCode":  "A689",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 S25 512G",
+                    "subsidy":  500000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260623",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1298000
+                },
+                {
+                    "modelCode":  "A5NQ",
+                    "manufacturer":  "Apple",
+                    "model":  "RE iPhone 15 Pro Max 256G",
+                    "subsidy":  470000,
+                    "scrbType":  "기기변경",
+                    "date":  "20240604",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1155000
+                },
+                {
+                    "modelCode":  "A5NR",
+                    "manufacturer":  "Apple",
+                    "model":  "RE iPhone 15 Pro Max 256G",
+                    "subsidy":  470000,
+                    "scrbType":  "기기변경",
+                    "date":  "20240604",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1155000
+                },
+                {
+                    "modelCode":  "A5NN",
+                    "manufacturer":  "Apple",
+                    "model":  "RE iPhone 15 Pro Max 256G",
+                    "subsidy":  470000,
+                    "scrbType":  "기기변경",
+                    "date":  "20240604",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1155000
+                },
+                {
+                    "modelCode":  "A5NP",
+                    "manufacturer":  "Apple",
+                    "model":  "RE iPhone 15 Pro Max 256G",
+                    "subsidy":  470000,
+                    "scrbType":  "기기변경",
+                    "date":  "20240604",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1155000
+                },
+                {
+                    "modelCode":  "A54K",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 15 Plus 128G",
+                    "subsidy":  470000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260609",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1342000
+                },
+                {
+                    "modelCode":  "A54V",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 15 Plus 512G",
+                    "subsidy":  470000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260609",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1793000
+                },
+                {
+                    "modelCode":  "A7UE",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone Duo 256G",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261016",
+                    "carrier":  "SKT",
+                    "factoryPrice":  3300000
+                },
+                {
+                    "modelCode":  "A7UG",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone Duo 512G",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261016",
+                    "carrier":  "SKT",
+                    "factoryPrice":  3597000
+                },
+                {
+                    "modelCode":  "A7UK",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone Duo 2T",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261016",
+                    "carrier":  "SKT",
+                    "factoryPrice":  5093000
+                },
+                {
+                    "modelCode":  "A7UL",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone Duo 2T",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261016",
+                    "carrier":  "SKT",
+                    "factoryPrice":  5093000
+                },
+                {
+                    "modelCode":  "A7UD",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone Duo 256G",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261016",
+                    "carrier":  "SKT",
+                    "factoryPrice":  3300000
+                },
+                {
+                    "modelCode":  "A7UH",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone Duo 1T",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261016",
+                    "carrier":  "SKT",
+                    "factoryPrice":  4191000
+                },
+                {
+                    "modelCode":  "A7UF",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone Duo 512G",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261016",
+                    "carrier":  "SKT",
+                    "factoryPrice":  3597000
+                },
+                {
+                    "modelCode":  "A7UJ",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone Duo 1T",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261016",
+                    "carrier":  "SKT",
+                    "factoryPrice":  4191000
+                },
+                {
+                    "modelCode":  "A7TH",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 17 512G",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261007",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1760000
+                },
+                {
+                    "modelCode":  "A7TC",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 17 256G",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261007",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1452000
+                },
+                {
+                    "modelCode":  "A7T9",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 17 256G",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261007",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1452000
+                },
+                {
+                    "modelCode":  "A7TK",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 17 512G",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261007",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1760000
+                },
+                {
+                    "modelCode":  "A7TE",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 17 256G",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261007",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1452000
+                },
+                {
+                    "modelCode":  "A7TJ",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 17 512G",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261007",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1760000
+                },
+                {
+                    "modelCode":  "A7TG",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 17 512G",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261007",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1760000
+                },
+                {
+                    "modelCode":  "A7TF",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 17 512G",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261007",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1760000
+                },
+                {
+                    "modelCode":  "A7TD",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 17 256G",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261007",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1452000
+                },
+                {
+                    "modelCode":  "A7TA",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 17 256G",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20261007",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1452000
+                },
+                {
+                    "modelCode":  "A7QM",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro 256G",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1991000
+                },
+                {
+                    "modelCode":  "A7QX",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro 1T",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2893000
+                },
+                {
+                    "modelCode":  "A7QQ",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro 512G",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2299000
+                },
+                {
+                    "modelCode":  "A7QW",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro 1T",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2893000
+                },
+                {
+                    "modelCode":  "A7QR",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro 512G",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2299000
+                },
+                {
+                    "modelCode":  "A7R2",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro 2T",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  3795000
+                },
+                {
+                    "modelCode":  "A7QZ",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro 2T",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  3795000
+                },
+                {
+                    "modelCode":  "A7QY",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro 2T",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  3795000
+                },
+                {
+                    "modelCode":  "A7QV",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro 1T",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2893000
+                },
+                {
+                    "modelCode":  "A7QL",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro 256G",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1991000
+                },
+                {
+                    "modelCode":  "A7QU",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro 1T",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2893000
+                },
+                {
+                    "modelCode":  "A7QP",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro 256G",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1991000
+                },
+                {
+                    "modelCode":  "A7QT",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro 512G",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2299000
+                },
+                {
+                    "modelCode":  "A7QN",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro 256G",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1991000
+                },
+                {
+                    "modelCode":  "A7R1",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro 2T",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  3795000
+                },
+                {
+                    "modelCode":  "A7QS",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro 512G",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2299000
+                },
+                {
+                    "modelCode":  "A6T1",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 17 Pro 256G",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20250913",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1782000
+                },
+                {
+                    "modelCode":  "A6T4",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 17 Pro 512G",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20250913",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2090000
+                },
+                {
+                    "modelCode":  "A6T7",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 17 Pro 1T",
+                    "subsidy":  450000,
+                    "scrbType":  "기기변경",
+                    "date":  "20250913",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2387000
+                },
+                {
+                    "modelCode":  "A6CX",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 A36 128G",
+                    "subsidy":  400000,
+                    "scrbType":  "기기변경",
+                    "date":  "20250612",
+                    "carrier":  "SKT",
+                    "factoryPrice":  499400
+                },
+                {
+                    "modelCode":  "A6K8",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 퀀텀6 128G",
+                    "subsidy":  357000,
+                    "scrbType":  "기기변경",
+                    "date":  "20250801",
+                    "carrier":  "SKT",
+                    "factoryPrice":  618200
+                },
+                {
+                    "modelCode":  "A7C2",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 와이드9 128G",
+                    "subsidy":  373400,
+                    "scrbType":  "기기변경",
+                    "date":  "20261016",
+                    "carrier":  "SKT",
+                    "factoryPrice":  469700
+                },
+                {
+                    "modelCode":  "A7CT",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 와이드9 128G",
+                    "subsidy":  373400,
+                    "scrbType":  "기기변경",
+                    "date":  "20261016",
+                    "carrier":  "SKT",
+                    "factoryPrice":  469700
+                },
+                {
+                    "modelCode":  "A7EZ",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 퀀텀7 128G",
+                    "subsidy":  357000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260825",
+                    "carrier":  "SKT",
+                    "factoryPrice":  717200
+                },
+                {
+                    "modelCode":  "A7FQ",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 퀀텀7 128G",
+                    "subsidy":  357000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260825",
+                    "carrier":  "SKT",
+                    "factoryPrice":  717200
+                },
+                {
+                    "modelCode":  "A7FS",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 퀀텀7 128G",
+                    "subsidy":  357000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260825",
+                    "carrier":  "SKT",
+                    "factoryPrice":  717200
+                },
+                {
+                    "modelCode":  "A7EX",
+                    "manufacturer":  "모토로라코리아",
+                    "model":  "MOTO G86 power 5G 256G",
+                    "subsidy":  293400,
+                    "scrbType":  "기기변경",
+                    "date":  "20260609",
+                    "carrier":  "SKT",
+                    "factoryPrice":  429000
+                },
+                {
+                    "modelCode":  "A7EY",
+                    "manufacturer":  "모토로라코리아",
+                    "model":  "MOTO G86 power 5G 256G",
+                    "subsidy":  293400,
+                    "scrbType":  "기기변경",
+                    "date":  "20260609",
+                    "carrier":  "SKT",
+                    "factoryPrice":  429000
+                },
+                {
+                    "modelCode":  "A6C4",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 와이드8 128G",
+                    "subsidy":  293400,
+                    "scrbType":  "기기변경",
+                    "date":  "20250701",
+                    "carrier":  "SKT",
+                    "factoryPrice":  374000
+                },
+                {
+                    "modelCode":  "A7RC",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro Max 1T",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  3091000
+                },
+                {
+                    "modelCode":  "A7RE",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro Max 1T",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  3091000
+                },
+                {
+                    "modelCode":  "A7R4",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro Max 256G",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2200000
+                },
+                {
+                    "modelCode":  "A7RG",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro Max 2T",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  3993000
+                },
+                {
+                    "modelCode":  "A7RD",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro Max 1T",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  3091000
+                },
+                {
+                    "modelCode":  "A7R5",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro Max 256G",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2200000
+                },
+                {
+                    "modelCode":  "A7R6",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro Max 256G",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2200000
+                },
+                {
+                    "modelCode":  "A7R7",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro Max 512G",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2497000
+                },
+                {
+                    "modelCode":  "A7R3",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro Max 256G",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2200000
+                },
+                {
+                    "modelCode":  "A7R8",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro Max 512G",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2497000
+                },
+                {
+                    "modelCode":  "A7RH",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro Max 2T",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  3993000
+                },
+                {
+                    "modelCode":  "A7RF",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro Max 1T",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  3091000
+                },
+                {
+                    "modelCode":  "A7RA",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro Max 512G",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2497000
+                },
+                {
+                    "modelCode":  "A7R9",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro Max 512G",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2497000
+                },
+                {
+                    "modelCode":  "A7RK",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 18 Pro Max 2T",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  3993000
+                },
+                {
+                    "modelCode":  "A6TE",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 17 Pro Max 512G",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20250912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2288000
+                },
+                {
+                    "modelCode":  "A6TA",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 17 Pro Max 256G",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20250912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1980000
+                },
+                {
+                    "modelCode":  "A6TH",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 17 Pro Max 1T",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20250912",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2585000
+                },
+                {
+                    "modelCode":  "A6CJ",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 16e 256G",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20251001",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1133000
+                },
+                {
+                    "modelCode":  "A6CD",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 16e 512G",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20251001",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1430000
+                },
+                {
+                    "modelCode":  "A6CA",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 16e 128G",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20251001",
+                    "carrier":  "SKT",
+                    "factoryPrice":  990000
+                },
+                {
+                    "modelCode":  "A5Y1",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 16 Pro Max 1T",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20251001",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2497000
+                },
+                {
+                    "modelCode":  "A5XS",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 16 Pro Max 256G",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20251001",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1892000
+                },
+                {
+                    "modelCode":  "A5XW",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 16 Pro Max 512G",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20251001",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2200000
+                },
+                {
+                    "modelCode":  "A5X9",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 16 Pro 128G",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20251001",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1540000
+                },
+                {
+                    "modelCode":  "A5XJ",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 16 Pro 512G",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20251001",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1991000
+                },
+                {
+                    "modelCode":  "A5XE",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 16 Pro 256G",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20251001",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1694000
+                },
+                {
+                    "modelCode":  "A5XN",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 16 Pro 1T",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20251001",
+                    "carrier":  "SKT",
+                    "factoryPrice":  2299000
+                },
+                {
+                    "modelCode":  "A5WN",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 16 512G",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20251001",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1694000
+                },
+                {
+                    "modelCode":  "A5WC",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 16 128G",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20251001",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1243000
+                },
+                {
+                    "modelCode":  "A5WH",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 16 256G",
+                    "subsidy":  220000,
+                    "scrbType":  "기기변경",
+                    "date":  "20251001",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1397000
+                },
+                {
+                    "modelCode":  "A7D4",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 A37 128G",
+                    "subsidy":  170000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260619",
+                    "carrier":  "SKT",
+                    "factoryPrice":  598400
+                },
+                {
+                    "modelCode":  "A795",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 A37 128G",
+                    "subsidy":  170000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260619",
+                    "carrier":  "SKT",
+                    "factoryPrice":  598400
+                },
+                {
+                    "modelCode":  "A7D2",
+                    "manufacturer":  "삼성전자(주)",
+                    "model":  "갤럭시 A37 128G",
+                    "subsidy":  170000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260619",
+                    "carrier":  "SKT",
+                    "factoryPrice":  598400
+                },
+                {
+                    "modelCode":  "A75X",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 17e 256G",
+                    "subsidy":  128000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260304",
+                    "carrier":  "SKT",
+                    "factoryPrice":  990000
+                },
+                {
+                    "modelCode":  "A75Z",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 17e 512G",
+                    "subsidy":  128000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260304",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1287000
+                },
+                {
+                    "modelCode":  "A75W",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 17e 256G",
+                    "subsidy":  128000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260304",
+                    "carrier":  "SKT",
+                    "factoryPrice":  990000
+                },
+                {
+                    "modelCode":  "A75V",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 17e 256G",
+                    "subsidy":  128000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260304",
+                    "carrier":  "SKT",
+                    "factoryPrice":  990000
+                },
+                {
+                    "modelCode":  "A761",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 17e 512G",
+                    "subsidy":  128000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260304",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1287000
+                },
+                {
+                    "modelCode":  "A75Y",
+                    "manufacturer":  "Apple",
+                    "model":  "iPhone 17e 512G",
+                    "subsidy":  128000,
+                    "scrbType":  "기기변경",
+                    "date":  "20260304",
+                    "carrier":  "SKT",
+                    "factoryPrice":  1287000
+                },
+                {
+                    "modelCode":  "A612",
+                    "manufacturer":  "샤오미",
+                    "model":  "홍미 14C (4GB RAM) 128G",
+                    "subsidy":  125000,
+                    "scrbType":  "기기변경",
+                    "date":  "20241018",
+                    "carrier":  "SKT",
+                    "factoryPrice":  149600
+                }
+            ],
+    "kt":  [
+               {
+                   "carrier":  "KT",
+                   "model":  "iPhone Air 1TB",
+                   "factoryPrice":  2189000,
+                   "subsidy":  700000,
+                   "date":  "2026.11.13"
+               },
+               {
+                   "carrier":  "KT",
+                   "model":  "iPhone Air 512GB",
+                   "factoryPrice":  1881000,
+                   "subsidy":  700000,
+                   "date":  "2026.11.13"
+               },
+               {
+                   "carrier":  "KT",
+                   "model":  "iPhone Air 256GB",
+                   "factoryPrice":  1584000,
+                   "subsidy":  700000,
+                   "date":  "2026.11.13"
+               },
+               {
+                   "carrier":  "KT",
+                   "model":  "갤럭시 A18 128GB",
+                   "factoryPrice":  425700,
+                   "subsidy":  150000,
+                   "date":  "2026.10.30"
+               },
+               {
+                   "carrier":  "KT",
+                   "model":  "갤럭시 S25 엣지 512GB",
+                   "factoryPrice":  1496000,
+                   "subsidy":  600000,
+                   "date":  "2026.10.30"
+               },
+               {
+                   "carrier":  "KT",
+                   "model":  "갤럭시 S25 엣지 256GB",
+                   "factoryPrice":  1254000,
+                   "subsidy":  600000,
+                   "date":  "2026.10.30"
+               },
+               {
+                   "carrier":  "KT",
+                   "model":  "갤럭시 S26 Ultra 1TB",
+                   "factoryPrice":  2545400,
+                   "subsidy":  600000,
+                   "date":  "2026.10.24"
+               },
+               {
+                   "carrier":  "KT",
+                   "model":  "갤럭시 S26 Ultra 512GB",
+                   "factoryPrice":  2050400,
+                   "subsidy":  600000,
+                   "date":  "2026.10.24"
+               },
+               {
+                   "carrier":  "KT",
+                   "model":  "갤럭시 S26 Ultra 256GB",
+                   "factoryPrice":  1797400,
+                   "subsidy":  600000,
+                   "date":  "2026.10.24"
+               },
+               {
+                   "carrier":  "KT",
+                   "model":  "갤럭시 S26+ 512GB",
+                   "factoryPrice":  1705000,
+                   "subsidy":  600000,
+                   "date":  "2026.10.24"
+               },
+               {
+                   "carrier":  "KT",
+                   "model":  "갤럭시 S26+ 256GB",
+                   "factoryPrice":  1452000,
+                   "subsidy":  600000,
+                   "date":  "2026.10.24"
+               },
+               {
+                   "carrier":  "KT",
+                   "model":  "갤럭시 S26 512GB",
+                   "factoryPrice":  1507000,
+                   "subsidy":  600000,
+                   "date":  "2026.10.24"
+               }
+           ],
+    "crawlTimestamp":  "2026-11-22T12:27:27+09:00"
+}

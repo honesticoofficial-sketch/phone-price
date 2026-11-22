@@ -1,0 +1,595 @@
+﻿{
+    "name":  "projects/phone-price-91c3c/databases/(default)/documents/global_config/devices_master",
+    "fields":  {
+                   "devices":  {
+                                   "arrayValue":  {
+                                                      "values":  [
+                                                                     {
+                                                                         "mapValue":  {
+                                                                                          "fields":  {
+                                                                                                         "id":  {
+                                                                                                                    "stringValue":  "s26"
+                                                                                                                },
+                                                                                                         "name":  {
+                                                                                                                      "stringValue":  "갤럭시 S26 256G"
+                                                                                                                  },
+                                                                                                         "group":  {
+                                                                                                                       "stringValue":  "S"
+                                                                                                                   },
+                                                                                                         "tag":  {
+                                                                                                                     "stringValue":  "#S26"
+                                                                                                                 },
+                                                                                                         "prices":  {
+                                                                                                                        "mapValue":  {
+                                                                                                                                         "fields":  {
+                                                                                                                                                        "KT":  "@{doubleValue=140.36}",
+                                                                                                                                                        "SK":  "@{doubleValue=125.4}",
+                                                                                                                                                        "LG":  "@{doubleValue=125.4}"
+                                                                                                                                                    }
+                                                                                                                                     }
+                                                                                                                    },
+                                                                                                         "sub":  {
+                                                                                                                     "mapValue":  {
+                                                                                                                                      "fields":  {
+                                                                                                                                                     "LG":  "@{mapValue=}",
+                                                                                                                                                     "SK":  "@{mapValue=}",
+                                                                                                                                                     "KT":  "@{mapValue=}"
+                                                                                                                                                 }
+                                                                                                                                  }
+                                                                                                                 }
+                                                                                                     }
+                                                                                      }
+                                                                     },
+                                                                     {
+                                                                         "mapValue":  {
+                                                                                          "fields":  {
+                                                                                                         "id":  {
+                                                                                                                    "stringValue":  "s26p"
+                                                                                                                },
+                                                                                                         "name":  {
+                                                                                                                      "stringValue":  "갤럭시 S26+ 256G"
+                                                                                                                  },
+                                                                                                         "group":  {
+                                                                                                                       "stringValue":  "S"
+                                                                                                                   },
+                                                                                                         "tag":  {
+                                                                                                                     "stringValue":  "#S26+"
+                                                                                                                 },
+                                                                                                         "prices":  {
+                                                                                                                        "mapValue":  {
+                                                                                                                                         "fields":  {
+                                                                                                                                                        "LG":  "@{doubleValue=145.2}",
+                                                                                                                                                        "KT":  "@{doubleValue=145.2}",
+                                                                                                                                                        "SK":  "@{doubleValue=145.2}"
+                                                                                                                                                    }
+                                                                                                                                     }
+                                                                                                                    },
+                                                                                                         "sub":  {
+                                                                                                                     "mapValue":  {
+                                                                                                                                      "fields":  {
+                                                                                                                                                     "KT":  "@{mapValue=}",
+                                                                                                                                                     "SK":  "@{mapValue=}",
+                                                                                                                                                     "LG":  "@{mapValue=}"
+                                                                                                                                                 }
+                                                                                                                                  }
+                                                                                                                 }
+                                                                                                     }
+                                                                                      }
+                                                                     },
+                                                                     {
+                                                                         "mapValue":  {
+                                                                                          "fields":  {
+                                                                                                         "id":  {
+                                                                                                                    "stringValue":  "s26u"
+                                                                                                                },
+                                                                                                         "name":  {
+                                                                                                                      "stringValue":  "갤럭시 S26 Ultra 256G"
+                                                                                                                  },
+                                                                                                         "group":  {
+                                                                                                                       "stringValue":  "S"
+                                                                                                                   },
+                                                                                                         "tag":  {
+                                                                                                                     "stringValue":  "#S26U"
+                                                                                                                 },
+                                                                                                         "prices":  {
+                                                                                                                        "mapValue":  {
+                                                                                                                                         "fields":  {
+                                                                                                                                                        "KT":  "@{doubleValue=179.74}",
+                                                                                                                                                        "SK":  "@{doubleValue=179.74}",
+                                                                                                                                                        "LG":  "@{doubleValue=179.74}"
+                                                                                                                                                    }
+                                                                                                                                     }
+                                                                                                                    },
+                                                                                                         "sub":  {
+                                                                                                                     "mapValue":  {
+                                                                                                                                      "fields":  {
+                                                                                                                                                     "LG":  "@{mapValue=}",
+                                                                                                                                                     "KT":  "@{mapValue=}",
+                                                                                                                                                     "SK":  "@{mapValue=}"
+                                                                                                                                                 }
+                                                                                                                                  }
+                                                                                                                 }
+                                                                                                     }
+                                                                                      }
+                                                                     },
+                                                                     {
+                                                                         "mapValue":  {
+                                                                                          "fields":  {
+                                                                                                         "id":  {
+                                                                                                                    "stringValue":  "s25"
+                                                                                                                },
+                                                                                                         "name":  {
+                                                                                                                      "stringValue":  "갤럭시 S25 256G"
+                                                                                                                  },
+                                                                                                         "group":  {
+                                                                                                                       "stringValue":  "S"
+                                                                                                                   },
+                                                                                                         "tag":  {
+                                                                                                                     "stringValue":  "#S25"
+                                                                                                                 },
+                                                                                                         "prices":  {
+                                                                                                                        "mapValue":  {
+                                                                                                                                         "fields":  {
+                                                                                                                                                        "SK":  "@{doubleValue=115.5}",
+                                                                                                                                                        "KT":  "@{doubleValue=115.5}",
+                                                                                                                                                        "LG":  "@{doubleValue=115.5}"
+                                                                                                                                                    }
+                                                                                                                                     }
+                                                                                                                    },
+                                                                                                         "sub":  {
+                                                                                                                     "mapValue":  {
+                                                                                                                                      "fields":  {
+                                                                                                                                                     "KT":  "@{mapValue=}",
+                                                                                                                                                     "SK":  "@{mapValue=}",
+                                                                                                                                                     "LG":  "@{mapValue=}"
+                                                                                                                                                 }
+                                                                                                                                  }
+                                                                                                                 }
+                                                                                                     }
+                                                                                      }
+                                                                     },
+                                                                     {
+                                                                         "mapValue":  {
+                                                                                          "fields":  {
+                                                                                                         "id":  {
+                                                                                                                    "stringValue":  "s25u"
+                                                                                                                },
+                                                                                                         "name":  {
+                                                                                                                      "stringValue":  "갤럭시 S25 Ultra 256G"
+                                                                                                                  },
+                                                                                                         "group":  {
+                                                                                                                       "stringValue":  "S"
+                                                                                                                   },
+                                                                                                         "tag":  {
+                                                                                                                     "stringValue":  "#S25U"
+                                                                                                                 },
+                                                                                                         "prices":  {
+                                                                                                                        "mapValue":  {
+                                                                                                                                         "fields":  {
+                                                                                                                                                        "LG":  "@{doubleValue=169.84}",
+                                                                                                                                                        "KT":  "@{doubleValue=169.84}",
+                                                                                                                                                        "SK":  "@{doubleValue=169.84}"
+                                                                                                                                                    }
+                                                                                                                                     }
+                                                                                                                    },
+                                                                                                         "sub":  {
+                                                                                                                     "mapValue":  {
+                                                                                                                                      "fields":  {
+                                                                                                                                                     "LG":  "@{mapValue=}",
+                                                                                                                                                     "KT":  "@{mapValue=}",
+                                                                                                                                                     "SK":  "@{mapValue=}"
+                                                                                                                                                 }
+                                                                                                                                  }
+                                                                                                                 }
+                                                                                                     }
+                                                                                      }
+                                                                     },
+                                                                     {
+                                                                         "mapValue":  {
+                                                                                          "fields":  {
+                                                                                                         "id":  {
+                                                                                                                    "stringValue":  "s25e"
+                                                                                                                },
+                                                                                                         "name":  {
+                                                                                                                      "stringValue":  "갤럭시 S25 엣지 256G"
+                                                                                                                  },
+                                                                                                         "group":  {
+                                                                                                                       "stringValue":  "S"
+                                                                                                                   },
+                                                                                                         "tag":  {
+                                                                                                                     "stringValue":  "#S25엣지"
+                                                                                                                 },
+                                                                                                         "prices":  {
+                                                                                                                        "mapValue":  {
+                                                                                                                                         "fields":  {
+                                                                                                                                                        "SK":  "@{doubleValue=125.4}",
+                                                                                                                                                        "KT":  "@{doubleValue=125.4}",
+                                                                                                                                                        "LG":  "@{doubleValue=125.4}"
+                                                                                                                                                    }
+                                                                                                                                     }
+                                                                                                                    },
+                                                                                                         "sub":  {
+                                                                                                                     "mapValue":  {
+                                                                                                                                      "fields":  {
+                                                                                                                                                     "LG":  "@{mapValue=}",
+                                                                                                                                                     "SK":  "@{mapValue=}",
+                                                                                                                                                     "KT":  "@{mapValue=}"
+                                                                                                                                                 }
+                                                                                                                                  }
+                                                                                                                 }
+                                                                                                     }
+                                                                                      }
+                                                                     },
+                                                                     {
+                                                                         "mapValue":  {
+                                                                                          "fields":  {
+                                                                                                         "id":  {
+                                                                                                                    "stringValue":  "flip8"
+                                                                                                                },
+                                                                                                         "name":  {
+                                                                                                                      "stringValue":  "갤럭시 Z 플립8"
+                                                                                                                  },
+                                                                                                         "group":  {
+                                                                                                                       "stringValue":  "FOLD"
+                                                                                                                   },
+                                                                                                         "tag":  {
+                                                                                                                     "stringValue":  "#플립8"
+                                                                                                                 },
+                                                                                                         "prices":  {
+                                                                                                                        "mapValue":  {
+                                                                                                                                         "fields":  {
+                                                                                                                                                        "SK":  "@{doubleValue=168.3}",
+                                                                                                                                                        "KT":  "@{doubleValue=168.3}",
+                                                                                                                                                        "LG":  "@{doubleValue=168.3}"
+                                                                                                                                                    }
+                                                                                                                                     }
+                                                                                                                    },
+                                                                                                         "sub":  {
+                                                                                                                     "mapValue":  {
+                                                                                                                                      "fields":  {
+                                                                                                                                                     "LG":  "@{mapValue=}",
+                                                                                                                                                     "SK":  "@{mapValue=}",
+                                                                                                                                                     "KT":  "@{mapValue=}"
+                                                                                                                                                 }
+                                                                                                                                  }
+                                                                                                                 }
+                                                                                                     }
+                                                                                      }
+                                                                     },
+                                                                     {
+                                                                         "mapValue":  {
+                                                                                          "fields":  {
+                                                                                                         "id":  {
+                                                                                                                    "stringValue":  "fold8"
+                                                                                                                },
+                                                                                                         "name":  {
+                                                                                                                      "stringValue":  "갤럭시 Z 폴드8"
+                                                                                                                  },
+                                                                                                         "group":  {
+                                                                                                                       "stringValue":  "FOLD"
+                                                                                                                   },
+                                                                                                         "tag":  {
+                                                                                                                     "stringValue":  "#폴드8와이드"
+                                                                                                                 },
+                                                                                                         "prices":  {
+                                                                                                                        "mapValue":  {
+                                                                                                                                         "fields":  {
+                                                                                                                                                        "LG":  "@{doubleValue=227.81}",
+                                                                                                                                                        "SK":  "@{doubleValue=227.81}",
+                                                                                                                                                        "KT":  "@{doubleValue=227.81}"
+                                                                                                                                                    }
+                                                                                                                                     }
+                                                                                                                    },
+                                                                                                         "sub":  {
+                                                                                                                     "mapValue":  {
+                                                                                                                                      "fields":  {
+                                                                                                                                                     "KT":  "@{mapValue=}",
+                                                                                                                                                     "SK":  "@{mapValue=}",
+                                                                                                                                                     "LG":  "@{mapValue=}"
+                                                                                                                                                 }
+                                                                                                                                  }
+                                                                                                                 }
+                                                                                                     }
+                                                                                      }
+                                                                     },
+                                                                     {
+                                                                         "mapValue":  {
+                                                                                          "fields":  {
+                                                                                                         "id":  {
+                                                                                                                    "stringValue":  "fold8u"
+                                                                                                                },
+                                                                                                         "name":  {
+                                                                                                                      "stringValue":  "갤럭시 Z 폴드8 Ultra"
+                                                                                                                  },
+                                                                                                         "group":  {
+                                                                                                                       "stringValue":  "FOLD"
+                                                                                                                   },
+                                                                                                         "tag":  {
+                                                                                                                     "stringValue":  "#폴드8울트라"
+                                                                                                                 },
+                                                                                                         "prices":  {
+                                                                                                                        "mapValue":  {
+                                                                                                                                         "fields":  {
+                                                                                                                                                        "SK":  "@{doubleValue=257.73}",
+                                                                                                                                                        "KT":  "@{doubleValue=257.73}",
+                                                                                                                                                        "LG":  "@{doubleValue=257.73}"
+                                                                                                                                                    }
+                                                                                                                                     }
+                                                                                                                    },
+                                                                                                         "sub":  {
+                                                                                                                     "mapValue":  {
+                                                                                                                                      "fields":  {
+                                                                                                                                                     "SK":  "@{mapValue=}",
+                                                                                                                                                     "KT":  "@{mapValue=}",
+                                                                                                                                                     "LG":  "@{mapValue=}"
+                                                                                                                                                 }
+                                                                                                                                  }
+                                                                                                                 }
+                                                                                                     }
+                                                                                      }
+                                                                     },
+                                                                     {
+                                                                         "mapValue":  {
+                                                                                          "fields":  {
+                                                                                                         "id":  {
+                                                                                                                    "stringValue":  "ip17"
+                                                                                                                },
+                                                                                                         "name":  {
+                                                                                                                      "stringValue":  "아이폰17 256G"
+                                                                                                                  },
+                                                                                                         "group":  {
+                                                                                                                       "stringValue":  "IPHONE"
+                                                                                                                   },
+                                                                                                         "tag":  {
+                                                                                                                     "stringValue":  "#아17"
+                                                                                                                 },
+                                                                                                         "prices":  {
+                                                                                                                        "mapValue":  {
+                                                                                                                                         "fields":  {
+                                                                                                                                                        "LG":  "@{doubleValue=145.2}",
+                                                                                                                                                        "KT":  "@{doubleValue=145.2}",
+                                                                                                                                                        "SK":  "@{doubleValue=145.2}"
+                                                                                                                                                    }
+                                                                                                                                     }
+                                                                                                                    },
+                                                                                                         "sub":  {
+                                                                                                                     "mapValue":  {
+                                                                                                                                      "fields":  {
+                                                                                                                                                     "LG":  "@{mapValue=}",
+                                                                                                                                                     "SK":  "@{mapValue=}",
+                                                                                                                                                     "KT":  "@{mapValue=}"
+                                                                                                                                                 }
+                                                                                                                                  }
+                                                                                                                 }
+                                                                                                     }
+                                                                                      }
+                                                                     },
+                                                                     {
+                                                                         "mapValue":  {
+                                                                                          "fields":  {
+                                                                                                         "id":  {
+                                                                                                                    "stringValue":  "ipair"
+                                                                                                                },
+                                                                                                         "name":  {
+                                                                                                                      "stringValue":  "아이폰 AIR 256G"
+                                                                                                                  },
+                                                                                                         "group":  {
+                                                                                                                       "stringValue":  "IPHONE"
+                                                                                                                   },
+                                                                                                         "tag":  {
+                                                                                                                     "stringValue":  "#17에어"
+                                                                                                                 },
+                                                                                                         "prices":  {
+                                                                                                                        "mapValue":  {
+                                                                                                                                         "fields":  {
+                                                                                                                                                        "LG":  "@{doubleValue=158.4}",
+                                                                                                                                                        "KT":  "@{doubleValue=158.4}",
+                                                                                                                                                        "SK":  "@{doubleValue=158.4}"
+                                                                                                                                                    }
+                                                                                                                                     }
+                                                                                                                    },
+                                                                                                         "sub":  {
+                                                                                                                     "mapValue":  {
+                                                                                                                                      "fields":  {
+                                                                                                                                                     "LG":  "@{mapValue=}",
+                                                                                                                                                     "KT":  "@{mapValue=}",
+                                                                                                                                                     "SK":  "@{mapValue=}"
+                                                                                                                                                 }
+                                                                                                                                  }
+                                                                                                                 }
+                                                                                                     }
+                                                                                      }
+                                                                     },
+                                                                     {
+                                                                         "mapValue":  {
+                                                                                          "fields":  {
+                                                                                                         "id":  {
+                                                                                                                    "stringValue":  "ip17p"
+                                                                                                                },
+                                                                                                         "name":  {
+                                                                                                                      "stringValue":  "아이폰17 PRO 256G"
+                                                                                                                  },
+                                                                                                         "group":  {
+                                                                                                                       "stringValue":  "IPHONE"
+                                                                                                                   },
+                                                                                                         "tag":  {
+                                                                                                                     "stringValue":  "#17프로"
+                                                                                                                 },
+                                                                                                         "prices":  {
+                                                                                                                        "mapValue":  {
+                                                                                                                                         "fields":  {
+                                                                                                                                                        "LG":  "@{doubleValue=178.2}",
+                                                                                                                                                        "KT":  "@{doubleValue=178.2}",
+                                                                                                                                                        "SK":  "@{doubleValue=178.2}"
+                                                                                                                                                    }
+                                                                                                                                     }
+                                                                                                                    },
+                                                                                                         "sub":  {
+                                                                                                                     "mapValue":  {
+                                                                                                                                      "fields":  {
+                                                                                                                                                     "LG":  "@{mapValue=}",
+                                                                                                                                                     "SK":  "@{mapValue=}",
+                                                                                                                                                     "KT":  "@{mapValue=}"
+                                                                                                                                                 }
+                                                                                                                                  }
+                                                                                                                 }
+                                                                                                     }
+                                                                                      }
+                                                                     },
+                                                                     {
+                                                                         "mapValue":  {
+                                                                                          "fields":  {
+                                                                                                         "id":  {
+                                                                                                                    "stringValue":  "ip18"
+                                                                                                                },
+                                                                                                         "name":  {
+                                                                                                                      "stringValue":  "아이폰18 256G"
+                                                                                                                  },
+                                                                                                         "group":  {
+                                                                                                                       "stringValue":  "IPHONE"
+                                                                                                                   },
+                                                                                                         "tag":  {
+                                                                                                                     "stringValue":  "#아18"
+                                                                                                                 },
+                                                                                                         "prices":  {
+                                                                                                                        "mapValue":  {
+                                                                                                                                         "fields":  {
+                                                                                                                                                        "LG":  "@{integerValue=0}",
+                                                                                                                                                        "KT":  "@{integerValue=0}",
+                                                                                                                                                        "SK":  "@{integerValue=0}"
+                                                                                                                                                    }
+                                                                                                                                     }
+                                                                                                                    },
+                                                                                                         "sub":  {
+                                                                                                                     "mapValue":  {
+                                                                                                                                      "fields":  {
+                                                                                                                                                     "LG":  "@{mapValue=}",
+                                                                                                                                                     "SK":  "@{mapValue=}",
+                                                                                                                                                     "KT":  "@{mapValue=}"
+                                                                                                                                                 }
+                                                                                                                                  }
+                                                                                                                 }
+                                                                                                     }
+                                                                                      }
+                                                                     },
+                                                                     {
+                                                                         "mapValue":  {
+                                                                                          "fields":  {
+                                                                                                         "id":  {
+                                                                                                                    "stringValue":  "ip18p"
+                                                                                                                },
+                                                                                                         "name":  {
+                                                                                                                      "stringValue":  "아이폰18PRO 256G"
+                                                                                                                  },
+                                                                                                         "group":  {
+                                                                                                                       "stringValue":  "IPHONE"
+                                                                                                                   },
+                                                                                                         "tag":  {
+                                                                                                                     "stringValue":  "#아18프로"
+                                                                                                                 },
+                                                                                                         "prices":  {
+                                                                                                                        "mapValue":  {
+                                                                                                                                         "fields":  {
+                                                                                                                                                        "KT":  "@{doubleValue=199.1}",
+                                                                                                                                                        "SK":  "@{doubleValue=199.1}",
+                                                                                                                                                        "LG":  "@{doubleValue=199.1}"
+                                                                                                                                                    }
+                                                                                                                                     }
+                                                                                                                    },
+                                                                                                         "sub":  {
+                                                                                                                     "mapValue":  {
+                                                                                                                                      "fields":  {
+                                                                                                                                                     "LG":  "@{mapValue=}",
+                                                                                                                                                     "KT":  "@{mapValue=}",
+                                                                                                                                                     "SK":  "@{mapValue=}"
+                                                                                                                                                 }
+                                                                                                                                  }
+                                                                                                                 }
+                                                                                                     }
+                                                                                      }
+                                                                     },
+                                                                     {
+                                                                         "mapValue":  {
+                                                                                          "fields":  {
+                                                                                                         "id":  {
+                                                                                                                    "stringValue":  "ip18pm"
+                                                                                                                },
+                                                                                                         "name":  {
+                                                                                                                      "stringValue":  "아이폰18PROMAX 256G"
+                                                                                                                  },
+                                                                                                         "group":  {
+                                                                                                                       "stringValue":  "IPHONE"
+                                                                                                                   },
+                                                                                                         "tag":  {
+                                                                                                                     "stringValue":  "#아18맥스"
+                                                                                                                 },
+                                                                                                         "prices":  {
+                                                                                                                        "mapValue":  {
+                                                                                                                                         "fields":  {
+                                                                                                                                                        "LG":  "@{integerValue=220}",
+                                                                                                                                                        "KT":  "@{integerValue=220}",
+                                                                                                                                                        "SK":  "@{integerValue=220}"
+                                                                                                                                                    }
+                                                                                                                                     }
+                                                                                                                    },
+                                                                                                         "sub":  {
+                                                                                                                     "mapValue":  {
+                                                                                                                                      "fields":  {
+                                                                                                                                                     "SK":  "@{mapValue=}",
+                                                                                                                                                     "KT":  "@{mapValue=}",
+                                                                                                                                                     "LG":  "@{mapValue=}"
+                                                                                                                                                 }
+                                                                                                                                  }
+                                                                                                                 }
+                                                                                                     }
+                                                                                      }
+                                                                     },
+                                                                     {
+                                                                         "mapValue":  {
+                                                                                          "fields":  {
+                                                                                                         "id":  {
+                                                                                                                    "stringValue":  "ipduo"
+                                                                                                                },
+                                                                                                         "name":  {
+                                                                                                                      "stringValue":  "아이폰Duo 256G"
+                                                                                                                  },
+                                                                                                         "group":  {
+                                                                                                                       "stringValue":  "IPHONE"
+                                                                                                                   },
+                                                                                                         "tag":  {
+                                                                                                                     "stringValue":  "#아이폰듀오"
+                                                                                                                 },
+                                                                                                         "prices":  {
+                                                                                                                        "mapValue":  {
+                                                                                                                                         "fields":  {
+                                                                                                                                                        "SK":  "@{integerValue=330}",
+                                                                                                                                                        "KT":  "@{integerValue=330}",
+                                                                                                                                                        "LG":  "@{integerValue=330}"
+                                                                                                                                                    }
+                                                                                                                                     }
+                                                                                                                    },
+                                                                                                         "sub":  {
+                                                                                                                     "mapValue":  {
+                                                                                                                                      "fields":  {
+                                                                                                                                                     "SK":  "@{mapValue=}",
+                                                                                                                                                     "KT":  "@{mapValue=}",
+                                                                                                                                                     "LG":  "@{mapValue=}"
+                                                                                                                                                 }
+                                                                                                                                  }
+                                                                                                                 }
+                                                                                                     }
+                                                                                      }
+                                                                     }
+                                                                 ]
+                                                  }
+                               },
+                   "updatedBy":  {
+                                     "stringValue":  "본사 (마스터)"
+                                 },
+                   "updatedAt":  {
+                                     "timestampValue":  "2026-11-16T03:39:23.372Z"
+                                 }
+               },
+    "createTime":  "2026-10-23T04:22:33.245050Z",
+    "updateTime":  "2026-11-16T03:39:23.382282Z"
+}
