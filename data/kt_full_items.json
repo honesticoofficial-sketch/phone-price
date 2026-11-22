@@ -1,0 +1,520 @@
+﻿[
+    {
+        "carrier":  "KT",
+        "model":  "iPhone Air 1TB",
+        "factoryPrice":  2189000,
+        "subsidy":  700000,
+        "date":  "2026.11.13"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "iPhone Air 512GB",
+        "factoryPrice":  1881000,
+        "subsidy":  700000,
+        "date":  "2026.11.13"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "iPhone Air 256GB",
+        "factoryPrice":  1584000,
+        "subsidy":  700000,
+        "date":  "2026.11.13"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 A18 128GB",
+        "factoryPrice":  425700,
+        "subsidy":  150000,
+        "date":  "2026.10.30"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 S25 엣지 512GB",
+        "factoryPrice":  1496000,
+        "subsidy":  600000,
+        "date":  "2026.10.30"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 S25 엣지 256GB",
+        "factoryPrice":  1254000,
+        "subsidy":  600000,
+        "date":  "2026.10.30"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 S26 Ultra 1TB",
+        "factoryPrice":  2545400,
+        "subsidy":  600000,
+        "date":  "2026.10.24"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 S26 Ultra 512GB",
+        "factoryPrice":  2050400,
+        "subsidy":  600000,
+        "date":  "2026.10.24"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 S26 Ultra 256GB",
+        "factoryPrice":  1797400,
+        "subsidy":  600000,
+        "date":  "2026.10.24"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 S26+ 512GB",
+        "factoryPrice":  1705000,
+        "subsidy":  600000,
+        "date":  "2026.10.24"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 S26+ 256GB",
+        "factoryPrice":  1452000,
+        "subsidy":  600000,
+        "date":  "2026.10.24"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 S26 512GB",
+        "factoryPrice":  1507000,
+        "subsidy":  600000,
+        "date":  "2026.10.24"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 S26 256GB",
+        "factoryPrice":  1254000,
+        "subsidy":  600000,
+        "date":  "2026.10.24"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 Z Fold8 1TB",
+        "factoryPrice":  3152600,
+        "subsidy":  600000,
+        "date":  "2026.10.21"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 Z Fold8 512GB",
+        "factoryPrice":  2531100,
+        "subsidy":  600000,
+        "date":  "2026.10.21"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 Z Fold8 256GB",
+        "factoryPrice":  2278100,
+        "subsidy":  600000,
+        "date":  "2026.10.21"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "iPhone Duo 2TB",
+        "factoryPrice":  5093000,
+        "subsidy":  400000,
+        "date":  "2026.10.16"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "iPhone Duo 1TB",
+        "factoryPrice":  4191000,
+        "subsidy":  400000,
+        "date":  "2026.10.16"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "iPhone Duo 512GB",
+        "factoryPrice":  3597000,
+        "subsidy":  400000,
+        "date":  "2026.10.16"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "iPhone Duo 256GB",
+        "factoryPrice":  3300000,
+        "subsidy":  400000,
+        "date":  "2026.10.16"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "moto g77 256GB",
+        "factoryPrice":  396000,
+        "subsidy":  300000,
+        "date":  "2026.10.01"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "[중고폰] 갤럭시 Z Fold 6 512GB",
+        "factoryPrice":  902000,
+        "subsidy":  300000,
+        "date":  "2026.09.15"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "[중고폰] 갤럭시 Z Fold 6 256GB",
+        "factoryPrice":  847000,
+        "subsidy":  300000,
+        "date":  "2026.09.15"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "iPhone 18 Pro Max 2TB",
+        "factoryPrice":  3993000,
+        "subsidy":  150000,
+        "date":  "2026.09.12"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "iPhone 18 Pro Max 1TB",
+        "factoryPrice":  3091000,
+        "subsidy":  150000,
+        "date":  "2026.09.12"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "iPhone 18 Pro Max 512GB",
+        "factoryPrice":  2497000,
+        "subsidy":  150000,
+        "date":  "2026.09.12"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "iPhone 18 Pro Max 256GB",
+        "factoryPrice":  2200000,
+        "subsidy":  150000,
+        "date":  "2026.09.12"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "iPhone 18 Pro 2TB",
+        "factoryPrice":  3795000,
+        "subsidy":  400000,
+        "date":  "2026.09.12"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "iPhone 18 Pro 1TB",
+        "factoryPrice":  2893000,
+        "subsidy":  400000,
+        "date":  "2026.09.12"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "iPhone 18 Pro 512GB",
+        "factoryPrice":  2299000,
+        "subsidy":  400000,
+        "date":  "2026.09.12"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "iPhone 18 Pro 256GB",
+        "factoryPrice":  1991000,
+        "subsidy":  400000,
+        "date":  "2026.09.12"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 S26 FE 256GB",
+        "factoryPrice":  1045000,
+        "subsidy":  500000,
+        "date":  "2026.09.04"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 Jump5 128GB",
+        "factoryPrice":  545600,
+        "subsidy":  150000,
+        "date":  "2026.09.01"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 A37 5G 128GB",
+        "factoryPrice":  598400,
+        "subsidy":  150000,
+        "date":  "2026.09.01"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 Jump4 128GB",
+        "factoryPrice":  449900,
+        "subsidy":  150000,
+        "date":  "2026.09.01"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 A36 5G 128GB",
+        "factoryPrice":  499400,
+        "subsidy":  150000,
+        "date":  "2026.09.01"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 Z Fold8 Ultra 1TB",
+        "factoryPrice":  3451800,
+        "subsidy":  500000,
+        "date":  "2026.07.28"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 Z Fold8 Ultra 512GB",
+        "factoryPrice":  2830300,
+        "subsidy":  500000,
+        "date":  "2026.07.28"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 Z Fold8 Ultra 256GB",
+        "factoryPrice":  2577300,
+        "subsidy":  500000,
+        "date":  "2026.07.28"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 Z Flip8 512GB",
+        "factoryPrice":  1936000,
+        "subsidy":  500000,
+        "date":  "2026.07.28"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 Z Flip8 256GB",
+        "factoryPrice":  1683000,
+        "subsidy":  500000,
+        "date":  "2026.07.28"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 S25 Ultra 1TB",
+        "factoryPrice":  2127400,
+        "subsidy":  500000,
+        "date":  "2026.06.23"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 S25 Ultra 512GB",
+        "factoryPrice":  1841400,
+        "subsidy":  500000,
+        "date":  "2026.06.23"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 S25 Ultra 256GB",
+        "factoryPrice":  1698400,
+        "subsidy":  500000,
+        "date":  "2026.06.23"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 S25+ 512GB",
+        "factoryPrice":  1496000,
+        "subsidy":  500000,
+        "date":  "2026.06.23"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 S25+ 256GB",
+        "factoryPrice":  1353000,
+        "subsidy":  500000,
+        "date":  "2026.06.23"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 S25 512GB",
+        "factoryPrice":  1298000,
+        "subsidy":  500000,
+        "date":  "2026.06.23"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 Z Flip7 512GB",
+        "factoryPrice":  1643400,
+        "subsidy":  500000,
+        "date":  "2026.06.02"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 Z Flip7 256GB",
+        "factoryPrice":  1485000,
+        "subsidy":  500000,
+        "date":  "2026.06.02"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "시나모롤 키즈폰",
+        "factoryPrice":  148500,
+        "subsidy":  147000,
+        "date":  "2026.05.27"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "iPhone 17e 512GB",
+        "factoryPrice":  1287000,
+        "subsidy":  450000,
+        "date":  "2026.03.25"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "iPhone 17e 256GB",
+        "factoryPrice":  990000,
+        "subsidy":  450000,
+        "date":  "2026.03.25"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "iPhone 17 512GB",
+        "factoryPrice":  1584000,
+        "subsidy":  450000,
+        "date":  "2026.02.24"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "iPhone 17 256GB",
+        "factoryPrice":  1287000,
+        "subsidy":  450000,
+        "date":  "2026.02.24"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 S25 256GB",
+        "factoryPrice":  1155000,
+        "subsidy":  500000,
+        "date":  "2026.02.24"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "모토로라 edge 70 256GB",
+        "factoryPrice":  550000,
+        "subsidy":  450000,
+        "date":  "2026.01.22"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "폼폼푸린 키즈폰 128GB",
+        "factoryPrice":  349800,
+        "subsidy":  150000,
+        "date":  "2026.01.20"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 A17 128GB",
+        "factoryPrice":  319000,
+        "subsidy":  150000,
+        "date":  "2026.01.20"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "클래식 폴더 64GB",
+        "factoryPrice":  205700,
+        "subsidy":  150000,
+        "date":  "2026.01.20"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "iPhone 17 Pro 1TB",
+        "factoryPrice":  2387000,
+        "subsidy":  450000,
+        "date":  "2026.01.14"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "iPhone 17 Pro 512GB",
+        "factoryPrice":  2090000,
+        "subsidy":  450000,
+        "date":  "2026.01.14"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "iPhone 17 Pro 256GB",
+        "factoryPrice":  1782000,
+        "subsidy":  450000,
+        "date":  "2026.01.14"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 S25 FE 256GB",
+        "factoryPrice":  946000,
+        "subsidy":  500000,
+        "date":  "2026.01.14"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 Z Fold7 1TB",
+        "factoryPrice":  2933700,
+        "subsidy":  500000,
+        "date":  "2026.01.14"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 Z Fold7 512GB",
+        "factoryPrice":  2537700,
+        "subsidy":  500000,
+        "date":  "2026.01.14"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "갤럭시 Z Fold7 256GB",
+        "factoryPrice":  2379300,
+        "subsidy":  500000,
+        "date":  "2026.01.14"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "모토로라 엣지 50 퓨전",
+        "factoryPrice":  349800,
+        "subsidy":  330000,
+        "date":  "2025.10.22"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "iPhone 17 Pro Max 2TB",
+        "factoryPrice":  3190000,
+        "subsidy":  150000,
+        "date":  "2025.09.12"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "iPhone 17 Pro Max 1TB",
+        "factoryPrice":  2585000,
+        "subsidy":  150000,
+        "date":  "2025.09.12"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "iPhone 17 Pro Max 512GB",
+        "factoryPrice":  2288000,
+        "subsidy":  150000,
+        "date":  "2025.09.12"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "iPhone 17 Pro Max 256GB",
+        "factoryPrice":  1980000,
+        "subsidy":  150000,
+        "date":  "2025.09.12"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "moto g56 5G 256GB",
+        "factoryPrice":  330000,
+        "subsidy":  290000,
+        "date":  "2025.08.14"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "레드미노트 14 256GB",
+        "factoryPrice":  319000,
+        "subsidy":  278000,
+        "date":  "2025.06.26"
+    },
+    {
+        "carrier":  "KT",
+        "model":  "샤오미 레드미 14C",
+        "factoryPrice":  199100,
+        "subsidy":  190000,
+        "date":  "2024.10.18"
+    }
+]

@@ -6,8 +6,19 @@ $edgePath = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
 $port = 9285
 
 Write-Host "=========================================================="
-Write-Host " [통신 3사(SKT / KT / LGU+) 공시지원금 & 출고가 통합 크롤러]"
+Write-Host " [통신 3사(SKT / KT / LGU+) 플래그십 전용 공시지원금 & 출고가 크롤러]"
+Write-Host " - 기준 요금제: SK 109 요금제 / KT 110 요금제 / LG 105 요금제"
+Write-Host " - 수집 대상: S시리즈, 아이폰, 폴더블류, FE류, 엣지류 (A시리즈 제외)"
 Write-Host "=========================================================="
+
+# 플래그십 전용 필터링 함수 (A시리즈, 워치, 태블릿, 샤오미, 모토로라 제외)
+function IsTargetModel($name) {
+    if (-not $name) { return $false }
+    if ($name -match '워치|Watch|버즈|Buds|태블릿|Tab|패드|클래식 폴더|샤오미|레드미|홍미|모토|moto') { return $false }
+    if ($name -match '갤럭시 A|Galaxy A|A\d{2}\s|A\d{2}$|SM-A\d+|퀀텀|와이드|점프|버디|키즈폰') { return $false }
+    if ($name -match 'iPhone|아이폰|S\d+|갤럭시 S|Galaxy S|Fold|Flip|폴드|플립|FE|엣지|Edge|Duo|Air') { return $true }
+    return $false
+}
 
 $crawledData = @{
     crawlTimestamp = (Get-Date).ToString("yyyy-MM-ddTHH:mm:sszzz")
@@ -20,7 +31,7 @@ $crawledData = @{
 # -------------------------------------------------------------
 # 1. SKT 크롤링 (https://shop.tworld.co.kr/notice)
 # -------------------------------------------------------------
-Write-Host "`n>>> [1/3] SKT 공통지원금 & 출고가 크롤링 시작..." -ForegroundColor Cyan
+Write-Host "`n>>> [1/3] SKT 베스트 109 요금제 기준 크롤링 시작..." -ForegroundColor Cyan
 try {
     $sktUrl = "https://shop.tworld.co.kr/notice"
     $sktRes = Invoke-WebRequest -Uri $sktUrl -Method Get -UserAgent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" -MaximumRedirection 5
@@ -30,6 +41,8 @@ try {
         foreach ($p in $rawSkt) {
             $mem = if ($p.productMem) { " " + $p.productMem } else { "" }
             $fullName = ($p.productNm + $mem).Trim()
+            if (-not (IsTargetModel $fullName)) { continue }
+
             $crawledData.skt += @{
                 carrier = "SKT"
                 manufacturer = $p.companyNm
@@ -41,7 +54,7 @@ try {
                 scrbType = if ($p.scrbTypCd -eq '31') { "기기변경" } elseif ($p.scrbTypCd -eq '20') { "번호이동" } else { "신규가입" }
             }
         }
-        Write-Host "  ✅ SKT 추출 성공: $($crawledData.skt.Count)개 기종 수집 완료" -ForegroundColor Green
+        Write-Host "  ✅ SKT 추출 성공: $($crawledData.skt.Count)개 플래그십 기종 수집 완료 (A시리즈 제외)" -ForegroundColor Green
     } else {
         Write-Host "  ❌ SKT 제품 목록 JSON 파싱 실패" -ForegroundColor Red
     }
@@ -103,29 +116,30 @@ function Close-EdgeCDP($cdpSession) {
 # -------------------------------------------------------------
 # 2. KT 크롤링 (https://shop.kt.com/m/smart/supportAmtList.do)
 # -------------------------------------------------------------
-Write-Host "`n>>> [2/3] KT 공통지원금 & 출고가 크롤링 시작..." -ForegroundColor Cyan
+Write-Host "`n>>> [2/3] KT 110 요금제 기준 크롤링 시작..." -ForegroundColor Cyan
 $ktSession = $null
 try {
     $ktUrl = "https://shop.kt.com/m/smart/supportAmtList.do"
     $ktSession = Start-EdgeCDP $ktUrl
 
-    # 더보기 버튼 최대 5회 시도
-    for ($i = 1; $i -le 5; $i++) {
+    # 더보기(#moreView) 버튼 클릭하여 전체 단말 로드
+    for ($i = 1; $i -le 10; $i++) {
         $clickRes = Invoke-CDPCmd $ktSession "Runtime.evaluate" @{
             expression = @"
                 (function() {
-                    const btn = document.querySelector('.rnw_more_btn, .btn_more');
-                    if (btn && btn.offsetParent !== null && !btn.classList.contains('disabled')) {
+                    const btn = document.querySelector('#moreView, .btnProdMore');
+                    if (btn && btn.offsetParent !== null && !btn.disabled) {
                         btn.click();
-                        return 'clicked';
+                        return btn.innerText.trim();
                     }
-                    return 'none';
+                    return 'done';
                 })()
 "@
             returnByValue = $true
         }
-        if ($clickRes.result.result.value -ne 'clicked') { break }
-        Start-Sleep -Seconds 1
+        $val = $clickRes.result.result.value
+        if ($val -eq 'done' -or -not $val) { break }
+        Start-Sleep -Seconds 2
     }
 
     $evalRes = Invoke-CDPCmd $ktSession "Runtime.evaluate" @{
@@ -172,8 +186,12 @@ try {
     }
 
     $rawKt = $evalRes.result.result.value
-    $crawledData.kt = $rawKt
-    Write-Host "  ✅ KT 추출 성공: $($crawledData.kt.Count)개 기종 수집 완료" -ForegroundColor Green
+    foreach ($item in $rawKt) {
+        if (IsTargetModel $item.model) {
+            $crawledData.kt += $item
+        }
+    }
+    Write-Host "  ✅ KT 추출 성공: $($crawledData.kt.Count)개 플래그십 기종 수집 완료 (A시리즈 제외)" -ForegroundColor Green
 } catch {
     Write-Host "  ❌ KT 크롤링 에러: $($_.Exception.Message)" -ForegroundColor Red
 } finally {
@@ -183,7 +201,7 @@ try {
 # -------------------------------------------------------------
 # 3. LGU+ 크롤링 (https://www.lguplus.com/mobile/financing-model)
 # -------------------------------------------------------------
-Write-Host "`n>>> [3/3] LGU+ 공통지원금 & 출고가 크롤링 시작..." -ForegroundColor Cyan
+Write-Host "`n>>> [3/3] LGU+ 105 요금제 기준 크롤링 시작..." -ForegroundColor Cyan
 $lguSession = $null
 try {
     $lguUrl = "https://www.lguplus.com/mobile/financing-model"
@@ -233,9 +251,13 @@ try {
         }
 
         $pageDevices = $evalRes.result.result.value
-        $crawledData.lgu += $pageDevices
+        foreach ($d in $pageDevices) {
+            if (IsTargetModel $d.model) {
+                $crawledData.lgu += $d
+            }
+        }
     }
-    Write-Host "  ✅ LGU+ 추출 성공: $($crawledData.lgu.Count)개 기종 수집 완료" -ForegroundColor Green
+    Write-Host "  ✅ LGU+ 추출 성공: $($crawledData.lgu.Count)개 플래그십 기종 수집 완료 (A시리즈 제외)" -ForegroundColor Green
 } catch {
     Write-Host "  ❌ LGU+ 크롤링 에러: $($_.Exception.Message)" -ForegroundColor Red
 } finally {
@@ -246,6 +268,12 @@ try {
 # 4. 종합 요약 및 JSON 저장
 # -------------------------------------------------------------
 $crawledData.summary = @{
+    targetScope = "S시리즈, 아이폰, 폴더블류, FE류, 엣지류 (A시리즈 및 저가형 제외)"
+    plansApplied = @{
+        SKT = "베스트 109 요금제 (넷가표 109,000원 6개월 기준)"
+        KT = "초이스/스페셜 110 요금제 (넷가표 110,000원 6개월 기준)"
+        LGU = "프리미어 105/95 요금제 (넷가표 105,000원 6개월 기준)"
+    }
     sktCount = $crawledData.skt.Count
     ktCount = $crawledData.kt.Count
     lguCount = $crawledData.lgu.Count
@@ -258,9 +286,10 @@ $jsonString = $crawledData | ConvertTo-Json -Depth 10
 
 Write-Host "`n=========================================================="
 Write-Host " [통합 크롤링 완료 및 데이터 저장 결과]" -ForegroundColor Yellow
-Write-Host " - SKT 수집 기종: $($crawledData.summary.sktCount)개"
-Write-Host " - KT 수집 기종:  $($crawledData.summary.ktCount)개"
-Write-Host " - LGU+ 수집 기종: $($crawledData.summary.lguCount)개"
+Write-Host " - 대상 범위: $($crawledData.summary.targetScope)"
+Write-Host " - SKT 수집: $($crawledData.summary.sktCount)개"
+Write-Host " - KT 수집:  $($crawledData.summary.ktCount)개"
+Write-Host " - LGU+ 수집: $($crawledData.summary.lguCount)개"
 Write-Host " - 총 수집 데이터: $($crawledData.summary.totalCount)건"
 Write-Host " - 저장 경로: $outputJsonPath"
 Write-Host "=========================================================="

@@ -17,7 +17,10 @@ $data = Get-Content $jsonPath -Raw -Encoding UTF8 | ConvertFrom-Json
 
 $all = @()
 $data.skt | ForEach-Object { $all += [PSCustomObject]@{ Carrier = "SKT"; Model = $_.model; FactoryPrice = $_.factoryPrice; Subsidy = $_.subsidy; Date = $_.date; Type = "크롤링" } }
-$data.kt | ForEach-Object { $all += [PSCustomObject]@{ Carrier = "KT"; Model = $_.model; FactoryPrice = $_.factoryPrice; Subsidy = $_.subsidy; Date = $_.date; Type = "크롤링" } }
+
+$ktList = if ($data.kt.value) { $data.kt.value } else { $data.kt }
+$ktList | ForEach-Object { $all += [PSCustomObject]@{ Carrier = "KT"; Model = $_.model; FactoryPrice = $_.factoryPrice; Subsidy = $_.subsidy; Date = $_.date; Type = "크롤링" } }
+
 $data.lgu | ForEach-Object { $all += [PSCustomObject]@{ Carrier = "LGU+"; Model = $_.model; FactoryPrice = $_.factoryPrice; Subsidy = $_.subsidy; Date = $_.date; Type = "크롤링" } }
 
 # 특수 등록 모델 로드
