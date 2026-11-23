@@ -815,15 +815,15 @@
             <div class="flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl border border-slate-200 text-xs">
               <span class="text-slate-600 font-bold px-2 flex items-center gap-1">
                 광고 운영 모드:
-                <button type="button" class="help-btn mr-0.5" onmouseenter="showHelpTip(event, this, '<b>광고 운영 모드 (단가/마진 분리 운영)</b><br>• <b>올부가 광고</b>: 매장 자체 추가 부가할인을 반영한 전용 광고가격과 올부가 넷가 마진으로 운영됩니다.<br>• <b>기본부가 광고</b>: 추가 부가할인 없는 순수 기본조건 전용 광고가격과 기본부가 넷가 마진으로 독립 운영됩니다.<br><br>※ 올부가와 기본부가는 각각 번이가/기변가/비고를 <b>완전히 따로 입력하고 독립 관리</b>할 수 있습니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>광고 운영 모드 (단가/마진 분리 운영)</b><br>• <b>올부가 광고</b>: 매장 자체 추가 부가할인을 반영한 전용 광고가격과 올부가 넷가 마진으로 운영됩니다.<br>• <b>기본부가 광고</b>: 추가 부가할인 없는 순수 기본조건 전용 광고가격과 기본부가 넷가 마진으로 독립 운영됩니다.<br><br>※ 올부가와 기본부가는 각각 번이가/기변가/비고를 <b>완전히 따로 입력하고 독립 관리</b>할 수 있습니다.')" title="광고 운영 모드 안내">?</button>
+                <button type="button" class="help-btn mr-0.5" onmouseenter="showHelpTip(event, this, '<b>광고 운영 모드 (단가/마진 분리 운영)</b><br>• <b>기본부가 광고</b>: 추가 부가할인 없는 순수 기본조건 전용 광고가격과 기본부가 넷가 마진으로 독립 운영됩니다.<br>• <b>올부가 광고</b>: 매장 자체 추가 부가할인을 반영한 전용 광고가격과 올부가 넷가 마진으로 운영됩니다.<br><br>※ 기본부가와 올부가는 각각 번이가/기변가/비고를 <b>완전히 따로 입력하고 독립 관리</b>할 수 있습니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>광고 운영 모드 (단가/마진 분리 운영)</b><br>• <b>기본부가 광고</b>: 추가 부가할인 없는 순수 기본조건 전용 광고가격과 기본부가 넷가 마진으로 독립 운영됩니다.<br>• <b>올부가 광고</b>: 매장 자체 추가 부가할인을 반영한 전용 광고가격과 올부가 넷가 마진으로 운영됩니다.<br><br>※ 기본부가와 올부가는 각각 번이가/기변가/비고를 <b>완전히 따로 입력하고 독립 관리</b>할 수 있습니다.')" title="광고 운영 모드 안내">?</button>
               </span>
-              <button onclick="setAdMarginBase('all')" id="adMarginBase-all" class="px-3.5 py-1.5 rounded-xl font-black bg-purple-600 text-white shadow-xs transition flex items-center gap-1.5">
-                <svg class="w-3.5 h-3.5 text-amber-300" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                <span>올부가 광고 운영</span>
-              </button>
               <button onclick="setAdMarginBase('basic')" id="adMarginBase-basic" class="px-3.5 py-1.5 rounded-xl font-bold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition flex items-center gap-1.5">
                 <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
                 <span>기본부가 광고 운영</span>
+              </button>
+              <button onclick="setAdMarginBase('all')" id="adMarginBase-all" class="px-3.5 py-1.5 rounded-xl font-black bg-purple-600 text-white shadow-xs transition flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-amber-300" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                <span>올부가 광고 운영</span>
               </button>
             </div>
 
@@ -866,7 +866,7 @@
               <table id="adTable" class="w-full text-xs text-left border-collapse" style="table-layout: fixed; min-width: 820px;">
                 <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 select-none">
                   <tr>
-                    <th class="relative p-2.5 text-center" style="width: 65px;">
+                    <th class="relative p-2.5 text-center" style="width: 78px;">
                       <span>순서</span>
                       <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
                     </th>
@@ -2864,9 +2864,9 @@ service cloud.firestore {
     let netDisplayMode = "both";
     let adMarginBase = (function() {
       try {
-        return localStorage.getItem('phone_ad_margin_base') || 'all';
+        return localStorage.getItem('phone_ad_margin_base') || 'basic';
       } catch(e) {
-        return 'all';
+        return 'basic';
       }
     })();
     let allAddDiscounts = { SK: 15, KT: 15, LG: 15 };
@@ -3004,22 +3004,6 @@ service cloud.firestore {
           SK: { mnp: '5', chg: '-10', note: '', hidden: false },
           KT: { mnp: '-15', chg: '-15', note: '', hidden: false },
           LG: { mnp: '-20', chg: '-25', note: '*인상전', hidden: false }
-        }
-      },
-      {
-        id: 's26_new', group: 'S', tag: '#S26', name: '갤럭시 S26 NEW',
-        prices: { SK: 140.36, KT: 140.36, LG: 140.36 },
-        sub: { SK: { mnp: 75, chg: 75 }, KT: { mnp: 75, chg: 75 }, LG: { mnp: 75, chg: 75 } },
-        rate: { SK: { mnp: 59, chg: 62 }, KT: { mnp: 78, chg: 68 }, LG: { mnp: 83, chg: 79 } },
-        loc: {
-          SK: { mnp: '도매', chg: '도매' },
-          KT: { mnp: '도매', chg: '도매' },
-          LG: { mnp: '도매', chg: '도매' }
-        },
-        ad: {
-          SK: { mnp: '0', chg: '0', note: '출고가인상', hidden: false },
-          KT: { mnp: '0', chg: '0', note: '출고가인상', hidden: false },
-          LG: { mnp: '0', chg: '0', note: '출고가인상', hidden: false }
         }
       },
       {
@@ -3201,71 +3185,6 @@ service cloud.firestore {
           KT: { mnp: '65', chg: '69', note: '', hidden: false },
           LG: { mnp: '49', chg: '75', note: '', hidden: false }
         }
-      },
-      {
-        id: 'ip18', group: 'IPHONE', tag: '#아18', name: '아이폰18 256G',
-        prices: { SK: 0, KT: 0, LG: 0 },
-        coming: true,
-        sub: { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } },
-        rate: { SK: { mnp: '', chg: '' }, KT: { mnp: '', chg: '' }, LG: { mnp: '', chg: '' } },
-        loc: {
-          SK: { mnp: '도매', chg: '도매' },
-          KT: { mnp: '도매', chg: '도매' },
-          LG: { mnp: '도매', chg: '도매' }
-        },
-        ad: {
-          SK: { mnp: '', chg: '', note: '', hidden: true },
-          KT: { mnp: '', chg: '', note: '', hidden: true },
-          LG: { mnp: '', chg: '', note: '출시전', hidden: true }
-        }
-      },
-      {
-        id: 'ip18p', group: 'IPHONE', tag: '#아18프로', name: '아이폰18PRO 256G',
-        prices: { SK: 199.1, KT: 199.1, LG: 199.1 },
-        sub: { SK: { mnp: 45, chg: 45 }, KT: { mnp: 45, chg: 45 }, LG: { mnp: 45, chg: 45 } },
-        rate: { SK: { mnp: 42, chg: 45 }, KT: { mnp: 73, chg: 49 }, LG: { mnp: 68, chg: 49 } },
-        loc: {
-          SK: { mnp: '도매', chg: '도매' },
-          KT: { mnp: '도매', chg: '도매' },
-          LG: { mnp: '도매', chg: '도매' }
-        },
-        ad: {
-          SK: { mnp: '99', chg: '95', note: '', hidden: false },
-          KT: { mnp: '69', chg: '95', note: '', hidden: false },
-          LG: { mnp: '75', chg: '95', note: '', hidden: false }
-        }
-      },
-      {
-        id: 'ip18pm', group: 'IPHONE', tag: '#아18맥스', name: '아이폰18PROMAX 256G',
-        prices: { SK: 220, KT: 220, LG: 220 },
-        sub: { SK: { mnp: 20, chg: 20 }, KT: { mnp: 20, chg: 20 }, LG: { mnp: 20, chg: 20 } },
-        rate: { SK: { mnp: 48, chg: 65 }, KT: { mnp: 73, chg: 49 }, LG: { mnp: 68, chg: 49 } },
-        loc: {
-          SK: { mnp: '도매', chg: '도매' },
-          KT: { mnp: '도매', chg: '도매' },
-          LG: { mnp: '도매', chg: '도매' }
-        },
-        ad: {
-          SK: { mnp: '139', chg: '125', note: '', hidden: false },
-          KT: { mnp: '115', chg: '139', note: '', hidden: false },
-          LG: { mnp: '119', chg: '139', note: '', hidden: false }
-        }
-      },
-      {
-        id: 'ipduo', group: 'IPHONE', tag: '#아이폰듀오', name: '아이폰Duo 256G',
-        prices: { SK: 330, KT: 330, LG: 330 },
-        sub: { SK: { mnp: 45, chg: 45 }, KT: { mnp: 45, chg: 45 }, LG: { mnp: 45, chg: 45 } },
-        rate: { SK: { mnp: 45, chg: 23 }, KT: { mnp: 64, chg: 31 }, LG: { mnp: 50, chg: 25 } },
-        loc: {
-          SK: { mnp: '도매', chg: '도매' },
-          KT: { mnp: '도매', chg: '도매' },
-          LG: { mnp: '도매', chg: '도매' }
-        },
-        ad: {
-          SK: { mnp: '229', chg: '249', note: '', hidden: false },
-          KT: { mnp: '209', chg: '245', note: '', hidden: false },
-          LG: { mnp: '225', chg: '249', note: '(사전예약)', hidden: false }
-        }
       }
     ];
 
@@ -3318,20 +3237,21 @@ service cloud.firestore {
         calcRows = [...defaultIds];
       }
 
+      // 유효하지 않은 (완전 삭제된) 기종 ID만 제거하고, 사용자가 의도적으로 삭제한 행은 억지로 다시 채워넣지 않습니다
+      calcRows = calcRows.filter(id => id === 'empty' || devices.some(d => d.id === id));
+      if (calcRows.length === 0) calcRows = [...defaultIds];
+
       ['SK', 'KT', 'LG'].forEach(c => {
         if (!dailyCarrierRows[c] || !Array.isArray(dailyCarrierRows[c])) {
           dailyCarrierRows[c] = [...defaultIds];
+        } else {
+          dailyCarrierRows[c] = dailyCarrierRows[c].filter(id => id === 'empty' || devices.some(d => d.id === id));
         }
         if (!adCarrierOrders[c] || !Array.isArray(adCarrierOrders[c])) {
           adCarrierOrders[c] = [...defaultIds];
         } else {
-          defaultIds.forEach(id => {
-            if (!adCarrierOrders[c].includes(id)) adCarrierOrders[c].push(id);
-          });
+          adCarrierOrders[c] = adCarrierOrders[c].filter(id => id === 'empty' || devices.some(d => d.id === id));
         }
-      });
-      defaultIds.forEach(id => {
-        if (!calcRows.includes(id)) calcRows.push(id);
       });
     }
 
@@ -3895,8 +3815,11 @@ service cloud.firestore {
       renderCalcTable();
     }
     function deleteCalcRow(idx) {
+      const removedId = calcRows[idx];
+      const d = devices.find(x => x.id === removedId);
+      const name = d ? d.name : (removedId === 'empty' ? '구분선' : '기종');
       calcRows.splice(idx, 1);
-      saveLayouts();
+      saveLayouts('넷가 행 삭제', `넷가 산출표에서 '${name}' 행 삭제`);
       renderCalcTable();
     }
     function updateCalcRow(idx, val) {
@@ -4010,8 +3933,11 @@ service cloud.firestore {
 
     function deleteAdRow(carrier, idx) {
       if (adCarrierOrders[carrier]) {
+        const removedId = adCarrierOrders[carrier][idx];
+        const d = devices.find(x => x.id === removedId);
+        const name = d ? d.name : (removedId === 'empty' ? '구분선' : '기종');
         adCarrierOrders[carrier].splice(idx, 1);
-        saveLayouts('광고 행 삭제', `${carrier} 광고표 ${idx + 1}번째 줄 삭제`);
+        saveLayouts('광고 행 삭제', `${carrier} 광고표에서 '${name}' 행 삭제`);
         renderAdSection();
       }
     }
@@ -5233,7 +5159,7 @@ service cloud.firestore {
         const currentTag = (adData.tag !== undefined && adData.tag !== null && adData.tag !== '') ? adData.tag : (getStoreCustomTag(storeKey, d.id) || getDefaultShortName(d));
 
         tr.innerHTML = `
-          <!-- 순서 (드래그 핸들 ⠿ & ▲/▼ 끌올 지원) -->
+          <!-- 순서 (드래그 핸들 ⠿ & ▲/▼ 끌올 지원 & 행 삭제 ✕) -->
           <td class="p-2 text-center text-slate-400 whitespace-nowrap overflow-hidden">
             <div class="flex items-center justify-center gap-1.5">
               <div class="drag-handle cursor-grab active:cursor-grabbing p-1.5 rounded-lg bg-slate-50 hover:bg-blue-100 hover:text-blue-700 text-slate-400 select-none transition border border-slate-200/80 shadow-xs flex items-center justify-center"
@@ -5249,6 +5175,7 @@ service cloud.firestore {
                 <button onclick="moveDeviceAd(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} class="w-4 h-3.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[8px] flex items-center justify-center" title="위로 한 칸">▲</button>
                 <button onclick="moveDeviceAd(${idx}, 1)" ${idx === carrierDevices.length - 1 ? 'disabled' : ''} class="w-4 h-3.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[8px] flex items-center justify-center" title="아래로 한 칸">▼</button>
               </div>
+              <button onclick="deleteAdRow('${activeAdCarrier}', ${idx})" class="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50 text-xs transition shrink-0" title="광고표에서 이 행 삭제">✕</button>
             </div>
           </td>
 
@@ -6271,13 +6198,10 @@ service cloud.firestore {
               syncCarrierConditionInputs();
             }
 
-            // 행 레이아웃 복원 & 등록된 전체 기종 자동 포함 보장
+            // 행 레이아웃 복원 (유효하지 않은 기종만 정리하고 사용자가 삭제한 행은 그대로 영구 보존)
             if (Array.isArray(data.calcRows) && data.calcRows.length > 0) {
-              calcRows = data.calcRows;
+              calcRows = data.calcRows.filter(id => id === 'empty' || devices.some(d => d.id === id));
             }
-            devices.forEach(d => {
-              if (d.id !== 'empty' && !calcRows.includes(d.id)) calcRows.push(d.id);
-            });
 
             if (data.dailyCarrierRows && typeof data.dailyCarrierRows === 'object') {
               dailyCarrierRows = data.dailyCarrierRows;
@@ -6285,6 +6209,8 @@ service cloud.firestore {
             ['SK', 'KT', 'LG'].forEach(c => {
               if (!dailyCarrierRows[c] || !Array.isArray(dailyCarrierRows[c])) {
                 dailyCarrierRows[c] = devices.map(d => d.id);
+              } else {
+                dailyCarrierRows[c] = dailyCarrierRows[c].filter(id => id === 'empty' || devices.some(d => d.id === id));
               }
             });
 
@@ -6295,9 +6221,7 @@ service cloud.firestore {
               if (!adCarrierOrders[c] || !Array.isArray(adCarrierOrders[c])) {
                 adCarrierOrders[c] = devices.map(d => d.id);
               } else {
-                devices.forEach(d => {
-                  if (d.id !== 'empty' && !adCarrierOrders[c].includes(d.id)) adCarrierOrders[c].push(d.id);
-                });
+                adCarrierOrders[c] = adCarrierOrders[c].filter(id => id === 'empty' || devices.some(d => d.id === id));
               }
             });
 
@@ -13990,7 +13914,7 @@ JSON 규격:
     }
 
     function getInitialPosterDeviceRows() {
-      const defaultIds = ['s26', 's26u', 'flip8', 'fold8', 'fold8u', 'ip17', 'ip18p', 'ip18pm', 'ipduo'];
+      const defaultIds = ['s26', 's26u', 'flip8', 'fold8', 'fold8u', 'ip17', 'ipair', 'ip17p'];
       const valid = defaultIds.filter(id => devices.some(d => d.id === id));
       if (valid.length > 0) return valid;
       return devices.filter(d => d.id !== 'empty').map(d => d.id).slice(0, 9);
