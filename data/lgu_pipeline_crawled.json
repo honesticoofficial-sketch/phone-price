@@ -1,0 +1,494 @@
+﻿[
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-09-12",
+        "subsidies":  {
+                          "NEW":  450000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  2893000,
+        "model":  "iPhone 18 Pro 1TB UIP18PR-1T",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-09-12",
+        "subsidies":  {
+                          "NEW":  500000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  2830300,
+        "model":  "갤럭시 Z Fold8 Ultra 512GB SM-F976N512",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-09-12",
+        "subsidies":  {
+                          "NEW":  450000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  2200000,
+        "model":  "iPhone 16 Pro Max 512GB UIP16PM-512",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-10-24",
+        "subsidies":  {
+                          "NEW":  600000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  2545400,
+        "model":  "갤럭시 S26 Ultra 1TB SM-S948N1TB",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-09-12",
+        "subsidies":  {
+                          "NEW":  450000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  2497000,
+        "model":  "iPhone 16 Pro Max 1TB UIP16PM-1T",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-09-12",
+        "subsidies":  {
+                          "NEW":  450000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  1540000,
+        "model":  "iPhone 16 Pro 128GB UIP16PR-128",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-09-12",
+        "subsidies":  {
+                          "NEW":  500000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  1936000,
+        "model":  "갤럭시 Z Flip8 512GB SM-F776N512",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-10-29",
+        "subsidies":  {
+                          "NEW":  600000,
+                          "MNP":  600000,
+                          "CHG":  600000
+                      },
+        "factoryPrice":  1254000,
+        "model":  "갤럭시 S25 Edge 256GB SM-S937N256",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-09-12",
+        "subsidies":  {
+                          "NEW":  450000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  1243000,
+        "model":  "iPhone 16 128GB UIP16-128",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-09-12",
+        "subsidies":  {
+                          "NEW":  450000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  2299000,
+        "model":  "iPhone 16 Pro 1TB UIP16PR-1T",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-10-24",
+        "subsidies":  {
+                          "NEW":  600000,
+                          "MNP":  600000,
+                          "CHG":  600000
+                      },
+        "factoryPrice":  1705000,
+        "model":  "갤럭시 S26+ 512GB SM-S947N512",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-09-12",
+        "subsidies":  {
+                          "NEW":  500000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  1485000,
+        "model":  "갤럭시 Z Flip7 256GB SM-F766N256",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-10-22",
+        "subsidies":  {
+                          "NEW":  600000,
+                          "MNP":  600000,
+                          "CHG":  600000
+                      },
+        "factoryPrice":  3152600,
+        "model":  "갤럭시 Z Fold8 1TB SM-F971N1TB",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-09-12",
+        "subsidies":  {
+                          "NEW":  500000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  1353000,
+        "model":  "갤럭시 S25+ 256GB SM-S936N256",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-10-29",
+        "subsidies":  {
+                          "NEW":  600000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  1496000,
+        "model":  "갤럭시 S25 Edge 512GB SM-S937N512",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-10-22",
+        "subsidies":  {
+                          "NEW":  600000,
+                          "MNP":  600000,
+                          "CHG":  600000
+                      },
+        "factoryPrice":  2531100,
+        "model":  "갤럭시 Z Fold8 512GB SM-F971N512",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-10-24",
+        "subsidies":  {
+                          "NEW":  600000,
+                          "MNP":  600000,
+                          "CHG":  600000
+                      },
+        "factoryPrice":  2050400,
+        "model":  "갤럭시 S26 Ultra 512GB SM-S948N512",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-09-12",
+        "subsidies":  {
+                          "NEW":  450000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  1694000,
+        "model":  "iPhone 16 512GB UIP16-512",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-09-24",
+        "subsidies":  {
+                          "NEW":  450000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  1760000,
+        "model":  "iPhone 17 512GB UIP17-512-NP",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-09-12",
+        "subsidies":  {
+                          "NEW":  450000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  2299000,
+        "model":  "iPhone 18 Pro 512GB UIP18PR-512",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-10-24",
+        "subsidies":  {
+                          "NEW":  600000,
+                          "MNP":  600000,
+                          "CHG":  600000
+                      },
+        "factoryPrice":  1254000,
+        "model":  "갤럭시 S26 256GB SM-S942N256",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-09-12",
+        "subsidies":  {
+                          "NEW":  500000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  2127400,
+        "model":  "갤럭시 S25 Ultra 1TB SM-S938N1TB",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-09-12",
+        "subsidies":  {
+                          "NEW":  500000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  1485000,
+        "model":  "갤럭시 Z Flip6 256GB SM-F741N256",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-09-12",
+        "subsidies":  {
+                          "NEW":  450000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  1694000,
+        "model":  "iPhone 16 Pro 256GB UIP16PR-256",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-09-12",
+        "subsidies":  {
+                          "NEW":  500000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  1298000,
+        "model":  "갤럭시 S25 512GB SM-S931N512",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-09-12",
+        "subsidies":  {
+                          "NEW":  450000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  1397000,
+        "model":  "iPhone 16 256GB UIP16-256",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-09-12",
+        "subsidies":  {
+                          "NEW":  500000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  2577300,
+        "model":  "갤럭시 Z Fold8 Ultra 256GB SM-F976N256",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-09-12",
+        "subsidies":  {
+                          "NEW":  500000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  1045000,
+        "model":  "갤럭시 S26 FE SM-S741N",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-10-24",
+        "subsidies":  {
+                          "NEW":  600000,
+                          "MNP":  600000,
+                          "CHG":  600000
+                      },
+        "factoryPrice":  1507000,
+        "model":  "갤럭시 S26 512GB SM-S942N512",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-09-12",
+        "subsidies":  {
+                          "NEW":  450000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  1782000,
+        "model":  "iPhone 17 Pro 256GB UIP17PR-256",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-09-12",
+        "subsidies":  {
+                          "NEW":  450000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  1991000,
+        "model":  "iPhone 16 Pro 512GB UIP16PR-512",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-10-22",
+        "subsidies":  {
+                          "NEW":  600000,
+                          "MNP":  600000,
+                          "CHG":  600000
+                      },
+        "factoryPrice":  2278100,
+        "model":  "갤럭시 Z Fold8 256GB SM-F971N256",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-09-12",
+        "subsidies":  {
+                          "NEW":  500000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  1683000,
+        "model":  "갤럭시 Z Flip8 256GB SM-F776N256",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-10-24",
+        "subsidies":  {
+                          "NEW":  600000,
+                          "MNP":  600000,
+                          "CHG":  600000
+                      },
+        "factoryPrice":  1452000,
+        "model":  "갤럭시 S26+ 256GB SM-S947N256",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-09-12",
+        "subsidies":  {
+                          "NEW":  500000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  1698400,
+        "model":  "갤럭시 S25 Ultra 256GB SM-S938N256",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-09-12",
+        "subsidies":  {
+                          "NEW":  500000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  1496000,
+        "model":  "갤럭시 S25+ 512GB SM-S936N512",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-10-24",
+        "subsidies":  {
+                          "NEW":  600000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  1797400,
+        "model":  "갤럭시 S26 Ultra 256GB SM-S948N256",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-09-12",
+        "subsidies":  {
+                          "NEW":  500000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  3451800,
+        "model":  "갤럭시 Z Fold8 Ultra 1TB SM-F976N1TB",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-09-12",
+        "subsidies":  {
+                          "NEW":  500000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  1841400,
+        "model":  "갤럭시 S25 Ultra 512GB SM-S938N512",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-09-12",
+        "subsidies":  {
+                          "NEW":  500000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  1155000,
+        "model":  "갤럭시 S25 256GB SM-S931N256",
+        "planPrice":  115000
+    },
+    {
+        "planName":  "5G 프리미어 슈퍼 (플러스플랜115)",
+        "effDate":  "2026-09-24",
+        "subsidies":  {
+                          "NEW":  450000,
+                          "MNP":  0,
+                          "CHG":  0
+                      },
+        "factoryPrice":  1452000,
+        "model":  "iPhone 17 256GB UIP17-256-NP",
+        "planPrice":  115000
+    }
+]

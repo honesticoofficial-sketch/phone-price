@@ -631,7 +631,7 @@
                             },
                      "LG":  {
                                 "mnp":  55,
-                                "new":  55,
+                                "new":  45,
                                 "chg":  45
                             },
                      "SK":  {
@@ -659,7 +659,7 @@
                             },
                      "LG":  {
                                 "mnp":  55,
-                                "new":  55,
+                                "new":  45,
                                 "chg":  45
                             },
                      "SK":  {
@@ -775,9 +775,9 @@
                                 "chg":  20.4
                             },
                      "SK":  {
-                                "mnp":  22,
-                                "new":  22,
-                                "chg":  22
+                                "mnp":  45,
+                                "new":  45,
+                                "chg":  45
                             }
                  },
         "tag":  "#",
@@ -803,9 +803,9 @@
                                 "chg":  20.4
                             },
                      "SK":  {
-                                "mnp":  22,
-                                "new":  22,
-                                "chg":  22
+                                "mnp":  45,
+                                "new":  45,
+                                "chg":  45
                             }
                  },
         "tag":  "#",
@@ -831,9 +831,9 @@
                                 "chg":  20.4
                             },
                      "SK":  {
-                                "mnp":  22,
-                                "new":  22,
-                                "chg":  22
+                                "mnp":  45,
+                                "new":  45,
+                                "chg":  45
                             }
                  },
         "tag":  "#",
@@ -859,9 +859,9 @@
                                 "chg":  20.4
                             },
                      "SK":  {
-                                "mnp":  22,
-                                "new":  22,
-                                "chg":  22
+                                "mnp":  45,
+                                "new":  45,
+                                "chg":  45
                             }
                  },
         "tag":  "#",
@@ -887,9 +887,9 @@
                                 "chg":  45
                             },
                      "SK":  {
-                                "mnp":  12.8,
-                                "new":  12.8,
-                                "chg":  12.8
+                                "mnp":  45,
+                                "new":  45,
+                                "chg":  45
                             }
                  },
         "tag":  "#17e",
@@ -915,9 +915,9 @@
                                 "chg":  45
                             },
                      "SK":  {
-                                "mnp":  12.8,
-                                "new":  12.8,
-                                "chg":  12.8
+                                "mnp":  45,
+                                "new":  45,
+                                "chg":  45
                             }
                  },
         "tag":  "#17e",
@@ -1145,202 +1145,6 @@
                             }
                  },
         "tag":  "#",
-        "group":  "IPHONE"
-    },
-    {
-        "id":  "ipair1t",
-        "name":  "iPhone Air 1T",
-        "prices":  {
-                       "KT":  218.9,
-                       "LG":  218.9,
-                       "SK":  218.9
-                   },
-        "subs":  {
-                     "KT":  {
-                                "mnp":  70,
-                                "new":  70,
-                                "chg":  70
-                            },
-                     "LG":  {
-                                "mnp":  45,
-                                "new":  45,
-                                "chg":  45
-                            },
-                     "SK":  {
-                                "mnp":  65,
-                                "new":  65,
-                                "chg":  65
-                            }
-                 },
-        "tag":  "#17에어",
-        "group":  "IPHONE"
-    },
-    {
-        "id":  "ipair256g",
-        "name":  "iPhone Air 256G",
-        "prices":  {
-                       "KT":  158.4,
-                       "LG":  158.4,
-                       "SK":  158.4
-                   },
-        "subs":  {
-                     "KT":  {
-                                "mnp":  70,
-                                "new":  70,
-                                "chg":  70
-                            },
-                     "LG":  {
-                                "mnp":  45,
-                                "new":  45,
-                                "chg":  45
-                            },
-                     "SK":  {
-                                "mnp":  65,
-                                "new":  65,
-                                "chg":  65
-                            }
-                 },
-        "tag":  "#17에어",
-        "group":  "IPHONE"
-    },
-    {
-        "id":  "ipair512g",
-        "name":  "iPhone Air 512G",
-        "prices":  {
-                       "KT":  188.1,
-                       "LG":  188.1,
-                       "SK":  188.1
-                   },
-        "subs":  {
-                     "KT":  {
-                                "mnp":  70,
-                                "new":  70,
-                                "chg":  70
-                            },
-                     "LG":  {
-                                "mnp":  45,
-                                "new":  45,
-                                "chg":  45
-                            },
-                     "SK":  {
-                                "mnp":  65,
-                                "new":  65,
-                                "chg":  65
-                            }
-                 },
-        "tag":  "#17에어",
-        "group":  "IPHONE"
-    },
-    {
-        "id":  "ipduo1t",
-        "name":  "iPhone Duo 1T",
-        "prices":  {
-                       "KT":  419.1,
-                       "LG":  419.1,
-                       "SK":  419.1
-                   },
-        "subs":  {
-                     "KT":  {
-                                "mnp":  45,
-                                "new":  45,
-                                "chg":  45
-                            },
-                     "LG":  {
-                                "mnp":  40,
-                                "new":  40,
-                                "chg":  40
-                            },
-                     "SK":  {
-                                "mnp":  45,
-                                "new":  45,
-                                "chg":  45
-                            }
-                 },
-        "tag":  "#기종",
-        "group":  "IPHONE"
-    },
-    {
-        "id":  "ipduo256g",
-        "name":  "iPhone Duo 256G",
-        "prices":  {
-                       "KT":  330,
-                       "LG":  330,
-                       "SK":  330
-                   },
-        "subs":  {
-                     "KT":  {
-                                "mnp":  45,
-                                "new":  45,
-                                "chg":  45
-                            },
-                     "LG":  {
-                                "mnp":  40,
-                                "new":  40,
-                                "chg":  40
-                            },
-                     "SK":  {
-                                "mnp":  45,
-                                "new":  45,
-                                "chg":  45
-                            }
-                 },
-        "tag":  "#기종",
-        "group":  "IPHONE"
-    },
-    {
-        "id":  "ipduo2t",
-        "name":  "iPhone Duo 2T",
-        "prices":  {
-                       "KT":  509.3,
-                       "LG":  509.3,
-                       "SK":  509.3
-                   },
-        "subs":  {
-                     "KT":  {
-                                "mnp":  45,
-                                "new":  45,
-                                "chg":  45
-                            },
-                     "LG":  {
-                                "mnp":  40,
-                                "new":  40,
-                                "chg":  40
-                            },
-                     "SK":  {
-                                "mnp":  45,
-                                "new":  45,
-                                "chg":  45
-                            }
-                 },
-        "tag":  "#기종",
-        "group":  "IPHONE"
-    },
-    {
-        "id":  "ipduo512g",
-        "name":  "iPhone Duo 512G",
-        "prices":  {
-                       "KT":  359.7,
-                       "LG":  359.7,
-                       "SK":  359.7
-                   },
-        "subs":  {
-                     "KT":  {
-                                "mnp":  45,
-                                "new":  45,
-                                "chg":  45
-                            },
-                     "LG":  {
-                                "mnp":  40,
-                                "new":  40,
-                                "chg":  40
-                            },
-                     "SK":  {
-                                "mnp":  45,
-                                "new":  45,
-                                "chg":  45
-                            }
-                 },
-        "tag":  "#기종",
         "group":  "IPHONE"
     },
     {
@@ -1615,9 +1419,9 @@
                                 "chg":  60
                             },
                      "SK":  {
-                                "mnp":  58,
-                                "new":  58,
-                                "chg":  58
+                                "mnp":  50,
+                                "new":  50,
+                                "chg":  50
                             }
                  },
         "tag":  "#S25엣지",
@@ -1643,9 +1447,9 @@
                                 "chg":  60
                             },
                      "SK":  {
-                                "mnp":  58,
-                                "new":  58,
-                                "chg":  58
+                                "mnp":  50,
+                                "new":  50,
+                                "chg":  50
                             }
                  },
         "tag":  "#S25엣지",
