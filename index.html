@@ -2247,6 +2247,38 @@ service cloud.firestore {
         </div>
 
         <div class="overflow-y-auto flex-1 space-y-4 text-xs pr-1">
+          <!-- 🔍 크롤링 수집 기종 검색 & 1초 자동완성 섹션 -->
+          <div class="p-3.5 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl border border-indigo-200/90 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="font-extrabold text-indigo-900 flex items-center gap-1.5 text-xs">
+                <svg class="w-4 h-4 text-indigo-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <span>통신 3사 크롤링 수집 기종에서 찾아서 자동 입력</span>
+              </span>
+              <span class="text-[10px] text-indigo-700 font-bold bg-white/90 px-2 py-0.5 rounded-full border border-indigo-200 shadow-2xs">
+                S시리즈 · 아이폰 · 폴더블 88종 수집
+              </span>
+            </div>
+            
+            <div class="relative">
+              <input type="text" id="catalogSearchInput" oninput="handleCatalogSearch(this.value)" placeholder="기종명을 검색하세요 (예: S24, 16프로, 플립7, 아이폰17, 폴드8, 엣지, S25+...)" class="w-full pl-3.5 pr-8 py-2.5 bg-white border border-indigo-300 rounded-xl font-bold text-slate-900 text-xs shadow-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+              <button type="button" onclick="clearCatalogSearch()" id="btnCatalogClear" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 font-bold text-xs flex items-center justify-center">&times;</button>
+            </div>
+
+            <!-- 빠른 필터 버튼 (전체 / S시리즈 / 폴더블 / 아이폰) -->
+            <div class="flex items-center gap-1.5 pt-0.5 flex-wrap">
+              <span class="text-[10.5px] text-slate-500 font-bold mr-0.5">빠른 필터:</span>
+              <button type="button" onclick="filterCatalogGroup('ALL')" id="catGroupBtn-ALL" class="px-2.5 py-0.5 rounded-lg text-[10.5px] font-bold bg-indigo-600 text-white shadow-2xs">전체</button>
+              <button type="button" onclick="filterCatalogGroup('S')" id="catGroupBtn-S" class="px-2.5 py-0.5 rounded-lg text-[10.5px] font-bold bg-white text-slate-600 hover:bg-slate-100 border border-slate-200">갤럭시 S</button>
+              <button type="button" onclick="filterCatalogGroup('FOLD')" id="catGroupBtn-FOLD" class="px-2.5 py-0.5 rounded-lg text-[10.5px] font-bold bg-white text-slate-600 hover:bg-slate-100 border border-slate-200">갤럭시 폴더블</button>
+              <button type="button" onclick="filterCatalogGroup('IPHONE')" id="catGroupBtn-IPHONE" class="px-2.5 py-0.5 rounded-lg text-[10.5px] font-bold bg-white text-slate-600 hover:bg-slate-100 border border-slate-200">아이폰</button>
+            </div>
+
+            <!-- 검색 결과 리스트 (드롭다운 / 스크롤) -->
+            <div id="catalogSearchResults" class="max-h-52 overflow-y-auto space-y-1.5 pr-1 border border-indigo-100 bg-white/95 rounded-xl p-2 hidden shadow-inner">
+              <!-- JS 동적 렌더링 -->
+            </div>
+          </div>
+
           <!-- 기본 정보 -->
           <div class="space-y-3 p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
             <div>
@@ -5625,6 +5657,1583 @@ service cloud.firestore {
     }
 
     // 신규 기종 추가 및 삭제 관리 함수들
+        // ==================== 통신 3사 수집 크롤링 플래그십 기종 풀 (88종) ====================
+    const CRAWLED_CATALOG_POOL = [
+    {
+        "id":  "ip15128g",
+        "name":  "iPhone 15 128G",
+        "prices":  {
+                       "KT":  124.3,
+                       "LG":  124.3,
+                       "SK":  124.3
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  0,
+                     "SK":  65
+                 },
+        "tag":  "#아15",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip15256g",
+        "name":  "iPhone 15 256G",
+        "prices":  {
+                       "KT":  139.7,
+                       "LG":  139.7,
+                       "SK":  139.7
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  0,
+                     "SK":  65
+                 },
+        "tag":  "#아15",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip15512g",
+        "name":  "iPhone 15 512G",
+        "prices":  {
+                       "KT":  169.4,
+                       "LG":  169.4,
+                       "SK":  169.4
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  0,
+                     "SK":  65
+                 },
+        "tag":  "#아15",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip15p128g",
+        "name":  "iPhone 15 Plus 128G",
+        "prices":  {
+                       "KT":  134.2,
+                       "LG":  134.2,
+                       "SK":  134.2
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  0,
+                     "SK":  47
+                 },
+        "tag":  "#아15",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip15p512g",
+        "name":  "iPhone 15 Plus 512G",
+        "prices":  {
+                       "KT":  179.3,
+                       "LG":  179.3,
+                       "SK":  179.3
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  0,
+                     "SK":  47
+                 },
+        "tag":  "#아15",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip15p128g",
+        "name":  "iPhone 15 Pro 128G",
+        "prices":  {
+                       "KT":  154,
+                       "LG":  154,
+                       "SK":  154
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  0,
+                     "SK":  65
+                 },
+        "tag":  "#",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip15p1t",
+        "name":  "iPhone 15 Pro 1T",
+        "prices":  {
+                       "KT":  229.9,
+                       "LG":  229.9,
+                       "SK":  229.9
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  0,
+                     "SK":  65
+                 },
+        "tag":  "#",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip15p256g",
+        "name":  "iPhone 15 Pro 256G",
+        "prices":  {
+                       "KT":  169.4,
+                       "LG":  169.4,
+                       "SK":  169.4
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  0,
+                     "SK":  65
+                 },
+        "tag":  "#",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip15p512g",
+        "name":  "iPhone 15 Pro 512G",
+        "prices":  {
+                       "KT":  199.1,
+                       "LG":  199.1,
+                       "SK":  199.1
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  0,
+                     "SK":  65
+                 },
+        "tag":  "#",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip16128g",
+        "name":  "iPhone 16 128G",
+        "prices":  {
+                       "KT":  124.3,
+                       "LG":  124.3,
+                       "SK":  124.3
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  45,
+                     "SK":  22
+                 },
+        "tag":  "#아16",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip16256g",
+        "name":  "iPhone 16 256G",
+        "prices":  {
+                       "KT":  139.7,
+                       "LG":  139.7,
+                       "SK":  139.7
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  45,
+                     "SK":  22
+                 },
+        "tag":  "#아16",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip16512g",
+        "name":  "iPhone 16 512G",
+        "prices":  {
+                       "KT":  169.4,
+                       "LG":  169.4,
+                       "SK":  169.4
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  45,
+                     "SK":  22
+                 },
+        "tag":  "#아16",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip16p128g",
+        "name":  "iPhone 16 Pro 128G",
+        "prices":  {
+                       "KT":  154,
+                       "LG":  154,
+                       "SK":  154
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  45,
+                     "SK":  22
+                 },
+        "tag":  "#",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip16p1t",
+        "name":  "iPhone 16 Pro 1T",
+        "prices":  {
+                       "KT":  229.9,
+                       "LG":  229.9,
+                       "SK":  229.9
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  45,
+                     "SK":  22
+                 },
+        "tag":  "#",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip16p256g",
+        "name":  "iPhone 16 Pro 256G",
+        "prices":  {
+                       "KT":  169.4,
+                       "LG":  169.4,
+                       "SK":  169.4
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  45,
+                     "SK":  22
+                 },
+        "tag":  "#",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip16p512g",
+        "name":  "iPhone 16 Pro 512G",
+        "prices":  {
+                       "KT":  199.1,
+                       "LG":  199.1,
+                       "SK":  199.1
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  45,
+                     "SK":  22
+                 },
+        "tag":  "#",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip16pm1t",
+        "name":  "iPhone 16 Pro Max 1T",
+        "prices":  {
+                       "KT":  249.7,
+                       "LG":  249.7,
+                       "SK":  249.7
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  45,
+                     "SK":  22
+                 },
+        "tag":  "#",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip16pm256g",
+        "name":  "iPhone 16 Pro Max 256G",
+        "prices":  {
+                       "KT":  189.2,
+                       "LG":  189.2,
+                       "SK":  189.2
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  0,
+                     "SK":  22
+                 },
+        "tag":  "#",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip16pm512g",
+        "name":  "iPhone 16 Pro Max 512G",
+        "prices":  {
+                       "KT":  220,
+                       "LG":  220,
+                       "SK":  220
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  45,
+                     "SK":  22
+                 },
+        "tag":  "#",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip16e128g",
+        "name":  "iPhone 16e 128G",
+        "prices":  {
+                       "KT":  99,
+                       "LG":  99,
+                       "SK":  99
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  0,
+                     "SK":  22
+                 },
+        "tag":  "#16e",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip16e256g",
+        "name":  "iPhone 16e 256G",
+        "prices":  {
+                       "KT":  113.3,
+                       "LG":  113.3,
+                       "SK":  113.3
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  0,
+                     "SK":  22
+                 },
+        "tag":  "#16e",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip16e512g",
+        "name":  "iPhone 16e 512G",
+        "prices":  {
+                       "KT":  143,
+                       "LG":  143,
+                       "SK":  143
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  0,
+                     "SK":  22
+                 },
+        "tag":  "#16e",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip17256g",
+        "name":  "iPhone 17 256G",
+        "prices":  {
+                       "KT":  128.7,
+                       "LG":  145.2,
+                       "SK":  145.2
+                   },
+        "subs":  {
+                     "KT":  45,
+                     "LG":  55,
+                     "SK":  45
+                 },
+        "tag":  "#아17",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip17512g",
+        "name":  "iPhone 17 512G",
+        "prices":  {
+                       "KT":  158.4,
+                       "LG":  176,
+                       "SK":  176
+                   },
+        "subs":  {
+                     "KT":  45,
+                     "LG":  55,
+                     "SK":  45
+                 },
+        "tag":  "#아17",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip17p1t",
+        "name":  "iPhone 17 Pro 1T",
+        "prices":  {
+                       "KT":  238.7,
+                       "LG":  238.7,
+                       "SK":  238.7
+                   },
+        "subs":  {
+                     "KT":  45,
+                     "LG":  0,
+                     "SK":  45
+                 },
+        "tag":  "#",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip17p256g",
+        "name":  "iPhone 17 Pro 256G",
+        "prices":  {
+                       "KT":  178.2,
+                       "LG":  178.2,
+                       "SK":  178.2
+                   },
+        "subs":  {
+                     "KT":  45,
+                     "LG":  45,
+                     "SK":  45
+                 },
+        "tag":  "#",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip17p512g",
+        "name":  "iPhone 17 Pro 512G",
+        "prices":  {
+                       "KT":  209,
+                       "LG":  209,
+                       "SK":  209
+                   },
+        "subs":  {
+                     "KT":  45,
+                     "LG":  0,
+                     "SK":  45
+                 },
+        "tag":  "#",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip17pm1t",
+        "name":  "iPhone 17 Pro Max 1T",
+        "prices":  {
+                       "KT":  258.5,
+                       "LG":  258.5,
+                       "SK":  258.5
+                   },
+        "subs":  {
+                     "KT":  15,
+                     "LG":  0,
+                     "SK":  22
+                 },
+        "tag":  "#",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip17pm256g",
+        "name":  "iPhone 17 Pro Max 256G",
+        "prices":  {
+                       "KT":  198,
+                       "LG":  198,
+                       "SK":  198
+                   },
+        "subs":  {
+                     "KT":  15,
+                     "LG":  0,
+                     "SK":  22
+                 },
+        "tag":  "#",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip17pm2t",
+        "name":  "iPhone 17 Pro Max 2T",
+        "prices":  {
+                       "KT":  319,
+                       "LG":  319,
+                       "SK":  319
+                   },
+        "subs":  {
+                     "KT":  15,
+                     "LG":  0,
+                     "SK":  0
+                 },
+        "tag":  "#",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip17pm512g",
+        "name":  "iPhone 17 Pro Max 512G",
+        "prices":  {
+                       "KT":  228.8,
+                       "LG":  228.8,
+                       "SK":  228.8
+                   },
+        "subs":  {
+                     "KT":  15,
+                     "LG":  0,
+                     "SK":  22
+                 },
+        "tag":  "#",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip17e256g",
+        "name":  "iPhone 17e 256G",
+        "prices":  {
+                       "KT":  99,
+                       "LG":  99,
+                       "SK":  99
+                   },
+        "subs":  {
+                     "KT":  45,
+                     "LG":  0,
+                     "SK":  12.8
+                 },
+        "tag":  "#17e",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip17e512g",
+        "name":  "iPhone 17e 512G",
+        "prices":  {
+                       "KT":  128.7,
+                       "LG":  128.7,
+                       "SK":  128.7
+                   },
+        "subs":  {
+                     "KT":  45,
+                     "LG":  0,
+                     "SK":  12.8
+                 },
+        "tag":  "#17e",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip18p1t",
+        "name":  "iPhone 18 Pro 1T",
+        "prices":  {
+                       "KT":  289.3,
+                       "LG":  289.3,
+                       "SK":  289.3
+                   },
+        "subs":  {
+                     "KT":  40,
+                     "LG":  40,
+                     "SK":  45
+                 },
+        "tag":  "#",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip18p256g",
+        "name":  "iPhone 18 Pro 256G",
+        "prices":  {
+                       "KT":  199.1,
+                       "LG":  199.1,
+                       "SK":  199.1
+                   },
+        "subs":  {
+                     "KT":  40,
+                     "LG":  0,
+                     "SK":  45
+                 },
+        "tag":  "#",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip18p2t",
+        "name":  "iPhone 18 Pro 2T",
+        "prices":  {
+                       "KT":  379.5,
+                       "LG":  379.5,
+                       "SK":  379.5
+                   },
+        "subs":  {
+                     "KT":  40,
+                     "LG":  0,
+                     "SK":  45
+                 },
+        "tag":  "#",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip18p512g",
+        "name":  "iPhone 18 Pro 512G",
+        "prices":  {
+                       "KT":  229.9,
+                       "LG":  229.9,
+                       "SK":  229.9
+                   },
+        "subs":  {
+                     "KT":  40,
+                     "LG":  0,
+                     "SK":  45
+                 },
+        "tag":  "#",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip18pm1t",
+        "name":  "iPhone 18 Pro Max 1T",
+        "prices":  {
+                       "KT":  309.1,
+                       "LG":  309.1,
+                       "SK":  309.1
+                   },
+        "subs":  {
+                     "KT":  15,
+                     "LG":  0,
+                     "SK":  22
+                 },
+        "tag":  "#",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip18pm256g",
+        "name":  "iPhone 18 Pro Max 256G",
+        "prices":  {
+                       "KT":  220,
+                       "LG":  220,
+                       "SK":  220
+                   },
+        "subs":  {
+                     "KT":  15,
+                     "LG":  0,
+                     "SK":  22
+                 },
+        "tag":  "#",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip18pm2t",
+        "name":  "iPhone 18 Pro Max 2T",
+        "prices":  {
+                       "KT":  399.3,
+                       "LG":  399.3,
+                       "SK":  399.3
+                   },
+        "subs":  {
+                     "KT":  15,
+                     "LG":  0,
+                     "SK":  22
+                 },
+        "tag":  "#",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ip18pm512g",
+        "name":  "iPhone 18 Pro Max 512G",
+        "prices":  {
+                       "KT":  249.7,
+                       "LG":  249.7,
+                       "SK":  249.7
+                   },
+        "subs":  {
+                     "KT":  15,
+                     "LG":  0,
+                     "SK":  22
+                 },
+        "tag":  "#",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ipair1t",
+        "name":  "iPhone Air 1T",
+        "prices":  {
+                       "KT":  218.9,
+                       "LG":  218.9,
+                       "SK":  218.9
+                   },
+        "subs":  {
+                     "KT":  70,
+                     "LG":  0,
+                     "SK":  65
+                 },
+        "tag":  "#17에어",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ipair256g",
+        "name":  "iPhone Air 256G",
+        "prices":  {
+                       "KT":  158.4,
+                       "LG":  158.4,
+                       "SK":  158.4
+                   },
+        "subs":  {
+                     "KT":  70,
+                     "LG":  45,
+                     "SK":  65
+                 },
+        "tag":  "#17에어",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ipair512g",
+        "name":  "iPhone Air 512G",
+        "prices":  {
+                       "KT":  188.1,
+                       "LG":  188.1,
+                       "SK":  188.1
+                   },
+        "subs":  {
+                     "KT":  70,
+                     "LG":  0,
+                     "SK":  65
+                 },
+        "tag":  "#17에어",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ipduo1t",
+        "name":  "iPhone Duo 1T",
+        "prices":  {
+                       "KT":  419.1,
+                       "LG":  419.1,
+                       "SK":  419.1
+                   },
+        "subs":  {
+                     "KT":  40,
+                     "LG":  0,
+                     "SK":  45
+                 },
+        "tag":  "#기종",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ipduo256g",
+        "name":  "iPhone Duo 256G",
+        "prices":  {
+                       "KT":  330,
+                       "LG":  330,
+                       "SK":  330
+                   },
+        "subs":  {
+                     "KT":  40,
+                     "LG":  0,
+                     "SK":  45
+                 },
+        "tag":  "#기종",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ipduo2t",
+        "name":  "iPhone Duo 2T",
+        "prices":  {
+                       "KT":  509.3,
+                       "LG":  509.3,
+                       "SK":  509.3
+                   },
+        "subs":  {
+                     "KT":  40,
+                     "LG":  0,
+                     "SK":  45
+                 },
+        "tag":  "#기종",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ipduo512g",
+        "name":  "iPhone Duo 512G",
+        "prices":  {
+                       "KT":  359.7,
+                       "LG":  359.7,
+                       "SK":  359.7
+                   },
+        "subs":  {
+                     "KT":  40,
+                     "LG":  0,
+                     "SK":  45
+                 },
+        "tag":  "#기종",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "reip15128g",
+        "name":  "RE iPhone 15 128G",
+        "prices":  {
+                       "KT":  77,
+                       "LG":  77,
+                       "SK":  77
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  0,
+                     "SK":  65
+                 },
+        "tag":  "#아15",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "reip15256g",
+        "name":  "RE iPhone 15 256G",
+        "prices":  {
+                       "KT":  85.8,
+                       "LG":  85.8,
+                       "SK":  85.8
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  0,
+                     "SK":  65
+                 },
+        "tag":  "#아15",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "reip15p128g",
+        "name":  "RE iPhone 15 Pro 128G",
+        "prices":  {
+                       "KT":  97.9,
+                       "LG":  97.9,
+                       "SK":  97.9
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  0,
+                     "SK":  65
+                 },
+        "tag":  "#",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "reip15p256g",
+        "name":  "RE iPhone 15 Pro 256G",
+        "prices":  {
+                       "KT":  106.7,
+                       "LG":  106.7,
+                       "SK":  106.7
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  0,
+                     "SK":  65
+                 },
+        "tag":  "#",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "reip15pm256g",
+        "name":  "RE iPhone 15 Pro Max 256G",
+        "prices":  {
+                       "KT":  115.5,
+                       "LG":  115.5,
+                       "SK":  115.5
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  0,
+                     "SK":  47
+                 },
+        "tag":  "#",
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "s24u256g",
+        "name":  "갤럭시 S24 울트라 256G",
+        "prices":  {
+                       "KT":  154.44,
+                       "LG":  154.44,
+                       "SK":  154.44
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  0,
+                     "SK":  63
+                 },
+        "tag":  "#S24U",
+        "group":  "S"
+    },
+    {
+        "id":  "s25256g",
+        "name":  "갤럭시 S25 256G",
+        "prices":  {
+                       "KT":  115.5,
+                       "LG":  115.5,
+                       "SK":  115.5
+                   },
+        "subs":  {
+                     "KT":  50,
+                     "LG":  50,
+                     "SK":  50
+                 },
+        "tag":  "#S25",
+        "group":  "S"
+    },
+    {
+        "id":  "s25512g",
+        "name":  "갤럭시 S25 512G",
+        "prices":  {
+                       "KT":  129.8,
+                       "LG":  129.8,
+                       "SK":  129.8
+                   },
+        "subs":  {
+                     "KT":  50,
+                     "LG":  50,
+                     "SK":  50
+                 },
+        "tag":  "#S25",
+        "group":  "S"
+    },
+    {
+        "id":  "s25fe256g",
+        "name":  "갤럭시 S25 FE 256G",
+        "prices":  {
+                       "KT":  94.6,
+                       "LG":  94.6,
+                       "SK":  94.6
+                   },
+        "subs":  {
+                     "KT":  50,
+                     "LG":  0,
+                     "SK":  50
+                 },
+        "tag":  "#S25FE",
+        "group":  "S"
+    },
+    {
+        "id":  "s25e256g",
+        "name":  "갤럭시 S25 엣지 256G",
+        "prices":  {
+                       "KT":  125.4,
+                       "LG":  125.4,
+                       "SK":  125.4
+                   },
+        "subs":  {
+                     "KT":  60,
+                     "LG":  60,
+                     "SK":  58
+                 },
+        "tag":  "#S25엣지",
+        "group":  "S"
+    },
+    {
+        "id":  "s25e512g",
+        "name":  "갤럭시 S25 엣지 512G",
+        "prices":  {
+                       "KT":  149.6,
+                       "LG":  149.6,
+                       "SK":  150.7
+                   },
+        "subs":  {
+                     "KT":  60,
+                     "LG":  60,
+                     "SK":  58
+                 },
+        "tag":  "#S25엣지",
+        "group":  "S"
+    },
+    {
+        "id":  "s25u1t",
+        "name":  "갤럭시 S25 울트라 1T",
+        "prices":  {
+                       "KT":  212.74,
+                       "LG":  212.74,
+                       "SK":  212.74
+                   },
+        "subs":  {
+                     "KT":  50,
+                     "LG":  50,
+                     "SK":  50
+                 },
+        "tag":  "#S25U",
+        "group":  "S"
+    },
+    {
+        "id":  "s25u256g",
+        "name":  "갤럭시 S25 울트라 256G",
+        "prices":  {
+                       "KT":  169.84,
+                       "LG":  169.84,
+                       "SK":  169.84
+                   },
+        "subs":  {
+                     "KT":  50,
+                     "LG":  50,
+                     "SK":  50
+                 },
+        "tag":  "#S25U",
+        "group":  "S"
+    },
+    {
+        "id":  "s25u512g",
+        "name":  "갤럭시 S25 울트라 512G",
+        "prices":  {
+                       "KT":  184.14,
+                       "LG":  184.14,
+                       "SK":  184.14
+                   },
+        "subs":  {
+                     "KT":  50,
+                     "LG":  50,
+                     "SK":  50
+                 },
+        "tag":  "#S25U",
+        "group":  "S"
+    },
+    {
+        "id":  "s25p256g",
+        "name":  "갤럭시 S25+ 256G",
+        "prices":  {
+                       "KT":  135.3,
+                       "LG":  135.3,
+                       "SK":  135.3
+                   },
+        "subs":  {
+                     "KT":  50,
+                     "LG":  50,
+                     "SK":  50
+                 },
+        "tag":  "#S25+",
+        "group":  "S"
+    },
+    {
+        "id":  "s25p512g",
+        "name":  "갤럭시 S25+ 512G",
+        "prices":  {
+                       "KT":  149.6,
+                       "LG":  149.6,
+                       "SK":  149.6
+                   },
+        "subs":  {
+                     "KT":  50,
+                     "LG":  50,
+                     "SK":  50
+                 },
+        "tag":  "#S25+",
+        "group":  "S"
+    },
+    {
+        "id":  "s26256g",
+        "name":  "갤럭시 S26 256G",
+        "prices":  {
+                       "KT":  125.4,
+                       "LG":  125.4,
+                       "SK":  125.4
+                   },
+        "subs":  {
+                     "KT":  60,
+                     "LG":  60,
+                     "SK":  60
+                 },
+        "tag":  "#S26",
+        "group":  "S"
+    },
+    {
+        "id":  "s26512g",
+        "name":  "갤럭시 S26 512G",
+        "prices":  {
+                       "KT":  150.7,
+                       "LG":  150.7,
+                       "SK":  150.7
+                   },
+        "subs":  {
+                     "KT":  60,
+                     "LG":  60,
+                     "SK":  60
+                 },
+        "tag":  "#S26",
+        "group":  "S"
+    },
+    {
+        "id":  "s26fe",
+        "name":  "갤럭시 S26 FE",
+        "prices":  {
+                       "KT":  104.5,
+                       "LG":  104.5,
+                       "SK":  104.5
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  50,
+                     "SK":  0
+                 },
+        "tag":  "#S26FE",
+        "group":  "S"
+    },
+    {
+        "id":  "s26fe256g",
+        "name":  "갤럭시 S26 FE 256G",
+        "prices":  {
+                       "KT":  104.5,
+                       "LG":  104.5,
+                       "SK":  104.5
+                   },
+        "subs":  {
+                     "KT":  50,
+                     "LG":  0,
+                     "SK":  50
+                 },
+        "tag":  "#S26FE",
+        "group":  "S"
+    },
+    {
+        "id":  "s26u1t",
+        "name":  "갤럭시 S26 울트라 1T",
+        "prices":  {
+                       "KT":  254.54,
+                       "LG":  254.54,
+                       "SK":  254.54
+                   },
+        "subs":  {
+                     "KT":  60,
+                     "LG":  60,
+                     "SK":  60
+                 },
+        "tag":  "#S26U",
+        "group":  "S"
+    },
+    {
+        "id":  "s26u256g",
+        "name":  "갤럭시 S26 울트라 256G",
+        "prices":  {
+                       "KT":  179.74,
+                       "LG":  179.74,
+                       "SK":  179.74
+                   },
+        "subs":  {
+                     "KT":  60,
+                     "LG":  60,
+                     "SK":  60
+                 },
+        "tag":  "#S26U",
+        "group":  "S"
+    },
+    {
+        "id":  "s26u512g",
+        "name":  "갤럭시 S26 울트라 512G",
+        "prices":  {
+                       "KT":  205.04,
+                       "LG":  205.04,
+                       "SK":  205.04
+                   },
+        "subs":  {
+                     "KT":  60,
+                     "LG":  60,
+                     "SK":  60
+                 },
+        "tag":  "#S26U",
+        "group":  "S"
+    },
+    {
+        "id":  "s26p256g",
+        "name":  "갤럭시 S26+ 256G",
+        "prices":  {
+                       "KT":  145.2,
+                       "LG":  145.2,
+                       "SK":  145.2
+                   },
+        "subs":  {
+                     "KT":  60,
+                     "LG":  60,
+                     "SK":  60
+                 },
+        "tag":  "#S26+",
+        "group":  "S"
+    },
+    {
+        "id":  "s26p512g",
+        "name":  "갤럭시 S26+ 512G",
+        "prices":  {
+                       "KT":  170.5,
+                       "LG":  170.5,
+                       "SK":  170.5
+                   },
+        "subs":  {
+                     "KT":  60,
+                     "LG":  60,
+                     "SK":  60
+                 },
+        "tag":  "#S26+",
+        "group":  "S"
+    },
+    {
+        "id":  "fold71t",
+        "name":  "갤럭시 Z 폴드7 1T",
+        "prices":  {
+                       "KT":  293.37,
+                       "LG":  293.37,
+                       "SK":  293.37
+                   },
+        "subs":  {
+                     "KT":  50,
+                     "LG":  0,
+                     "SK":  50
+                 },
+        "tag":  "#폴드7",
+        "group":  "FOLD"
+    },
+    {
+        "id":  "fold7256g",
+        "name":  "갤럭시 Z 폴드7 256G",
+        "prices":  {
+                       "KT":  237.93,
+                       "LG":  237.93,
+                       "SK":  237.93
+                   },
+        "subs":  {
+                     "KT":  50,
+                     "LG":  0,
+                     "SK":  50
+                 },
+        "tag":  "#폴드7",
+        "group":  "FOLD"
+    },
+    {
+        "id":  "fold7512g",
+        "name":  "갤럭시 Z 폴드7 512G",
+        "prices":  {
+                       "KT":  253.77,
+                       "LG":  253.77,
+                       "SK":  253.77
+                   },
+        "subs":  {
+                     "KT":  50,
+                     "LG":  0,
+                     "SK":  50
+                 },
+        "tag":  "#폴드7",
+        "group":  "FOLD"
+    },
+    {
+        "id":  "fold81t",
+        "name":  "갤럭시 Z 폴드8 1T",
+        "prices":  {
+                       "KT":  315.26,
+                       "LG":  315.26,
+                       "SK":  315.26
+                   },
+        "subs":  {
+                     "KT":  60,
+                     "LG":  60,
+                     "SK":  60
+                 },
+        "tag":  "#폴드8",
+        "group":  "FOLD"
+    },
+    {
+        "id":  "fold8256g",
+        "name":  "갤럭시 Z 폴드8 256G",
+        "prices":  {
+                       "KT":  227.81,
+                       "LG":  227.81,
+                       "SK":  227.81
+                   },
+        "subs":  {
+                     "KT":  60,
+                     "LG":  60,
+                     "SK":  60
+                 },
+        "tag":  "#폴드8",
+        "group":  "FOLD"
+    },
+    {
+        "id":  "fold8512g",
+        "name":  "갤럭시 Z 폴드8 512G",
+        "prices":  {
+                       "KT":  253.11,
+                       "LG":  253.11,
+                       "SK":  253.11
+                   },
+        "subs":  {
+                     "KT":  60,
+                     "LG":  60,
+                     "SK":  60
+                 },
+        "tag":  "#폴드8",
+        "group":  "FOLD"
+    },
+    {
+        "id":  "fold8u1t",
+        "name":  "갤럭시 Z 폴드8 울트라 1T",
+        "prices":  {
+                       "KT":  345.18,
+                       "LG":  345.18,
+                       "SK":  345.18
+                   },
+        "subs":  {
+                     "KT":  50,
+                     "LG":  50,
+                     "SK":  50
+                 },
+        "tag":  "#폴드8U",
+        "group":  "FOLD"
+    },
+    {
+        "id":  "fold8u256g",
+        "name":  "갤럭시 Z 폴드8 울트라 256G",
+        "prices":  {
+                       "KT":  257.73,
+                       "LG":  257.73,
+                       "SK":  257.73
+                   },
+        "subs":  {
+                     "KT":  50,
+                     "LG":  50,
+                     "SK":  50
+                 },
+        "tag":  "#폴드8U",
+        "group":  "FOLD"
+    },
+    {
+        "id":  "fold8u512g",
+        "name":  "갤럭시 Z 폴드8 울트라 512G",
+        "prices":  {
+                       "KT":  283.03,
+                       "LG":  283.03,
+                       "SK":  283.03
+                   },
+        "subs":  {
+                     "KT":  50,
+                     "LG":  50,
+                     "SK":  50
+                 },
+        "tag":  "#폴드8U",
+        "group":  "FOLD"
+    },
+    {
+        "id":  "flip6256g",
+        "name":  "갤럭시 Z 플립6 256G",
+        "prices":  {
+                       "KT":  148.5,
+                       "LG":  148.5,
+                       "SK":  148.5
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  50,
+                     "SK":  60
+                 },
+        "tag":  "#플립6",
+        "group":  "FOLD"
+    },
+    {
+        "id":  "flip7256g",
+        "name":  "갤럭시 Z 플립7 256G",
+        "prices":  {
+                       "KT":  148.5,
+                       "LG":  148.5,
+                       "SK":  148.5
+                   },
+        "subs":  {
+                     "KT":  50,
+                     "LG":  50,
+                     "SK":  50
+                 },
+        "tag":  "#플립7",
+        "group":  "FOLD"
+    },
+    {
+        "id":  "flip7512g",
+        "name":  "갤럭시 Z 플립7 512G",
+        "prices":  {
+                       "KT":  164.34,
+                       "LG":  164.34,
+                       "SK":  164.34
+                   },
+        "subs":  {
+                     "KT":  50,
+                     "LG":  0,
+                     "SK":  50
+                 },
+        "tag":  "#플립7",
+        "group":  "FOLD"
+    },
+    {
+        "id":  "flip7fe256g",
+        "name":  "갤럭시 Z 플립7 FE 256G",
+        "prices":  {
+                       "KT":  119.9,
+                       "LG":  119.9,
+                       "SK":  119.9
+                   },
+        "subs":  {
+                     "KT":  0,
+                     "LG":  0,
+                     "SK":  50
+                 },
+        "tag":  "#플립7",
+        "group":  "FOLD"
+    },
+    {
+        "id":  "flip8256g",
+        "name":  "갤럭시 Z 플립8 256G",
+        "prices":  {
+                       "KT":  168.3,
+                       "LG":  168.3,
+                       "SK":  168.3
+                   },
+        "subs":  {
+                     "KT":  50,
+                     "LG":  50,
+                     "SK":  50
+                 },
+        "tag":  "#플립8",
+        "group":  "FOLD"
+    },
+    {
+        "id":  "flip8512g",
+        "name":  "갤럭시 Z 플립8 512G",
+        "prices":  {
+                       "KT":  193.6,
+                       "LG":  193.6,
+                       "SK":  193.6
+                   },
+        "subs":  {
+                     "KT":  50,
+                     "LG":  50,
+                     "SK":  50
+                 },
+        "tag":  "#플립8",
+        "group":  "FOLD"
+    }
+];
+
+    // ==================== 통신 3사 수집 크롤링 플래그십 기종 풀 (88종) & 검색 자동완성 ====================
+    let catActiveGroup = 'ALL';
+
+    function filterCatalogGroup(group) {
+      catActiveGroup = group;
+      ['ALL', 'S', 'FOLD', 'IPHONE'].forEach(g => {
+        const btn = document.getElementById('catGroupBtn-' + g);
+        if (!btn) return;
+        if (g === group) {
+          btn.className = 'px-2.5 py-0.5 rounded-lg text-[10.5px] font-bold bg-indigo-600 text-white shadow-2xs';
+        } else {
+          btn.className = 'px-2.5 py-0.5 rounded-lg text-[10.5px] font-bold bg-white text-slate-600 hover:bg-slate-100 border border-slate-200';
+        }
+      });
+      const q = (document.getElementById('catalogSearchInput')?.value || '');
+      handleCatalogSearch(q);
+    }
+
+    function clearCatalogSearch() {
+      const inp = document.getElementById('catalogSearchInput');
+      if (inp) inp.value = '';
+      const clearBtn = document.getElementById('btnCatalogClear');
+      if (clearBtn) clearBtn.classList.add('hidden');
+      const resultsDiv = document.getElementById('catalogSearchResults');
+      if (resultsDiv) {
+        resultsDiv.classList.add('hidden');
+        resultsDiv.innerHTML = '';
+      }
+    }
+
+    function handleCatalogSearch(query) {
+      const q = (query || '').trim().toLowerCase().replace(/\s+/g, '');
+      const resultsDiv = document.getElementById('catalogSearchResults');
+      const clearBtn = document.getElementById('btnCatalogClear');
+      if (clearBtn) clearBtn.classList.toggle('hidden', !query);
+
+      if (!resultsDiv) return;
+
+      if (!q && catActiveGroup === 'ALL') {
+        resultsDiv.classList.add('hidden');
+        resultsDiv.innerHTML = '';
+        return;
+      }
+
+      // 검색어 동의어 정규화
+      let qSyn = q;
+      qSyn = qSyn.replace(/아이폰/g, 'iphone').replace(/플립/g, 'flip').replace(/폴드/g, 'fold')
+                 .replace(/울트라/g, 'ultra').replace(/엣지/g, 'edge').replace(/프로/g, 'pro')
+                 .replace(/프맥/g, 'promax').replace(/플러스/g, 'plus').replace(/에어/g, 'air');
+
+      const matches = (typeof CRAWLED_CATALOG_POOL !== 'undefined' ? CRAWLED_CATALOG_POOL : []).filter(item => {
+        if (catActiveGroup !== 'ALL' && item.group !== catActiveGroup) return false;
+        if (!q) return true; // 필터만 선택되고 검색어가 없으면 해당 그룹 전체 표시
+
+        const nameRaw = item.name.toLowerCase().replace(/\s+/g, '');
+        const tagRaw = (item.tag || '').toLowerCase().replace(/\s+/g, '');
+        
+        let itemSyn = nameRaw;
+        itemSyn = itemSyn.replace(/아이폰/g, 'iphone').replace(/플립/g, 'flip').replace(/폴드/g, 'fold')
+                         .replace(/울트라/g, 'ultra').replace(/엣지/g, 'edge').replace(/프로/g, 'pro')
+                         .replace(/프맥/g, 'promax').replace(/플러스/g, 'plus').replace(/에어/g, 'air');
+
+        return nameRaw.includes(q) || tagRaw.includes(q) || itemSyn.includes(qSyn) || nameRaw.includes(qSyn) || itemSyn.includes(q);
+      });
+
+      if (matches.length === 0) {
+        resultsDiv.classList.remove('hidden');
+        resultsDiv.innerHTML = '<div class="p-3 text-center text-slate-400 font-bold text-xs">일치하는 크롤링 수집 기종이 없습니다.<br><span class="text-[11px] font-normal">아래 직접 입력창에 기종명과 출고가를 수동으로 입력하실 수 있습니다.</span></div>';
+        return;
+      }
+
+      resultsDiv.classList.remove('hidden');
+      resultsDiv.innerHTML = matches.slice(0, 20).map(item => {
+        const groupBadge = item.group === 'S' ? '<span class="px-1.5 py-0.5 rounded text-[10px] font-black bg-blue-100 text-blue-700">갤럭시 S</span>' :
+                           item.group === 'FOLD' ? '<span class="px-1.5 py-0.5 rounded text-[10px] font-black bg-amber-100 text-amber-800">폴더블</span>' :
+                           '<span class="px-1.5 py-0.5 rounded text-[10px] font-black bg-purple-100 text-purple-700">아이폰</span>';
+        
+        const skPrice = (item.prices && item.prices.SK) ? item.prices.SK + '만' : '-';
+        const ktPrice = (item.prices && item.prices.KT) ? item.prices.KT + '만' : '-';
+        const lgPrice = (item.prices && item.prices.LG) ? item.prices.LG + '만' : '-';
+
+        const skSub = (item.subs && item.subs.SK !== undefined) ? item.subs.SK + '만' : '0';
+        const ktSub = (item.subs && item.subs.KT !== undefined) ? item.subs.KT + '만' : '0';
+        const lgSub = (item.subs && item.subs.LG !== undefined) ? item.subs.LG + '만' : '0';
+
+        const isRegistered = (typeof devices !== 'undefined' && Array.isArray(devices)) && devices.some(d => d.name.trim().toLowerCase() === item.name.trim().toLowerCase());
+        const regBadge = isRegistered ? '<span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-slate-100 text-slate-500 border border-slate-200">등록됨</span>' : '';
+
+        return `
+          <div class="flex items-center justify-between p-2.5 rounded-xl border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/50 transition gap-2 group bg-white shadow-2xs">
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-1.5 flex-wrap mb-1">
+                ${groupBadge}
+                <span class="font-bold text-slate-900 text-xs">${item.name}</span>
+                <span class="text-[10.5px] font-bold text-indigo-600 bg-indigo-50 px-1 rounded">${item.tag || ''}</span>
+                ${regBadge}
+              </div>
+              <div class="flex items-center gap-2 text-[10.5px] text-slate-500 font-medium flex-wrap">
+                <span>출고가: <b class="text-rose-600">SK ${skPrice}</b> / <b class="text-blue-600">KT ${ktPrice}</b> / <b class="text-pink-600">LG ${lgPrice}</b></span>
+                <span class="text-slate-300">|</span>
+                <span>공시: <b class="text-rose-600">SK ${skSub}</b> / <b class="text-blue-600">KT ${ktSub}</b> / <b class="text-pink-600">LG ${lgSub}</b></span>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <button type="button" onclick="selectCatalogModel('${item.id}')" class="px-2.5 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-[11px] border border-indigo-200 transition" title="이 기종 정보를 아래 폼에 자동 입력합니다">
+                입력폼 채우기
+              </button>
+              <button type="button" onclick="quickAddCatalogModel('${item.id}')" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[11px] shadow-2xs transition flex items-center gap-1" title="폼 작성 없이 즉시 등록합니다">
+                <span>⚡ 즉시 추가</span>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function selectCatalogModel(itemId) {
+      if (typeof CRAWLED_CATALOG_POOL === 'undefined') return;
+      const item = CRAWLED_CATALOG_POOL.find(x => x.id === itemId);
+      if (!item) return;
+
+      document.getElementById('newDevName').value = item.name;
+      document.getElementById('newDevGroup').value = item.group;
+      document.getElementById('newDevTag').value = item.tag || ('#' + item.name.replace(/갤럭시\s*|아이폰\s*/g, '').split(' ')[0]);
+
+      document.getElementById('newDevPriceSK').value = (item.prices && item.prices.SK) ? item.prices.SK : '';
+      document.getElementById('newDevPriceKT').value = (item.prices && item.prices.KT) ? item.prices.KT : '';
+      document.getElementById('newDevPriceLG').value = (item.prices && item.prices.LG) ? item.prices.LG : '';
+
+      const skSub = (item.subs && item.subs.SK !== undefined) ? item.subs.SK : 0;
+      const ktSub = (item.subs && item.subs.KT !== undefined) ? item.subs.KT : 0;
+      const lgSub = (item.subs && item.subs.LG !== undefined) ? item.subs.LG : 0;
+
+      document.getElementById('newDevSubSK_mnp').value = skSub;
+      document.getElementById('newDevSubSK_chg').value = skSub;
+      document.getElementById('newDevSubKT_mnp').value = ktSub;
+      document.getElementById('newDevSubKT_chg').value = ktSub;
+      document.getElementById('newDevSubLG_mnp').value = lgSub;
+      document.getElementById('newDevSubLG_chg').value = lgSub;
+
+      const nameInput = document.getElementById('newDevName');
+      nameInput.classList.add('ring-2', 'ring-emerald-500', 'bg-emerald-50');
+      setTimeout(() => {
+        nameInput.classList.remove('ring-2', 'ring-emerald-500', 'bg-emerald-50');
+      }, 1200);
+      nameInput.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function quickAddCatalogModel(itemId) {
+      if (typeof CRAWLED_CATALOG_POOL === 'undefined') return;
+      const item = CRAWLED_CATALOG_POOL.find(x => x.id === itemId);
+      if (!item) return;
+
+      const alreadyExists = typeof devices !== 'undefined' && Array.isArray(devices) && devices.some(d => d.name.trim().toLowerCase() === item.name.trim().toLowerCase());
+      if (alreadyExists) {
+        if (!confirm(`⚠️ '${item.name}' 모델은 이미 등록되어 있는 기종입니다.\n그래도 추가로 등록하시겠습니까?`)) {
+          return;
+        }
+      }
+
+      selectCatalogModel(itemId);
+      addNewDeviceSubmit();
+    }
+
+
     function openAddDeviceModal() {
       if (currentRole !== 'master') {
         alert("👑 본사 관리자만 신규 기종을 추가할 수 있습니다.");
@@ -5642,7 +7251,13 @@ service cloud.firestore {
       document.getElementById('newDevSubKT_chg').value = '0';
       document.getElementById('newDevSubLG_mnp').value = '0';
       document.getElementById('newDevSubLG_chg').value = '0';
-      setTimeout(() => document.getElementById('newDevName').focus(), 100);
+      if (typeof clearCatalogSearch === 'function') clearCatalogSearch();
+      if (typeof filterCatalogGroup === 'function') filterCatalogGroup('ALL');
+      setTimeout(() => {
+        const catInp = document.getElementById('catalogSearchInput');
+        if (catInp) catInp.focus();
+        else document.getElementById('newDevName')?.focus();
+      }, 100);
     }
 
     function closeAddDeviceModal() {
@@ -6162,17 +7777,7 @@ service cloud.firestore {
 
       if (cardBtn) {
         let b = document.getElementById('tabBadge-card');
-        if (!isMaster) {
-          if (!b) {
-            const span = document.createElement('span');
-            span.id = 'tabBadge-card';
-            span.className = 'text-[9.5px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200 ml-1 shrink-0';
-            span.innerText = '업데이트 예정';
-            cardBtn.appendChild(span);
-          }
-        } else {
-          if (b) b.remove();
-        }
+        if (b) b.remove();
       }
 
       if (compBtn) {
