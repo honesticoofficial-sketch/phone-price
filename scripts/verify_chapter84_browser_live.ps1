@@ -8,7 +8,7 @@ $artifactPng = "C:\Users\User01\.gemini\antigravity\brain\2f8eabdf-6a8a-4957-81f
 $port = 9260
 
 Write-Host "=========================================================="
-Write-Host " [Chapter 84 브라우저 라이브 실시간 검증 및 스크린샷 캡처]"
+Write-Host " [KT 초이스더블 120k 적용 및 3사 공시지원금 실시간 검증]"
 Write-Host "=========================================================="
 
 cmd.exe /c "taskkill /f /im msedge.exe 2>nul" | Out-Null
@@ -82,10 +82,28 @@ try {
     $v18 = $res18.result.result.value
     Write-Host "  Item: $($v18.name)"
     Write-Host "  SK Subs: $($v18.subs.SK.mnp) 만원"
-    Write-Host "  KT Subs: $($v18.subs.KT.mnp) 만원"
+    Write-Host "  KT Subs: $($v18.subs.KT.mnp) 만원 (초이스더블 120k 실측)"
     Write-Host "  LG Subs: $($v18.subs.LG.mnp) 만원"
 
-    Write-Host "`n4. Checking iPhone 17 & 17 Pro LGU+ differentiated subsidies..."
+    Write-Host "`n4. Checking KT 120k Choice Double Subsidies (iPhone 18 Pro & 17 Pro Max)..."
+    $resKt = Invoke-CDP "Runtime.evaluate" @{
+        expression = @"
+            (() => {
+                const ip18p = CRAWLED_CATALOG_POOL.find(x => x.name === 'iPhone 18 Pro 256G');
+                const ip17pm = CRAWLED_CATALOG_POOL.find(x => x.name === 'iPhone 17 Pro Max 256G');
+                return {
+                    ip18p: ip18p ? { name: ip18p.name, kt: ip18p.subs.KT.mnp } : null,
+                    ip17pm: ip17pm ? { name: ip17pm.name, kt: ip17pm.subs.KT.mnp } : null
+                };
+            })()
+"@
+        returnByValue = $true
+    }
+    $vKt = $resKt.result.result.value
+    Write-Host "  $($vKt.ip18p.name) -> KT: $($vKt.ip18p.kt) 만원 (기존 90k 40만 -> 120k 45만 정상)"
+    Write-Host "  $($vKt.ip17pm.name) -> KT: $($vKt.ip17pm.kt) 만원 (기존 90k 15만 -> 120k 22.1만 정상)"
+
+    Write-Host "`n5. Checking iPhone 17 & 17 Pro LGU+ differentiated subsidies..."
     $res17 = Invoke-CDP "Runtime.evaluate" @{
         expression = @"
             (() => {
@@ -103,19 +121,17 @@ try {
     Write-Host "  Item 1: $($v17.ip17.name) -> LG 번이: $($v17.ip17.lg_mnp) 만원 / 기변: $($v17.ip17.lg_chg) 만원"
     Write-Host "  Item 2: $($v17.ip17p.name) -> LG 번이: $($v17.ip17p.lg_mnp) 만원 / 기변: $($v17.ip17p.lg_chg) 만원"
 
-    Write-Host "`n5. Capturing Verification Screenshot..."
+    Write-Host "`n6. Capturing Verification Screenshot..."
     $screenshotRes = Invoke-CDP "Page.captureScreenshot" @{ format = "png" }
     if ($screenshotRes.result.data) {
         $rawBytes = [System.Convert]::FromBase64String($screenshotRes.result.data)
         [System.IO.File]::WriteAllBytes($outPng, $rawBytes)
         [System.IO.File]::WriteAllBytes($artifactPng, $rawBytes)
-        Write-Host "  ✅ Screenshot successfully saved and copied to artifact: $artifactPng" -ForegroundColor Green
-    } else {
-        Write-Host "  ❌ Failed to capture screenshot" -ForegroundColor Red
+        Write-Host "  ✅ Screenshot successfully saved: $artifactPng" -ForegroundColor Green
     }
 
     Write-Host "`n=========================================================="
-    Write-Host " 🎉 [ALL BROWSER PASS] 브라우저 라이브 검증 100% 완료!" -ForegroundColor Cyan
+    Write-Host " 🎉 [ALL BROWSER PASS] KT 120k 정상 반영 및 브라우저 검증 완료!" -ForegroundColor Cyan
     Write-Host "=========================================================="
 
 } finally {

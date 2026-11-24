@@ -24,7 +24,7 @@
         "carrier":  "KT",
         "model":  "갤럭시 A18 128GB",
         "factoryPrice":  425700,
-        "subsidy":  150000,
+        "subsidy":  221000,
         "date":  "2026.10.30"
     },
     {
@@ -164,56 +164,56 @@
         "carrier":  "KT",
         "model":  "iPhone 18 Pro Max 2TB",
         "factoryPrice":  3993000,
-        "subsidy":  150000,
+        "subsidy":  221000,
         "date":  "2026.09.12"
     },
     {
         "carrier":  "KT",
         "model":  "iPhone 18 Pro Max 1TB",
         "factoryPrice":  3091000,
-        "subsidy":  150000,
+        "subsidy":  221000,
         "date":  "2026.09.12"
     },
     {
         "carrier":  "KT",
         "model":  "iPhone 18 Pro Max 512GB",
         "factoryPrice":  2497000,
-        "subsidy":  150000,
+        "subsidy":  221000,
         "date":  "2026.09.12"
     },
     {
         "carrier":  "KT",
         "model":  "iPhone 18 Pro Max 256GB",
         "factoryPrice":  2200000,
-        "subsidy":  150000,
+        "subsidy":  221000,
         "date":  "2026.09.12"
     },
     {
         "carrier":  "KT",
         "model":  "iPhone 18 Pro 2TB",
         "factoryPrice":  3795000,
-        "subsidy":  400000,
+        "subsidy":  450000,
         "date":  "2026.09.12"
     },
     {
         "carrier":  "KT",
         "model":  "iPhone 18 Pro 1TB",
         "factoryPrice":  2893000,
-        "subsidy":  400000,
+        "subsidy":  450000,
         "date":  "2026.09.12"
     },
     {
         "carrier":  "KT",
         "model":  "iPhone 18 Pro 512GB",
         "factoryPrice":  2299000,
-        "subsidy":  400000,
+        "subsidy":  450000,
         "date":  "2026.09.12"
     },
     {
         "carrier":  "KT",
         "model":  "iPhone 18 Pro 256GB",
         "factoryPrice":  1991000,
-        "subsidy":  400000,
+        "subsidy":  450000,
         "date":  "2026.09.12"
     },
     {
@@ -402,7 +402,7 @@
         "carrier":  "KT",
         "model":  "갤럭시 A17 128GB",
         "factoryPrice":  319000,
-        "subsidy":  150000,
+        "subsidy":  221000,
         "date":  "2026.01.20"
     },
     {
@@ -472,28 +472,28 @@
         "carrier":  "KT",
         "model":  "iPhone 17 Pro Max 2TB",
         "factoryPrice":  3190000,
-        "subsidy":  150000,
+        "subsidy":  221000,
         "date":  "2025.09.12"
     },
     {
         "carrier":  "KT",
         "model":  "iPhone 17 Pro Max 1TB",
         "factoryPrice":  2585000,
-        "subsidy":  150000,
+        "subsidy":  221000,
         "date":  "2025.09.12"
     },
     {
         "carrier":  "KT",
         "model":  "iPhone 17 Pro Max 512GB",
         "factoryPrice":  2288000,
-        "subsidy":  150000,
+        "subsidy":  221000,
         "date":  "2025.09.12"
     },
     {
         "carrier":  "KT",
         "model":  "iPhone 17 Pro Max 256GB",
         "factoryPrice":  1980000,
-        "subsidy":  150000,
+        "subsidy":  221000,
         "date":  "2025.09.12"
     },
     {

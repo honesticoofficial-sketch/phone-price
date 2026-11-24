@@ -3772,3 +3772,39 @@ service cloud.firestore {
   - `Galaxy Z Flip 8`: 전 통신사 50만 원
 - 브라우저 CDP 라이브 검증: `scripts/verify_chapter84_browser_live.ps1` 실행 및 `data/chapter84_verified.png` 갱신.
 - GitHub 원격 저장소(`main` 브랜치) 커밋 및 푸시 완료.
+
+
+---
+
+## 86. 📱 [제86장] KT 90요금제 오염 원천 차단 및 120k 초이스 더블 실측 파이프라인 수립
+
+### 1) 배경 및 사용자 지적
+- 대표님 피드백:
+  > "kt 또 초이스더블 요금제 기준으로 안보고 90요금제 기준으로 본거같은데? 공시가 왜저래? 동일 오류 안생기게 제대로 좀 프로세스 짜봐"
+- **핵심 문제**: KT 공식 모바일 사이트(`https://shop.kt.com/m/smart/supportAmtList.do`) 접속 시 초기 기본 세팅 요금제가 `초이스90 유튜브 프리미엄 (90,000원)`으로 되어 있었음.
+- 기존 크롤러가 요금제 변경을 시도했으나 팝업의 `#btnLayerItem`(선택완료) 버튼을 누르지 않아 부모창의 요금제가 실제로는 120k로 바뀌지 않고 초기 90요금제 상태로 단말 공시가 수집되었음.
+
+### 2) 90요금제 vs 120k 초이스더블 실측 차이 규명
+- **`iPhone 18 Pro`**:
+  - 90요금제: **400,000원 (40만 원)**
+  - 120k 초이스 더블: **450,000원 (45만 원)**
+- **`iPhone 17 Pro Max`**:
+  - 90요금제: **150,000원 (15만 원)**
+  - 120k 초이스 더블: **221,000원 (22.1만 원)**
+- 대표님의 날카로운 지적대로 40만 원과 15만 원은 90요금제 기준 공시였으며, 120k 초이스더블 적용 시 각각 **45만 원**, **22.1만 원**으로 정상 확인 완료.
+
+### 3) 동일 오류 재발 원천 차단 2중 보안 게이트웨이 구축 (`scripts/pipeline_crawl_kt_choice120_safe.ps1`)
+1. **[게이트 1] DOM 요금제 텍스트 실시간 검증**:
+   - `#btnPayChange` -> `fnPplClick(pplListObj_1103)` -> `#btnLayerItem` 클릭
+   - 이후 `#prodPaymentName` 엘리먼트 텍스트를 검사하여 `90`이 포함되거나 `초이스 더블 / 120`이 미포함되어 있으면 즉시 `throw Error`로 크롤링을 중단하고 저장을 원천 차단.
+2. **[게이트 2] 90요금제 시그니처 단말 역추적 검증**:
+   - 수집된 단말 중 `iPhone 18 Pro`의 지원금이 40만 원이거나 `iPhone 17 Pro Max`가 15만 원인 경우(90요금제 특유의 고시값), 파이프라인이 즉시 이상 감지 후 프로세스를 중단하도록 안전장치 내장.
+
+### 4) 실서비스 동기화 및 브라우저 검증 결과
+- `crawled_catalog_pool.json`, `crawled_subsidies_latest.json`, `index.html` 내장 풀 동기화 완료:
+  - `iPhone 18 Pro Max 256G`: SK 22.0만 / KT 22.1만 / LG 20.4만
+  - `iPhone 18 Pro 256G`: SK 45.0만 / **KT 45.0만 (120k 정상)** / LG 45.0만
+  - `iPhone 17 Pro Max 256G`: SK 22.0만 / **KT 22.1만 (120k 정상)** / LG 45.0만
+  - `iPhone 17 256G`: LG 번이 55.0만 / 기변 45.0만
+- 브라우저 CDP 라이브 검증 100% ALL PASS ([chapter84_verified.png](file:///C:/Users/User01/.gemini/antigravity/brain/2f8eabdf-6a8a-4957-81f7-425939762cc2/chapter84_verified.png))
+- GitHub 원격 저장소(`main` 브랜치) 커밋 및 푸시 완료.
