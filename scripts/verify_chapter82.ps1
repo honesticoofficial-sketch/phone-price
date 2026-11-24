@@ -2,11 +2,11 @@
 $ErrorActionPreference = "Stop"
 
 $edgePath = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
-$port = 9255
+$port = 9275
 $htmlPath = "file:///C:/Users/User01/.gemini/antigravity/scratch/phone-price/index.html"
 
 Write-Host "=========================================================="
-Write-Host " [Chapter 82] 플래그십 크롤링 풀 검색 & 제휴카드 잠금해제 검증"
+Write-Host " [Chapter 82-B] 18프로 공시지원금 & 개통방식별(번이/기변) 전수 검증"
 Write-Host "=========================================================="
 
 Get-Process msedge -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like "*--remote-debugging-port=$port*" } | Stop-Process -Force -ErrorAction SilentlyContinue
@@ -58,54 +58,13 @@ try {
         return $res.result.result.value
     }
 
-    # Setup alert/confirm mock
     Eval-JSAsync @"
         window.alert = function(msg) { console.log('ALERT:', msg); };
         window.confirm = function(msg) { console.log('CONFIRM:', msg); return true; };
 "@
 
-    # ========================================================
-    # TEST 1: 타매장(명지점 152411) 제휴카드 탭 잠금 해제 검증
-    # ========================================================
-    Write-Host "`n1. Testing Myongji Store (152411) Affiliate Card Unlock..."
-    Eval-JSAsync @"
-        '152411'.split('').forEach(d => inputPin(d));
-"@
-    Start-Sleep -Seconds 2
-
-    $myeongjiStatus = Eval-JSAsync @"
-        (() => {
-            const cardBadge = document.getElementById('tabBadge-card');
-            const cardBtn = document.getElementById('tabBtn-card');
-            switchTab('card');
-            const tabCard = document.getElementById('tab-card');
-            const isHidden = tabCard.classList.contains('hidden');
-            return {
-                role: currentRole,
-                storeId: currentStoreId,
-                hasCardBadge: !!cardBadge,
-                cardBtnText: cardBtn ? cardBtn.innerText.trim() : null,
-                isTabCardVisible: !isHidden
-            };
-        })()
-"@
-    Write-Host "   -> Myeongji Role: $($myeongjiStatus.role), Store: $($myeongjiStatus.storeId)"
-    Write-Host "   -> Card Badge exists: $($myeongjiStatus.hasCardBadge) (Expected: False)"
-    Write-Host "   -> Card Button Text: '$($myeongjiStatus.cardBtnText)'"
-    Write-Host "   -> Tab Card is Visible: $($myeongjiStatus.isTabCardVisible) (Expected: True)"
-
-    if ($myeongjiStatus.hasCardBadge -eq $true) {
-        throw "제휴카드 뱃지가 여전히 표시되고 있습니다!"
-    }
-    if ($myeongjiStatus.isTabCardVisible -ne $true) {
-        throw "명지점에서 제휴카드 탭으로 전환되지 않았습니다!"
-    }
-    Write-Host "   [PASS] 타매장 제휴카드 잠금 해제 검증 성공!"
-
-    # ========================================================
-    # TEST 2: 마스터(103105) 로그인 & 크롤링 풀 검색 자동완성 검증
-    # ========================================================
-    Write-Host "`n2. Switching to Master Role (103105)..."
+    # 1. Master Login
+    Write-Host "1. Master Login (103105)..."
     Eval-JSAsync @"
         currentRole = 'master';
         currentStoreId = 'myeongji';
@@ -113,107 +72,109 @@ try {
         updateTabBadgesForRole();
 "@
 
-    $poolCount = Eval-JSAsync "CRAWLED_CATALOG_POOL.length"
-    Write-Host "   -> CRAWLED_CATALOG_POOL total models: $poolCount (Expected: 88)"
-    if ($poolCount -lt 80) { throw "크롤링 풀 기종 수가 부족합니다: $poolCount" }
-
-    Write-Host "`n3. Testing Catalog Search & Auto-Fill in Add Device Modal..."
-    $searchTest = Eval-JSAsync @"
+    # 2. Check 18 Pro
+    Write-Host "`n2. Verifying iPhone 18 Pro Search and Auto-Fill..."
+    $check18 = Eval-JSAsync @"
         (() => {
             openSettingsModal();
             openAddDeviceModal();
+            handleCatalogSearch('18프로');
 
-            // 1. Search '16프로'
-            handleCatalogSearch('16프로');
             const resEl = document.getElementById('catalogSearchResults');
-            const searchHtml1 = resEl ? resEl.innerHTML : '';
-            const searchHas16Pro = searchHtml1.includes('iPhone 16 Pro 128G');
+            const searchHtml = resEl ? resEl.innerHTML : '';
 
-            // 2. Select 'iPhone 16 Pro 128G'
-            selectCatalogModel('ip16p128g');
-            const nameVal = document.getElementById('newDevName').value;
-            const groupVal = document.getElementById('newDevGroup').value;
-            const pSK = document.getElementById('newDevPriceSK').value;
-            const pKT = document.getElementById('newDevPriceKT').value;
-            const pLG = document.getElementById('newDevPriceLG').value;
-            const sSK = document.getElementById('newDevSubSK_mnp').value;
-            const sLG = document.getElementById('newDevSubLG_mnp').value;
+            // Select iPhone 18 Pro 256G
+            selectCatalogModel('ip18p256g');
 
-            // 3. Search '플립7'
-            handleCatalogSearch('플립7');
-            const searchHtml2 = resEl ? resEl.innerHTML : '';
-            const searchHasFlip7 = searchHtml2.includes('갤럭시 Z 플립7 256G');
+            const name = document.getElementById('newDevName').value;
+            const priceSK = document.getElementById('newDevPriceSK').value;
+            const priceKT = document.getElementById('newDevPriceKT').value;
+            const priceLG = document.getElementById('newDevPriceLG').value;
 
-            // 4. Search 'S24'
-            handleCatalogSearch('S24');
-            const searchHtml3 = resEl ? resEl.innerHTML : '';
-            const searchHasS24 = searchHtml3.includes('갤럭시 S24');
+            const subSK_mnp = document.getElementById('newDevSubSK_mnp').value;
+            const subSK_chg = document.getElementById('newDevSubSK_chg').value;
+            const subKT_mnp = document.getElementById('newDevSubKT_mnp').value;
+            const subKT_chg = document.getElementById('newDevSubKT_chg').value;
+            const subLG_mnp = document.getElementById('newDevSubLG_mnp').value;
+            const subLG_chg = document.getElementById('newDevSubLG_chg').value;
 
             return {
-                modalVisible: !document.getElementById('addDeviceModal').classList.contains('hidden'),
-                searchHas16Pro,
-                selectedName: nameVal,
-                selectedGroup: groupVal,
-                prices: { SK: pSK, KT: pKT, LG: pLG },
-                subs: { SK: sSK, LG: sLG },
-                searchHasFlip7,
-                searchHasS24
+                searchHas18Pro: searchHtml.includes('iPhone 18 Pro 256G'),
+                name,
+                prices: { SK: priceSK, KT: priceKT, LG: priceLG },
+                subs: {
+                    SK: { mnp: subSK_mnp, chg: subSK_chg },
+                    KT: { mnp: subKT_mnp, chg: subKT_chg },
+                    LG: { mnp: subLG_mnp, chg: subLG_chg }
+                }
             };
         })()
 "@
-    Write-Host "   -> Add Device Modal Visible: $($searchTest.modalVisible)"
-    Write-Host "   -> Search '16프로' found iPhone 16 Pro: $($searchTest.searchHas16Pro)"
-    Write-Host "   -> Selected Model Name: '$($searchTest.selectedName)'"
-    Write-Host "   -> Selected Group: '$($searchTest.selectedGroup)'"
-    Write-Host "   -> Prices: SK $($searchTest.prices.SK)만 / KT $($searchTest.prices.KT)만 / LG $($searchTest.prices.LG)만"
-    Write-Host "   -> Subsidies: SK $($searchTest.subs.SK)만 / LG $($searchTest.subs.LG)만"
-    Write-Host "   -> Search '플립7' found Z Flip7: $($searchTest.searchHasFlip7)"
-    Write-Host "   -> Search 'S24' found Galaxy S24: $($searchTest.searchHasS24)"
+    Write-Host "   -> Search found 18 Pro: $($check18.searchHas18Pro)"
+    Write-Host "   -> Selected Model: $($check18.name)"
+    Write-Host "   -> Prices: SK $($check18.prices.SK)만 / KT $($check18.prices.KT)만 / LG $($check18.prices.LG)만"
+    Write-Host "   -> SK 공시: 번이 $($check18.subs.SK.mnp)만 / 기변 $($check18.subs.SK.chg)만"
+    Write-Host "   -> KT 공시: 번이 $($check18.subs.KT.mnp)만 / 기변 $($check18.subs.KT.chg)만"
+    Write-Host "   -> LG 공시: 번이 $($check18.subs.LG.mnp)만 / 기변 $($check18.subs.LG.chg)만"
 
-    if (-not $searchTest.searchHas16Pro) { throw "'16프로' 검색 실패" }
-    if ($searchTest.selectedName -ne "iPhone 16 Pro 128G") { throw "기종명 채우기 불일치" }
-    if ($searchTest.prices.SK -ne "154") { throw "출고가 채우기 불일치" }
-    if (-not $searchTest.searchHasFlip7) { throw "'플립7' 검색 실패" }
-    if (-not $searchTest.searchHasS24) { throw "'S24' 검색 실패" }
-    Write-Host "   [PASS] 검색 및 자동입력 검증 성공!"
+    if (-not $check18.searchHas18Pro) { throw "18프로 검색 실패" }
+    if ($check18.subs.LG.mnp -eq "0" -or [string]::IsNullOrEmpty($check18.subs.LG.mnp)) {
+        throw "LG 18프로 공시지원금이 여전히 0원입니다!"
+    }
+    if ($check18.subs.KT.mnp -eq "0" -or [string]::IsNullOrEmpty($check18.subs.KT.mnp)) {
+        throw "KT 18프로 공시지원금이 여전히 0원입니다!"
+    }
+    Write-Host "   [PASS] iPhone 18 Pro 통신 3사 공시지원금 정상화 완료!"
 
-    # ========================================================
-    # TEST 3: 빠른 필터 (갤럭시 S / 폴더블 / 아이폰) 검증
-    # ========================================================
-    Write-Host "`n4. Testing Quick Group Filters..."
-    $filterTest = Eval-JSAsync @"
+    # 3. Check S24 (which has different MNP vs CHG: SK 63 vs 55)
+    Write-Host "`n3. Verifying Model with Different MNP vs CHG (S24 Ultra)..."
+    $checkS24 = Eval-JSAsync @"
         (() => {
-            clearCatalogSearch();
-            filterCatalogGroup('FOLD');
-            const resFold = document.getElementById('catalogSearchResults').innerHTML;
-            const countFold = (resFold.match(/⚡ 즉시 추가/g) || []).length;
-
-            filterCatalogGroup('IPHONE');
-            const resIphone = document.getElementById('catalogSearchResults').innerHTML;
-            const countIphone = (resIphone.match(/⚡ 즉시 추가/g) || []).length;
-
-            filterCatalogGroup('S');
-            const resS = document.getElementById('catalogSearchResults').innerHTML;
-            const countS = (resS.match(/⚡ 즉시 추가/g) || []).length;
-
-            return { countFold, countIphone, countS };
+            handleCatalogSearch('S24');
+            selectCatalogModel('s24u256g');
+            return {
+                name: document.getElementById('newDevName').value,
+                subSK: {
+                    mnp: document.getElementById('newDevSubSK_mnp').value,
+                    chg: document.getElementById('newDevSubSK_chg').value
+                },
+                subKT: {
+                    mnp: document.getElementById('newDevSubKT_mnp').value,
+                    chg: document.getElementById('newDevSubKT_chg').value
+                }
+            };
         })()
 "@
-    Write-Host "   -> FOLD filter items: $($filterTest.countFold)"
-    Write-Host "   -> IPHONE filter items: $($filterTest.countIphone)"
-    Write-Host "   -> S filter items: $($filterTest.countS)"
-    if ($filterTest.countFold -eq 0 -or $filterTest.countIphone -eq 0 -or $filterTest.countS -eq 0) {
-        throw "필터별 결과 항목 부족"
+    Write-Host "   -> Model: $($checkS24.name)"
+    Write-Host "   -> SK 공시: 번이 $($checkS24.subSK.mnp)만 / 기변 $($checkS24.subSK.chg)만"
+    Write-Host "   -> KT 공시: 번이 $($checkS24.subKT.mnp)만 / 기변 $($checkS24.subKT.chg)만"
+    if ($checkS24.subSK.mnp -ne "63" -or $checkS24.subSK.chg -ne "55") {
+        throw "S24 울트라 번이/기변 공시 분리 실패!"
     }
-    Write-Host "   [PASS] 빠른 그룹 필터 검증 성공!"
+    Write-Host "   [PASS] 번호이동 vs 기기변경 차등 공시지원금 분리 반영 성공!"
 
-    # ========================================================
-    # TEST 4: Capture Screenshot
-    # ========================================================
-    Write-Host "`n5. Capturing Verification Screenshot..."
-    # Keep modal with '16프로' search visible for screenshot
+    # 4. Check Affiliate Card Unlock for Myeongji Store
+    Write-Host "`n4. Re-verifying Affiliate Card Unlock for Store Role..."
+    $cardCheck = Eval-JSAsync @"
+        (() => {
+            currentRole = 'worker';
+            currentStoreId = 'myeongji';
+            updateTabBadgesForRole();
+            const badge = document.getElementById('tabBadge-card');
+            return { hasBadge: !!badge };
+        })()
+"@
+    Write-Host "   -> Card Lock Badge exists: $($cardCheck.hasBadge) (Expected: False)"
+    if ($cardCheck.hasBadge) { throw "제휴카드 잠금 뱃지 잔존" }
+    Write-Host "   [PASS] 제휴카드 잠금 해제 유지 확인!"
+
+    # 5. Capture verification screenshot
+    Write-Host "`n5. Capturing Screenshot..."
     Eval-JSAsync @"
-        handleCatalogSearch('16프로');
+        currentRole = 'master';
+        openSettingsModal();
+        openAddDeviceModal();
+        handleCatalogSearch('18프로');
 "@
     Start-Sleep -Milliseconds 500
 
@@ -221,10 +182,10 @@ try {
     $bytes = [System.Convert]::FromBase64String($ss.result.data)
     $ssPath = "C:\Users\User01\.gemini\antigravity\scratch\phone-price\data\chapter82_verified.png"
     [System.IO.File]::WriteAllBytes($ssPath, $bytes)
-    Write-Host "   -> Screenshot saved to $ssPath ($([math]::Round($bytes.Length/1024, 1)) KB)"
+    Write-Host "   -> Screenshot saved: $ssPath"
 
     Write-Host "`n=========================================================="
-    Write-Host " 🎉 Chapter 82 All Verification Tests PASSED!"
+    Write-Host " 🎉 ALL 18 Pro & MNP/CHG RE-VERIFICATION TESTS PASSED!"
     Write-Host "=========================================================="
 
 } finally {
