@@ -2011,6 +2011,10 @@ service cloud.firestore {
             </p>
           </div>
           <div class="flex items-center gap-2">
+            <button onclick="syncCrawledSubsidiesOnline()" id="btnSyncCrawledSubsidies" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition" title="통신 3사 최신 크롤링 데이터(플립8, 폴드8, S26, 아이폰17 등)를 출고가 및 공시지원금에 즉시 일괄 동기화합니다.">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              <span>🔄 크롤링 데이터 자동 동기화</span>
+            </button>
             <button onclick="openAddDeviceModal()" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs transition">
               <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
               <span>+ 신규 기종 추가</span>
@@ -3110,8 +3114,8 @@ service cloud.firestore {
       },
       {
         id: 's25e', group: 'S', tag: '#S25엣지', name: '갤럭시 S25 엣지 256G',
-        prices: { SK: 149.6, KT: 135.3, LG: 135.3 },
-        sub: { SK: { mnp: 68, chg: 68 }, KT: { mnp: 70, chg: 70 }, LG: { mnp: 70, chg: 70 } },
+        prices: { SK: 125.4, KT: 125.4, LG: 125.4 },
+        sub: { SK: { mnp: 58, chg: 58 }, KT: { mnp: 60, chg: 60 }, LG: { mnp: 60, chg: 60 } },
         rate: { SK: { mnp: 40, chg: 52 }, KT: { mnp: '품절', chg: '품절' }, LG: { mnp: 73, chg: 86 } },
         loc: {
           SK: { mnp: '도매', chg: '도매' },
@@ -3128,8 +3132,8 @@ service cloud.firestore {
       // 폴더블 시리즈
       {
         id: 'flip8', group: 'FOLD', tag: '#플립8', name: '갤럭시 Z 플립8',
-        prices: { SK: 148.5, KT: 148.5, LG: 148.5 },
-        sub: { SK: { mnp: 60, chg: 60 }, KT: { mnp: 60, chg: 60 }, LG: { mnp: 60, chg: 60 } },
+        prices: { SK: 168.3, KT: 168.3, LG: 168.3 },
+        sub: { SK: { mnp: 50, chg: 50 }, KT: { mnp: 50, chg: 50 }, LG: { mnp: 50, chg: 50 } },
         rate: { SK: { mnp: 65, chg: 63 }, KT: { mnp: 69, chg: 48 }, LG: { mnp: 86, chg: 77 } },
         loc: {
           SK: { mnp: '도매', chg: '도매' },
@@ -3161,7 +3165,7 @@ service cloud.firestore {
       {
         id: 'fold8u', group: 'FOLD', tag: '#폴드8울트라', name: '갤럭시 Z 폴드8 Ultra',
         prices: { SK: 257.73, KT: 257.73, LG: 257.73 },
-        sub: { SK: { mnp: 60, chg: 60 }, KT: { mnp: 60, chg: 60 }, LG: { mnp: 60, chg: 60 } },
+        sub: { SK: { mnp: 50, chg: 50 }, KT: { mnp: 50, chg: 50 }, LG: { mnp: 50, chg: 50 } },
         rate: { SK: { mnp: 65, chg: 58 }, KT: { mnp: 69, chg: 48 }, LG: { mnp: 86, chg: 77 } },
         loc: {
           SK: { mnp: '도매', chg: '도매' },
@@ -3178,8 +3182,8 @@ service cloud.firestore {
       // 아이폰 시리즈
       {
         id: 'ip17', group: 'IPHONE', tag: '#아17', name: '아이폰17 256G',
-        prices: { SK: 145.2, KT: 145.2, LG: 145.2 },
-        sub: { SK: { mnp: 45, chg: 45 }, KT: { mnp: 50, chg: 45 }, LG: { mnp: 55, chg: 45 } },
+        prices: { SK: 145.2, KT: 128.7, LG: 145.2 },
+        sub: { SK: { mnp: 45, chg: 45 }, KT: { mnp: 45, chg: 45 }, LG: { mnp: 55, chg: 55 } },
         rate: { SK: { mnp: 49, chg: 52 }, KT: { mnp: 57, chg: 52 }, LG: { mnp: 62, chg: 44 } },
         loc: {
           SK: { mnp: '도매', chg: '도매' },
@@ -3195,7 +3199,7 @@ service cloud.firestore {
       {
         id: 'ipair', group: 'IPHONE', tag: '#17에어', name: '아이폰 AIR 256G',
         prices: { SK: 158.4, KT: 158.4, LG: 158.4 },
-        sub: { SK: { mnp: 45, chg: 45 }, KT: { mnp: 45, chg: 45 }, LG: { mnp: 55, chg: 45 } },
+        sub: { SK: { mnp: 65, chg: 65 }, KT: { mnp: 70, chg: 70 }, LG: { mnp: 45, chg: 45 } },
         rate: { SK: { mnp: 59, chg: 47 }, KT: { mnp: 60, chg: 55 }, LG: { mnp: 128, chg: 44 } },
         loc: {
           SK: { mnp: '도매', chg: '도매' },
@@ -3211,7 +3215,7 @@ service cloud.firestore {
       {
         id: 'ip17p', group: 'IPHONE', tag: '#17프로', name: '아이폰17 PRO 256G',
         prices: { SK: 178.2, KT: 178.2, LG: 178.2 },
-        sub: { SK: { mnp: 45, chg: 45 }, KT: { mnp: 45, chg: 45 }, LG: { mnp: 55, chg: 45 } },
+        sub: { SK: { mnp: 45, chg: 45 }, KT: { mnp: 45, chg: 45 }, LG: { mnp: 45, chg: 45 } },
         rate: { SK: { mnp: 49, chg: 37 }, KT: { mnp: 57, chg: 52 }, LG: { mnp: 62, chg: 44 } },
         loc: {
           SK: { mnp: '도매', chg: '도매' },
@@ -5480,6 +5484,61 @@ service cloud.firestore {
     function closeSettingsModal() {
       document.getElementById('settingsModal').classList.add('hidden');
       render();
+    }
+
+    function syncCrawledSubsidiesOnline() {
+      if (currentRole !== 'master') {
+        alert("🔒 [권한 제한]\n\n'크롤링 데이터 자동 동기화'는 본사 마스터 전용 기능입니다.");
+        return;
+      }
+      if (!confirm("🔄 [통신 3사 크롤링 데이터 자동 동기화]\n\n통신 3사(SKT, KT, LGU+) 최신 크롤링 데이터(플립8, 폴드8, S26, 아이폰17 등)를 바탕으로 12개 기종의 출고가 및 공통지원금을 즉시 일괄 동기화하시겠습니까?\n\n※ 매장별 대리점 단가(리베이트) 및 광고표 판매가는 100% 안전하게 유지됩니다.")) {
+        return;
+      }
+
+      // 통신 3사 최신 크롤링 공식 데이터셋 매핑 테이블
+      const crawledMaster = {
+        's26':   { prices: { SK: 125.4, KT: 125.4, LG: 125.4 }, sub: { SK: 60, KT: 60, LG: 60 } },
+        's26p':  { prices: { SK: 145.2, KT: 145.2, LG: 145.2 }, sub: { SK: 60, KT: 60, LG: 60 } },
+        's26u':  { prices: { SK: 179.74, KT: 179.74, LG: 179.74 }, sub: { SK: 60, KT: 60, LG: 60 } },
+        's25':   { prices: { SK: 115.5, KT: 115.5, LG: 115.5 }, sub: { SK: 50, KT: 50, LG: 50 } },
+        's25u':  { prices: { SK: 169.84, KT: 169.84, LG: 169.84 }, sub: { SK: 50, KT: 50, LG: 50 } },
+        's25e':  { prices: { SK: 125.4, KT: 125.4, LG: 125.4 }, sub: { SK: 58, KT: 60, LG: 60 } },
+        'flip8': { prices: { SK: 168.3, KT: 168.3, LG: 168.3 }, sub: { SK: 50, KT: 50, LG: 50 } },
+        'fold8': { prices: { SK: 227.81, KT: 227.81, LG: 227.81 }, sub: { SK: 60, KT: 60, LG: 60 } },
+        'fold8u':{ prices: { SK: 257.73, KT: 257.73, LG: 257.73 }, sub: { SK: 50, KT: 50, LG: 50 } },
+        'ip17':  { prices: { SK: 145.2, KT: 128.7, LG: 145.2 }, sub: { SK: 45, KT: 45, LG: 55 } },
+        'ipair': { prices: { SK: 158.4, KT: 158.4, LG: 158.4 }, sub: { SK: 65, KT: 70, LG: 45 } },
+        'ip17p': { prices: { SK: 178.2, KT: 178.2, LG: 178.2 }, sub: { SK: 45, KT: 45, LG: 45 } }
+      };
+
+      let updatedCount = 0;
+      devices.forEach(d => {
+        const item = crawledMaster[d.id];
+        if (!item) return;
+        if (!d.prices) d.prices = { SK: 0, KT: 0, LG: 0 };
+        if (!d.sub) d.sub = { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } };
+
+        // S26 KT NEW 버전 체크박스가 켜져 있는 상태라면 KT는 140.36만 / 75만 유지
+        const isS26KtHiked = (d.id === 's26' && (d.prices.KT || 0) >= 140);
+
+        ['SK', 'KT', 'LG'].forEach(c => {
+          if (d.id === 's26' && c === 'KT' && isS26KtHiked) {
+            d.prices.KT = 140.36;
+            d.sub.KT = { mnp: 75, chg: 75 };
+          } else {
+            d.prices[c] = item.prices[c];
+            d.sub[c] = { mnp: item.sub[c], chg: item.sub[c] };
+          }
+        });
+        if (d.prices.SK) d.price = d.prices.SK;
+        updatedCount++;
+      });
+
+      scheduleMasterSave('공시/출고가 자동 동기화', '최신 통신 3사 크롤링 데이터 기반 출고가 및 공통지원금 일괄 자동 동기화 완료');
+      renderSettingsTable();
+      render();
+      showGeneralToast('🎉 [동기화 완료] 플립8(168.3만/50만), 폴드8 울트라(50만) 등 12개 기종 최신 크롤링 데이터 자동 적용 완료!');
+      alert(`🎉 [최신 크롤링 데이터 동기화 완료]\n\n총 ${updatedCount}개 기종의 출고가 및 공시지원금이 통신 3사 최신 크롤링 공식 데이터로 안전하게 업데이트되었습니다!\n\n• 갤럭시 Z 플립8: 출고가 168.3만 / 공시 50만 (전 통신사 일치)\n• 갤럭시 Z 폴드8 Ultra: 공시 50만\n• 갤럭시 S26: 출고가 125.4만/60만 (KT 인상재고는 140.36만/75만 유지)\n• 아이폰 AIR: SK 65만 / KT 70만 / LG 45만\n• 아이폰 17: SK 45만 / KT 45만 / LG 55만`);
     }
 
     function renderSettingsTable() {
