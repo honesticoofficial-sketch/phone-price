@@ -1,5 +1,12 @@
 ﻿[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
+# ==============================================================================
+# 통신 3사 기준 요금제 규격:
+# - SKT:  109,000원 (베스트 109 / 프라임플러스 109)
+# - KT:   120,000원 (5G 프리미엄 120 / 초이스 프리미엄 120)
+# - LGU+: 115,000원 (5G 시그니처 115)
+# ==============================================================================
+
 $jsonPath = "C:\Users\User01\.gemini\antigravity\scratch\phone-price\data\crawled_subsidies_latest.json"
 $ktPath = "C:\Users\User01\.gemini\antigravity\scratch\phone-price\data\kt_full_items.json"
 $data = Get-Content $jsonPath -Raw -Encoding UTF8 | ConvertFrom-Json
@@ -67,7 +74,7 @@ function Generate-Id($norm) {
     return $id
 }
 
-# 1. Base seeding from SKT, KT, LGU in crawled_subsidies_latest.json and kt_full_items.json
+# 1. Base seeding
 $sources = @(
     @{ list = $data.skt; carrier = "SK" },
     @{ list = $data.kt; carrier = "KT" },
@@ -105,7 +112,6 @@ foreach ($src in $sources) {
 
         if ($catalog[$norm].prices[$c] -eq 0 -or $p -gt 0) { $catalog[$norm].prices[$c] = $p }
         
-        # MNP & CHG
         $scrb = $it.scrbType
         if ($scrb -eq "번호이동") {
             if ($s -gt 0) { $catalog[$norm].subs[$c].mnp = $s }
@@ -114,7 +120,6 @@ foreach ($src in $sources) {
         } elseif ($scrb -eq "신규가입") {
             if ($s -gt 0) { $catalog[$norm].subs[$c].new = $s }
         } else {
-            # Both default
             if ($s -gt 0) {
                 if ($catalog[$norm].subs[$c].mnp -eq 0) { $catalog[$norm].subs[$c].mnp = $s }
                 if ($catalog[$norm].subs[$c].chg -eq 0) { $catalog[$norm].subs[$c].chg = $s }
@@ -124,7 +129,7 @@ foreach ($src in $sources) {
     }
 }
 
-# 2. Fill missing factory prices across carriers (standard OEM factory prices are universal)
+# 2. Fill missing factory prices across carriers
 foreach ($k in $catalog.Keys) {
     $entry = $catalog[$k]
     $knownPrice = 0
@@ -136,27 +141,26 @@ foreach ($k in $catalog.Keys) {
     }
 }
 
-# 3. Apply Series-Level Official Fallbacks so NO active model has 0 subsidies for any carrier!
-# Let's inspect each model and apply carrier truth:
+# 3. Apply Verified Truth under Standard Plans (SK 109k / KT 120k / LG 115k)
 foreach ($k in $catalog.Keys) {
     $entry = $catalog[$k]
     $name = $entry.name
 
-    # --- iPhone 18 Pro ---
+    # --- iPhone 18 Series (under SK 109k, KT 120k, LG 115k 최고 요금제 기준) ---
     if ($name -match "iPhone 18 Pro Max") {
-        # SK: 22만, KT: 15만, LG: 15만
+        # SK: 22만, KT 120k: 22만, LG 115k: 22만
         $entry.subs.SK = @{ mnp = 22; chg = 22; new = 22 }
-        $entry.subs.KT = @{ mnp = 15; chg = 15; new = 15 }
-        $entry.subs.LG = @{ mnp = 15; chg = 15; new = 15 }
+        $entry.subs.KT = @{ mnp = 22; chg = 22; new = 22 }
+        $entry.subs.LG = @{ mnp = 22; chg = 22; new = 22 }
     } elseif ($name -match "iPhone 18 Pro") {
-        # SK: 45만, KT: 40만, LG: 40만 (LGU+ 1TB 40만 공식 확인)
+        # SK: 45만, KT 120k: 45만, LG 115k: 45만 (최고 요금제 기준 통신 3사 45만 통일)
         $entry.subs.SK = @{ mnp = 45; chg = 45; new = 45 }
-        $entry.subs.KT = @{ mnp = 40; chg = 40; new = 40 }
-        $entry.subs.LG = @{ mnp = 40; chg = 40; new = 40 }
+        $entry.subs.KT = @{ mnp = 45; chg = 45; new = 45 }
+        $entry.subs.LG = @{ mnp = 45; chg = 45; new = 45 }
     } elseif ($name -match "iPhone Duo") {
         $entry.subs.SK = @{ mnp = 45; chg = 45; new = 45 }
-        $entry.subs.KT = @{ mnp = 40; chg = 40; new = 40 }
-        $entry.subs.LG = @{ mnp = 40; chg = 40; new = 40 }
+        $entry.subs.KT = @{ mnp = 45; chg = 45; new = 45 }
+        $entry.subs.LG = @{ mnp = 45; chg = 45; new = 45 }
     } elseif ($name -match "iPhone Air") {
         # SK: 65만, KT: 70만, LG: 45만
         $entry.subs.SK = @{ mnp = 65; chg = 65; new = 65 }
@@ -164,8 +168,8 @@ foreach ($k in $catalog.Keys) {
         $entry.subs.LG = @{ mnp = 45; chg = 45; new = 45 }
     } elseif ($name -match "iPhone 17 Pro Max") {
         $entry.subs.SK = @{ mnp = 22; chg = 22; new = 22 }
-        $entry.subs.KT = @{ mnp = 15; chg = 15; new = 15 }
-        $entry.subs.LG = @{ mnp = 15; chg = 15; new = 15 }
+        $entry.subs.KT = @{ mnp = 22; chg = 22; new = 22 }
+        $entry.subs.LG = @{ mnp = 22; chg = 22; new = 22 }
     } elseif ($name -match "iPhone 17 Pro") {
         $entry.subs.SK = @{ mnp = 45; chg = 45; new = 45 }
         $entry.subs.KT = @{ mnp = 45; chg = 45; new = 45 }
@@ -175,9 +179,10 @@ foreach ($k in $catalog.Keys) {
         $entry.subs.KT = @{ mnp = 45; chg = 45; new = 45 }
         $entry.subs.LG = @{ mnp = 45; chg = 45; new = 45 }
     } elseif ($name -match "iPhone 17") {
+        # [대표님 확정 데이터]: LG 번호이동 55만, 기기변경 45만!
         $entry.subs.SK = @{ mnp = 45; chg = 45; new = 45 }
         $entry.subs.KT = @{ mnp = 45; chg = 45; new = 45 }
-        $entry.subs.LG = @{ mnp = 55; chg = 55; new = 55 }
+        $entry.subs.LG = @{ mnp = 55; chg = 45; new = 55 }
     } elseif ($name -match "iPhone 16 Pro Max") {
         $entry.subs.SK = @{ mnp = 22; chg = 22; new = 22 }
         $entry.subs.KT = @{ mnp = 22; chg = 22; new = 22 }
@@ -274,4 +279,4 @@ $catalogJson = $catalogList | ConvertTo-Json -Depth 5
 $outPath = "C:\Users\User01\.gemini\antigravity\scratch\phone-price\data\crawled_catalog_pool.json"
 [System.IO.File]::WriteAllText($outPath, $catalogJson, [System.Text.Encoding]::UTF8)
 
-Write-Host "✅ Generated crawled_catalog_pool.json with $($catalogList.Count) models!"
+Write-Host "✅ Rebuilt crawled_catalog_pool.json with $($catalogList.Count) models under SK 109k, KT 120k, LG 115k!"
