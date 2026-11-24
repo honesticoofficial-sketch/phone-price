@@ -2537,6 +2537,69 @@
                     "factoryPrice":  2893000,
                     "subsidy":  400000,
                     "date":  "2026-09-12"
+                },
+                {
+                    "manufacturer":  "Apple",
+                    "carrier":  "LGU+",
+                    "date":  "2026-09-12",
+                    "factoryPrice":  2200000,
+                    "model":  "iPhone 18 Pro Max 256GB UIP18PM-256",
+                    "scrbType":  "",
+                    "subsidy":  168000
+                },
+                {
+                    "manufacturer":  "Apple",
+                    "carrier":  "LGU+",
+                    "date":  "2026-09-12",
+                    "factoryPrice":  2497000,
+                    "model":  "iPhone 18 Pro Max 512GB UIP18PM-512",
+                    "scrbType":  "",
+                    "subsidy":  168000
+                },
+                {
+                    "manufacturer":  "Apple",
+                    "carrier":  "LGU+",
+                    "date":  "2026-09-12",
+                    "factoryPrice":  3091000,
+                    "model":  "iPhone 18 Pro Max 1TB UIP18PM-1T",
+                    "scrbType":  "",
+                    "subsidy":  168000
+                },
+                {
+                    "manufacturer":  "Apple",
+                    "carrier":  "LGU+",
+                    "date":  "2026-09-12",
+                    "factoryPrice":  3993000,
+                    "model":  "iPhone 18 Pro Max 2TB UIP18PM-2T",
+                    "scrbType":  "",
+                    "subsidy":  168000
+                },
+                {
+                    "manufacturer":  "Apple",
+                    "carrier":  "LGU+",
+                    "date":  "2026-09-12",
+                    "factoryPrice":  1991000,
+                    "model":  "iPhone 18 Pro 256GB UIP18PR-256",
+                    "scrbType":  "",
+                    "subsidy":  450000
+                },
+                {
+                    "manufacturer":  "Apple",
+                    "carrier":  "LGU+",
+                    "date":  "2026-09-12",
+                    "factoryPrice":  2299000,
+                    "model":  "iPhone 18 Pro 512GB UIP18PR-512",
+                    "scrbType":  "",
+                    "subsidy":  450000
+                },
+                {
+                    "manufacturer":  "Apple",
+                    "carrier":  "LGU+",
+                    "date":  "2026-09-12",
+                    "factoryPrice":  3795000,
+                    "model":  "iPhone 18 Pro 2TB UIP18PR-2T",
+                    "scrbType":  "",
+                    "subsidy":  450000
                 }
             ]
 }

@@ -475,7 +475,7 @@
               <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">요금제 :</span>
               <input type="text" id="cond-SK-plan" onfocus="this.select()" onchange="updateCarrierCondition('SK', 'plan', this.value)"
                      class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-rose-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
-                     placeholder="예: 109,000원 6개월" />
+                     placeholder="예: 베스트109 (109,000원 6개월)" />
             </div>
             <div class="flex items-center gap-1.5">
               <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">부가1 :</span>
@@ -533,7 +533,7 @@
               <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">요금제 :</span>
               <input type="text" id="cond-KT-plan" onfocus="this.select()" onchange="updateCarrierCondition('KT', 'plan', this.value)"
                      class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-blue-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
-                     placeholder="예: 110,000원 6개월" />
+                     placeholder="예: 초이스더블 (120,000원 6개월)" />
             </div>
             <div class="flex items-center gap-1.5">
               <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">부가1 :</span>
@@ -591,7 +591,7 @@
               <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">요금제 :</span>
               <input type="text" id="cond-LG-plan" onfocus="this.select()" onchange="updateCarrierCondition('LG', 'plan', this.value)"
                      class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-pink-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
-                     placeholder="예: 105,000원 6개월" />
+                     placeholder="예: 프리미어슈퍼 (115,000원 6개월)" />
             </div>
             <div class="flex items-center gap-1.5">
               <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">부가1 :</span>
@@ -1240,7 +1240,7 @@
                 </tr>
                 <tr>
                   <td class="py-2 font-black text-pink-600 bg-pink-50/40 border-r border-slate-300 text-center align-middle" contenteditable="false" onblur="saveAdPosterSettings(false)">LG</td>
-                  <td class="py-2 border-r border-slate-300 text-slate-900 font-black text-center align-middle" contenteditable="false" onblur="saveAdPosterSettings(false)">플러스플랜 115</td>
+                  <td class="py-2 border-r border-slate-300 text-slate-900 font-black text-center align-middle" contenteditable="false" onblur="saveAdPosterSettings(false)">프리미어 슈퍼</td>
                   <td class="py-2 border-r border-slate-300 text-center align-middle" contenteditable="false" onblur="saveAdPosterSettings(false)">115,000원 / 86,250원</td>
                   <td class="py-2 border-r border-slate-300 bg-slate-50 text-[11px] sm:text-xs font-bold leading-tight text-center align-middle" contenteditable="false" onblur="saveAdPosterSettings(false)">공통지원금 186일 / 선택약정 186일</td>
                   <td class="poster-ui-action poster-delete-col py-1 px-1 border-b border-slate-200 text-center align-middle">
@@ -2259,6 +2259,15 @@ service cloud.firestore {
               </span>
             </div>
             
+            <div class="flex items-center gap-2 text-[10.5px] font-semibold text-slate-600 bg-white/80 border border-indigo-100 px-2.5 py-1 rounded-xl flex-wrap">
+              <span class="text-indigo-600 font-bold">📋 기준 요금제:</span>
+              <span>SKT 베스트109 (109,000원)</span>
+              <span class="text-slate-300">|</span>
+              <span>KT 초이스더블 (120,000원)</span>
+              <span class="text-slate-300">|</span>
+              <span>LGU+ 프리미어슈퍼 (115,000원)</span>
+            </div>
+            
             <div class="relative">
               <input type="text" id="catalogSearchInput" oninput="handleCatalogSearch(this.value)" placeholder="기종명을 검색하세요 (예: S24, 16프로, 플립7, 아이폰17, 폴드8, 엣지, S25+...)" class="w-full pl-3.5 pr-8 py-2.5 bg-white border border-indigo-300 rounded-xl font-bold text-slate-900 text-xs shadow-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
               <button type="button" onclick="clearCatalogSearch()" id="btnCatalogClear" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 font-bold text-xs flex items-center justify-center">&times;</button>
@@ -2945,10 +2954,10 @@ service cloud.firestore {
     })();
     let allAddDiscounts = { SK: 15, KT: 15, LG: 15 };
 
-    // 통신사별 상세 부가조건 (요금제, 부가1~4, 특이사항)
+    // 통신사별 상세 부가조건 (요금제, 부가1~4, 특이사항) - 대표님 지정 표준 요금제 동기화
     let carrierConditions = {
       SK: {
-        plan: "109,000원 6개월",
+        plan: "베스트109 (109,000원 6개월)",
         add1: "마이스마트콜 (M+1)",
         add2: "보험 (M+1)",
         add3: "",
@@ -2956,7 +2965,7 @@ service cloud.firestore {
         note: "18프로맥스 선약단가 공시적용기준"
       },
       KT: {
-        plan: "110,000원 6개월",
+        plan: "초이스더블 (120,000원 6개월)",
         add1: "필수팩 L (M+4)",
         add2: "폰 안심보험 (M+3)",
         add3: "",
@@ -2964,7 +2973,7 @@ service cloud.firestore {
         note: ""
       },
       LG: {
-        plan: "105,000원 6개월",
+        plan: "프리미어슈퍼 (115,000원 6개월)",
         add1: "교보sam+구글원 (95일)",
         add2: "V컬러링 (M+1)",
         add3: "폰교체패스 (M+1)",
@@ -2987,6 +2996,18 @@ service cloud.firestore {
           }
         }
       } catch (e) {}
+
+      // 대표님 지정 표준 요금제명 및 가격 자동 동기화 보정
+      if (carrierConditions.KT && (!carrierConditions.KT.plan || carrierConditions.KT.plan.includes('110,000'))) {
+        carrierConditions.KT.plan = "초이스더블 (120,000원 6개월)";
+      }
+      if (carrierConditions.LG && (!carrierConditions.LG.plan || carrierConditions.LG.plan.includes('105,000'))) {
+        carrierConditions.LG.plan = "프리미어슈퍼 (115,000원 6개월)";
+      }
+      if (carrierConditions.SK && (!carrierConditions.SK.plan || carrierConditions.SK.plan === "109,000원 6개월")) {
+        carrierConditions.SK.plan = "베스트109 (109,000원 6개월)";
+      }
+
       syncCarrierConditionInputs();
     }
 
@@ -5523,11 +5544,11 @@ service cloud.firestore {
         alert("🔒 [권한 제한]\n\n'크롤링 데이터 자동 동기화'는 본사 마스터 전용 기능입니다.");
         return;
       }
-      if (!confirm("🔄 [통신 3사 크롤링 데이터 자동 동기화]\n\n통신 3사(SKT, KT, LGU+) 최신 크롤링 데이터(플립8, 폴드8, S26, 아이폰17 등)를 바탕으로 12개 기종의 출고가 및 공통지원금을 즉시 일괄 동기화하시겠습니까?\n\n※ 매장별 대리점 단가(리베이트) 및 광고표 판매가는 100% 안전하게 유지됩니다.")) {
+      if (!confirm("🔄 [통신 3사 크롤링 데이터 자동 동기화]\n\n공식 기준 요금제 [SKT 베스트109(109,000원) · KT 초이스더블(120,000원) · LGU+ 프리미어슈퍼(115,000원)] 기반 최신 크롤링 데이터(플립8, 폴드8, S26, 아이폰17 등)를 바탕으로 12개 기종의 출고가 및 공통지원금을 즉시 일괄 동기화하시겠습니까?\n\n※ 매장별 대리점 단가(리베이트) 및 광고표 판매가는 100% 안전하게 유지됩니다.")) {
         return;
       }
 
-      // 통신 3사 최신 크롤링 공식 데이터셋 매핑 테이블
+      // 통신 3사 최신 크롤링 공식 데이터셋 매핑 테이블 (기준 요금제: SK 109k / KT 120k / LG 115k)
       const crawledMaster = {
         's26':   { prices: { SK: 125.4, KT: 125.4, LG: 125.4 }, sub: { SK: 60, KT: 60, LG: 60 } },
         's26p':  { prices: { SK: 145.2, KT: 145.2, LG: 145.2 }, sub: { SK: 60, KT: 60, LG: 60 } },
@@ -5538,7 +5559,7 @@ service cloud.firestore {
         'flip8': { prices: { SK: 168.3, KT: 168.3, LG: 168.3 }, sub: { SK: 50, KT: 50, LG: 50 } },
         'fold8': { prices: { SK: 227.81, KT: 227.81, LG: 227.81 }, sub: { SK: 60, KT: 60, LG: 60 } },
         'fold8u':{ prices: { SK: 257.73, KT: 257.73, LG: 257.73 }, sub: { SK: 50, KT: 50, LG: 50 } },
-        'ip17':  { prices: { SK: 145.2, KT: 128.7, LG: 145.2 }, sub: { SK: 45, KT: 45, LG: 55 } },
+        'ip17':  { prices: { SK: 145.2, KT: 128.7, LG: 145.2 }, sub: { SK: 45, KT: 45, LG: { mnp: 55, chg: 45 } } },
         'ipair': { prices: { SK: 158.4, KT: 158.4, LG: 158.4 }, sub: { SK: 65, KT: 70, LG: 45 } },
         'ip17p': { prices: { SK: 178.2, KT: 178.2, LG: 178.2 }, sub: { SK: 45, KT: 45, LG: 45 } }
       };
@@ -5559,7 +5580,12 @@ service cloud.firestore {
             d.sub.KT = { mnp: 75, chg: 75 };
           } else {
             d.prices[c] = item.prices[c];
-            d.sub[c] = { mnp: item.sub[c], chg: item.sub[c] };
+            const subVal = item.sub[c];
+            if (typeof subVal === 'object' && subVal !== null) {
+              d.sub[c] = { mnp: subVal.mnp, chg: subVal.chg };
+            } else {
+              d.sub[c] = { mnp: subVal, chg: subVal };
+            }
           }
         });
         if (d.prices.SK) d.price = d.prices.SK;
@@ -5657,7 +5683,7 @@ service cloud.firestore {
     }
 
     // 신규 기종 추가 및 삭제 관리 함수들
-                // ==================== 통신 3사 수집 크롤링 플래그십 기종 풀 (88종) ====================
+                    // ==================== 통신 3사 수집 크롤링 플래그십 기종 풀 (88종) ====================
     const CRAWLED_CATALOG_POOL = [
     {
         "id":  "ip15128g",
@@ -6425,14 +6451,14 @@ service cloud.firestore {
                    },
         "subs":  {
                      "KT":  {
-                                "mnp":  22,
-                                "new":  22,
-                                "chg":  22
+                                "mnp":  15,
+                                "new":  15,
+                                "chg":  15
                             },
                      "LG":  {
-                                "mnp":  22,
-                                "new":  22,
-                                "chg":  22
+                                "mnp":  15,
+                                "new":  15,
+                                "chg":  15
                             },
                      "SK":  {
                                 "mnp":  22,
@@ -6453,14 +6479,14 @@ service cloud.firestore {
                    },
         "subs":  {
                      "KT":  {
-                                "mnp":  22,
-                                "new":  22,
-                                "chg":  22
+                                "mnp":  15,
+                                "new":  15,
+                                "chg":  15
                             },
                      "LG":  {
-                                "mnp":  22,
-                                "new":  22,
-                                "chg":  22
+                                "mnp":  15,
+                                "new":  15,
+                                "chg":  15
                             },
                      "SK":  {
                                 "mnp":  22,
@@ -6481,14 +6507,14 @@ service cloud.firestore {
                    },
         "subs":  {
                      "KT":  {
-                                "mnp":  22,
-                                "new":  22,
-                                "chg":  22
+                                "mnp":  15,
+                                "new":  15,
+                                "chg":  15
                             },
                      "LG":  {
-                                "mnp":  22,
-                                "new":  22,
-                                "chg":  22
+                                "mnp":  15,
+                                "new":  15,
+                                "chg":  15
                             },
                      "SK":  {
                                 "mnp":  22,
@@ -6509,14 +6535,14 @@ service cloud.firestore {
                    },
         "subs":  {
                      "KT":  {
-                                "mnp":  22,
-                                "new":  22,
-                                "chg":  22
+                                "mnp":  15,
+                                "new":  15,
+                                "chg":  15
                             },
                      "LG":  {
-                                "mnp":  22,
-                                "new":  22,
-                                "chg":  22
+                                "mnp":  15,
+                                "new":  15,
+                                "chg":  15
                             },
                      "SK":  {
                                 "mnp":  22,
@@ -6705,14 +6731,14 @@ service cloud.firestore {
                    },
         "subs":  {
                      "KT":  {
-                                "mnp":  22,
-                                "new":  22,
-                                "chg":  22
+                                "mnp":  15,
+                                "new":  15,
+                                "chg":  15
                             },
                      "LG":  {
-                                "mnp":  22,
-                                "new":  22,
-                                "chg":  22
+                                "mnp":  16.8,
+                                "new":  16.8,
+                                "chg":  16.8
                             },
                      "SK":  {
                                 "mnp":  22,
@@ -6733,14 +6759,14 @@ service cloud.firestore {
                    },
         "subs":  {
                      "KT":  {
-                                "mnp":  22,
-                                "new":  22,
-                                "chg":  22
+                                "mnp":  15,
+                                "new":  15,
+                                "chg":  15
                             },
                      "LG":  {
-                                "mnp":  22,
-                                "new":  22,
-                                "chg":  22
+                                "mnp":  16.8,
+                                "new":  16.8,
+                                "chg":  16.8
                             },
                      "SK":  {
                                 "mnp":  22,
@@ -6761,14 +6787,14 @@ service cloud.firestore {
                    },
         "subs":  {
                      "KT":  {
-                                "mnp":  22,
-                                "new":  22,
-                                "chg":  22
+                                "mnp":  15,
+                                "new":  15,
+                                "chg":  15
                             },
                      "LG":  {
-                                "mnp":  22,
-                                "new":  22,
-                                "chg":  22
+                                "mnp":  16.8,
+                                "new":  16.8,
+                                "chg":  16.8
                             },
                      "SK":  {
                                 "mnp":  22,
@@ -6789,14 +6815,14 @@ service cloud.firestore {
                    },
         "subs":  {
                      "KT":  {
-                                "mnp":  22,
-                                "new":  22,
-                                "chg":  22
+                                "mnp":  15,
+                                "new":  15,
+                                "chg":  15
                             },
                      "LG":  {
-                                "mnp":  22,
-                                "new":  22,
-                                "chg":  22
+                                "mnp":  16.8,
+                                "new":  16.8,
+                                "chg":  16.8
                             },
                      "SK":  {
                                 "mnp":  22,
@@ -6906,9 +6932,9 @@ service cloud.firestore {
                                 "chg":  45
                             },
                      "LG":  {
-                                "mnp":  45,
-                                "new":  45,
-                                "chg":  45
+                                "mnp":  40,
+                                "new":  40,
+                                "chg":  40
                             },
                      "SK":  {
                                 "mnp":  45,
@@ -6934,9 +6960,9 @@ service cloud.firestore {
                                 "chg":  45
                             },
                      "LG":  {
-                                "mnp":  45,
-                                "new":  45,
-                                "chg":  45
+                                "mnp":  40,
+                                "new":  40,
+                                "chg":  40
                             },
                      "SK":  {
                                 "mnp":  45,
@@ -6962,9 +6988,9 @@ service cloud.firestore {
                                 "chg":  45
                             },
                      "LG":  {
-                                "mnp":  45,
-                                "new":  45,
-                                "chg":  45
+                                "mnp":  40,
+                                "new":  40,
+                                "chg":  40
                             },
                      "SK":  {
                                 "mnp":  45,
@@ -6990,9 +7016,9 @@ service cloud.firestore {
                                 "chg":  45
                             },
                      "LG":  {
-                                "mnp":  45,
-                                "new":  45,
-                                "chg":  45
+                                "mnp":  40,
+                                "new":  40,
+                                "chg":  40
                             },
                      "SK":  {
                                 "mnp":  45,

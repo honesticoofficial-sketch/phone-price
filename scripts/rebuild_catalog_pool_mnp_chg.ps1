@@ -1,10 +1,10 @@
 ﻿[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 # ==============================================================================
-# 통신 3사 기준 요금제 규격:
-# - SKT:  109,000원 (베스트 109 / 프라임플러스 109)
-# - KT:   120,000원 (5G 프리미엄 120 / 초이스 프리미엄 120)
-# - LGU+: 115,000원 (5G 시그니처 115)
+# 통신 3사 넷가표 기준 공식 요금제 규격:
+# - SKT:  베스트109 (109,000원) [선약 81,750원]
+# - KT:   초이스더블 (120,000원) [선약 90,000원]
+# - LGU+: 프리미어슈퍼 (115,000원) [선약 86,250원]
 # ==============================================================================
 
 $jsonPath = "C:\Users\User01\.gemini\antigravity\scratch\phone-price\data\crawled_subsidies_latest.json"
@@ -146,30 +146,31 @@ foreach ($k in $catalog.Keys) {
     $entry = $catalog[$k]
     $name = $entry.name
 
-    # --- iPhone 18 Series (under SK 109k, KT 120k, LG 115k 최고 요금제 기준) ---
+    # --- iPhone 18 Series (under SK 베스트109, KT 초이스더블 120, LG 프리미어슈퍼 115 최고 요금제 기준) ---
     if ($name -match "iPhone 18 Pro Max") {
-        # SK: 22만, KT 120k: 22만, LG 115k: 22만
+        # [통신 3사 각자 독립 수집값 반영]: SK 22만 / KT 15만 / LG 16.8만
         $entry.subs.SK = @{ mnp = 22; chg = 22; new = 22 }
-        $entry.subs.KT = @{ mnp = 22; chg = 22; new = 22 }
-        $entry.subs.LG = @{ mnp = 22; chg = 22; new = 22 }
+        $entry.subs.KT = @{ mnp = 15; chg = 15; new = 15 }
+        $entry.subs.LG = @{ mnp = 16.8; chg = 16.8; new = 16.8 }
     } elseif ($name -match "iPhone 18 Pro") {
-        # SK: 45만, KT 120k: 45만, LG 115k: 45만 (최고 요금제 기준 통신 3사 45만 통일)
+        # SK: 45만, KT: 45만, LG: 45만 (최고 요금제 기준 통신 3사 45만 통일)
         $entry.subs.SK = @{ mnp = 45; chg = 45; new = 45 }
         $entry.subs.KT = @{ mnp = 45; chg = 45; new = 45 }
         $entry.subs.LG = @{ mnp = 45; chg = 45; new = 45 }
     } elseif ($name -match "iPhone Duo") {
         $entry.subs.SK = @{ mnp = 45; chg = 45; new = 45 }
         $entry.subs.KT = @{ mnp = 45; chg = 45; new = 45 }
-        $entry.subs.LG = @{ mnp = 45; chg = 45; new = 45 }
+        $entry.subs.LG = @{ mnp = 40; chg = 40; new = 40 }
     } elseif ($name -match "iPhone Air") {
         # SK: 65만, KT: 70만, LG: 45만
         $entry.subs.SK = @{ mnp = 65; chg = 65; new = 65 }
         $entry.subs.KT = @{ mnp = 70; chg = 70; new = 70 }
         $entry.subs.LG = @{ mnp = 45; chg = 45; new = 45 }
     } elseif ($name -match "iPhone 17 Pro Max") {
+        # [통신 3사 각자 독립 수집값 반영]: SK 22만 / KT 15만 / LG 15만
         $entry.subs.SK = @{ mnp = 22; chg = 22; new = 22 }
-        $entry.subs.KT = @{ mnp = 22; chg = 22; new = 22 }
-        $entry.subs.LG = @{ mnp = 22; chg = 22; new = 22 }
+        $entry.subs.KT = @{ mnp = 15; chg = 15; new = 15 }
+        $entry.subs.LG = @{ mnp = 15; chg = 15; new = 15 }
     } elseif ($name -match "iPhone 17 Pro") {
         $entry.subs.SK = @{ mnp = 45; chg = 45; new = 45 }
         $entry.subs.KT = @{ mnp = 45; chg = 45; new = 45 }
