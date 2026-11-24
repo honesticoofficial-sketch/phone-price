@@ -3686,3 +3686,19 @@ service cloud.firestore {
   3. `iPhone 17` LGU+ 개통방식별 차등 (번이 55만 / 기변 45만 / 신규 45만): **PASS**
   4. 보급형 및 외산폰(A시리즈, 샤오미, 모토로라, 워치/탭) 100% 잔존 0건: **PASS**
   5. 실사 검증 스크린샷: `data/chapter84_verified.png` 캡처 완료.
+
+---
+
+### 5) [긴급 정밀 보정] iPhone 17 Pro LGU+ 번호이동 55만 원 누락 원인 규명 및 전 라인업 동기화
+1. **사용자 지적 사항**:
+   > "아이폰17프로도 번호이동 55인데 45로 되어있는데 제대로 체크되는거맞아? 다르게 나오는 원인이뭐야?"
+2. **원인 분석**:
+   - `scripts/pipeline_full_3carrier.ps1` 파이프라인에서 아이폰 17 지원금을 적용할 때 사용했던 정규식이 `iPhone 17(?! Pro| Plus| Air|\s*e)` 형태로 작성되어 있어, **`Pro` 단어가 붙은 `iPhone 17 Pro` 기종이 부정형 룩어헤드에 의해 매칭 대상에서 제외**되었음.
+   - 그 결과 `iPhone 17 (기본형)`만 번이 55만 원이 적용되고, `iPhone 17 Pro`는 기존 기본값인 45만 원(기기변경 지원금과 동일값)으로 잔존했던 오류임.
+3. **조치 결과**:
+   - 매칭 정규식을 `(?i)(iPhone|아이폰)\s*17\b`로 확장하여 `iPhone 17 (기본형)`, `iPhone 17 Pro`, `iPhone 17 Pro Max` 전 모델에 대해:
+     - **번호이동(MNP)**: **550,000원 (55.0만)**
+     - **기기변경(CHG)**: **450,000원 (45.0만)**
+     - **신규개통(NEW)**: **450,000원 (45.0만)**
+   - `crawled_catalog_pool.json`, `crawled_subsidies_latest.json`, `index.html` 내장 풀 동시 갱신 완료.
+   - 브라우저 실시간 검증(`verify_chapter84_browser_live.ps1`) 100% PASS 확인.

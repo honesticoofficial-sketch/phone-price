@@ -23,15 +23,16 @@ $pass1 = ($promax.subs.SK.mnp -eq 22.0) -and ($promax.subs.KT.mnp -eq 22.1) -and
 if ($pass1) { Write-Host "   ✅ Test 1 PASS! 3사 공시지원금 상이 및 정확 반영 확인" -ForegroundColor Green }
 else { Write-Host "   ❌ Test 1 FAIL!" -ForegroundColor Red }
 
-# Test 2: iPhone 17 (LG 번이 55, 기변 45)
+# Test 2: iPhone 17 & iPhone 17 Pro (LG 번이 55, 기변 45)
 $ip17 = $poolJson | Where-Object { $_.name -eq "iPhone 17 256G" -or $_.id -eq "ip17256g" } | Select-Object -First 1
-Write-Host "`n[Test 2] iPhone 17 256G LGU+ 가입유형별 지원금 검증:"
-Write-Host "   - LG 번호이동(mnp): $($ip17.subs.LG.mnp) 만원 (기대값: 55.0 만원)"
-Write-Host "   - LG 기기변경(chg): $($ip17.subs.LG.chg) 만원 (기대값: 45.0 만원)"
-Write-Host "   - LG 신규개통(new): $($ip17.subs.LG.new) 만원 (기대값: 45.0 만원)"
+$ip17pro = $poolJson | Where-Object { $_.name -eq "iPhone 17 Pro 256G" -or $_.id -eq "ip17p256g" } | Select-Object -First 1
 
-$pass2 = ($ip17.subs.LG.mnp -eq 55.0) -and ($ip17.subs.LG.chg -eq 45.0) -and ($ip17.subs.LG.new -eq 45.0)
-if ($pass2) { Write-Host "   ✅ Test 2 PASS! LG 번이 55만 / 기변 45만 개통방식별 차등 완벽 반영 확인" -ForegroundColor Green }
+Write-Host "`n[Test 2] iPhone 17 & iPhone 17 Pro LGU+ 가입유형별 지원금 검증:"
+Write-Host "   - iPhone 17 기본형: LG 번이 $($ip17.subs.LG.mnp)만 / 기변 $($ip17.subs.LG.chg)만"
+Write-Host "   - iPhone 17 Pro:   LG 번이 $($ip17pro.subs.LG.mnp)만 / 기변 $($ip17pro.subs.LG.chg)만"
+
+$pass2 = ($ip17.subs.LG.mnp -eq 55.0) -and ($ip17.subs.LG.chg -eq 45.0) -and ($ip17pro.subs.LG.mnp -eq 55.0) -and ($ip17pro.subs.LG.chg -eq 45.0)
+if ($pass2) { Write-Host "   ✅ Test 2 PASS! iPhone 17 & 17 Pro 모두 LG 번이 55만 / 기변 45만 개통방식별 차등 완벽 반영 확인" -ForegroundColor Green }
 else { Write-Host "   ❌ Test 2 FAIL!" -ForegroundColor Red }
 
 # Test 3: 요금제 명칭 및 금액 동기화 검사

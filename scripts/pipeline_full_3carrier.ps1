@@ -131,8 +131,8 @@ foreach ($item in $existingPool) {
         $lguChg = 204000
     }
 
-    # 2) iPhone 17 LGU+: 번호이동 550,000원, 기기변경 450,000원
-    if ($key -match 'iPhone 17(?! Pro| Plus| Air|\s*e)' -or $key -like "*아이폰 17*") {
+    # 2) iPhone 17 전 라인업 LGU+: 번호이동 550,000원, 기기변경 450,000원, 신규개통 450,000원
+    if ($key -match '(?i)(iPhone|아이폰)\s*17\b') {
         $lguMnp = 550000
         $lguChg = 450000
         $lguNew = 450000
@@ -207,8 +207,8 @@ foreach ($item in $existingPool) {
         $item.subs.LG.chg = 20.4
     }
 
-    # 아이폰 17 LGU+ 검증 및 고정 (번이 55, 기변 45, 신규 45)
-    if ($mName -match 'iPhone 17(?! Pro| Plus| Air|\s*e)' -or $mName -like "*아이폰 17*") {
+    # 아이폰 17 전 라인업 LGU+ 검증 및 고정 (번이 55, 기변 45, 신규 45)
+    if ($mName -match '(?i)(iPhone|아이폰)\s*17\b') {
         $item.subs.LG.mnp = 55.0
         $item.subs.LG.chg = 45.0
         $item.subs.LG.new = 45.0

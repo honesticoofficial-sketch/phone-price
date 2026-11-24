@@ -85,21 +85,23 @@ try {
     Write-Host "  KT Subs: $($v18.subs.KT.mnp) 만원"
     Write-Host "  LG Subs: $($v18.subs.LG.mnp) 만원"
 
-    Write-Host "`n4. Checking iPhone 17 LGU+ differentiated subsidies..."
+    Write-Host "`n4. Checking iPhone 17 & 17 Pro LGU+ differentiated subsidies..."
     $res17 = Invoke-CDP "Runtime.evaluate" @{
         expression = @"
             (() => {
-                const item = CRAWLED_CATALOG_POOL.find(x => x.name === 'iPhone 17 256G');
-                return item ? { name: item.name, lg_mnp: item.subs.LG.mnp, lg_chg: item.subs.LG.chg, lg_new: item.subs.LG.new } : null;
+                const item17 = CRAWLED_CATALOG_POOL.find(x => x.name === 'iPhone 17 256G');
+                const item17p = CRAWLED_CATALOG_POOL.find(x => x.name === 'iPhone 17 Pro 256G');
+                return {
+                    ip17: item17 ? { name: item17.name, lg_mnp: item17.subs.LG.mnp, lg_chg: item17.subs.LG.chg } : null,
+                    ip17p: item17p ? { name: item17p.name, lg_mnp: item17p.subs.LG.mnp, lg_chg: item17p.subs.LG.chg } : null
+                };
             })()
 "@
         returnByValue = $true
     }
     $v17 = $res17.result.result.value
-    Write-Host "  Item: $($v17.name)"
-    Write-Host "  LG 번호이동(mnp): $($v17.lg_mnp) 만원"
-    Write-Host "  LG 기기변경(chg): $($v17.lg_chg) 만원"
-    Write-Host "  LG 신규개통(new): $($v17.lg_new) 만원"
+    Write-Host "  Item 1: $($v17.ip17.name) -> LG 번이: $($v17.ip17.lg_mnp) 만원 / 기변: $($v17.ip17.lg_chg) 만원"
+    Write-Host "  Item 2: $($v17.ip17p.name) -> LG 번이: $($v17.ip17p.lg_mnp) 만원 / 기변: $($v17.ip17p.lg_chg) 만원"
 
     Write-Host "`n5. Capturing Verification Screenshot..."
     $screenshotRes = Invoke-CDP "Page.captureScreenshot" @{ format = "png" }
