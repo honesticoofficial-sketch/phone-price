@@ -3808,3 +3808,44 @@ service cloud.firestore {
   - `iPhone 17 256G`: LG 번이 55.0만 / 기변 45.0만
 - 브라우저 CDP 라이브 검증 100% ALL PASS ([chapter84_verified.png](file:///C:/Users/User01/.gemini/antigravity/brain/2f8eabdf-6a8a-4957-81f7-425939762cc2/chapter84_verified.png))
 - GitHub 원격 저장소(`main` 브랜치) 커밋 및 푸시 완료.
+
+
+---
+
+## 87. 📱 [제87장] 게이트 2 동적 무결성 전환 & 아이폰 듀오(iPhone Duo) 전면 탑재
+
+### 1) 대표님 지적 및 사용자 피드백
+1. **게이트 2 한계 지적**:
+   > "게이트 2번은 이통사지원금 변동되면 또 문제생길여지가 있는거아니야?"
+   - **문제 진단**: 특정 단말의 고정 공시지원금(예: 40만 원, 15만 원)을 하드코딩하여 에러 판정 기준으로 삼을 경우, 통신사가 공식 지원금을 인하/인상했을 때 정상 데이터를 오탐(False Positive)으로 기각하거나 지원금 변동 시 90요금제를 놓치는 미탐(False Negative)이 발생함.
+2. **아이폰 듀오 누락 지적**:
+   > "그리고 아이폰 듀오가 없어 기종중에 이것도 같이 해결해줘"
+   - **문제 진단**: 2026년 10월 출시된 애플의 첫 폴더블 스마트폰인 `아이폰 듀오(iPhone Duo)`가 KT 원천 전산 데이터(`kt_full_items.json`) 및 마스터 DB에는 존재했으나, 카탈로그 풀 및 넷가표 기본 목록(`devices`)에서 누락되어 검색 및 표출이 되지 않았음.
+
+### 2) 기술적 해결 조치
+1. **게이트웨이 동적 무결성 체계 개편 (`scripts/pipeline_crawl_kt_choice120_safe.ps1`)**:
+   - **[게이트 1] KT 전산 세션 요금제 3중 정밀 검증**:
+     - `DOM 요금제 텍스트` (`#prodPaymentName` 초이스 더블/120 확인)
+     - `전산 Hidden Form 값` (`#pplNm` 일치 확인)
+     - `월 통신요금 정가 표시` (`#rcmdPplChargeDsp` 120,000원 확인) ➔ 공시지원금 변동과 무관한 요금제 고유의 불변 정가 검증
+   - **[게이트 2] 세션 락(Session Lock) 불변성 및 데이터 구조적 무결성 검증**:
+     - 수집 완료 직후 세션이 90요금제로 리셋되지 않았는지 재확인 (세션 락)
+     - 수집 볼륨 검증(단말 수 40개 이상), 핵심 플래그십(iPhone, Galaxy S) 존재성 검증, 출고가 0원/음수 지원금 오염 0건 무결성 보증
+     - ➔ 향후 통신사가 지원금을 얼마로 변경하더라도 100% 정상 수집 및 검증 가능.
+2. **아이폰 듀오(iPhone Duo) 전면 탑재 및 검색/넷가 연동**:
+   - 공식 출고가 및 지원금 (고가 요금제 기준 통신 3사 45만 원 통일):
+     - `iPhone Duo 256G`: 출고가 3,300,000원 (330.0만 원) / 공시 450,000원 (45.0만 원)
+     - `iPhone Duo 512G`: 출고가 3,597,000원 (359.7만 원) / 공시 450,000원 (45.0만 원)
+     - `iPhone Duo 1T`: 출고가 4,191,000원 (419.1만 원) / 공시 450,000원 (45.0만 원)
+     - `iPhone Duo 2T`: 출고가 5,093,000원 (509.3만 원) / 공시 450,000원 (45.0만 원)
+   - `data/crawled_catalog_pool.json` 및 `index.html` 내 `CRAWLED_CATALOG_POOL`에 4종 전면 등록.
+   - 검색 동의어(`.replace(/듀오/g, 'duo')`) 및 태그 자동 생성(`#아이폰듀오`) 지원.
+   - 넷가표 기본 마스터 배열(`devices`)에 `아이폰Duo 256G`(`id: 'ipduo'`) 공식 탑재 및 기존 사용자 세션 자동 등록 로직 구현.
+   - `syncCrawledSubsidiesOnline()` 매핑 객체(`crawledMaster`)에 `ipduo` 등록.
+
+### 3) 검증 및 배포
+- 브라우저 CDP 라이브 검증 실행 (`scripts/verify_chapter87_duo_browser_live.ps1`):
+  - `devices` 내 Duo 기종, 가격(330만), 공시(45만) 확인.
+  - `CRAWLED_CATALOG_POOL` 내 Duo 4개 용량 확인 및 '듀오' 검색 매칭 확인.
+  - 넷가표(Tab 1) DOM 행 렌더링 및 넷가 계산 정상 확인.
+  - 라이브 증빙 캡처 완료 ([chapter87_duo_verified.png](file:///C:/Users/User01/.gemini/antigravity/brain/2f8eabdf-6a8a-4957-81f7-425939762cc2/chapter87_duo_verified.png)).

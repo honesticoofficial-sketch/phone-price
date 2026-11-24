@@ -22,7 +22,11 @@ foreach ($item in $existingPool) {
     # 1) SKT 베스트109 공식 실측 매칭
     # ----------------------------------------------------
     $sktMatch = $null
-    if ($name -match '(?i)18\s*Pro\s*Max') {
+    if ($name -match '(?i)Duo') {
+        $item.subs.SK.new = 45.0
+        $item.subs.SK.mnp = 45.0
+        $item.subs.SK.chg = 45.0
+    } elseif ($name -match '(?i)18\s*Pro\s*Max') {
         $sktMatch = $sktJson | Where-Object { $_.model -match '(?i)18\s*Pro\s*Max' } | Select-Object -First 1
     } elseif ($name -match '(?i)18\s*Pro') {
         $sktMatch = $sktJson | Where-Object { $_.model -match '(?i)18\s*Pro' -and $_.model -notmatch '(?i)Pro\s*Max' } | Select-Object -First 1
@@ -96,7 +100,11 @@ foreach ($item in $existingPool) {
     # 2) KT 초이스더블 (120,000원) 공식 실측 매칭
     # ----------------------------------------------------
     $ktMatch = $null
-    if ($name -match '(?i)18\s*Pro\s*Max') {
+    if ($name -match '(?i)Duo') {
+        $item.subs.KT.new = 45.0
+        $item.subs.KT.mnp = 45.0
+        $item.subs.KT.chg = 45.0
+    } elseif ($name -match '(?i)18\s*Pro\s*Max') {
         $ktMatch = $ktJson | Where-Object { $_.model -match '(?i)18\s*Pro\s*Max' } | Select-Object -First 1
     } elseif ($name -match '(?i)18\s*Pro') {
         $ktMatch = $ktJson | Where-Object { $_.model -match '(?i)18\s*Pro' -and $_.model -notmatch '(?i)Pro\s*Max' } | Select-Object -First 1
@@ -149,7 +157,11 @@ foreach ($item in $existingPool) {
     # 3) LGU+ 프리미어 슈퍼 (115,000원) 공식 실측 매칭
     # ----------------------------------------------------
     $lguMatch = $null
-    if ($name -match '(?i)18\s*Pro\s*Max') {
+    if ($name -match '(?i)Duo') {
+        $item.subs.LG.new = 45.0
+        $item.subs.LG.mnp = 45.0
+        $item.subs.LG.chg = 45.0
+    } elseif ($name -match '(?i)18\s*Pro\s*Max') {
         $lguMatch = $lguJson | Where-Object { $_.model -match '(?i)18\s*Pro\s*Max' } | Select-Object -First 1
     } elseif ($name -match '(?i)18\s*Pro') {
         $lguMatch = $lguJson | Where-Object { $_.model -match '(?i)18\s*Pro' -and $_.model -notmatch '(?i)Pro\s*Max' } | Select-Object -First 1

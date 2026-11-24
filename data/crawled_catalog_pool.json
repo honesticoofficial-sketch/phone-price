@@ -1148,6 +1148,118 @@
         "group":  "IPHONE"
     },
     {
+        "id":  "ipduo1t",
+        "name":  "iPhone Duo 1T",
+        "tag":  "#아이폰듀오",
+        "subs":  {
+                     "KT":  {
+                                "mnp":  45,
+                                "new":  45,
+                                "chg":  45
+                            },
+                     "LG":  {
+                                "mnp":  45,
+                                "new":  45,
+                                "chg":  45
+                            },
+                     "SK":  {
+                                "mnp":  45,
+                                "new":  45,
+                                "chg":  45
+                            }
+                 },
+        "prices":  {
+                       "KT":  419.1,
+                       "LG":  419.1,
+                       "SK":  419.1
+                   },
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ipduo256g",
+        "name":  "iPhone Duo 256G",
+        "tag":  "#아이폰듀오",
+        "subs":  {
+                     "KT":  {
+                                "mnp":  45,
+                                "new":  45,
+                                "chg":  45
+                            },
+                     "LG":  {
+                                "mnp":  45,
+                                "new":  45,
+                                "chg":  45
+                            },
+                     "SK":  {
+                                "mnp":  45,
+                                "new":  45,
+                                "chg":  45
+                            }
+                 },
+        "prices":  {
+                       "KT":  330,
+                       "LG":  330,
+                       "SK":  330
+                   },
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ipduo2t",
+        "name":  "iPhone Duo 2T",
+        "tag":  "#아이폰듀오",
+        "subs":  {
+                     "KT":  {
+                                "mnp":  45,
+                                "new":  45,
+                                "chg":  45
+                            },
+                     "LG":  {
+                                "mnp":  45,
+                                "new":  45,
+                                "chg":  45
+                            },
+                     "SK":  {
+                                "mnp":  45,
+                                "new":  45,
+                                "chg":  45
+                            }
+                 },
+        "prices":  {
+                       "KT":  509.3,
+                       "LG":  509.3,
+                       "SK":  509.3
+                   },
+        "group":  "IPHONE"
+    },
+    {
+        "id":  "ipduo512g",
+        "name":  "iPhone Duo 512G",
+        "tag":  "#아이폰듀오",
+        "subs":  {
+                     "KT":  {
+                                "mnp":  45,
+                                "new":  45,
+                                "chg":  45
+                            },
+                     "LG":  {
+                                "mnp":  45,
+                                "new":  45,
+                                "chg":  45
+                            },
+                     "SK":  {
+                                "mnp":  45,
+                                "new":  45,
+                                "chg":  45
+                            }
+                 },
+        "prices":  {
+                       "KT":  359.7,
+                       "LG":  359.7,
+                       "SK":  359.7
+                   },
+        "group":  "IPHONE"
+    },
+    {
         "id":  "reip15128g",
         "name":  "RE iPhone 15 128G",
         "prices":  {

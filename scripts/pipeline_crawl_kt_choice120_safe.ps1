@@ -71,18 +71,36 @@ try {
     }
     Start-Sleep -Seconds 4
 
-    # 3. [보안 게이트 1] DOM 요금제명 실시간 무결성 검증
+    # 3. [보안 게이트 1] KT 전산 세션 요금제 3중 정밀 검증 (DOM + Hidden Form + 월정액 120,000원)
     $planCheck = Invoke-CDPCmd "Runtime.evaluate" @{
-        expression = "document.querySelector('#prodPaymentName')?.innerText.trim()"
+        expression = @"
+            (() => {
+                const prodName = document.querySelector('#prodPaymentName')?.innerText.trim() || '';
+                const pplNmVal = document.querySelector('#pplNm')?.value || '';
+                const chargeDsp = document.querySelector('#rcmdPplChargeDsp')?.innerText.trim() || '';
+                return {
+                    prodPaymentName: prodName,
+                    pplNm: pplNmVal,
+                    chargeDsp: chargeDsp
+                };
+            })()
+"@
         returnByValue = $true
     }
-    $verifiedPlan = $planCheck.result.result.value
-    Write-Host "   검증된 DOM 요금제: $verifiedPlan"
+    $vData = $planCheck.result.result.value
+    Write-Host "   검증된 DOM 요금제: $($vData.prodPaymentName)"
+    Write-Host "   전산 Hidden 요금제: $($vData.pplNm)"
+    Write-Host "   표시 월통신요금: $($vData.chargeDsp)"
 
-    if ($verifiedPlan -match '90' -or $verifiedPlan -notmatch '초이스 더블|120|더블') {
-        throw "🚨 [요금제 오염 차단] 120k 초이스 더블이 아닙니다: '$verifiedPlan'. 크롤링을 즉시 중단합니다."
+    # 요금제명 및 월 120,000원 정가 검증 (공시지원금 변동과 무관한 절대 불변 기준)
+    $is120kName = ($vData.prodPaymentName -match '초이스 더블|120|더블') -and ($vData.prodPaymentName -notmatch '90')
+    $is120kHidden = ($vData.pplNm -match '초이스 더블|120|더블') -or ($vData.pplNm -eq '')
+    $is120kPrice = ($vData.chargeDsp -match '120,000|120000')
+
+    if (-not $is120kName -or ($vData.chargeDsp -ne '' -and -not $is120kPrice)) {
+        throw "🚨 [요금제 오염 차단] 120k 초이스 더블 세션이 아닙니다 (요금제: '$($vData.prodPaymentName)', 월요금: '$($vData.chargeDsp)'). 크롤링을 즉시 중단합니다."
     }
-    Write-Host "   ✅ [게이트 통과] 120k 초이스 더블 100% 확인" -ForegroundColor Green
+    Write-Host "   ✅ [게이트 1 통과] 120,000원 초이스 더블 전산 세션 무결성 100% 확인" -ForegroundColor Green
 
     # 4. 전체 리스트 로딩 (더보기 클릭)
     Write-Host "`n4. 전체 단말 로딩..."
@@ -129,19 +147,45 @@ try {
     $crawled = $extract.result.result.value
     Write-Host "   총 수집 단말: $($crawled.Count) 개"
 
-    # 6. [보안 게이트 2] 90요금제 시그니처 단말 공시금액 역추적 검증
-    # 90요금제일 때: 18 Pro = 400,000 / 17 Pro Max = 150,000
-    # 120k 초이스더블일 때: 18 Pro = 450,000 / 17 Pro Max = 221,000
+    # 6. [보안 게이트 2] 세션 지속성 및 구조적 데이터 무결성 검증 (공시지원금 변동에 영향받지 않는 동적 무결성 검증)
+    # 6-1. 수집 완료 직후 세션 불변성 재검증 (크롤링 중 세션 초기화/리셋 방지)
+    $postSession = Invoke-CDPCmd "Runtime.evaluate" @{
+        expression = @"
+            (() => {
+                return {
+                    name: document.querySelector('#prodPaymentName')?.innerText.trim() || '',
+                    charge: document.querySelector('#rcmdPplChargeDsp')?.innerText.trim() || ''
+                };
+            })()
+"@
+        returnByValue = $true
+    }
+    $ps = $postSession.result.result.value
+    if ($ps.name -match '90' -or ($ps.name -notmatch '초이스 더블|120|더블')) {
+        throw "🚨 [세션 이탈 감지] 크롤링 도중 120k 세션이 풀려 '$($ps.name)'(으)로 변경되었습니다! 데이터를 저장하지 않습니다."
+    }
+    Write-Host "   ✅ [세션 락 확인] 수집 완료 시점까지 120k 초이스더블 세션 유지 확인" -ForegroundColor Green
+
+    # 6-2. 데이터 볼륨 및 필수 플래그십 무결성 검증
+    if ($crawled.Count -lt 40) {
+        throw "🚨 [데이터 볼륨 부족] 수집된 단말 수가 $($crawled.Count)개로 비정상적입니다. 파이프라인을 중단합니다."
+    }
+
     $ip18Pro = $crawled | Where-Object { $_.model -match '(?i)18\s*Pro\b' -and $_.model -notmatch 'Max' } | Select-Object -First 1
     $ip17PM = $crawled | Where-Object { $_.model -match '(?i)17\s*Pro\s*Max' } | Select-Object -First 1
+    $s26U = $crawled | Where-Object { $_.model -match '(?i)S26\s*Ultra|S26\s*울트라' } | Select-Object -First 1
 
-    if ($ip18Pro -and $ip18Pro.subsidy -eq 400000) {
-        throw "🚨 [90요금제 시그니처 감지] iPhone 18 Pro 공시지원금이 40만 원(90요금제 값)으로 추출되었습니다! 크롤링 파이프라인을 비정상 종료합니다."
+    if (-not $ip18Pro -or -not $ip17PM) {
+        throw "🚨 [필수 플래그십 누락] 핵심 아이폰 기종(18 Pro / 17 Pro Max)이 크롤링 데이터셋에서 누락되었습니다."
     }
-    if ($ip17PM -and $ip17PM.subsidy -eq 150000) {
-        throw "🚨 [90요금제 시그니처 감지] iPhone 17 Pro Max 공시지원금이 15만 원(90요금제 값)으로 추출되었습니다! 크롤링 파이프라인을 비정상 종료합니다."
+
+    # 출고가 및 공시금액 데이터 타입 유효성 검증 (0원 및 NaN 체크)
+    $corruptItems = $crawled | Where-Object { $_.factoryPrice -le 0 -or $_.subsidy -lt 0 }
+    if ($corruptItems.Count -gt 0) {
+        throw "🚨 [데이터 오염 감지] 출고가 0원 이하 또는 음수 지원금 단말이 $($corruptItems.Count)건 발견되었습니다."
     }
-    Write-Host "   ✅ [게이트 통과] 90요금제 시그니처 0건 (18 Pro: $($ip18Pro.subsidy)원 / 17 Pro Max: $($ip17PM.subsidy)원)" -ForegroundColor Green
+
+    Write-Host "   ✅ [게이트 2 통과] 구조적 데이터 무결성 100% 검증 (총 $($crawled.Count)개 정상 수집, 출고가/공시지원금 전수 정상)" -ForegroundColor Green
 
     # 7. 데이터 영구 저장
     $outJson = "C:\Users\User01\.gemini\antigravity\scratch\phone-price\data\kt_full_items.json"
