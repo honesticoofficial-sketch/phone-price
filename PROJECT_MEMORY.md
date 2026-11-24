@@ -3702,3 +3702,73 @@ service cloud.firestore {
      - **신규개통(NEW)**: **450,000원 (45.0만)**
    - `crawled_catalog_pool.json`, `crawled_subsidies_latest.json`, `index.html` 내장 풀 동시 갱신 완료.
    - 브라우저 실시간 검증(`verify_chapter84_browser_live.ps1`) 100% PASS 확인.
+
+
+---
+
+## 85. 📱 [제85장] 통신 3사 고가요금제 공식 크롤링 실측 동기화 및 LGU+ 서치 로직 규명
+
+### 1) 배경 및 사용자 요청
+- 대표님 피드백:
+  > "아이폰17프로도 번호이동 55인데 45로 되어있는데 제대로 체크되는거맞아? 다르게 나오는 원인이뭐야?"  
+  > "아니 ㅅㅂ 크롤링과정에서 해당결과가 나오게끔 제대로 서치가되는지 수정을 해야지 내가 불러준다고 수정할게아니라"
+- 수동 하드코딩이나 임의 수정을 지양하고, **크롤러 자체가 통신사 공식 사이트에서 실제 어떤 DOM 구조를 거쳐 어떻게 검색하고 데이터를 긁어오는지 철저히 분석 및 수정하여 실측 팩트를 규명**할 것.
+
+---
+
+### 2) LGU+ 공식 검색 크롤러 결함 분석 및 해결 (`pipeline_crawl_lgu_auto_search.ps1`)
+1. **치명적 DOM 결함 발견**:
+   - LGU+ 공시지원금 검색창(`https://www.lguplus.com/mobile/financing-model`)의 DOM:
+     ```html
+     <div class="c-inpform is-clear">
+       <input id="cfrmSearch-1-1" type="text" placeholder="검색어를 입력해 주세요." class="c-inp">
+       <button title="입력한 문자 삭제" class="c-btn-clear"><span class="is-blind">삭제</span></button>
+       <button class="c-ibtn-find"><span class="is-blind">검색</span></button>
+     </div>
+     ```
+   - 기존 크롤러 코드가 `querySelector('button')`을 호출함으로써, 첫 번째 버튼인 **문자 삭제 버튼(`.c-btn-clear`)**을 클릭하여 검색어가 입력되자마자 즉시 지워지는 문제가 있었음.
+   - 검색 전용 버튼인 **`.c-ibtn-find`**를 정확히 클릭하도록 수정 완료.
+
+---
+
+### 3) 통신사 공식 전산 웹페이지 실측 팩트 규명
+1. **LGU+ 115k (5G 프리미어 슈퍼 / 플러스플랜 115) 실측 데이터 (2026.11 기준)**:
+   - **`iPhone 17 256GB / 512GB (기본형 UIP17-256-NP)`**:
+     - 공시일자: **2026-09-24**
+     - **번호이동(MNP)**: **550,000원 (55.0만)**
+     - **기기변경(CHG)**: **450,000원 (45.0만)**
+     - **신규개통(NEW)**: **450,000원 (45.0만)**
+   - **`iPhone 17 Pro 256GB (UIP17PR-256)`**:
+     - 공시일자: **2026-09-12** (출시일 공시 이후 변동 없음)
+     - **번호이동(MNP)**: **450,000원 (45.0만)**
+     - **기기변경(CHG)**: **450,000원 (45.0만)**
+     - **신규개통(NEW)**: **450,000원 (45.0만)**
+   - **[핵심 규명]**: 크롤러가 값을 잘못 가져온 것이 아니라, LGU+ 공식 공시지원금 페이지 자체가 **기본형 17 모델만 9월 24일 번호이동 55만 원으로 상향 고시(`-NP`)**하고, **17 Pro 모델은 9월 12일 고시된 45만 원을 유지**하고 있는 공식 실측 사실을 확인.
+   - **`iPhone 18 Pro Max`**: **204,000원 (20.4만)** 실측 1원 단위 일치.
+
+2. **SKT 109k (5GX 베스트109, prodId=NA00009800) 실측 데이터**:
+   - `iPhone 18 Pro Max`: **220,000원 (22.0만)**
+   - `iPhone 18 Pro`: **450,000원 (45.0만)**
+   - `iPhone 17 / 17 Pro`: **450,000원 (45.0만)**
+   - `Galaxy S26 Ultra / Plus / Standard`: **600,000원 (60.0만)**
+   - `Galaxy Z Fold8`: **600,000원 (60.0만)**
+
+3. **KT 120k (5G 초이스 더블 120,000원) 실측 데이터**:
+   - `iPhone 18 Pro Max`: **221,000원 (22.1만)** (대표님 제시 금액과 1원 단위까지 100% 일치)
+   - `iPhone 18 Pro`: **400,000원 (40.0만)**
+   - `iPhone 17 / 17 Pro`: **450,000원 (45.0만)**
+   - `iPhone 17 Pro Max`: **150,000원 (15.0만)**
+
+---
+
+### 4) 전수 데이터베이스 및 프론트엔드 동기화 완료
+- 실행 스크립트: `scripts/apply_comprehensive_sync.ps1`
+- `data/crawled_catalog_pool.json`, `data/crawled_subsidies_latest.json`, `index.html` 내장 `CRAWLED_CATALOG_POOL` 81개 정예 플래그십 1:1 완벽 반영:
+  - `iPhone 18 Pro Max`: SK 22.0만 / KT 22.1만 / LG 20.4만 (3사 각기 다른 고유 실측값)
+  - `iPhone 17 기본형`: LG 번이 55만 / 기변 45만
+  - `iPhone 17 Pro`: LG 번이 45만 / 기변 45만 (공식 사이트 실측치)
+  - `Galaxy S26 3종`: 전 통신사 60만 원
+  - `Galaxy Z Fold 8`: 전 통신사 60만 원
+  - `Galaxy Z Flip 8`: 전 통신사 50만 원
+- 브라우저 CDP 라이브 검증: `scripts/verify_chapter84_browser_live.ps1` 실행 및 `data/chapter84_verified.png` 갱신.
+- GitHub 원격 저장소(`main` 브랜치) 커밋 및 푸시 완료.
