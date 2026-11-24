@@ -1945,28 +1945,28 @@
                    "carrier":  "KT",
                    "model":  "iPhone 18 Pro Max 2TB",
                    "factoryPrice":  3993000,
-                   "subsidy":  150000,
+                   "subsidy":  221000,
                    "date":  "2026.09.12"
                },
                {
                    "carrier":  "KT",
                    "model":  "iPhone 18 Pro Max 1TB",
                    "factoryPrice":  3091000,
-                   "subsidy":  150000,
+                   "subsidy":  221000,
                    "date":  "2026.09.12"
                },
                {
                    "carrier":  "KT",
                    "model":  "iPhone 18 Pro Max 512GB",
                    "factoryPrice":  2497000,
-                   "subsidy":  150000,
+                   "subsidy":  221000,
                    "date":  "2026.09.12"
                },
                {
                    "carrier":  "KT",
                    "model":  "iPhone 18 Pro Max 256GB",
                    "factoryPrice":  2200000,
-                   "subsidy":  150000,
+                   "subsidy":  221000,
                    "date":  "2026.09.12"
                },
                {
@@ -2545,7 +2545,7 @@
                     "factoryPrice":  2200000,
                     "model":  "iPhone 18 Pro Max 256GB UIP18PM-256",
                     "scrbType":  "",
-                    "subsidy":  168000
+                    "subsidy":  204000
                 },
                 {
                     "manufacturer":  "Apple",
@@ -2554,7 +2554,7 @@
                     "factoryPrice":  2497000,
                     "model":  "iPhone 18 Pro Max 512GB UIP18PM-512",
                     "scrbType":  "",
-                    "subsidy":  168000
+                    "subsidy":  204000
                 },
                 {
                     "manufacturer":  "Apple",
@@ -2563,7 +2563,7 @@
                     "factoryPrice":  3091000,
                     "model":  "iPhone 18 Pro Max 1TB UIP18PM-1T",
                     "scrbType":  "",
-                    "subsidy":  168000
+                    "subsidy":  204000
                 },
                 {
                     "manufacturer":  "Apple",
@@ -2572,7 +2572,7 @@
                     "factoryPrice":  3993000,
                     "model":  "iPhone 18 Pro Max 2TB UIP18PM-2T",
                     "scrbType":  "",
-                    "subsidy":  168000
+                    "subsidy":  204000
                 },
                 {
                     "manufacturer":  "Apple",

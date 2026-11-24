@@ -131,10 +131,10 @@ Write-Host "  SK Subs: $($s.subs.SK.mnp) (Form: $($s.form_sk_mnp))"
 Write-Host "  KT Subs: $($s.subs.KT.mnp) (Form: $($s.form_kt_mnp))"
 Write-Host "  LG Subs: $($s.subs.LG.mnp) (Form: $($s.form_lg_mnp))"
 
-if ($s.subs.SK.mnp -eq 22 -and $s.subs.KT.mnp -eq 15 -and $s.subs.LG.mnp -eq 16.8) {
-    Write-Host "  ✅ PASS: iPhone 18 Pro Max 3사 각자 독립 수집값 (SK 22만 / KT 15만 / LG 16.8만) 완벽 일치!" -ForegroundColor Green
+if ($s.subs.SK.mnp -eq 22 -and $s.subs.KT.mnp -eq 22.1 -and $s.subs.LG.mnp -eq 20.4) {
+    Write-Host "  ✅ PASS: iPhone 18 Pro Max 3사 최고 요금제 공식 지원금 (SK 22만 / KT 22.1만[221,000원] / LG 20.4만[204,000원]) 완벽 일치!" -ForegroundColor Green
 } else {
-    Write-Host "  ❌ FAIL: iPhone 18 Pro Max 지원금 불일치!" -ForegroundColor Red
+    Write-Host "  ❌ FAIL: iPhone 18 Pro Max 지원금 불일치! (SK=$($s.subs.SK.mnp), KT=$($s.subs.KT.mnp), LG=$($s.subs.LG.mnp))" -ForegroundColor Red
 }
 
 Write-Host "`n5. Capturing Verification Screenshot..."
