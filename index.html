@@ -302,6 +302,15 @@
           <span id="myWorkerText">내 작업자: -</span>
         </div>
 
+        <!-- 동시 접속 중인 작업자 목록 (구글 시트 스타일 실시간 협업 바) -->
+        <div id="collaboratorsContainer" class="hidden items-center gap-1.5 px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 shadow-2xs" title="현재 같은 매장에 동시 접속 중인 작업자들입니다">
+          <span class="text-slate-400 font-medium text-[11px] flex items-center gap-1">
+            <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 20 20" fill="currentColor"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/></svg>
+            <span>접속자:</span>
+          </span>
+          <div id="collaboratorBadges" class="flex items-center gap-1 flex-wrap"></div>
+        </div>
+
         <!-- 본사 마스터 전용 매장 전환기 -->
         <div id="masterStoreSwitcher" class="hidden items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-bold gap-1">
           <span class="text-[11px] text-slate-500 px-1 font-medium">매장 보기:</span>
@@ -3021,8 +3030,8 @@ service cloud.firestore {
     let devices = [
       {
         id: 's26', group: 'S', tag: '#S26', name: '갤럭시 S26 256G',
-        prices: { SK: 125.4, KT: 125.4, LG: 125.4 },
-        sub: { SK: { mnp: 50, chg: 60 }, KT: { mnp: 50, chg: 60 }, LG: { mnp: 50, chg: 60 } },
+        prices: { SK: 125.4, KT: 140.36, LG: 125.4 },
+        sub: { SK: { mnp: 60, chg: 60 }, KT: { mnp: 75, chg: 75 }, LG: { mnp: 60, chg: 60 } },
         rate: { SK: { mnp: 59, chg: 62 }, KT: { mnp: 78, chg: 68 }, LG: { mnp: 83, chg: 79 } },
         loc: {
           SK: { mnp: '도매', chg: '도매' },
@@ -3038,7 +3047,7 @@ service cloud.firestore {
       {
         id: 's26p', group: 'S', tag: '#S26+', name: '갤럭시 S26+ 256G',
         prices: { SK: 145.2, KT: 145.2, LG: 145.2 },
-        sub: { SK: { mnp: 50, chg: 60 }, KT: { mnp: 50, chg: 60 }, LG: { mnp: 50, chg: 60 } },
+        sub: { SK: { mnp: 60, chg: 60 }, KT: { mnp: 60, chg: 60 }, LG: { mnp: 60, chg: 60 } },
         rate: { SK: { mnp: 59, chg: 62 }, KT: { mnp: 68, chg: 52 }, LG: { mnp: 77, chg: 73 } },
         loc: {
           SK: { mnp: '도매', chg: '도매' },
@@ -3054,7 +3063,7 @@ service cloud.firestore {
       {
         id: 's26u', group: 'S', tag: '#S26U', name: '갤럭시 S26 Ultra 256G',
         prices: { SK: 179.74, KT: 179.74, LG: 179.74 },
-        sub: { SK: { mnp: 50, chg: 60 }, KT: { mnp: 50, chg: 60 }, LG: { mnp: 50, chg: 60 } },
+        sub: { SK: { mnp: 60, chg: 60 }, KT: { mnp: 60, chg: 60 }, LG: { mnp: 60, chg: 60 } },
         rate: { SK: { mnp: 59, chg: 62 }, KT: { mnp: 68, chg: 52 }, LG: { mnp: 77, chg: 73 } },
         loc: {
           SK: { mnp: '도매', chg: '도매' },
@@ -3119,8 +3128,8 @@ service cloud.firestore {
       // 폴더블 시리즈
       {
         id: 'flip8', group: 'FOLD', tag: '#플립8', name: '갤럭시 Z 플립8',
-        prices: { SK: 168.3, KT: 168.3, LG: 168.3 },
-        sub: { SK: { mnp: 50, chg: 50 }, KT: { mnp: 50, chg: 50 }, LG: { mnp: 50, chg: 50 } },
+        prices: { SK: 148.5, KT: 148.5, LG: 148.5 },
+        sub: { SK: { mnp: 60, chg: 60 }, KT: { mnp: 60, chg: 60 }, LG: { mnp: 60, chg: 60 } },
         rate: { SK: { mnp: 65, chg: 63 }, KT: { mnp: 69, chg: 48 }, LG: { mnp: 86, chg: 77 } },
         loc: {
           SK: { mnp: '도매', chg: '도매' },
@@ -3136,7 +3145,7 @@ service cloud.firestore {
       {
         id: 'fold8', group: 'FOLD', tag: '#폴드8와이드', name: '갤럭시 Z 폴드8',
         prices: { SK: 227.81, KT: 227.81, LG: 227.81 },
-        sub: { SK: { mnp: 50, chg: 50 }, KT: { mnp: 60, chg: 60 }, LG: { mnp: 50, chg: 50 } },
+        sub: { SK: { mnp: 60, chg: 60 }, KT: { mnp: 60, chg: 60 }, LG: { mnp: 60, chg: 60 } },
         rate: { SK: { mnp: 55, chg: 70 }, KT: { mnp: 82, chg: 64 }, LG: { mnp: 99, chg: 96 } },
         loc: {
           SK: { mnp: '도매', chg: '도매' },
@@ -3152,7 +3161,7 @@ service cloud.firestore {
       {
         id: 'fold8u', group: 'FOLD', tag: '#폴드8울트라', name: '갤럭시 Z 폴드8 Ultra',
         prices: { SK: 257.73, KT: 257.73, LG: 257.73 },
-        sub: { SK: { mnp: 50, chg: 50 }, KT: { mnp: 50, chg: 50 }, LG: { mnp: 50, chg: 50 } },
+        sub: { SK: { mnp: 60, chg: 60 }, KT: { mnp: 60, chg: 60 }, LG: { mnp: 60, chg: 60 } },
         rate: { SK: { mnp: 65, chg: 58 }, KT: { mnp: 69, chg: 48 }, LG: { mnp: 86, chg: 77 } },
         loc: {
           SK: { mnp: '도매', chg: '도매' },
@@ -4274,6 +4283,13 @@ service cloud.firestore {
       if (userBadge) userBadge.classList.add('hidden');
       const myWorkerBadge = document.getElementById('myWorkerBadge');
       if (myWorkerBadge) myWorkerBadge.classList.add('hidden');
+      const collabContainer = document.getElementById('collaboratorsContainer');
+      if (collabContainer) collabContainer.classList.add('hidden');
+      if (db && currentStoreId && mySessionId) {
+        try {
+          db.collection('presence').doc(currentStoreId).collection('sessions').doc(mySessionId).delete().catch(() => {});
+        } catch(e) {}
+      }
       const switcher = document.getElementById('masterStoreSwitcher');
       if (switcher) switcher.classList.add('hidden');
     }
@@ -4719,7 +4735,22 @@ service cloud.firestore {
               </button>
               <button onclick="deleteCalcRow(${idx})" class="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50 text-xs transition" title="행 삭제">✕</button>
             </div>
-            <div class="text-[10px] text-slate-400 font-normal pl-6">출고가: ${d.coming ? '출시전' : priceSummary}</div>
+            <div class="text-[10px] text-slate-400 font-normal pl-6">
+              출고가: ${d.coming ? '출시전' : priceSummary}
+              ${d.id === 's26' ? `
+                <div class="mt-1 flex items-center gap-1 flex-wrap">
+                  <button type="button" onclick="toggleS26PriceHike('KT')" class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-black border transition ${ktP >= 140 ? 'bg-amber-100 text-amber-800 border-amber-300 hover:bg-amber-200' : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'}" title="클릭 시 KT S26 출고가 인상(NEW 140.36만/공시 75만) ↔ 일반(125.4만/60만) 전환">
+                    <span>⚡ KT ${ktP >= 140 ? 'NEW 인상 적용중 (140.36만/75만)' : '일반 (125.4만/60만)'}</span>
+                  </button>
+                  <button type="button" onclick="toggleS26PriceHike('SK')" class="inline-flex items-center gap-0.5 px-1 py-0.5 rounded text-[9px] font-bold border transition ${skP >= 140 ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'}" title="SK S26 출고가인상 토글">
+                    <span>SK ${skP >= 140 ? 'NEW' : '일반'}</span>
+                  </button>
+                  <button type="button" onclick="toggleS26PriceHike('LG')" class="inline-flex items-center gap-0.5 px-1 py-0.5 rounded text-[9px] font-bold border transition ${lgP >= 140 ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'}" title="LG S26 출고가인상 토글">
+                    <span>LG ${lgP >= 140 ? 'NEW' : '일반'}</span>
+                  </button>
+                </div>
+              ` : ''}
+            </div>
           </td>
           <td class="p-2 border-r border-slate-200 bg-rose-50/10 min-w-[110px] whitespace-nowrap">${renderCell(d, 'SK', 'mnp')}</td>
           <td class="p-2 border-r border-slate-200 bg-rose-50/10 min-w-[110px] whitespace-nowrap">${renderCell(d, 'SK', 'chg')}</td>
@@ -4809,6 +4840,14 @@ service cloud.firestore {
               <span class="truncate">${d.name}</span>
               <svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-purple-600 shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
             </button>
+            ${d.id === 's26' ? `
+              <div class="mt-1">
+                <button type="button" onclick="toggleS26PriceHike('${activeInputCarrier}')" class="inline-flex items-center gap-1 w-full justify-center px-2 py-1 rounded-lg text-[11px] font-black border shadow-2xs transition ${isS26HikeActive(activeInputCarrier) ? 'bg-amber-500 text-white border-amber-600 hover:bg-amber-600' : 'bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200'}" title="클릭 시 S26 ${activeInputCarrier} 일반 ↔ NEW(출고가 인상 140.36만/공시 75만) 즉시 전환">
+                  <span>⚡ ${activeInputCarrier} S26:</span>
+                  <span>${isS26HikeActive(activeInputCarrier) ? 'NEW 인상 적용중 (140.36만/75만)' : '일반버전 → [출고가인상 클릭]'}</span>
+                </button>
+              </div>
+            ` : ''}
           </td>
           <!-- 번이 단가 -->
           <td class="p-2 text-center overflow-visible relative">
@@ -5247,6 +5286,13 @@ service cloud.firestore {
                        onchange="updateAdTagCommit('${d.id}', this.value, this)"
                        class="flex-1 min-w-0 px-2 py-0.5 bg-white border border-slate-300 rounded text-xs font-black text-slate-900 focus:ring-2 focus:ring-purple-500 focus:outline-none" />
               </div>
+              ${d.id === 's26' ? `
+                <div class="flex items-center gap-1 mt-1">
+                  <button type="button" onclick="toggleS26PriceHike('${activeAdCarrier}')" class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-black border transition ${isS26HikeActive(activeAdCarrier) ? 'bg-amber-100 text-amber-800 border-amber-300 hover:bg-amber-200' : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'}" title="클릭 시 S26 ${activeAdCarrier} 일반 ↔ NEW(출고가 인상 140.36만/공시 75만) 전환">
+                    <span>⚡ ${activeAdCarrier} ${isS26HikeActive(activeAdCarrier) ? 'NEW인상(140.36/75)' : '일반(125.4/60)'}</span>
+                  </button>
+                </div>
+              ` : ''}
             </div>
           </td>
 
@@ -5458,6 +5504,14 @@ service cloud.firestore {
                 </svg>
               </button>
             </div>
+            ${d.id === 's26' ? `
+              <div class="mt-1 flex items-center gap-1 flex-wrap">
+                <span class="text-[9px] font-bold text-amber-800 bg-amber-50 border border-amber-200 px-1 py-0.5 rounded">NEW 토글:</span>
+                <button type="button" onclick="toggleS26PriceHike('SK')" class="text-[9px] font-bold px-1.5 py-0.5 rounded border transition ${d.prices && d.prices.SK >= 140 ? 'bg-amber-500 text-white border-amber-600' : 'bg-white text-slate-600 border-slate-300'}">SK</button>
+                <button type="button" onclick="toggleS26PriceHike('KT')" class="text-[9px] font-bold px-1.5 py-0.5 rounded border transition ${d.prices && d.prices.KT >= 140 ? 'bg-amber-500 text-white border-amber-600' : 'bg-white text-slate-600 border-slate-300'}">KT ${d.prices && d.prices.KT >= 140 ? '⚡NEW' : '일반'}</button>
+                <button type="button" onclick="toggleS26PriceHike('LG')" class="text-[9px] font-bold px-1.5 py-0.5 rounded border transition ${d.prices && d.prices.LG >= 140 ? 'bg-amber-500 text-white border-amber-600' : 'bg-white text-slate-600 border-slate-300'}">LG</button>
+              </div>
+            ` : ''}
           </td>
 
           <!-- SK 설정 -->
@@ -5893,6 +5947,61 @@ service cloud.firestore {
       }
     }
 
+    // ==================== S26 출고가 인상 (NEW 버전) 원클릭 토글 & 알림 토스트 ====================
+    function isS26HikeActive(carrier = 'KT') {
+      const d = devices.find(x => x.id === 's26');
+      if (!d || !d.prices) return false;
+      return (d.prices[carrier] || 0) >= 140;
+    }
+
+    function toggleS26PriceHike(carrier = 'KT') {
+      const d = devices.find(x => x.id === 's26');
+      if (!d) return;
+
+      if (!d.prices) d.prices = { SK: 125.4, KT: 125.4, LG: 125.4 };
+      if (!d.sub) d.sub = { SK: { mnp: 60, chg: 60 }, KT: { mnp: 60, chg: 60 }, LG: { mnp: 60, chg: 60 } };
+      if (!d.sub[carrier]) d.sub[carrier] = { mnp: 60, chg: 60 };
+
+      const currentlyHiked = (d.prices[carrier] || 0) >= 140;
+
+      if (currentlyHiked) {
+        // 일반 버전으로 복귀
+        d.prices[carrier] = 125.4;
+        d.sub[carrier].mnp = 60;
+        d.sub[carrier].chg = 60;
+        if (carrier === 'SK') d.price = 125.4;
+        showGeneralToast(`ℹ️ [${carrier}] 갤럭시 S26: '일반 버전' (출고가 125.4만 / 공시 60만) 전환 완료!`);
+      } else {
+        // 출고가 인상 NEW 버전으로 전환
+        d.prices[carrier] = 140.36;
+        d.sub[carrier].mnp = 75;
+        d.sub[carrier].chg = 75;
+        if (carrier === 'SK') d.price = 140.36;
+        showGeneralToast(`⚡ [${carrier}] 갤럭시 S26: '출고가 인상 NEW 버전' (출고가 140.36만 / 공시 75만) 적용 완료!`);
+      }
+
+      scheduleMasterSave('출고가/공시 설정', `갤럭시 S26 (${carrier}) ${currentlyHiked ? '일반 버전(125.4만/60만)' : '출고가 인상 NEW(140.36만/75만)'} 전환`);
+      render();
+    }
+
+    let generalToastTimer = null;
+    function showGeneralToast(msg, type = 'info') {
+      let toast = document.getElementById('generalToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'generalToast';
+        toast.className = 'fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 text-white px-4 py-2.5 rounded-2xl shadow-2xl border border-slate-700/80 text-xs font-bold flex items-center gap-2 transition-all duration-200 pointer-events-none';
+        document.body.appendChild(toast);
+      }
+      toast.innerHTML = msg;
+      toast.classList.remove('hidden', 'opacity-0', '-translate-y-2');
+      if (generalToastTimer) clearTimeout(generalToastTimer);
+      generalToastTimer = setTimeout(() => {
+        toast.classList.add('opacity-0', '-translate-y-2');
+        setTimeout(() => toast.classList.add('hidden'), 200);
+      }, 3000);
+    }
+
     // ==================== 사용자 헤더 배지 & 매장 스위처 관리 ====================
     function updateUserHeaderBadge() {
       const badge = document.getElementById('userBadge');
@@ -6092,13 +6201,14 @@ service cloud.firestore {
       { name: 'blue', label: '파랑', dot: 'bg-blue-500', border: '#3b82f6', bg: '#dbeafe', text: '#1d4ed8', badgeBg: 'bg-blue-600', icon: '🔵' },
       { name: 'purple', label: '보라', dot: 'bg-purple-500', border: '#a855f7', bg: '#f3e8ff', text: '#7e22ce', badgeBg: 'bg-purple-600', icon: '🟣' },
       { name: 'green', label: '초록', dot: 'bg-emerald-500', border: '#10b981', bg: '#d1fae5', text: '#047857', badgeBg: 'bg-emerald-600', icon: '🟢' },
-      { name: 'orange', label: '주황', dot: 'bg-amber-500', border: '#f59e0b', bg: '#fef3c7', text: '#b45309', badgeBg: 'bg-amber-600', icon: '🟠' }
+      { name: 'orange', label: '주황', dot: 'bg-amber-500', border: '#f59e0b', bg: '#fef3c7', text: '#b45309', badgeBg: 'bg-amber-600', icon: '🟠' },
+      { name: 'cyan', label: '하늘', dot: 'bg-cyan-500', border: '#06b6d4', bg: '#cffafe', text: '#0e7490', badgeBg: 'bg-cyan-600', icon: '🩵' }
     ];
 
     let mySessionId = (function() {
       let sid = sessionStorage.getItem('phone_worker_session_id');
       if (!sid) {
-        sid = 'w_' + Math.random().toString(36).substring(2, 8) + '_' + Date.now().toString(36);
+        sid = 's_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now().toString(36);
         try { sessionStorage.setItem('phone_worker_session_id', sid); } catch(e) {}
       }
       return sid;
@@ -6140,6 +6250,56 @@ service cloud.firestore {
       text.innerText = `내 작업자: ${myWorkerName} (${myWorkerColor.label})`;
     }
 
+    function updateCollaboratorBadgesUI() {
+      const container = document.getElementById('collaboratorsContainer');
+      const badgesBox = document.getElementById('collaboratorBadges');
+      if (!container || !badgesBox) return;
+
+      if (!isUnlocked || !currentStoreId) {
+        container.classList.add('hidden');
+        container.classList.remove('flex');
+        return;
+      }
+
+      container.classList.remove('hidden');
+      container.classList.add('flex');
+
+      let html = '';
+      const now = Date.now();
+
+      // 내 자신 먼저 표시
+      html += `
+        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-black border shadow-2xs"
+              style="background-color: ${myWorkerColor.bg}; border-color: ${myWorkerColor.border}; color: ${myWorkerColor.text};">
+          <span class="w-1.5 h-1.5 rounded-full ${myWorkerColor.dot} animate-pulse"></span>
+          <span>${myWorkerName} (나)</span>
+        </span>
+      `;
+
+      // 다른 작업자들 표시
+      let otherCount = 0;
+      Object.entries(activePresenceWorkers).forEach(([sid, w]) => {
+        if (sid === mySessionId) return;
+        if (!w || !w.workerName || (now - (w.lastSeen || 0) > 25000)) return;
+
+        otherCount++;
+        const color = WORKER_COLOR_PALETTE[(w.colorIndex !== undefined ? w.colorIndex : (w.workerNum - 1)) % WORKER_COLOR_PALETTE.length];
+        const isEditing = !!w.activeCell;
+
+        html += `
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-black border shadow-2xs transition"
+                style="background-color: ${color.bg}; border-color: ${color.border}; color: ${color.text};"
+                title="${w.workerName}: ${isEditing ? '입력 중 (' + w.activeCell + ')' : '대기 중'}">
+            <span class="w-1.5 h-1.5 rounded-full ${color.dot}"></span>
+            <span>${w.workerName}</span>
+            ${isEditing ? `<span class="text-[9px] animate-pulse">✏️</span>` : ''}
+          </span>
+        `;
+      });
+
+      badgesBox.innerHTML = html;
+    }
+
     function subscribeStorePresence(storeId = currentStoreId) {
       if (unsubscribeStorePresence) {
         unsubscribeStorePresence();
@@ -6152,92 +6312,105 @@ service cloud.firestore {
       if (!db || !storeId) return;
 
       const prefix = getStorePrefix(storeId);
-      let assignedNum = parseInt(sessionStorage.getItem('phone_worker_num_' + storeId) || '1', 10);
-      myWorkerNum = assignedNum;
-      myWorkerName = `${prefix}${assignedNum}`;
-      myWorkerColor = WORKER_COLOR_PALETTE[(assignedNum - 1) % WORKER_COLOR_PALETTE.length];
-      updateMyWorkerBadgeUI();
+      const sessionsCollRef = db.collection('presence').doc(storeId).collection('sessions');
+      const mySessionDocRef = sessionsCollRef.doc(mySessionId);
 
-      const presenceDocRef = db.collection('presence').doc(storeId);
-
-      presenceDocRef.get().then(doc => {
-        let workers = {};
-        if (doc.exists && doc.data() && doc.data().workers) {
-          workers = doc.data().workers;
-        }
-
+      // 세션 서브컬렉션 실시간 구독
+      unsubscribeStorePresence = sessionsCollRef.onSnapshot(snapshot => {
         const now = Date.now();
-        const activeNumbers = new Set();
-        Object.entries(workers).forEach(([sid, w]) => {
-          if (sid !== mySessionId && w && (now - (w.lastSeen || 0) < 30000)) {
-            activeNumbers.add(w.workerNum || 1);
+        const activeWorkers = {};
+        const takenNumbers = new Map();
+
+        snapshot.forEach(docSnap => {
+          const sid = docSnap.id;
+          const data = docSnap.data();
+          if (!data) return;
+
+          // 45초 이상 경과된 비정상/종료 세션은 비동기 자동 청소
+          if (now - (data.lastSeen || 0) > 45000) {
+            docSnap.ref.delete().catch(() => {});
+            return;
+          }
+
+          // 25초 이내 활성 세션 수집
+          if (now - (data.lastSeen || 0) < 25000) {
+            activeWorkers[sid] = data;
+            if (sid !== mySessionId && data.workerNum) {
+              takenNumbers.set(data.workerNum, sid);
+            }
           }
         });
 
-        let assignedNum = 1;
-        const savedNum = parseInt(sessionStorage.getItem('phone_worker_num_' + storeId) || '0', 10);
-        if (savedNum && !activeNumbers.has(savedNum)) {
-          assignedNum = savedNum;
-        } else {
+        // 내 작업자 번호 결정 (다른 활성 세션과 중복 방지)
+        let myNum = myWorkerNum;
+        let needsSync = false;
+
+        if (!myNum || takenNumbers.has(myNum)) {
           for (let i = 1; i <= 20; i++) {
-            if (!activeNumbers.has(i)) {
-              assignedNum = i;
+            if (!takenNumbers.has(i)) {
+              myNum = i;
               break;
             }
           }
+          needsSync = true;
         }
 
-        try { sessionStorage.setItem('phone_worker_num_' + storeId, assignedNum); } catch(e) {}
-        myWorkerNum = assignedNum;
-        myWorkerName = `${prefix}${assignedNum}`;
-        myWorkerColor = WORKER_COLOR_PALETTE[(assignedNum - 1) % WORKER_COLOR_PALETTE.length];
-        updateMyWorkerBadgeUI();
+        if (!snapshot.docs.some(d => d.id === mySessionId)) {
+          needsSync = true;
+        }
 
-        presenceDocRef.set({
-          [`workers.${mySessionId}`]: {
+        myWorkerNum = myNum;
+        myWorkerName = `${prefix}${myNum}`;
+        myWorkerColor = WORKER_COLOR_PALETTE[(myNum - 1) % WORKER_COLOR_PALETTE.length];
+        try { sessionStorage.setItem('phone_worker_num_' + storeId, myNum); } catch(e) {}
+
+        if (needsSync) {
+          mySessionDocRef.set({
+            sessionId: mySessionId,
             workerNum: myWorkerNum,
             workerName: myWorkerName,
             colorIndex: (myWorkerNum - 1) % WORKER_COLOR_PALETTE.length,
             activeCell: myActiveCellId || null,
-            lastSeen: now
-          }
-        }, { merge: true }).catch(err => console.warn("Presence register error:", err));
-      }).catch(err => console.warn("Presence get error:", err));
+            lastSeen: Date.now()
+          }, { merge: true }).catch(err => console.warn("Session register error:", err));
+        }
 
-      unsubscribeStorePresence = presenceDocRef.onSnapshot(doc => {
-        if (!doc.exists) return;
-        const data = doc.data();
-        if (!data || !data.workers) return;
-
-        activePresenceWorkers = data.workers;
+        activePresenceWorkers = activeWorkers;
+        updateMyWorkerBadgeUI();
+        updateCollaboratorBadgesUI();
         renderPresenceHighlights();
       }, err => console.warn("Presence snapshot error:", err));
 
+      // 8초 주기 활성 상태 하트비트 전송
       presenceHeartbeatTimer = setInterval(() => {
         if (!isUnlocked || !currentStoreId) return;
-        presenceDocRef.set({
-          [`workers.${mySessionId}.lastSeen`]: Date.now(),
-          [`workers.${mySessionId}.activeCell`]: myActiveCellId || null
+        mySessionDocRef.set({
+          sessionId: mySessionId,
+          workerNum: myWorkerNum,
+          workerName: myWorkerName,
+          colorIndex: (myWorkerNum - 1) % WORKER_COLOR_PALETTE.length,
+          activeCell: myActiveCellId || null,
+          lastSeen: Date.now()
         }, { merge: true }).catch(() => {});
-      }, 10000);
+      }, 8000);
     }
 
     function broadcastCellFocus(cellId) {
-      if (!db || !currentStoreId || !isUnlocked) return;
+      if (!db || !currentStoreId || !isUnlocked || !mySessionId) return;
       myActiveCellId = cellId;
-      db.collection('presence').doc(currentStoreId).set({
-        [`workers.${mySessionId}.activeCell`]: cellId,
-        [`workers.${mySessionId}.lastSeen`]: Date.now()
+      db.collection('presence').doc(currentStoreId).collection('sessions').doc(mySessionId).set({
+        activeCell: cellId,
+        lastSeen: Date.now()
       }, { merge: true }).catch(() => {});
     }
 
     function broadcastCellBlur(cellId) {
-      if (!db || !currentStoreId || !isUnlocked) return;
+      if (!db || !currentStoreId || !isUnlocked || !mySessionId) return;
       if (myActiveCellId === cellId) {
         myActiveCellId = null;
-        db.collection('presence').doc(currentStoreId).set({
-          [`workers.${mySessionId}.activeCell`]: null,
-          [`workers.${mySessionId}.lastSeen`]: Date.now()
+        db.collection('presence').doc(currentStoreId).collection('sessions').doc(mySessionId).set({
+          activeCell: null,
+          lastSeen: Date.now()
         }, { merge: true }).catch(() => {});
       }
     }
@@ -6336,9 +6509,7 @@ service cloud.firestore {
       window.addEventListener('beforeunload', () => {
         if (db && currentStoreId && mySessionId) {
           try {
-            db.collection('presence').doc(currentStoreId).set({
-              [`workers.${mySessionId}`]: firebase.firestore.FieldValue.delete()
-            }, { merge: true });
+            db.collection('presence').doc(currentStoreId).collection('sessions').doc(mySessionId).delete().catch(() => {});
           } catch(e) {}
         }
       });
