@@ -3952,3 +3952,11 @@ service cloud.firestore {
    - 기존 공용 `devices_master`를 수정하던 `toggleS26PriceHike()`를 매장별 독립 상태(`storeS26Hike` / `stores/{storeId}.s26HikeMap`)로 분리하여 명지점과 광안점이 각자 독립적으로 `출고가인상반영` ON/OFF를 운영할 수 있도록 개선 완료.
 4. **초기 PIN 복원 시 TDZ(`ReferenceError`) 차단**:
    - `detailSettings`, `MAX_COLOR_PRESETS_PER_STORE`, `colorPresetsCache`를 `var` 호이스팅 선언으로 변경하여 자동 PIN 복원 시 콘솔 오류 **0건** 달성.
+
+---
+
+## 94. 🛡️ [제94장] 제휴카드안내서 매장 선택 스위처 마스터 계정 전용 제한 (2026-11-25)
+
+1. **`제휴카드안내서` (`TAB 4-card`) 매장 기본정보 선택 스위처 권한 분리**:
+   - `명지점 설정 / 광안점 설정 / 테스트매장 설정` 스위처(`#cardStoreSwitcherBox`)는 **마스터 계정(`103105`)** 으로 로그인했을 때만 표시.
+   - 일반 매장 계정(`명지점 152411`, `광안점 152422`)으로 접속 시 스위처를 완전히 숨기고 **`본인 매장 전용 설정`(`#cardSingleStoreBadge`)** 으로 자동 고정 (`setCardStore()`, `initCardTab()` 가드 포함).

@@ -1508,14 +1508,17 @@
             </div>
           </div>
 
-          <!-- 매장 선택 스위처 -->
-          <div class="flex items-center bg-slate-100 p-1 rounded-xl text-xs font-bold">
-            <button onclick="setCardStore('myeongji')" id="cardStoreBtn-myeongji" class="px-3.5 py-1.5 rounded-lg bg-indigo-600 text-white shadow-2xs transition font-black">명지점 설정</button>
-            <button onclick="setCardStore('gwangan')" id="cardStoreBtn-gwangan" class="px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition font-black">광안점 설정</button>
-            <button onclick="setCardStore('test_store')" id="cardStoreBtn-test_store" class="hidden px-3.5 py-1.5 rounded-lg text-amber-700 hover:text-amber-900 transition font-black items-center gap-1">
-              <svg class="w-3.5 h-3.5 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10 2v7.31L4.69 17.5A2 2 0 006.41 21h11.18a2 2 0 001.72-3.5L14 9.31V2"/></svg>
-              <span>테스트매장 설정</span>
-            </button>
+          <!-- 매장 선택 스위처 (마스터 관리자 전용) & 일반 매장 고정 배지 -->
+          <div class="flex items-center gap-2">
+            <span id="cardSingleStoreBadge" class="hidden px-3 py-1.5 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200 text-xs font-black">명지점 전용 설정</span>
+            <div id="cardStoreSwitcherBox" class="hidden items-center bg-slate-100 p-1 rounded-xl text-xs font-bold">
+              <button onclick="setCardStore('myeongji')" id="cardStoreBtn-myeongji" class="px-3.5 py-1.5 rounded-lg bg-indigo-600 text-white shadow-2xs transition font-black">명지점 설정</button>
+              <button onclick="setCardStore('gwangan')" id="cardStoreBtn-gwangan" class="px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition font-black">광안점 설정</button>
+              <button onclick="setCardStore('test_store')" id="cardStoreBtn-test_store" class="hidden px-3.5 py-1.5 rounded-lg text-amber-700 hover:text-amber-900 transition font-black items-center gap-1">
+                <svg class="w-3.5 h-3.5 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10 2v7.31L4.69 17.5A2 2 0 006.41 21h11.18a2 2 0 001.72-3.5L14 9.31V2"/></svg>
+                <span>테스트매장 설정</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -6723,7 +6726,14 @@ service cloud.firestore {
           copyBtn.classList.remove('hidden');
           copyBtn.classList.add('flex');
         }
-        // 제휴카드, 비교표, 히스토리 모달 내 테스트매장 버튼 노출
+        // 제휴카드 매장 스위처 (마스터 전용) 및 비교표/히스토리 테스트매장 버튼 노출
+        const cardSwitcherBox = document.getElementById('cardStoreSwitcherBox');
+        if (cardSwitcherBox) {
+          cardSwitcherBox.classList.remove('hidden');
+          cardSwitcherBox.classList.add('flex');
+        }
+        const cardSingleBadge = document.getElementById('cardSingleStoreBadge');
+        if (cardSingleBadge) cardSingleBadge.classList.add('hidden');
         const cardTestBtn = document.getElementById('cardStoreBtn-test_store');
         if (cardTestBtn) cardTestBtn.classList.remove('hidden');
         const compTestBtn = document.getElementById('compStoreBtn-test_store');
@@ -6748,7 +6758,17 @@ service cloud.firestore {
           copyBtn.classList.add('hidden');
           copyBtn.classList.remove('flex');
         }
-        // 일반 매장에서는 테스트매장 버튼 엄격 숨김
+        // 일반 매장에서는 제휴카드 매장 선택 스위처 및 테스트매장 버튼 엄격 숨김 (본인 매장 전용 배지 표시)
+        const cardSwitcherBox = document.getElementById('cardStoreSwitcherBox');
+        if (cardSwitcherBox) {
+          cardSwitcherBox.classList.add('hidden');
+          cardSwitcherBox.classList.remove('flex');
+        }
+        const cardSingleBadge = document.getElementById('cardSingleStoreBadge');
+        if (cardSingleBadge) {
+          cardSingleBadge.innerText = `${currentStoreName || (currentStoreId === 'gwangan' ? '광안점' : '명지점')} 전용 설정`;
+          cardSingleBadge.classList.remove('hidden');
+        }
         const cardTestBtn = document.getElementById('cardStoreBtn-test_store');
         if (cardTestBtn) cardTestBtn.classList.add('hidden');
         const compTestBtn = document.getElementById('compStoreBtn-test_store');
@@ -11999,7 +12019,9 @@ function handleSelectAffiliateCard(cardId) {
     }
 
     function setCardStore(sId) {
-      cardStoreId = sId;
+      // 마스터 계정이 아닌 개별 매장은 항상 본인 매장 정보만 설정 가능
+      const resolvedId = (currentRole === 'master') ? sId : (currentStoreId || 'myeongji');
+      cardStoreId = resolvedId;
       const btnMj = document.getElementById('cardStoreBtn-myeongji');
       const btnGw = document.getElementById('cardStoreBtn-gwangan');
       const btnTs = document.getElementById('cardStoreBtn-test_store');
@@ -12015,14 +12037,14 @@ function handleSelectAffiliateCard(cardId) {
         }
       }
 
-      if (sId === 'myeongji' && btnMj) {
+      if (resolvedId === 'myeongji' && btnMj) {
         btnMj.className = "px-3.5 py-1.5 rounded-lg bg-indigo-600 text-white shadow-2xs transition font-black";
-      } else if (sId === 'gwangan' && btnGw) {
+      } else if (resolvedId === 'gwangan' && btnGw) {
         btnGw.className = "px-3.5 py-1.5 rounded-lg bg-indigo-600 text-white shadow-2xs transition font-black";
-      } else if (sId === 'test_store' && btnTs && currentRole === 'master') {
+      } else if (resolvedId === 'test_store' && btnTs && currentRole === 'master') {
         btnTs.className = "px-3.5 py-1.5 rounded-lg bg-amber-500 text-white shadow-2xs transition font-black";
       }
-      loadCardSettings(sId);
+      loadCardSettings(resolvedId);
       syncStoreInputsToActive();
       renderCardPreview();
     }
@@ -12241,8 +12263,22 @@ function handleSelectAffiliateCard(cardId) {
 
     // ==================== 제휴카드 안내서 제작 초기화 ====================
     function initCardTab() {
-      if (currentStoreId && ['myeongji', 'gwangan'].includes(currentStoreId)) {
+      if (currentRole !== 'master') {
+        cardStoreId = currentStoreId || 'myeongji';
+      } else if (currentStoreId) {
         cardStoreId = currentStoreId;
+      }
+      const cardSwitcherBox = document.getElementById('cardStoreSwitcherBox');
+      const cardSingleBadge = document.getElementById('cardSingleStoreBadge');
+      if (cardSwitcherBox) {
+        cardSwitcherBox.classList.toggle('hidden', currentRole !== 'master');
+        cardSwitcherBox.classList.toggle('flex', currentRole === 'master');
+      }
+      if (cardSingleBadge) {
+        cardSingleBadge.classList.toggle('hidden', currentRole === 'master');
+        if (currentRole !== 'master') {
+          cardSingleBadge.innerText = `${currentStoreName || (currentStoreId === 'gwangan' ? '광안점' : '명지점')} 전용 설정`;
+        }
       }
       setCardStore(cardStoreId);
       setCardTheme(cardTheme);
