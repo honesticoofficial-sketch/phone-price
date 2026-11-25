@@ -1460,9 +1460,6 @@
               <div id="detailDateBadge" class="inline-block px-3 py-1 rounded-xl bg-white/15 border border-white/25 text-xs font-black text-white select-none">
                 2026.11.25 기준
               </div>
-              <div id="detailPaybackNotice" contenteditable="true" onblur="saveDetailSettings(true)" class="text-[11px] font-extrabold text-amber-200 leading-tight focus:outline-none">
-                모든 매장지원금은 페이백 금액 제외 추가지원금으로 모두 반영됩니다.
-              </div>
             </div>
           </div>
 
@@ -16845,7 +16842,6 @@ JSON 규격:
         title: `${storeLabel} 휴대폰 시세 상세내역`,
         badgePill: '현금완납 기준',
         dateBadge: getTodayKstDateBadge(),
-        paybackNotice: '모든 매장지원금은 페이백 금액 제외 추가지원금으로 모두 반영됩니다.',
         footerNote: buildDetailFooterWithNowTime(''),
         sunyakMap: {}
       };
@@ -16886,12 +16882,10 @@ JSON 규격:
       if (!detailSettings) return null;
       const titleEl = document.getElementById('detailStoreTitle');
       const badgeEl = document.getElementById('detailBadgePill');
-      const paybackEl = document.getElementById('detailPaybackNotice');
       const footerEl = document.getElementById('detailFooterNote');
       if (titleEl && titleEl.innerText.trim()) detailSettings.title = titleEl.innerText.trim();
       if (badgeEl && badgeEl.innerText.trim()) detailSettings.badgePill = badgeEl.innerText.trim();
       detailSettings.dateBadge = getTodayKstDateBadge();
-      if (paybackEl && paybackEl.innerText.trim()) detailSettings.paybackNotice = paybackEl.innerText.trim();
       if (footerEl && footerEl.innerText.trim()) detailSettings.footerNote = footerEl.innerText.trim();
       detailSettings.savedDayKey = new Date().toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' });
       return JSON.parse(JSON.stringify(detailSettings));
@@ -16990,7 +16984,6 @@ JSON 규격:
       const titleEl = document.getElementById('detailStoreTitle');
       const badgeEl = document.getElementById('detailBadgePill');
       const dateEl = document.getElementById('detailDateBadge');
-      const paybackEl = document.getElementById('detailPaybackNotice');
       const footerEl = document.getElementById('detailFooterNote');
       if (titleEl && detailSettings.title) titleEl.innerText = detailSettings.title;
       if (badgeEl && detailSettings.badgePill) badgeEl.innerText = detailSettings.badgePill;
@@ -16999,7 +16992,6 @@ JSON 규격:
         detailSettings.dateBadge = todayBadge;
         dateEl.innerText = todayBadge;
       }
-      if (paybackEl && detailSettings.paybackNotice) paybackEl.innerText = detailSettings.paybackNotice;
       if (footerEl && detailSettings.footerNote) footerEl.innerText = detailSettings.footerNote;
     }
 
