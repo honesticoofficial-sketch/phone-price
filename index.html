@@ -1416,23 +1416,20 @@
           <div id="detailHeaderBanner" class="px-6 py-5 text-white flex items-start justify-between gap-4" style="background: linear-gradient(135deg, #312e81, #4f46e5);">
             <div class="space-y-1.5">
               <div class="flex items-center gap-2 flex-wrap">
-                <span id="detailBadgePill" contenteditable="true" onblur="saveDetailSettings(false)" class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-white/20 text-white border border-white/30 tracking-tight focus:outline-none">
+                <span id="detailBadgePill" contenteditable="true" onblur="saveDetailSettings(true)" class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-white/20 text-white border border-white/30 tracking-tight focus:outline-none">
                   현금완납 기준
                 </span>
-                <span id="detailModePill" class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-emerald-400/25 text-emerald-100 border border-emerald-300/40">
-                  공시 · 선택약정 투명 안내
-                </span>
               </div>
-              <h2 id="detailStoreTitle" contenteditable="true" onblur="saveDetailSettings(false)" class="text-xl sm:text-2xl font-black tracking-tight text-white focus:outline-none" title="클릭하여 제목을 수정할 수 있습니다">
+              <h2 id="detailStoreTitle" contenteditable="true" oninput="scheduleDetailTitleCloudSave()" onblur="saveDetailSettings(true)" onkeydown="if(event.key==='Enter'){event.preventDefault(); this.blur();}" class="text-xl sm:text-2xl font-black tracking-tight text-white focus:outline-none focus:ring-2 focus:ring-white/40 rounded px-1 -mx-1" title="클릭하여 제목을 수정할 수 있습니다 (수정 시 클라우드 자동 저장)">
                 단콕 휴대폰 시세 상세내역
               </h2>
             </div>
             <div class="text-right shrink-0 space-y-1">
               <div class="text-[11px] font-bold text-white/75">공시 및 시세 적용 기준</div>
-              <div id="detailDateBadge" contenteditable="true" onblur="saveDetailSettings(false)" class="inline-block px-3 py-1 rounded-xl bg-white/15 border border-white/25 text-xs font-black text-white focus:outline-none">
+              <div id="detailDateBadge" class="inline-block px-3 py-1 rounded-xl bg-white/15 border border-white/25 text-xs font-black text-white select-none">
                 2026.11.25 기준
               </div>
-              <div id="detailPaybackNotice" contenteditable="true" onblur="saveDetailSettings(false)" class="text-[11px] font-extrabold text-amber-200 leading-tight focus:outline-none">
+              <div id="detailPaybackNotice" contenteditable="true" onblur="saveDetailSettings(true)" class="text-[11px] font-extrabold text-amber-200 leading-tight focus:outline-none">
                 모든 매장지원금은 페이백 금액 제외 추가지원금으로 모두 반영됩니다.
               </div>
             </div>
@@ -16368,11 +16365,25 @@ JSON 규격:
       return nextText;
     }
 
+    function getTodayKstDateBadge() {
+      try {
+        const now = new Date();
+        const parts = new Intl.DateTimeFormat('ko-KR', {
+          timeZone: 'Asia/Seoul',
+          year: 'numeric', month: '2-digit', day: '2-digit'
+        }).formatToParts(now);
+        const y = parts.find(p => p.type === 'year')?.value || now.getFullYear();
+        const m = parts.find(p => p.type === 'month')?.value || String(now.getMonth() + 1).padStart(2, '0');
+        const d = parts.find(p => p.type === 'day')?.value || String(now.getDate()).padStart(2, '0');
+        return `${y}.${m}.${d} 기준`;
+      } catch(e) {
+        return '오늘 기준';
+      }
+    }
+
     function getDefaultDetailSettings(storeId = currentStoreId) {
       const sId = storeId || 'myeongji';
       const storeLabel = (sId === 'myeongji') ? '원조폰 명지점' : (sId === 'gwangan') ? '원조폰 광안점' : '단콕 테스트매장';
-      const now = new Date();
-      const kstStr = new Intl.DateTimeFormat('ko-KR', { timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit' }).format(now).replace(/\s/g, '').replace(/\.$/, '');
       return {
         themeColor: '#4f46e5',
         marginMode: adMarginBase === 'all' ? 'all' : 'basic',
@@ -16380,7 +16391,7 @@ JSON 규격:
         showFinalPrice: false,
         title: `${storeLabel} 휴대폰 시세 상세내역`,
         badgePill: '현금완납 기준',
-        dateBadge: `${kstStr} 기준`,
+        dateBadge: getTodayKstDateBadge(),
         paybackNotice: '모든 매장지원금은 페이백 금액 제외 추가지원금으로 모두 반영됩니다.',
         footerNote: buildDetailFooterWithNowTime(''),
         sunyakMap: {}
@@ -16411,11 +16422,9 @@ JSON 규격:
         detailSettings = base;
       }
 
-      const todayKey = new Date().toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' });
-      if (detailSettings.savedDayKey !== todayKey) {
-        detailSettings.dateBadge = base.dateBadge;
-        detailSettings.savedDayKey = todayKey;
-      }
+      // 날짜 배지는 수정 불가 및 매일 한국시간(KST) 오늘 날짜로 자동 최신화
+      detailSettings.dateBadge = getTodayKstDateBadge();
+      detailSettings.savedDayKey = new Date().toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' });
 
       syncDetailControlsUI();
     }
@@ -16424,32 +16433,51 @@ JSON 규격:
       if (!detailSettings) return null;
       const titleEl = document.getElementById('detailStoreTitle');
       const badgeEl = document.getElementById('detailBadgePill');
-      const dateEl = document.getElementById('detailDateBadge');
       const paybackEl = document.getElementById('detailPaybackNotice');
       const footerEl = document.getElementById('detailFooterNote');
       if (titleEl && titleEl.innerText.trim()) detailSettings.title = titleEl.innerText.trim();
       if (badgeEl && badgeEl.innerText.trim()) detailSettings.badgePill = badgeEl.innerText.trim();
-      if (dateEl && dateEl.innerText.trim()) detailSettings.dateBadge = dateEl.innerText.trim();
+      detailSettings.dateBadge = getTodayKstDateBadge();
       if (paybackEl && paybackEl.innerText.trim()) detailSettings.paybackNotice = paybackEl.innerText.trim();
       if (footerEl && footerEl.innerText.trim()) detailSettings.footerNote = footerEl.innerText.trim();
       detailSettings.savedDayKey = new Date().toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' });
       return JSON.parse(JSON.stringify(detailSettings));
     }
 
+    let detailTitleSaveTimer = null;
+    function scheduleDetailTitleCloudSave() {
+      if (detailTitleSaveTimer) clearTimeout(detailTitleSaveTimer);
+      detailTitleSaveTimer = setTimeout(() => {
+        saveDetailSettings(true);
+      }, 600);
+    }
+
     function saveDetailSettings(triggerCloud = true) {
       if (!detailSettings) return;
+      if (detailTitleSaveTimer) {
+        clearTimeout(detailTitleSaveTimer);
+        detailTitleSaveTimer = null;
+      }
       const sId = currentStoreId || 'myeongji';
       const data = getDetailSettingsForSave();
       try {
         localStorage.setItem(`phone_detail_settings_${sId}`, JSON.stringify(data));
       } catch(e) {}
       if (triggerCloud && db && isStoreDataLoaded) {
+        setSyncStatus('syncing', '상세내역 설정 클라우드 저장 중...');
         const actor = currentRole === 'master' ? '본사 (마스터)' : currentStoreName;
         db.collection('stores').doc(sId).set({
           detailSettings: data,
           updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
           updatedBy: actor
-        }, { merge: true }).catch(err => console.warn('Detail settings save error:', err));
+        }, { merge: true })
+          .then(() => {
+            setSyncStatus('online', '클라우드 동기화 완료');
+          })
+          .catch(err => {
+            console.warn('Detail settings save error:', err);
+            setSyncStatus('error', '상세내역 설정 저장 실패');
+          });
       }
     }
 
@@ -16515,7 +16543,11 @@ JSON 규격:
       const footerEl = document.getElementById('detailFooterNote');
       if (titleEl && detailSettings.title) titleEl.innerText = detailSettings.title;
       if (badgeEl && detailSettings.badgePill) badgeEl.innerText = detailSettings.badgePill;
-      if (dateEl && detailSettings.dateBadge) dateEl.innerText = detailSettings.dateBadge;
+      if (dateEl) {
+        const todayBadge = getTodayKstDateBadge();
+        detailSettings.dateBadge = todayBadge;
+        dateEl.innerText = todayBadge;
+      }
       if (paybackEl && detailSettings.paybackNotice) paybackEl.innerText = detailSettings.paybackNotice;
       if (footerEl && detailSettings.footerNote) footerEl.innerText = detailSettings.footerNote;
     }
@@ -16803,6 +16835,8 @@ JSON 규격:
           tbody.appendChild(tr);
         });
       });
+      const dateEl = document.getElementById('detailDateBadge');
+      if (dateEl) dateEl.innerText = getTodayKstDateBadge();
       stampDetailLiveFooterTime();
     }
 
@@ -16813,6 +16847,8 @@ JSON 규격:
         alert("시세 상세내역 요소를 찾을 수 없습니다.");
         return;
       }
+      const dateEl = document.getElementById('detailDateBadge');
+      if (dateEl) dateEl.innerText = getTodayKstDateBadge();
       stampDetailLiveFooterTime();
 
       const copyBtn = document.getElementById('detailCopyBtn');
