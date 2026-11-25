@@ -3199,11 +3199,25 @@ service cloud.firestore {
     let netDisplayMode = "both";
     let adMarginBase = (function() {
       try {
-        return localStorage.getItem('phone_ad_margin_base') || 'basic';
+        return localStorage.getItem('phone_ad_margin_base_myeongji') || localStorage.getItem('phone_ad_margin_base') || 'basic';
       } catch(e) {
         return 'basic';
       }
     })();
+
+    function loadAdMarginBase(storeId = currentStoreId) {
+      const sKey = storeId || 'myeongji';
+      try {
+        let val = localStorage.getItem(`phone_ad_margin_base_${sKey}`);
+        if (!val && sKey === 'myeongji') val = localStorage.getItem('phone_ad_margin_base');
+        adMarginBase = (val === 'all') ? 'all' : 'basic';
+      } catch (e) {
+        adMarginBase = 'basic';
+      }
+      if (typeof setAdMarginBase === 'function') {
+        setAdMarginBase(adMarginBase, false);
+      }
+    }
     let allAddDiscounts = { SK: 15, KT: 15, LG: 15 };
 
     var storeS26Hike = { SK: false, KT: false, LG: false };
@@ -3289,7 +3303,7 @@ service cloud.firestore {
       carrierConditions = getDefaultCarrierConditions();
       try {
         const savedStore = localStorage.getItem(`phone_carrier_conditions_${sKey}`);
-        const savedLegacy = !savedStore ? localStorage.getItem('phone_carrier_conditions') : null;
+        const savedLegacy = (!savedStore && sKey === 'myeongji') ? localStorage.getItem('phone_carrier_conditions') : null;
         const raw = savedStore || savedLegacy;
         if (raw) {
           const parsed = JSON.parse(raw);
@@ -3346,7 +3360,7 @@ service cloud.firestore {
       allAddDiscounts = { SK: 15, KT: 15, LG: 15 };
       try {
         const savedStore = localStorage.getItem(`phone_all_add_discounts_${sKey}`);
-        const savedLegacy = !savedStore ? localStorage.getItem('phone_all_add_discounts') : null;
+        const savedLegacy = (!savedStore && sKey === 'myeongji') ? localStorage.getItem('phone_all_add_discounts') : null;
         const raw = savedStore || savedLegacy;
         if (raw) {
           const parsed = JSON.parse(raw);
@@ -3636,23 +3650,23 @@ service cloud.firestore {
     function loadLayouts(storeId = currentStoreId) {
       const sKey = storeId || 'myeongji';
       const defaultIds = devices.map(d => d.id);
+      calcRows = [...defaultIds];
+      dailyCarrierRows = { SK: [...defaultIds], KT: [...defaultIds], LG: [...defaultIds] };
+      adCarrierOrders = { SK: [...defaultIds], KT: [...defaultIds], LG: [...defaultIds] };
       try {
-        const savedCalc = localStorage.getItem(`phone_calc_rows_${sKey}`) || localStorage.getItem('phone_calc_rows');
+        const savedCalc = localStorage.getItem(`phone_calc_rows_${sKey}`) || (sKey === 'myeongji' ? localStorage.getItem('phone_calc_rows') : null);
         if (savedCalc) {
           const parsed = JSON.parse(savedCalc);
           if (Array.isArray(parsed) && parsed.length > 0) calcRows = parsed;
-          else calcRows = [...defaultIds];
-        } else {
-          calcRows = [...defaultIds];
         }
 
-        const savedDaily = localStorage.getItem(`phone_daily_carrier_rows_${sKey}`) || localStorage.getItem('phone_daily_carrier_rows');
+        const savedDaily = localStorage.getItem(`phone_daily_carrier_rows_${sKey}`) || (sKey === 'myeongji' ? localStorage.getItem('phone_daily_carrier_rows') : null);
         if (savedDaily) {
           const parsed = JSON.parse(savedDaily);
           if (parsed && typeof parsed === 'object') dailyCarrierRows = parsed;
         }
 
-        const savedAd = localStorage.getItem(`phone_ad_carrier_orders_${sKey}`) || localStorage.getItem('phone_ad_carrier_orders');
+        const savedAd = localStorage.getItem(`phone_ad_carrier_orders_${sKey}`) || (sKey === 'myeongji' ? localStorage.getItem('phone_ad_carrier_orders') : null);
         if (savedAd) {
           const parsed = JSON.parse(savedAd);
           if (parsed && typeof parsed === 'object') adCarrierOrders = parsed;
@@ -4784,11 +4798,13 @@ service cloud.firestore {
       render();
     }
 
-    function setAdMarginBase(b) {
-      adMarginBase = b;
-      try {
-        localStorage.setItem('phone_ad_margin_base', b);
-      } catch(e) {}
+    function setAdMarginBase(b, persist = true) {
+      adMarginBase = (b === 'all') ? 'all' : 'basic';
+      if (persist) {
+        try {
+          localStorage.setItem(`phone_ad_margin_base_${currentStoreId || 'myeongji'}`, adMarginBase);
+        } catch(e) {}
+      }
 
       const allBtn = document.getElementById('adMarginBase-all');
       const basicBtn = document.getElementById('adMarginBase-basic');
@@ -6023,10 +6039,10 @@ service cloud.firestore {
             </div>
             ${d.id === 's26' ? `
               <div class="mt-1 flex items-center gap-1.5 flex-wrap text-[10px] text-slate-500 font-medium">
-                <span class="text-[10px] text-slate-400">인상반영:</span>
-                <label class="inline-flex items-center gap-0.5 cursor-pointer"><input type="checkbox" ${d.prices && d.prices.SK >= 140 ? 'checked' : ''} onchange="toggleS26PriceHike('SK')" class="w-3 h-3 rounded text-blue-600 cursor-pointer" /><span>SK</span></label>
-                <label class="inline-flex items-center gap-0.5 cursor-pointer font-bold text-amber-700"><input type="checkbox" ${d.prices && d.prices.KT >= 140 ? 'checked' : ''} onchange="toggleS26PriceHike('KT')" class="w-3 h-3 rounded text-blue-600 cursor-pointer" /><span>KT</span></label>
-                <label class="inline-flex items-center gap-0.5 cursor-pointer"><input type="checkbox" ${d.prices && d.prices.LG >= 140 ? 'checked' : ''} onchange="toggleS26PriceHike('LG')" class="w-3 h-3 rounded text-blue-600 cursor-pointer" /><span>LG</span></label>
+                <span class="text-[10px] text-slate-400">인상반영(현매장):</span>
+                <label class="inline-flex items-center gap-0.5 cursor-pointer"><input type="checkbox" ${isS26HikeActive('SK') ? 'checked' : ''} onchange="toggleS26PriceHike('SK')" class="w-3 h-3 rounded text-blue-600 cursor-pointer" /><span>SK</span></label>
+                <label class="inline-flex items-center gap-0.5 cursor-pointer font-bold text-amber-700"><input type="checkbox" ${isS26HikeActive('KT') ? 'checked' : ''} onchange="toggleS26PriceHike('KT')" class="w-3 h-3 rounded text-blue-600 cursor-pointer" /><span>KT</span></label>
+                <label class="inline-flex items-center gap-0.5 cursor-pointer"><input type="checkbox" ${isS26HikeActive('LG') ? 'checked' : ''} onchange="toggleS26PriceHike('LG')" class="w-3 h-3 rounded text-blue-600 cursor-pointer" /><span>LG</span></label>
               </div>
             ` : ''}
           </td>
@@ -6859,6 +6875,31 @@ service cloud.firestore {
       if (svgG) svgG.setAttribute('class', 'w-3.5 h-3.5 text-purple-600');
     }
 
+    function resetStoreDeviceData(storeId = currentStoreId, restoreLocalBackup = true) {
+      const sId = storeId || 'myeongji';
+      let rBackup = null, lBackup = null, aBackup = null;
+      if (restoreLocalBackup) {
+        try {
+          const rs = localStorage.getItem('phone_rates_backup_' + sId);
+          if (rs) rBackup = JSON.parse(rs);
+          const ls = localStorage.getItem('phone_locs_backup_' + sId);
+          if (ls) lBackup = JSON.parse(ls);
+          const as = localStorage.getItem('phone_ads_backup_' + sId);
+          if (as) aBackup = JSON.parse(as);
+        } catch (e) {}
+      }
+      devices.forEach(d => {
+        if (!d || d.id === 'empty') return;
+        d.rate = (rBackup && rBackup[d.id]) ? JSON.parse(JSON.stringify(rBackup[d.id])) : { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } };
+        d.loc = (lBackup && lBackup[d.id]) ? JSON.parse(JSON.stringify(lBackup[d.id])) : { SK: { mnp: '도매', chg: '도매' }, KT: { mnp: '도매', chg: '도매' }, LG: { mnp: '도매', chg: '도매' } };
+        d.ad = (aBackup && aBackup[d.id]) ? JSON.parse(JSON.stringify(aBackup[d.id])) : {
+          SK: { mnp: '', chg: '', note: '', hidden: false, sunyak: false, tag: d.tag || '' },
+          KT: { mnp: '', chg: '', note: '', hidden: false, sunyak: false, tag: d.tag || '' },
+          LG: { mnp: '', chg: '', note: '', hidden: false, sunyak: false, tag: d.tag || '' }
+        };
+      });
+    }
+
     function masterSwitchStore(targetStoreId) {
       if (currentRole !== 'master') return;
       if (currentStoreId === targetStoreId) return;
@@ -6875,7 +6916,9 @@ service cloud.firestore {
       currentStoreId = targetStoreId;
       lastUserActionTime = 0;
 
+      resetStoreDeviceData(targetStoreId, true);
       if (typeof loadStoreS26Hike === 'function') loadStoreS26Hike(targetStoreId);
+      if (typeof loadAdMarginBase === 'function') loadAdMarginBase(targetStoreId);
       if (typeof loadCarrierConditions === 'function') loadCarrierConditions(targetStoreId);
       if (typeof loadDiscounts === 'function') loadDiscounts(targetStoreId);
       if (typeof loadLayouts === 'function') loadLayouts(targetStoreId);
@@ -7245,11 +7288,14 @@ service cloud.firestore {
 
     // ==================== Firebase Firestore 실시간 동기화 & 영속화 로직 ====================
     function initFirestoreListeners() {
+      if (typeof resetStoreDeviceData === 'function') resetStoreDeviceData(currentStoreId, true);
       if (typeof loadStoreS26Hike === 'function') loadStoreS26Hike(currentStoreId);
+      if (typeof loadAdMarginBase === 'function') loadAdMarginBase(currentStoreId);
       if (!db) {
         if (typeof loadCarrierConditions === 'function') loadCarrierConditions(currentStoreId);
         if (typeof loadDiscounts === 'function') loadDiscounts(currentStoreId);
         if (typeof loadLayouts === 'function') loadLayouts(currentStoreId);
+        if (typeof loadColorPresets === 'function') loadColorPresets(currentStoreId);
         setSyncStatus('error', 'Firebase 연결 오류');
         render();
         return;
@@ -7503,7 +7549,8 @@ service cloud.firestore {
                 }
               });
 
-              // rates, locs, ads 데이터 복원
+              // rates, locs, ads 데이터 복원 (타 매장 잔류 데이터 방지를 위해 먼저 메모리 초기화)
+              if (typeof resetStoreDeviceData === 'function') resetStoreDeviceData(currentStoreId, false);
               if (data.rates && Object.keys(data.rates).length > 0) {
                 Object.keys(data.rates).forEach(deviceId => {
                   const localD = devices.find(d => d.id === deviceId);
@@ -7650,21 +7697,17 @@ service cloud.firestore {
 
     var pendingStoreSaveMeta = null;
 
-    function executeStoreSave(targetStoreId, category = '', description = '') {
+    function saveStoreLocalBackups(targetStoreId = currentStoreId) {
       const sId = targetStoreId || currentStoreId || 'myeongji';
       const rates = {};
       const locs = {};
       const ads = {};
       devices.forEach(d => {
+        if (!d || d.id === 'empty') return;
         rates[d.id] = d.rate;
         locs[d.id] = d.loc;
         ads[d.id] = d.ad;
       });
-
-      const storeLabel = sId === 'myeongji' ? '명지점' : sId === 'gwangan' ? '광안점' : '🧪 테스트매장';
-      const actor = currentRole === 'master' ? `본사 (마스터 - ${storeLabel})` : currentStoreName;
-
-      // 최신 입력 데이터 실시간 로컬 안전 이중 백업 (전부 매장별 키로 완전 분리 보존)
       try {
         localStorage.setItem('phone_rates_backup_' + sId, JSON.stringify(rates));
         localStorage.setItem('phone_locs_backup_' + sId, JSON.stringify(locs));
@@ -7676,7 +7719,17 @@ service cloud.firestore {
         localStorage.setItem('phone_carrier_conditions_' + sId, JSON.stringify(carrierConditions));
         localStorage.setItem('phone_all_add_discounts_' + sId, JSON.stringify(allAddDiscounts));
         localStorage.setItem('phone_s26_hike_' + sId, JSON.stringify(storeS26Hike));
+        localStorage.setItem('phone_ad_margin_base_' + sId, adMarginBase);
       } catch(e) {}
+      return { rates, locs, ads };
+    }
+
+    function executeStoreSave(targetStoreId, category = '', description = '') {
+      const sId = targetStoreId || currentStoreId || 'myeongji';
+      const { rates, locs, ads } = saveStoreLocalBackups(sId);
+
+      const storeLabel = sId === 'myeongji' ? '명지점' : sId === 'gwangan' ? '광안점' : '🧪 테스트매장';
+      const actor = currentRole === 'master' ? `본사 (마스터 - ${storeLabel})` : currentStoreName;
 
       if (!db || !isStoreDataLoaded) return;
 
@@ -7721,6 +7774,19 @@ service cloud.firestore {
     }
 
     function flushPendingStoreSave(targetStoreId = currentStoreId) {
+      if (typeof detailTitleSaveTimer !== 'undefined' && detailTitleSaveTimer) {
+        clearTimeout(detailTitleSaveTimer);
+        detailTitleSaveTimer = null;
+        const sId = targetStoreId || currentStoreId || 'myeongji';
+        if (typeof getDetailSettingsForSave === 'function' && detailSettings) {
+          const data = getDetailSettingsForSave();
+          try { localStorage.setItem(`phone_detail_settings_${sId}`, JSON.stringify(data)); } catch (e) {}
+          if (db && isStoreDataLoaded) {
+            const actor = currentRole === 'master' ? '본사 (마스터)' : currentStoreName;
+            db.collection('stores').doc(sId).set({ detailSettings: data }, { merge: true }).catch(() => {});
+          }
+        }
+      }
       if (storeSaveTimer) {
         clearTimeout(storeSaveTimer);
         storeSaveTimer = null;
@@ -7733,15 +7799,10 @@ service cloud.firestore {
 
     function scheduleStoreSave(category = '', description = '') {
       const targetStoreId = currentStoreId || 'myeongji';
-      // 매장 데이터가 클라우드에서 아직 로딩되지 않았을 때는 클라우드 덮어쓰기 차단 (단, 로컬 백업은 유지)
-      if (!db) {
-        try {
-          localStorage.setItem('phone_carrier_conditions_' + targetStoreId, JSON.stringify(carrierConditions));
-          localStorage.setItem('phone_all_add_discounts_' + targetStoreId, JSON.stringify(allAddDiscounts));
-          localStorage.setItem('phone_s26_hike_' + targetStoreId, JSON.stringify(storeS26Hike));
-        } catch(e) {}
-        return;
-      }
+      // 즉시 매장별 로컬 백업 최신화 (오프라인/샌드박스 및 매장 전환 레이스 보호)
+      saveStoreLocalBackups(targetStoreId);
+      // 매장 데이터가 클라우드에서 아직 로딩되지 않았을 때는 클라우드 덮어쓰기 차단
+      if (!db) return;
       if (!isStoreDataLoaded) {
         console.warn("[데이터 보호] 클라우드 매장 데이터가 아직 완전히 로딩되지 않아 저장을 차단합니다 (리베이트 롤백 방지).");
         return;
@@ -11927,15 +11988,17 @@ function handleSelectAffiliateCard(cardId) {
       try {
         localStorage.setItem('phone_store_contacts', JSON.stringify(storeContacts));
       } catch(e) {}
-      if (db) {
+      if (db && storeContacts[cardStoreId]) {
         try {
-          await db.collection('settings').doc('contacts').set(storeContacts, { merge: true });
+          await db.collection('settings').doc('contacts').set({
+            [cardStoreId]: storeContacts[cardStoreId]
+          }, { merge: true });
         } catch(e) {
           console.warn("Firestore 연락처 저장 실패:", e);
         }
       }
       renderCardPreview();
-      const storeLabel = cardStoreId === 'myeongji' ? '명지점' : '광안점';
+      const storeLabel = cardStoreId === 'myeongji' ? '명지점' : (cardStoreId === 'gwangan' ? '광안점' : '테스트매장');
       alert(`✅ [${storeLabel}] 매장 정보가 저장되었습니다!\nA4 안내서 상단과 하단에 즉시 실시간 반영되었습니다.`);
     }
 
@@ -16185,7 +16248,16 @@ JSON 규격:
           if (document.getElementById('posterStoreTitle')) document.getElementById('posterStoreTitle').innerText = defaultTitle;
           if (document.getElementById('posterSubtitle')) document.getElementById('posterSubtitle').innerText = '성지매장 눈속임 원조폰에서는 끝!!';
           if (document.getElementById('posterDateText')) document.getElementById('posterDateText').innerText = getKstTodayString();
+          posterVasData = (typeof getDefaultPosterVasData === 'function') ? JSON.parse(JSON.stringify(getDefaultPosterVasData())) : [];
+          posterVasEtcText = '';
+          checkedNoticeIds = (typeof masterNoticeItems !== 'undefined' && Array.isArray(masterNoticeItems)) ? masterNoticeItems.map(n => n.id) : ['pn-1', 'pn-2', 'pn-3', 'pn-4', 'pn-5', 'pn-6', 'pn-7'];
+          const localChecked = localStorage.getItem(`phone_poster_checked_notices_${sId}`);
+          if (localChecked) { try { checkedNoticeIds = JSON.parse(localChecked); } catch(e) {} }
+          const localHigh = localStorage.getItem(`phone_poster_discount_highlight_${sId}`);
+          isPosterDiscountHighlightEnabled = (localHigh !== null) ? (localHigh === '1') : true;
         }
+        const savedManual = localStorage.getItem(`phone_poster_manual_edit_${sId}`);
+        isPosterManualEditEnabled = (savedManual === '1');
 
         applyPosterDiscountHighlightState();
         renderPosterNoticeChecklist();

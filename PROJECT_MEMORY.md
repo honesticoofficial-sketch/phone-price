@@ -3960,3 +3960,17 @@ service cloud.firestore {
 1. **`제휴카드안내서` (`TAB 4-card`) 매장 기본정보 선택 스위처 권한 분리**:
    - `명지점 설정 / 광안점 설정 / 테스트매장 설정` 스위처(`#cardStoreSwitcherBox`)는 **마스터 계정(`103105`)** 으로 로그인했을 때만 표시.
    - 일반 매장 계정(`명지점 152411`, `광안점 152422`)으로 접속 시 스위처를 완전히 숨기고 **`본인 매장 전용 설정`(`#cardSingleStoreBadge`)** 으로 자동 고정 (`setCardStore()`, `initCardTab()` 가드 포함).
+
+---
+
+## 95. 🔍 [제95장] 전체 시스템 교차 간섭 정밀 검수 & 100% 매장 독립 운영 완성 (2026-11-25)
+
+1. **`resetStoreDeviceData()` 메모리 초기화 & 백업 분리**:
+   - 매장 전환(`masterSwitchStore`) 및 오프라인/초기 로드 시 메모리 내 `devices[].rate / .loc / .ad` 잔류값을 즉시 초기화하고 해당 매장의 백업/클라우드 데이터만 로드하도록 보강.
+2. **잔여 공용 `localStorage` 키 및 레거시 폴백 전면 제거**:
+   - `phone_ad_margin_base_${storeId}` 매장별 분리 (`loadAdMarginBase()`).
+   - `loadCarrierConditions`, `loadDiscounts`, `loadLayouts`에서 타 매장(`gwangan`, `test_store`)이 구형 공용 로컬 키를 잘못 물려받지 않도록 차단.
+3. **`시세표 포스터` 미저장 매장 기본값 리셋 & `제휴카드` 연락처 부분 저장**:
+   - `loadAdPosterSettings()`에서 신규/미설정 매장으로 전환할 때 이전 매장의 부가서비스·체크상태가 남지 않도록 초기화.
+   - `saveActiveStoreContact()`에서 현재 선택한 매장 키(`{ [cardStoreId]: ... }`)만 Firestore에 머지 저장해 타 매장 연락처 간섭 차단.
+   - `detailTitleSaveTimer`도 매장 전환 직전 즉시 플러시 처리하며, 설정 모달 S26 `인상반영` 체크도 `isS26HikeActive()`로 통일 완료.
