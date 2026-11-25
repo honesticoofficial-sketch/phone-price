@@ -478,6 +478,12 @@
           </div>
           <div class="space-y-1.5">
             <div class="flex items-center gap-1.5">
+              <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0 whitespace-nowrap">요금제명:</span>
+              <input type="text" id="cond-SK-planName" onfocus="this.select()" onchange="updateCarrierCondition('SK', 'planName', this.value)"
+                     class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-rose-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
+                     placeholder="예: 베스트 109 (시세상세내역 표시)" />
+            </div>
+            <div class="flex items-center gap-1.5">
               <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">요금제 :</span>
               <input type="text" id="cond-SK-plan" onfocus="this.select()" onchange="updateCarrierCondition('SK', 'plan', this.value)"
                      class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-rose-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
@@ -536,6 +542,12 @@
           </div>
           <div class="space-y-1.5">
             <div class="flex items-center gap-1.5">
+              <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0 whitespace-nowrap">요금제명:</span>
+              <input type="text" id="cond-KT-planName" onfocus="this.select()" onchange="updateCarrierCondition('KT', 'planName', this.value)"
+                     class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-blue-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
+                     placeholder="예: 초이스 더블 (시세상세내역 표시)" />
+            </div>
+            <div class="flex items-center gap-1.5">
               <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">요금제 :</span>
               <input type="text" id="cond-KT-plan" onfocus="this.select()" onchange="updateCarrierCondition('KT', 'plan', this.value)"
                      class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-blue-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
@@ -593,6 +605,12 @@
             </div>
           </div>
           <div class="space-y-1.5">
+            <div class="flex items-center gap-1.5">
+              <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0 whitespace-nowrap">요금제명:</span>
+              <input type="text" id="cond-LG-planName" onfocus="this.select()" onchange="updateCarrierCondition('LG', 'planName', this.value)"
+                     class="w-full px-2 py-0.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-pink-400 rounded-md text-xs font-semibold text-slate-800 focus:outline-none transition"
+                     placeholder="예: 프리미어 슈퍼 (시세상세내역 표시)" />
+            </div>
             <div class="flex items-center gap-1.5">
               <span class="text-[11px] font-bold text-slate-500 w-14 shrink-0">요금제 :</span>
               <input type="text" id="cond-LG-plan" onfocus="this.select()" onchange="updateCarrierCondition('LG', 'plan', this.value)"
@@ -2853,10 +2871,15 @@ service cloud.firestore {
 
         <div class="flex items-center gap-3 p-3 bg-slate-50 border border-slate-200 rounded-2xl">
           <span id="colorPresetSaveSwatch" class="w-10 h-10 rounded-xl border-2 border-white shadow-sm ring-1 ring-slate-200 shrink-0" style="background-color: #4f46e5;"></span>
-          <div class="min-w-0">
+          <div class="min-w-0 flex-1">
             <div class="text-[11px] font-bold text-slate-500">선택된 색상 코드</div>
             <div id="colorPresetSaveHex" class="text-sm font-mono font-black text-slate-900">#4F46E5</div>
           </div>
+          <span id="colorPresetSaveCountBadge" class="px-2.5 py-1 rounded-full text-[11px] font-black bg-indigo-50 text-indigo-700 border border-indigo-200 shrink-0">0 / 5개</span>
+        </div>
+
+        <div id="colorPresetLimitNotice" class="hidden p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-[11px] font-bold text-amber-800 leading-snug">
+          매장별 최대 5개까지만 저장할 수 있습니다. 기존 색상을 삭제하거나 같은 이름으로 덮어쓰기해 주세요.
         </div>
 
         <div class="space-y-1.5">
@@ -2883,7 +2906,10 @@ service cloud.firestore {
               <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
             </span>
             <div>
-              <h3 class="text-sm sm:text-base font-black text-slate-900">저장된 색상 불러오기</h3>
+              <div class="flex items-center gap-2">
+                <h3 class="text-sm sm:text-base font-black text-slate-900">저장된 색상 불러오기</h3>
+                <span id="colorPresetLoadCountBadge" class="px-2 py-0.5 rounded-full text-[10px] font-black bg-indigo-50 text-indigo-700 border border-indigo-200">0 / 5개</span>
+              </div>
               <p id="colorPresetLoadScopeLabel" class="text-[11px] font-bold text-slate-500">저장해둔 색상을 클릭하면 즉시 적용됩니다</p>
             </div>
           </div>
@@ -3177,9 +3203,10 @@ service cloud.firestore {
     })();
     let allAddDiscounts = { SK: 15, KT: 15, LG: 15 };
 
-    // 통신사별 상세 부가조건 (요금제, 부가1~4, 특이사항) - 대표님 지정 표준 요금제 동기화
+    // 통신사별 상세 부가조건 (요금제명, 요금제, 부가1~4, 특이사항) - 대표님 지정 표준 요금제 동기화
     let carrierConditions = {
       SK: {
+        planName: "베스트 109",
         plan: "베스트109 (109,000원 6개월)",
         add1: "마이스마트콜 (M+1)",
         add2: "보험 (M+1)",
@@ -3188,6 +3215,7 @@ service cloud.firestore {
         note: "18프로맥스 선약단가 공시적용기준"
       },
       KT: {
+        planName: "초이스 더블",
         plan: "초이스더블 (120,000원 6개월)",
         add1: "필수팩 L (M+4)",
         add2: "폰 안심보험 (M+3)",
@@ -3196,6 +3224,7 @@ service cloud.firestore {
         note: ""
       },
       LG: {
+        planName: "프리미어 슈퍼",
         plan: "프리미어슈퍼 (115,000원 6개월)",
         add1: "교보sam+구글원 (95일)",
         add2: "V컬러링 (M+1)",
@@ -3238,9 +3267,16 @@ service cloud.firestore {
       const activeEl = document.activeElement;
       ['SK', 'KT', 'LG'].forEach(c => {
         const cond = carrierConditions[c] || {};
-        ['plan', 'add1', 'add2', 'add3', 'add4', 'note'].forEach(field => {
+        ['planName', 'plan', 'add1', 'add2', 'add3', 'add4', 'note'].forEach(field => {
           const el = document.getElementById(`cond-${c}-${field}`);
-          if (el && el !== activeEl) el.value = cond[field] || '';
+          if (!el || el === activeEl) return;
+          if (field === 'planName') {
+            el.value = (cond.planName !== undefined && cond.planName !== null)
+              ? cond.planName
+              : (typeof parseDetailDefaultPlan === 'function' ? parseDetailDefaultPlan(c).planName : '');
+          } else {
+            el.value = cond[field] || '';
+          }
         });
       });
     }
@@ -3254,9 +3290,9 @@ service cloud.firestore {
         localStorage.setItem('phone_carrier_conditions', JSON.stringify(carrierConditions));
       } catch (e) {}
 
-      const fieldKo = { plan: '요금제', add1: '부가1', add2: '부가2', add3: '부가3', add4: '부가4', note: '특이사항' }[field] || field;
+      const fieldKo = { planName: '요금제명', plan: '요금제', add1: '부가1', add2: '부가2', add3: '부가3', add4: '부가4', note: '특이사항' }[field] || field;
       scheduleStoreSave('부가조건 설정', `${carrier} ${fieldKo}: ${oldVal || '-'} → ${val}`);
-      if (field === 'plan' && typeof renderDetailSheet === 'function' && currentTab === 'detail') {
+      if ((field === 'plan' || field === 'planName') && typeof renderDetailSheet === 'function' && currentTab === 'detail') {
         renderDetailSheet();
       }
     }
@@ -7208,6 +7244,7 @@ service cloud.firestore {
       }
       isStoreDataLoaded = false; // 매장 전환 또는 신규 구독 시 플래그 리셋 (로딩 전 저장 차단)
       knownDeviceIds = null;
+      if (typeof loadColorPresets === 'function') loadColorPresets(currentStoreId);
       if (!db) return;
 
       if (typeof subscribeStorePresence === 'function') {
@@ -7240,12 +7277,20 @@ service cloud.firestore {
 
             // 부가조건 복원
             if (data.carrierConditions && typeof data.carrierConditions === 'object') {
+              const defPlanNames = { SK: '베스트 109', KT: '초이스 더블', LG: '프리미어 슈퍼' };
               ['SK', 'KT', 'LG'].forEach(c => {
                 if (data.carrierConditions[c]) {
-                  carrierConditions[c] = { ...carrierConditions[c], ...data.carrierConditions[c] };
+                  const merged = { ...(carrierConditions[c] || {}), ...data.carrierConditions[c] };
+                  if (data.carrierConditions[c].planName === undefined) {
+                    const pText = String(data.carrierConditions[c].plan || '').trim();
+                    const cleanFromPlan = pText.replace(/\([^)]*\)/g, '').replace(/[0-9]{1,3}(?:,[0-9]{3})+\s*원?/g, '').replace(/[0-9]{5,6}\s*원/g, '').trim();
+                    merged.planName = cleanFromPlan || defPlanNames[c] || '';
+                  }
+                  carrierConditions[c] = merged;
                 }
               });
               syncCarrierConditionInputs();
+              if (typeof renderDetailSheet === 'function' && currentTab === 'detail') renderDetailSheet();
             }
 
             // ★ 리베이트/단가(rates), 단가처(locs), 광고가(ads) 및 행 레이아웃 데이터 복원
@@ -7358,6 +7403,8 @@ service cloud.firestore {
               }
               if (data.colorPresets && typeof applyStoreColorPresets === 'function') {
                 applyStoreColorPresets(data.colorPresets);
+              } else if (typeof loadColorPresets === 'function') {
+                loadColorPresets(currentStoreId);
               }
 
               render();
@@ -16408,13 +16455,24 @@ JSON 규격:
         LG: { planName: '프리미어 슈퍼', planFee: 115000 }
       };
       const fallback = defaults[carrier] || { planName: '', planFee: 0 };
-      const condPlan = (carrierConditions && carrierConditions[carrier] && carrierConditions[carrier].plan) ? String(carrierConditions[carrier].plan).trim() : '';
-      if (!condPlan) return fallback;
-      const feeMatch = condPlan.match(/([0-9]{1,3}(?:,[0-9]{3})+)/) || condPlan.match(/([0-9]{5,6})\s*원?/);
+      const cond = (carrierConditions && carrierConditions[carrier]) ? carrierConditions[carrier] : {};
+      const condPlan = cond.plan ? String(cond.plan).trim() : '';
+      const hasExplicitName = (cond.planName !== undefined && cond.planName !== null);
+      const explicitName = hasExplicitName ? String(cond.planName).trim() : '';
+
+      const feeSource = condPlan || explicitName;
+      const feeMatch = feeSource.match(/([0-9]{1,3}(?:,[0-9]{3})+)/) || feeSource.match(/([0-9]{5,6})\s*원?/);
       const feeNum = feeMatch ? parseInt(feeMatch[1].replace(/,/g, ''), 10) : fallback.planFee;
-      let cleanName = condPlan.replace(/\([^)]*\)/g, '').replace(/[0-9]{1,3}(?:,[0-9]{3})+\s*원?/g, '').replace(/[0-9]{5,6}\s*원/g, '').trim();
-      if (!cleanName) cleanName = fallback.planName;
-      return { planName: cleanName, planFee: feeNum };
+
+      let resolvedName = '';
+      if (hasExplicitName) {
+        resolvedName = explicitName;
+      } else if (condPlan) {
+        resolvedName = condPlan.replace(/\([^)]*\)/g, '').replace(/[0-9]{1,3}(?:,[0-9]{3})+\s*원?/g, '').replace(/[0-9]{5,6}\s*원/g, '').trim() || fallback.planName;
+      } else {
+        resolvedName = fallback.planName;
+      }
+      return { planName: resolvedName, planFee: feeNum };
     }
 
     function formatDetailLiveTimestamp() {
@@ -16738,9 +16796,9 @@ JSON 규격:
       }
       if (colEl) {
         if (showFinal) {
-          colEl.innerHTML = `<col style="width:6.5%"><col style="width:19.5%"><col style="width:8.5%"><col style="width:11.5%"><col style="width:7.5%"><col style="width:8%"><col style="width:8%"><col style="width:8%"><col style="width:8%"><col style="width:7.25%"><col style="width:7.25%">`;
+          colEl.innerHTML = `<col style="width:6.5%"><col style="width:21.5%"><col style="width:9.5%"><col style="width:13.5%"><col style="width:8%"><col style="width:8%"><col style="width:9%"><col style="width:9%"><col style="width:7.5%"><col style="width:7.5%">`;
         } else {
-          colEl.innerHTML = `<col style="width:7%"><col style="width:22%"><col style="width:9.5%"><col style="width:12.5%"><col style="width:8.5%"><col style="width:9.5%"><col style="width:9.5%"><col style="width:10.75%"><col style="width:10.75%">`;
+          colEl.innerHTML = `<col style="width:7%"><col style="width:25%"><col style="width:10.5%"><col style="width:15.5%"><col style="width:10%"><col style="width:10%"><col style="width:11%"><col style="width:11%">`;
         }
       }
 
@@ -16750,7 +16808,6 @@ JSON 규격:
           <th rowspan="2" class="p-2 border-r border-slate-200 text-center align-middle">통신사</th>
           <th rowspan="2" class="p-2 border-r border-slate-200 text-center align-middle">모델명</th>
           <th rowspan="2" class="p-2 border-r border-slate-200 text-center align-middle">출고가</th>
-          <th rowspan="2" class="p-2 border-r border-slate-200 text-center align-middle">요금제</th>
           <th rowspan="2" class="p-2 border-r border-slate-200 text-center align-middle">기본료</th>
           <th colspan="2" class="p-1.5 border-r border-slate-200 border-b border-slate-200 text-center align-middle">공통지원금</th>
           <th colspan="${storeColSpan}" class="p-1.5 border-b border-slate-200 text-center align-middle" style="background-color: ${theme.storeThBg}; color: ${theme.storeThText};">매장지원금</th>
@@ -16814,7 +16871,7 @@ JSON 규격:
         if (rowsToRender.length === 0) {
           const tr = document.createElement('tr');
           tr.className = cIdx > 0 ? 'border-t-2 border-slate-300' : '';
-          const totalCols = 9 + (showFinal ? 2 : 0);
+          const totalCols = 8 + (showFinal ? 2 : 0);
           tr.innerHTML = `
             <td class="p-2.5 font-black text-center border-r border-slate-200" style="border-left: 4px solid ${meta.accent}; color: ${meta.text}; background-color: ${meta.bg};">${meta.label}</td>
             <td colspan="${totalCols - 1}" class="p-3 text-center text-slate-400 text-[11px] font-semibold">시세표에 등록된 기종이 없습니다.</td>
@@ -16837,12 +16894,13 @@ JSON 규격:
                 ${meta.label}
               </td>
             `;
+            const planNameHtml = planCfg.planName
+              ? `<div class="font-extrabold text-slate-800 text-[11px] leading-snug break-keep">${escapeHtml(planCfg.planName)}</div>`
+              : '';
             planColsHtml = `
-              <td rowspan="${rowCount}" class="p-2 text-center align-middle border-r border-slate-200 font-bold text-slate-700 text-[11px] leading-snug break-keep bg-white">
-                ${planCfg.planName || '-'}
-              </td>
-              <td rowspan="${rowCount}" class="p-2 text-center align-middle border-r border-slate-200 font-bold text-slate-700 text-[11px] tabular-nums bg-white">
-                ${formatWon(planCfg.planFee || 0)}
+              <td rowspan="${rowCount}" class="px-2 py-2 text-center align-middle border-r border-slate-200 bg-white">
+                ${planNameHtml}
+                <div class="${planCfg.planName ? 'mt-0.5 ' : ''}font-bold text-slate-600 text-[11px] tabular-nums">(${formatWon(planCfg.planFee || 0)})</div>
               </td>
             `;
           }
@@ -17089,9 +17147,35 @@ JSON 규격:
       }, 500);
     }
 
-    // ==================== 색상 테마 이름 저장 / 불러오기 (시세표 & 시세상세내역 공용) ====================
+    // ==================== 색상 테마 이름 저장 / 불러오기 (매장별 독립 · 시세표/상세내역 통합 공용 · 최대 5개) ====================
+    const MAX_COLOR_PRESETS_PER_STORE = 5;
     let activeColorPresetScope = 'poster';
-    let colorPresetsCache = { poster: [], detail: [] };
+    let colorPresetsCache = [];
+
+    function getPresetStoreLabel(storeId = currentStoreId) {
+      if (storeId === 'gwangan') return '광안점';
+      if (storeId === 'test_store') return '테스트매장';
+      return '명지점';
+    }
+
+    function normalizeColorPresetList(rawVal) {
+      let arr = [];
+      if (Array.isArray(rawVal)) {
+        arr = rawVal;
+      } else if (rawVal && typeof rawVal === 'object') {
+        const merged = [...(Array.isArray(rawVal.poster) ? rawVal.poster : []), ...(Array.isArray(rawVal.detail) ? rawVal.detail : [])];
+        const seen = new Set();
+        merged.forEach(item => {
+          if (!item || !item.name || !item.color) return;
+          const k = `${item.name}|${String(item.color).toUpperCase()}`;
+          if (!seen.has(k)) {
+            seen.add(k);
+            arr.push(item);
+          }
+        });
+      }
+      return arr.filter(x => x && x.name && x.color).slice(0, MAX_COLOR_PRESETS_PER_STORE);
+    }
 
     function getColorPresetsStorageKey(storeId = currentStoreId) {
       return `phone_color_presets_${storeId || 'myeongji'}`;
@@ -17102,25 +17186,16 @@ JSON 규격:
         const raw = localStorage.getItem(getColorPresetsStorageKey(storeId));
         if (raw) {
           const parsed = JSON.parse(raw);
-          if (parsed && typeof parsed === 'object') {
-            colorPresetsCache = {
-              poster: Array.isArray(parsed.poster) ? parsed.poster : [],
-              detail: Array.isArray(parsed.detail) ? parsed.detail : []
-            };
-            return colorPresetsCache;
-          }
+          colorPresetsCache = normalizeColorPresetList(parsed);
+          return colorPresetsCache;
         }
       } catch(e) {}
-      colorPresetsCache = { poster: [], detail: [] };
+      colorPresetsCache = [];
       return colorPresetsCache;
     }
 
     function applyStoreColorPresets(cp) {
-      if (!cp || typeof cp !== 'object') return;
-      colorPresetsCache = {
-        poster: Array.isArray(cp.poster) ? cp.poster : [],
-        detail: Array.isArray(cp.detail) ? cp.detail : []
-      };
+      colorPresetsCache = normalizeColorPresetList(cp);
       try {
         localStorage.setItem(getColorPresetsStorageKey(currentStoreId), JSON.stringify(colorPresetsCache));
       } catch(e) {}
@@ -17146,16 +17221,22 @@ JSON 규격:
 
     function openColorPresetSaveModal(scope = 'poster') {
       activeColorPresetScope = scope === 'detail' ? 'detail' : 'poster';
+      loadColorPresets(currentStoreId);
       const hex = getActiveColorForScope(activeColorPresetScope);
+      const storeLabel = getPresetStoreLabel(currentStoreId);
       const modal = document.getElementById('colorPresetSaveModal');
       const scopeLabel = document.getElementById('colorPresetSaveScopeLabel');
       const swatch = document.getElementById('colorPresetSaveSwatch');
       const hexEl = document.getElementById('colorPresetSaveHex');
+      const countBadge = document.getElementById('colorPresetSaveCountBadge');
+      const limitNotice = document.getElementById('colorPresetLimitNotice');
       const nameInp = document.getElementById('colorPresetNameInput');
 
-      if (scopeLabel) scopeLabel.innerText = activeColorPresetScope === 'detail' ? '시세 상세내역 브랜드 테마 색상' : '시세표 브랜드 테마 색상';
+      if (scopeLabel) scopeLabel.innerText = `[${storeLabel}] 공용 색상 저장 (시세표 · 상세내역 공용)`;
       if (swatch) swatch.style.backgroundColor = hex;
       if (hexEl) hexEl.innerText = hex;
+      if (countBadge) countBadge.innerText = `${colorPresetsCache.length} / ${MAX_COLOR_PRESETS_PER_STORE}개`;
+      if (limitNotice) limitNotice.classList.toggle('hidden', colorPresetsCache.length < MAX_COLOR_PRESETS_PER_STORE);
       if (nameInp) {
         nameInp.value = '';
         setTimeout(() => nameInp.focus(), 50);
@@ -17196,6 +17277,15 @@ JSON 규격:
       const hex = getActiveColorForScope(scope);
       loadColorPresets(currentStoreId);
 
+      const list = Array.isArray(colorPresetsCache) ? [...colorPresetsCache] : [];
+      const existingIdx = list.findIndex(item => item.name === presetName);
+      if (existingIdx === -1 && list.length >= MAX_COLOR_PRESETS_PER_STORE) {
+        const storeLabel = getPresetStoreLabel(currentStoreId);
+        alert(`[${storeLabel}] 매장별 색상은 최대 ${MAX_COLOR_PRESETS_PER_STORE}개까지만 저장할 수 있습니다.\n[불러오기]에서 기존 색상을 삭제하거나, 기존 이름으로 덮어쓰기해 주세요.`);
+        if (nameInp) nameInp.focus();
+        return;
+      }
+
       // 현재 탭에도 해당 색상 즉시 확정 적용
       if (scope === 'detail') {
         applyDetailThemeColor(hex, true);
@@ -17204,8 +17294,6 @@ JSON 규격:
         saveAdPosterSettings(false);
       }
 
-      const list = colorPresetsCache[scope] || [];
-      const existingIdx = list.findIndex(item => item.name === presetName);
       const entry = {
         id: existingIdx !== -1 ? list[existingIdx].id : ('cp_' + Date.now()),
         name: presetName,
@@ -17214,23 +17302,23 @@ JSON 규격:
       };
       if (existingIdx !== -1) list[existingIdx] = entry;
       else list.unshift(entry);
-      colorPresetsCache[scope] = list;
+      colorPresetsCache = list.slice(0, MAX_COLOR_PRESETS_PER_STORE);
 
       closeColorPresetSaveModal();
-      showSaveProgress('저장 중', `'${presetName}' 색상을 클라우드에 저장하고 있습니다`);
+      showSaveProgress('저장 중', `[${getPresetStoreLabel(currentStoreId)}] '${presetName}' 색상을 클라우드에 저장하고 있습니다`);
 
       const startedAt = Date.now();
       persistColorPresetsToCloud()
         .then(() => {
           const waitMore = Math.max(0, 450 - (Date.now() - startedAt));
           setTimeout(() => {
-            updateSaveProgressDone('저장 완료!', `'${presetName}' (${hex}) 색상이 저장되었습니다.`);
+            updateSaveProgressDone('저장 완료!', `[${getPresetStoreLabel(currentStoreId)}] '${presetName}' (${hex}) 색상이 저장되었습니다.`);
           }, waitMore);
         })
         .catch(err => {
           console.warn('Color preset save error:', err);
           setTimeout(() => {
-            updateSaveProgressDone('저장 완료!', `'${presetName}' 색상이 저장되었습니다.`);
+            updateSaveProgressDone('저장 완료!', `[${getPresetStoreLabel(currentStoreId)}] '${presetName}' 색상이 저장되었습니다.`);
           }, 400);
         });
     }
@@ -17238,12 +17326,11 @@ JSON 규격:
     function openColorPresetLoadModal(scope = 'poster') {
       activeColorPresetScope = scope === 'detail' ? 'detail' : 'poster';
       loadColorPresets(currentStoreId);
+      const storeLabel = getPresetStoreLabel(currentStoreId);
       const modal = document.getElementById('colorPresetLoadModal');
       const scopeLabel = document.getElementById('colorPresetLoadScopeLabel');
       if (scopeLabel) {
-        scopeLabel.innerText = activeColorPresetScope === 'detail'
-          ? '시세 상세내역 저장 색상 목록 (클릭 시 즉시 적용)'
-          : '시세표 저장 색상 목록 (클릭 시 즉시 적용)';
+        scopeLabel.innerText = `[${storeLabel}] 저장 색상 (시세표 · 상세내역 공용 · 최대 ${MAX_COLOR_PRESETS_PER_STORE}개)`;
       }
       renderColorPresetLoadList();
       if (modal) modal.classList.remove('hidden');
@@ -17256,16 +17343,19 @@ JSON 규격:
 
     function renderColorPresetLoadList() {
       const container = document.getElementById('colorPresetLoadList');
+      const countBadge = document.getElementById('colorPresetLoadCountBadge');
+      const list = Array.isArray(colorPresetsCache) ? colorPresetsCache : [];
+      if (countBadge) countBadge.innerText = `${list.length} / ${MAX_COLOR_PRESETS_PER_STORE}개`;
       if (!container) return;
-      const list = colorPresetsCache[activeColorPresetScope] || [];
       if (list.length === 0) {
+        const storeLabel = getPresetStoreLabel(currentStoreId);
         container.innerHTML = `
           <div class="py-10 text-center space-y-2.5 text-slate-400">
             <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
               <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
             </div>
-            <div class="text-xs font-extrabold text-slate-600">저장된 색상이 없습니다.</div>
-            <p class="text-[11px] text-slate-400">원하는 색상을 고른 뒤 [저장] 버튼을 눌러 이름을 지정해 보세요.</p>
+            <div class="text-xs font-extrabold text-slate-600">[${storeLabel}] 저장된 색상이 없습니다.</div>
+            <p class="text-[11px] text-slate-400">시세표나 시세상세내역에서 색상을 고른 뒤 [저장]을 눌러 보세요. (최대 ${MAX_COLOR_PRESETS_PER_STORE}개)</p>
           </div>
         `;
         return;
@@ -17291,7 +17381,7 @@ JSON 규격:
     }
 
     function applyLoadedColorPreset(idx) {
-      const list = colorPresetsCache[activeColorPresetScope] || [];
+      const list = Array.isArray(colorPresetsCache) ? colorPresetsCache : [];
       const item = list[idx];
       if (!item) return;
 
@@ -17305,10 +17395,10 @@ JSON 규격:
     }
 
     function deleteColorPreset(idx) {
-      const list = colorPresetsCache[activeColorPresetScope] || [];
+      const list = Array.isArray(colorPresetsCache) ? [...colorPresetsCache] : [];
       if (!list[idx]) return;
       list.splice(idx, 1);
-      colorPresetsCache[activeColorPresetScope] = list;
+      colorPresetsCache = list;
       renderColorPresetLoadList();
       persistColorPresetsToCloud();
     }

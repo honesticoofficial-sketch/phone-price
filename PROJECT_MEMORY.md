@@ -1,4 +1,4 @@
-﻿# 📱 스마트폰 넷가 & 시세표 관리 시스템 (Phone Price Calculator)
+# 📱 스마트폰 넷가 & 시세표 관리 시스템 (Phone Price Calculator)
 # 🌟 마스터 프로젝트 인수인계 수첩 (PROJECT_MEMORY.md)
 
 > **이 문서는 무엇인가요?**  
@@ -3913,3 +3913,16 @@ service cloud.firestore {
    - 두 탭 모두 색상 선택기 옆에 **`저장`** 및 **`불러오기`** 버튼 배치 (전부 세련된 SVG 벡터 아이콘 사용, 윈도우 기본 이모티콘 미사용).
    - **`저장` 클릭**: `#colorPresetSaveModal` 팝업에서 선택한 색상 미리보기 및 저장 이름 입력 -> **`완료`** 클릭 시 **`저장 중...`** 로딩 모달(`showSaveProgress`) 표시 후 **`저장 완료!`**(`updateSaveProgressDone`) 전환 및 `localStorage` + Firestore `stores/{storeId}.colorPresets` 저장.
    - **`불러오기` 클릭**: `#colorPresetLoadModal` 팝업에서 저장된 색상 목록 조회, 원클릭 **`적용`** 및 개별 삭제 지원.
+3. **매장별 분리 · 탭 공용 · 최대 5개 제한**:
+   - 시세표와 시세상세내역에서 저장한 색상을 양쪽 탭 어디서나 함께 불러올 수 있으며, 매장(`명지점`/`광안점`/`테스트매장`)별로 완벽히 분리 저장되고 매장당 최대 5개까지 저장 가능하도록 제한 적용.
+
+---
+
+## 91. 📋 [제91장] 넷가표 요금제명 전용 입력란 & 시세상세내역 기본료 칸 통합 표기 (2026-11-25)
+
+1. **`넷가표` (`TAB 1`) 통신사별 `요금제명` 입력란 추가**:
+   - `SK`, `KT`, `LG` 기본부가조건 카드 상단에 `#cond-SK-planName`, `#cond-KT-planName`, `#cond-LG-planName` (`요금제명:`) 입력란 추가.
+   - 입력 시 `carrierConditions[c].planName`에 즉시 저장 및 Firestore 클라우드 동기화 (`syncCarrierConditionInputs`, `onSnapshot` 하위 호환 파싱 포함).
+2. **`시세상세내역` (`TAB 5`) `기본료` 칸 통합 자동 연동**:
+   - 기존 중복되던 별도 `요금제` 열을 제거하고 `기본료` 열 하나로 통합하여 가로 폭 균형 개선 (`8열` 기본 / `현금완납가 포함 10열`).
+   - `기본료` 칸 상단에 `넷가표`에서 입력한 **요금제 이름**, 바로 아래에 **괄호로 감싼 가격 `(109,000)`**이 자동으로 표기되도록 `renderDetailSheet()` 업데이트 완료.
