@@ -1040,10 +1040,6 @@
 
           <!-- 시세표 액션 버튼 그룹 (하단 통합) -->
           <div class="flex items-center gap-2 flex-wrap">
-            <button type="button" onclick="syncAdPosterPrices()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1.5 cursor-pointer">
-              <svg class="w-4 h-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-              <span>가격 다시 불러오기</span>
-            </button>
             <button type="button" id="posterCopyBtn" onclick="captureAdPosterImage('copy')" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs sm:text-sm font-extrabold shadow-sm transition flex items-center gap-1.5 cursor-pointer">
               <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
               <span>시세표 클립보드 복사</span>
@@ -17099,7 +17095,9 @@ JSON 규격:
       const showFinal = !!detailSettings.showFinalPrice;
       const mode = detailSettings.marginMode || 'basic';
 
-      // 동적 헤더 & colgroup 생성 (추가지원금 칸 제거, 960px 기준 깔끔한 비율)
+      const DETAIL_EXTRA_SUPPORT_WON = 200000;
+
+      // 동적 헤더 & colgroup 생성 (매장지원금: 추가지원금 200,000 고정 · 번호이동 · 기기변경)
       const tableEl = document.getElementById('detailMainTable');
       let colEl = document.getElementById('detailMainColGroup');
       if (tableEl && !colEl) {
@@ -17109,13 +17107,13 @@ JSON 규격:
       }
       if (colEl) {
         if (showFinal) {
-          colEl.innerHTML = `<col style="width:6.5%"><col style="width:19.5%"><col style="width:8.5%"><col style="width:11.5%"><col style="width:7.5%"><col style="width:8%"><col style="width:8%"><col style="width:8%"><col style="width:8%"><col style="width:7.25%"><col style="width:7.25%">`;
+          colEl.innerHTML = `<col style="width:6%"><col style="width:18%"><col style="width:8%"><col style="width:9.5%"><col style="width:7%"><col style="width:7.5%"><col style="width:7.5%"><col style="width:7.5%"><col style="width:7.5%"><col style="width:7.5%"><col style="width:7%"><col style="width:7%">`;
         } else {
-          colEl.innerHTML = `<col style="width:7%"><col style="width:22%"><col style="width:9.5%"><col style="width:12.5%"><col style="width:8.5%"><col style="width:9.5%"><col style="width:9.5%"><col style="width:10.75%"><col style="width:10.75%">`;
+          colEl.innerHTML = `<col style="width:6.5%"><col style="width:20%"><col style="width:9%"><col style="width:11%"><col style="width:8%"><col style="width:8.5%"><col style="width:8.5%"><col style="width:8.5%"><col style="width:10%"><col style="width:10%">`;
         }
       }
 
-      const storeColSpan = 2 + (showFinal ? 2 : 0);
+      const storeColSpan = 3 + (showFinal ? 2 : 0);
       thead.innerHTML = `
         <tr class="border-b border-slate-200 text-[11px] font-black text-slate-700" style="background-color: ${theme.thBg};">
           <th rowspan="2" class="p-2 border-r border-slate-200 text-center align-middle">통신사</th>
@@ -17129,6 +17127,7 @@ JSON 규격:
         <tr class="border-b-2 border-slate-300 text-[10px] font-extrabold text-slate-600" style="background-color: ${theme.thBg};">
           <th class="p-1.5 border-r border-slate-200 text-center align-middle">번호이동</th>
           <th class="p-1.5 border-r border-slate-200 text-center align-middle">기기변경</th>
+          <th class="p-1.5 border-r border-slate-200 text-center align-middle" style="background-color: ${theme.storeThBg}; color: ${theme.storeThText};">추가지원금</th>
           <th class="p-1.5 border-r border-slate-200 text-center align-middle" style="background-color: ${theme.storeThBg}; color: ${theme.storeThText};">번호이동</th>
           <th class="p-1.5 ${showFinal ? 'border-r border-slate-200' : ''} text-center align-middle" style="background-color: ${theme.storeThBg}; color: ${theme.storeThText};">기기변경</th>
           ${showFinal ? `<th class="p-1.5 border-r border-slate-200 text-center align-middle bg-amber-50/70 text-amber-900">번이 완납가</th><th class="p-1.5 text-center align-middle bg-amber-50/70 text-amber-900">기변 완납가</th>` : ''}
@@ -17185,7 +17184,7 @@ JSON 규격:
         if (rowsToRender.length === 0) {
           const tr = document.createElement('tr');
           tr.className = cIdx > 0 ? 'border-t-2 border-slate-300' : '';
-          const totalCols = 9 + (showFinal ? 2 : 0);
+          const totalCols = 10 + (showFinal ? 2 : 0);
           tr.innerHTML = `
             <td class="p-2.5 font-black text-center border-r border-slate-200" style="border-left: 4px solid ${meta.accent}; color: ${meta.text}; background-color: ${meta.bg};">${meta.label}</td>
             <td colspan="${totalCols - 1}" class="p-3 text-center text-slate-400 text-[11px] font-semibold">시세표에 등록된 기종이 없습니다.</td>
@@ -17201,6 +17200,7 @@ JSON 규격:
 
           let carrierColsHtml = '';
           let planColsHtml = '';
+          let extraSubColHtml = '';
 
           if (rIdx === 0) {
             carrierColsHtml = `
@@ -17214,6 +17214,11 @@ JSON 규격:
               </td>
               <td rowspan="${rowCount}" class="p-2 text-center align-middle border-r border-slate-200 font-bold text-slate-700 text-[11px] tabular-nums bg-white">
                 ${formatWon(planCfg.planFee || 0)}
+              </td>
+            `;
+            extraSubColHtml = `
+              <td rowspan="${rowCount}" class="px-2 py-2 border-r border-slate-100 text-center align-middle font-black text-[11px] tabular-nums" style="background-color: ${theme.storeCellBg}; color: ${theme.storeNumText};">
+                ${formatWon(DETAIL_EXTRA_SUPPORT_WON)}
               </td>
             `;
           }
@@ -17247,6 +17252,9 @@ JSON 규격:
             return formatWon(val);
           };
 
+          const netStoreMnp = (row.storeSubMnp !== null) ? (row.storeSubMnp - DETAIL_EXTRA_SUPPORT_WON) : null;
+          const netStoreChg = (row.storeSubChg !== null) ? (row.storeSubChg - DETAIL_EXTRA_SUPPORT_WON) : null;
+
           const finalColsHtml = showFinal ? `
             <td class="p-1.5 border-r border-slate-200 text-center align-middle font-extrabold text-[11px] tabular-nums bg-amber-50/30 ${row.mnpSoldOut ? 'text-slate-400' : (row.mnpWon !== null && row.mnpWon < 0 ? 'text-rose-600' : 'text-slate-800')}">
               ${row.mnpSoldOut ? '품절' : (row.mnpWon !== null ? formatWon(row.mnpWon) : '-')}
@@ -17269,11 +17277,12 @@ JSON 규격:
             </td>
             ${planColsHtml}
             ${subColsHtml}
+            ${extraSubColHtml}
             <td class="px-2 py-2 border-r border-slate-100 text-center align-middle font-black text-[11px] tabular-nums" style="background-color: ${theme.storeCellBg}; color: ${theme.storeNumText};">
-              ${formatStoreSub(row.storeSubMnp, row.mnpSoldOut)}
+              ${formatStoreSub(netStoreMnp, row.mnpSoldOut)}
             </td>
             <td class="px-2 py-2 ${showFinal ? 'border-r border-slate-200' : ''} text-center align-middle font-black text-[11px] tabular-nums" style="background-color: ${theme.storeCellBg}; color: ${theme.storeNumText};">
-              ${formatStoreSub(row.storeSubChg, row.chgSoldOut)}
+              ${formatStoreSub(netStoreChg, row.chgSoldOut)}
             </td>
             ${finalColsHtml}
           `;
