@@ -924,28 +924,35 @@
             </div>
 
             <div class="overflow-x-auto border border-slate-200 rounded-xl">
-              <table id="adTable" class="w-full text-xs text-left border-collapse" style="table-layout: fixed; min-width: 835px;">
+              <table id="adTable" class="w-full text-xs text-left border-collapse" style="table-layout: fixed; min-width: 840px;">
                 <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 select-none">
                   <tr>
-                    <th class="relative p-2.5 text-center" style="width: 78px;">
+                    <th class="relative p-2.5 text-center" style="width: 74px;">
                       <span>순서</span>
                       <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
                     </th>
-                    <th class="relative p-2.5 text-center" style="width: 70px;">
+                    <th class="relative p-2.5 text-center" style="width: 62px;">
                       <span class="flex items-center justify-center gap-0.5">
                         게시
                         <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>게시/숨김</b><br>광고 문구 복사 시 해당 기종의 포함 여부를 설정합니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>게시/숨김</b><br>광고 문구 복사 시 해당 기종의 포함 여부를 설정합니다.')" title="게시 안내">?</button>
                       </span>
                       <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
                     </th>
-                    <th class="relative p-2.5" style="width: 235px;">
-                      <span class="flex items-center">
-                        기종 · 표기명 · 개통기준
-                        <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>기종 · 표기명 · 개통기준(공시/선약)</b><br>• <b>기종 선택</b>: 드롭다운을 눌러 단가표 기종을 변경합니다.<br>• <b>표기명</b>: 최종 광고 문구에 출력될 단축 모델명입니다.<br>• <b>공시/선약</b>: 선약 선택 시 공통지원금 0원 기준으로 넷가·마진이 자동 계산되며, 시세상세내역에도 선택약정으로 자동 반영됩니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>기종 · 표기명 · 개통기준(공시/선약)</b><br>• <b>기종 선택</b>: 드롭다운을 눌러 단가표 기종을 변경합니다.<br>• <b>표기명</b>: 최종 광고 문구에 출력될 단축 모델명입니다.<br>• <b>공시/선약</b>: 선약 선택 시 공통지원금 0원 기준으로 넷가·마진이 자동 계산되며, 시세상세내역에도 선택약정으로 자동 반영됩니다.')" title="기종 선택 및 개통기준 안내">?</button>
+                    <th class="relative p-2.5 text-center" style="width: 62px;">
+                      <span class="flex items-center justify-center gap-0.5">
+                        개통
+                        <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>개통 기준 (공시/선약)</b><br>기본은 공시지원금 기준이며, 클릭 시 선약(선택약정)으로 전환됩니다.<br>• 선약 선택 시 공통지원금 0원으로 마진 계산 &amp; 시세상세내역에 선택약정으로 자동 반영됩니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>개통 기준 (공시/선약)</b><br>기본은 공시지원금 기준이며, 클릭 시 선약(선택약정)으로 전환됩니다.<br>• 선약 선택 시 공통지원금 0원으로 마진 계산 &amp; 시세상세내역에 선택약정으로 자동 반영됩니다.')" title="개통 기준 안내">?</button>
                       </span>
                       <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
                     </th>
-                    <th class="relative p-2.5 text-center bg-slate-100/70" style="width: 100px;">
+                    <th class="relative p-2.5" style="width: 205px;">
+                      <span class="flex items-center">
+                        기종 선택 & 광고 표기명
+                        <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>기종 선택 &amp; 표기명</b><br>• <b>기종 선택</b>: 드롭다운을 눌러 단가표 기종을 변경합니다.<br>• <b>표기명</b>: 최종 광고 시세표 문구에 출력될 단축 모델명입니다. 수정 시 매장 단축명으로 자동 보관됩니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>기종 선택 &amp; 표기명</b><br>• <b>기종 선택</b>: 드롭다운을 눌러 단가표 기종을 변경합니다.<br>• <b>표기명</b>: 최종 광고 시세표 문구에 출력될 단축 모델명입니다. 수정 시 매장 단축명으로 자동 보관됩니다.')" title="기종 선택 및 표기명 안내">?</button>
+                      </span>
+                      <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
+                    </th>
+                    <th class="relative p-2.5 text-center bg-slate-100/70" style="width: 95px;">
                       <span class="flex items-center justify-center">
                         <span id="adNetThTitle">기준넷가 (올부가)</span>
                         <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>기준넷가</b><br>선택된 광고 모드(올부가/기본부가)에 따른 매장의 실제 매입 원가입니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>기준넷가</b><br>선택된 광고 모드(올부가/기본부가)에 따른 매장의 실제 매입 원가입니다.')" title="기준넷가 안내">?</button>
@@ -4675,7 +4682,9 @@ service cloud.firestore {
         const saved = localStorage.getItem(`phone_col_widths_${tableId}`);
         if (saved) {
           const widths = JSON.parse(saved);
-          document.querySelectorAll(`#${tableId} thead th`).forEach((th, i) => {
+          const ths = document.querySelectorAll(`#${tableId} thead th`);
+          if (!Array.isArray(widths) || widths.length !== ths.length) return;
+          ths.forEach((th, i) => {
             if (widths[i]) {
               let w = widths[i];
               if (tableId === 'dailyTable' && i === 0) {
@@ -5741,7 +5750,7 @@ service cloud.firestore {
                 </button>
               </div>
             </td>
-            <td colspan="6" class="p-2.5 text-center text-slate-400 text-xs font-medium tracking-widest select-none">
+            <td colspan="7" class="p-2.5 text-center text-slate-400 text-xs font-medium tracking-widest select-none">
               <span class="inline-flex items-center gap-2 text-slate-400">
                 <span class="w-16 h-px bg-slate-200"></span>
                 <span>구분선 (복사 시 빈 줄)</span>
@@ -5800,6 +5809,18 @@ service cloud.firestore {
             </button>
           </td>
 
+          <!-- 개통 기준 (공시 기본 / 클릭 시 선약 전환) -->
+          <td class="p-2 text-center overflow-hidden">
+            <button type="button"
+                    data-ad-sunyak-toggle="${d.id}"
+                    data-ad-sunyak-state="${isSunyak ? 'sunyak' : 'gongsi'}"
+                    onclick="setAdSunyak('${d.id}', ${!isSunyak})"
+                    class="px-2.5 py-1 rounded-lg text-xs font-black border transition cursor-pointer ${isSunyak ? 'bg-amber-500 text-white border-amber-600 hover:bg-amber-600 shadow-2xs' : 'bg-slate-100 text-slate-700 border-slate-300 hover:bg-amber-50 hover:text-amber-700 hover:border-amber-300'}"
+                    title="${isSunyak ? '현재 선택약정 기준 (클릭 시 공시지원금으로 전환)' : '현재 공시지원금 기준 (클릭 시 선택약정으로 전환)'}">
+              ${isSunyak ? '선약' : '공시'}
+            </button>
+          </td>
+
           <!-- 기종 선택 드롭다운 & 광고 표기명 직접 수정 -->
           <td class="p-2 overflow-hidden">
             <div class="space-y-1">
@@ -5823,15 +5844,8 @@ service cloud.firestore {
                        onchange="updateAdTagCommit('${d.id}', this.value, this)"
                        class="flex-1 min-w-0 px-2 py-0.5 bg-white border border-slate-300 rounded text-xs font-black text-slate-900 focus:ring-2 focus:ring-purple-500 focus:outline-none" />
               </div>
-              <!-- 개통 기준 (공시 / 선약) 토글 + S26 출고가인상 체크 -->
-              <div class="flex items-center justify-between gap-1.5 pt-0.5 flex-wrap">
-                <div class="inline-flex items-center rounded-md border border-slate-200 bg-slate-100 p-0.5 text-[10px] font-extrabold shrink-0" title="개통 기준 선택 (선약 선택 시 공통지원금 0원으로 마진 계산 및 시세상세내역 자동 반영)">
-                  <button type="button" data-ad-sunyak-btn="gongsi" onclick="setAdSunyak('${d.id}', false)"
-                          class="px-2 py-0.5 rounded transition cursor-pointer ${!isSunyak ? 'bg-slate-800 text-white shadow-2xs' : 'text-slate-500 hover:text-slate-800'}">공시</button>
-                  <button type="button" data-ad-sunyak-btn="sunyak" onclick="setAdSunyak('${d.id}', true)"
-                          class="px-2 py-0.5 rounded transition cursor-pointer ${isSunyak ? 'bg-amber-500 text-white shadow-2xs' : 'text-slate-500 hover:text-amber-700'}">선약</button>
-                </div>
-                ${d.id === 's26' ? `
+              ${d.id === 's26' ? `
+                <div class="flex items-center gap-1.5 mt-1 pl-0.5">
                   <label class="inline-flex items-center gap-1 text-[10.5px] font-semibold text-slate-600 hover:text-slate-900 cursor-pointer select-none">
                     <input type="checkbox"
                            ${isS26HikeActive(activeAdCarrier) ? 'checked' : ''}
@@ -5839,8 +5853,8 @@ service cloud.firestore {
                            class="w-3.5 h-3.5 rounded border-slate-300 text-purple-600 focus:ring-1 focus:ring-purple-500 cursor-pointer" />
                     <span>출고가인상반영</span>
                   </label>
-                ` : `<span class="text-[10px] font-bold ${isSunyak ? 'text-amber-600' : 'text-slate-400'}">${isSunyak ? '선택약정 기준' : '공시지원 기준'}</span>`}
-              </div>
+                </div>
+              ` : ''}
             </div>
           </td>
 
