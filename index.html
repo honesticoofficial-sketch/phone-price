@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -406,6 +406,12 @@
           </svg>
           <span>광고가격(시세표)</span>
         </button>
+        <button onclick="switchTab('detail')" id="tabBtn-detail" class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-extrabold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition">
+          <svg class="w-4 h-4 text-indigo-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+          </svg>
+          <span>시세상세내역</span>
+        </button>
         <button onclick="switchTab('card')" id="tabBtn-card" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-extrabold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition relative">
           <svg class="w-4 h-4 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="2" y="5" width="20" height="14" rx="2"/>
@@ -777,7 +783,7 @@
           <table id="dailyTable" class="w-full text-xs text-left border-collapse" style="table-layout: fixed; min-width: 680px;">
             <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 select-none">
               <tr>
-                <th class="relative p-2.5 text-center" style="width: 75px;">
+                <th class="relative p-2.5 text-center" style="width: 96px; min-width: 92px;">
                   <span class="flex items-center justify-center">
                     순서
                     <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>단가표 순서 이동</b><br>좌측 핸들 아이콘을 마우스로 잡고 위아래로 끌어서 배치 순서를 바꿀 수 있습니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>단가표 순서 이동</b><br>좌측 핸들 아이콘을 마우스로 잡고 위아래로 끌어서 배치 순서를 바꿀 수 있습니다.')" title="순서 이동 안내">?</button>
@@ -1315,6 +1321,157 @@
             </div>
           </div>
 
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 5: 시세 상세내역 (자동 산출 & 클립보드 복사) ==================== -->
+    <div id="tab-detail" class="space-y-4 hidden">
+      <!-- 상단 컨트롤 & 테마/조건 설정 바 -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-2.5">
+          <div class="flex items-center gap-2.5">
+            <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 text-white flex items-center justify-center shadow-xs">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+            </span>
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="font-black text-xs sm:text-sm text-slate-900">시세 상세내역 자동 생성기</span>
+                <span id="detailModeBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-indigo-50 text-indigo-700 border border-indigo-200">
+                  기본부가 광고가 자동 연동
+                </span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  매장지원금 = 출고가 - 공통지원금 (- 추가지원금) - 광고가
+                </span>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-0.5">광고표(번이/기변)에 입력한 가격을 바탕으로 출고가 · 요금제 · 공통지원금 · 매장지원금이 자동 기입됩니다.</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 flex-wrap">
+            <button type="button" onclick="syncDetailFromAd()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1.5 cursor-pointer">
+              <svg class="w-4 h-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              <span>광고가격 새로고침</span>
+            </button>
+            <button type="button" id="detailCopyBtn" onclick="copyDetailSheetToClipboard()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs sm:text-sm font-extrabold shadow-sm transition flex items-center gap-1.5 cursor-pointer">
+              <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              <span>시세 상세내역 클립보드 복사</span>
+            </button>
+            <button type="button" onclick="printDetailSheet()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs sm:text-sm font-extrabold shadow-sm transition flex items-center gap-1.5 cursor-pointer" title="브라우저 인쇄 / PDF 저장">
+              <svg class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+              <span>PDF / 인쇄</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 테마 프리셋 + 부가조건 모드 + 표시 옵션 -->
+        <div class="flex flex-wrap items-center gap-3 text-xs">
+          <!-- 단콕 전용 테마 5종 -->
+          <div class="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 flex-wrap">
+            <span class="font-bold text-slate-600 mr-1">독자 테마:</span>
+            <button type="button" onclick="setDetailTheme('purple')" id="detailThemeBtn-purple" class="detail-theme-btn px-2.5 py-1 rounded-lg font-extrabold bg-indigo-600 text-white shadow-2xs transition cursor-pointer">단콕 퍼플</button>
+            <button type="button" onclick="setDetailTheme('emerald')" id="detailThemeBtn-emerald" class="detail-theme-btn px-2.5 py-1 rounded-lg font-bold bg-white text-slate-600 border border-slate-200 hover:bg-emerald-50 transition cursor-pointer">에메랄드</button>
+            <button type="button" onclick="setDetailTheme('navy')" id="detailThemeBtn-navy" class="detail-theme-btn px-2.5 py-1 rounded-lg font-bold bg-white text-slate-600 border border-slate-200 hover:bg-sky-50 transition cursor-pointer">클래식 네이비</button>
+            <button type="button" onclick="setDetailTheme('crimson')" id="detailThemeBtn-crimson" class="detail-theme-btn px-2.5 py-1 rounded-lg font-bold bg-white text-slate-600 border border-slate-200 hover:bg-rose-50 transition cursor-pointer">크림슨 레드</button>
+            <button type="button" onclick="setDetailTheme('slate')" id="detailThemeBtn-slate" class="detail-theme-btn px-2.5 py-1 rounded-lg font-bold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 transition cursor-pointer">모던 다크</button>
+          </div>
+
+          <!-- 연동 가격 조건 (기본부가 vs 풀부가) -->
+          <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
+            <span class="text-xs font-bold text-slate-600 pl-2 pr-1">연동 기준:</span>
+            <button type="button" id="detailMarginModeBtn-basic" onclick="setDetailMarginMode('basic')" class="px-3 py-1 rounded-lg text-xs font-black transition cursor-pointer bg-white text-slate-900 shadow-xs border border-slate-200">
+              기본부가 광고가
+            </button>
+            <button type="button" id="detailMarginModeBtn-all" onclick="setDetailMarginMode('all')" class="px-3 py-1 rounded-lg text-xs font-black transition cursor-pointer text-slate-500 hover:text-slate-900">
+              풀부가(올부가) 광고가
+            </button>
+          </div>
+
+          <!-- 추가 옵션 토글들 -->
+          <label class="inline-flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 font-bold text-slate-700 cursor-pointer select-none">
+            <input type="checkbox" id="detailShowExtraSubChk" onchange="toggleDetailOption('showExtraSub', this.checked)" checked class="w-3.5 h-3.5 rounded border-slate-300 text-indigo-600 cursor-pointer" />
+            <span>추가지원금(올부가) 칸 표시</span>
+          </label>
+          <label class="inline-flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 font-bold text-slate-700 cursor-pointer select-none">
+            <input type="checkbox" id="detailHideInactiveChk" onchange="toggleDetailOption('hideInactive', this.checked)" checked class="w-3.5 h-3.5 rounded border-slate-300 text-indigo-600 cursor-pointer" />
+            <span>품절·미입력 기종 자동 숨김</span>
+          </label>
+          <label class="inline-flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 font-bold text-slate-700 cursor-pointer select-none">
+            <input type="checkbox" id="detailShowFinalPriceChk" onchange="toggleDetailOption('showFinalPrice', this.checked)" class="w-3.5 h-3.5 rounded border-slate-300 text-indigo-600 cursor-pointer" />
+            <span>현금완납가(광고가) 함께 표시</span>
+          </label>
+        </div>
+
+        <!-- 통신사별 요금제명 / 기본료 / 추가지원금 간편 편집 바 -->
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-2.5 pt-1 text-xs">
+          <div class="flex flex-wrap items-center gap-1.5 bg-rose-50/50 border border-rose-200/80 rounded-xl px-2.5 py-2 overflow-hidden">
+            <span class="font-black text-rose-700 shrink-0 w-8">SKT</span>
+            <input type="text" id="detailPlanName-SK" oninput="updateDetailCarrierPlan('SK', 'planName', this.value)" class="flex-1 min-w-[90px] px-2 py-1 bg-white border border-rose-200 rounded-lg font-bold text-slate-800 text-[11px]" placeholder="요금제명" />
+            <input type="number" id="detailPlanFee-SK" oninput="updateDetailCarrierPlan('SK', 'planFee', this.value)" class="w-20 shrink-0 px-1.5 py-1 bg-white border border-rose-200 rounded-lg font-bold text-slate-800 text-[11px] text-right" placeholder="기본료" title="월 기본료(원)" />
+            <input type="number" id="detailExtraSub-SK" oninput="updateDetailCarrierPlan('SK', 'extraSub', this.value)" class="w-20 shrink-0 px-1.5 py-1 bg-white border border-rose-200 rounded-lg font-bold text-indigo-700 text-[11px] text-right" placeholder="추가지원" title="추가지원금(원)" />
+          </div>
+          <div class="flex flex-wrap items-center gap-1.5 bg-blue-50/50 border border-blue-200/80 rounded-xl px-2.5 py-2 overflow-hidden">
+            <span class="font-black text-blue-700 shrink-0 w-8">KT</span>
+            <input type="text" id="detailPlanName-KT" oninput="updateDetailCarrierPlan('KT', 'planName', this.value)" class="flex-1 min-w-[90px] px-2 py-1 bg-white border border-blue-200 rounded-lg font-bold text-slate-800 text-[11px]" placeholder="요금제명" />
+            <input type="number" id="detailPlanFee-KT" oninput="updateDetailCarrierPlan('KT', 'planFee', this.value)" class="w-20 shrink-0 px-1.5 py-1 bg-white border border-blue-200 rounded-lg font-bold text-slate-800 text-[11px] text-right" placeholder="기본료" title="월 기본료(원)" />
+            <input type="number" id="detailExtraSub-KT" oninput="updateDetailCarrierPlan('KT', 'extraSub', this.value)" class="w-20 shrink-0 px-1.5 py-1 bg-white border border-blue-200 rounded-lg font-bold text-indigo-700 text-[11px] text-right" placeholder="추가지원" title="추가지원금(원)" />
+          </div>
+          <div class="flex flex-wrap items-center gap-1.5 bg-pink-50/50 border border-pink-200/80 rounded-xl px-2.5 py-2 overflow-hidden">
+            <span class="font-black text-pink-700 shrink-0 w-8">LG</span>
+            <input type="text" id="detailPlanName-LG" oninput="updateDetailCarrierPlan('LG', 'planName', this.value)" class="flex-1 min-w-[90px] px-2 py-1 bg-white border border-pink-200 rounded-lg font-bold text-slate-800 text-[11px]" placeholder="요금제명" />
+            <input type="number" id="detailPlanFee-LG" oninput="updateDetailCarrierPlan('LG', 'planFee', this.value)" class="w-20 shrink-0 px-1.5 py-1 bg-white border border-pink-200 rounded-lg font-bold text-slate-800 text-[11px] text-right" placeholder="기본료" title="월 기본료(원)" />
+            <input type="number" id="detailExtraSub-LG" oninput="updateDetailCarrierPlan('LG', 'extraSub', this.value)" class="w-20 shrink-0 px-1.5 py-1 bg-white border border-pink-200 rounded-lg font-bold text-indigo-700 text-[11px] text-right" placeholder="추가지원" title="추가지원금(원)" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 시세 상세내역 캡처 카드 본체 -->
+      <div class="flex justify-start lg:justify-center overflow-x-auto py-2">
+        <div id="detailSheetCard" class="w-[960px] min-w-[960px] bg-white rounded-3xl shadow-xl border-2 border-indigo-200 overflow-hidden text-slate-900 transition-all shrink-0" style="font-family: 'Pretendard Variable', Pretendard, sans-serif;">
+          <!-- 상단 독자 헤더 배너 -->
+          <div id="detailHeaderBanner" class="px-6 py-5 text-white flex flex-wrap items-center justify-between gap-3" style="background: linear-gradient(135deg, #312e81, #4f46e5);">
+            <div class="space-y-1.5">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span id="detailBadgePill" contenteditable="true" onblur="saveDetailSettings(false)" class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-white/20 text-white border border-white/30 tracking-tight focus:outline-none">
+                  현금완납 기준
+                </span>
+                <span id="detailModePill" class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-emerald-400/25 text-emerald-100 border border-emerald-300/40">
+                  공시 · 선택약정 투명 안내
+                </span>
+              </div>
+              <h2 id="detailStoreTitle" contenteditable="true" onblur="saveDetailSettings(false)" class="text-xl sm:text-2xl font-black tracking-tight text-white focus:outline-none" title="클릭하여 제목을 수정할 수 있습니다">
+                단콕 휴대폰 시세 상세내역
+              </h2>
+            </div>
+            <div class="text-right">
+              <div class="text-[11px] font-bold text-white/75">공시 및 시세 적용 기준</div>
+              <div id="detailDateBadge" contenteditable="true" onblur="saveDetailSettings(false)" class="mt-0.5 inline-block px-3 py-1 rounded-xl bg-white/15 border border-white/25 text-xs font-black text-white focus:outline-none">
+                2026.11.25 기준
+              </div>
+            </div>
+          </div>
+
+          <!-- 상세내역 통합 테이블 -->
+          <div class="p-4 sm:p-5 bg-white">
+            <div class="overflow-hidden rounded-2xl border border-slate-200">
+              <table id="detailMainTable" class="w-full border-collapse text-xs" style="table-layout: fixed;">
+                <thead id="detailTableHead">
+                  <!-- renderDetailSheet()에서 옵션에 맞춰 동적 렌더링 -->
+                </thead>
+                <tbody id="detailSheetTableBody" class="divide-y divide-slate-200 bg-white">
+                  <!-- renderDetailSheet()에서 동적 렌더링 -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- 하단 안내 문구 -->
+            <div class="mt-3 flex flex-wrap items-center justify-between gap-2 px-1 text-[11px] text-slate-500 font-semibold">
+              <span id="detailFooterNote" contenteditable="true" onblur="saveDetailSettings(false)" class="focus:outline-none">
+                공통지원금 당일 공시 기준 · 현금완납 기준 · 선택약정: 공통지원금 대신 매월 요금 25% 할인 · 단위: 원
+              </span>
+              <span class="font-extrabold text-slate-400">DAN KOK SYSTEM</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -2939,6 +3096,8 @@ service cloud.firestore {
     let unsubscribeAuditHistory = null;
     let storeSaveTimer = null;
     let masterSaveTimer = null;
+    let isMasterConfigLoaded = false;
+    let knownDeviceIds = null;
 
     // 2. 화면 상태
     let currentTab = "calc";
@@ -3235,8 +3394,8 @@ service cloud.firestore {
       // 아이폰 시리즈
       {
         id: 'ip17', group: 'IPHONE', tag: '#아17', name: '아이폰17 256G',
-        prices: { SK: 145.2, KT: 128.7, LG: 145.2 },
-        sub: { SK: { mnp: 45, chg: 45 }, KT: { mnp: 45, chg: 45 }, LG: { mnp: 55, chg: 45 } },
+        prices: { SK: 145.2, KT: 145.2, LG: 145.2 },
+        sub: { SK: { mnp: 45, chg: 45 }, KT: { mnp: 50, chg: 45 }, LG: { mnp: 55, chg: 45 } },
         rate: { SK: { mnp: 49, chg: 52 }, KT: { mnp: 57, chg: 52 }, LG: { mnp: 62, chg: 44 } },
         loc: {
           SK: { mnp: '도매', chg: '도매' },
@@ -3350,37 +3509,17 @@ service cloud.firestore {
 
       // 유효하지 않은 (완전 삭제된) 기종 ID만 제거하고, 사용자가 의도적으로 삭제한 행은 억지로 다시 채워넣지 않습니다
       calcRows = calcRows.filter(id => id === 'empty' || devices.some(d => d.id === id));
-      if (calcRows.length === 0) {
-        calcRows = [...defaultIds];
-      } else {
-        // 새로 추가된 신규 기종(예: ipduo 등)이 calcRows에 누락되어 있다면 자동 포함
-        devices.forEach(d => {
-          if (d.id !== 'empty' && !calcRows.includes(d.id)) {
-            calcRows.push(d.id);
-          }
-        });
-      }
 
       ['SK', 'KT', 'LG'].forEach(c => {
         if (!dailyCarrierRows[c] || !Array.isArray(dailyCarrierRows[c])) {
           dailyCarrierRows[c] = [...defaultIds];
         } else {
           dailyCarrierRows[c] = dailyCarrierRows[c].filter(id => id === 'empty' || devices.some(d => d.id === id));
-          devices.forEach(d => {
-            if (d.id !== 'empty' && !dailyCarrierRows[c].includes(d.id)) {
-              dailyCarrierRows[c].push(d.id);
-            }
-          });
         }
         if (!adCarrierOrders[c] || !Array.isArray(adCarrierOrders[c])) {
           adCarrierOrders[c] = [...defaultIds];
         } else {
           adCarrierOrders[c] = adCarrierOrders[c].filter(id => id === 'empty' || devices.some(d => d.id === id));
-          devices.forEach(d => {
-            if (d.id !== 'empty' && !adCarrierOrders[c].includes(d.id)) {
-              adCarrierOrders[c].push(d.id);
-            }
-          });
         }
       });
     }
@@ -3906,7 +4045,7 @@ service cloud.firestore {
     }
 
     function getCarrierDeviceList(carrier) {
-      if (!adCarrierOrders[carrier] || !Array.isArray(adCarrierOrders[carrier]) || adCarrierOrders[carrier].length === 0) {
+      if (!adCarrierOrders[carrier] || !Array.isArray(adCarrierOrders[carrier])) {
         adCarrierOrders[carrier] = devices.map(d => d.id);
       }
       return adCarrierOrders[carrier].map(id => {
@@ -3948,6 +4087,7 @@ service cloud.firestore {
       renderCalcTable();
     }
     function deleteCalcRow(idx) {
+      if (typeof markUserAction === 'function') markUserAction();
       const removedId = calcRows[idx];
       const d = devices.find(x => x.id === removedId);
       const name = d ? d.name : (removedId === 'empty' ? '구분선' : '기종');
@@ -4000,6 +4140,7 @@ service cloud.firestore {
       }
     }
     function deleteDailyRow(idx) {
+      if (typeof markUserAction === 'function') markUserAction();
       const rows = getDailyRows(activeInputCarrier);
       const deletedId = rows[idx];
       const d = devices.find(x => x.id === deletedId);
@@ -4008,6 +4149,8 @@ service cloud.firestore {
       saveLayouts('대리점 단가 수정', `[${activeInputCarrier}] '${name}' 기종 행 삭제 완료`);
       renderDailyTable();
       renderCalcTable(); // 넷가 산출표 즉시 품절 연동!
+      if (typeof renderAdPosterTable === 'function' && currentTab === 'adtable') renderAdPosterTable();
+      if (typeof renderDetailSheet === 'function' && currentTab === 'detail') renderDetailSheet();
     }
     function updateDailyRow(idx, val) {
       const rows = getDailyRows(activeInputCarrier);
@@ -4065,6 +4208,7 @@ service cloud.firestore {
     }
 
     function deleteAdRow(carrier, idx) {
+      if (typeof markUserAction === 'function') markUserAction();
       if (adCarrierOrders[carrier]) {
         const removedId = adCarrierOrders[carrier][idx];
         const d = devices.find(x => x.id === removedId);
@@ -4288,8 +4432,13 @@ service cloud.firestore {
           const widths = JSON.parse(saved);
           document.querySelectorAll(`#${tableId} thead th`).forEach((th, i) => {
             if (widths[i]) {
-              th.style.width = widths[i];
-              th.style.minWidth = widths[i];
+              let w = widths[i];
+              if (tableId === 'dailyTable' && i === 0) {
+                const px = parseInt(String(w).replace(/[^0-9]/g, ''), 10) || 0;
+                if (px < 92) w = '96px';
+              }
+              th.style.width = w;
+              th.style.minWidth = w;
             }
           });
         }
@@ -4372,6 +4521,8 @@ service cloud.firestore {
       clearPin();
       isUnlocked = false;
       currentRole = null;
+      isMasterConfigLoaded = false;
+      knownDeviceIds = null;
       const pModal = document.getElementById('pinModal');
       if (pModal) pModal.classList.remove('hidden');
       const userBadge = document.getElementById('userBadge');
@@ -4432,7 +4583,7 @@ service cloud.firestore {
         return;
       }
       currentTab = t;
-      ['calc', 'daily', 'ad', 'adtable', 'card', 'compare', 'request'].forEach(id => {
+      ['calc', 'daily', 'ad', 'adtable', 'detail', 'card', 'compare', 'request'].forEach(id => {
         const tabEl = document.getElementById('tab-' + id);
         if (tabEl) tabEl.classList.toggle('hidden', id !== t);
         const b = document.getElementById('tabBtn-' + id);
@@ -4450,6 +4601,9 @@ service cloud.firestore {
         loadAdPosterSettings(currentStoreId);
         renderAdPosterTable();
         renderPosterVasTable();
+      } else if (t === 'detail') {
+        loadDetailSettings(currentStoreId);
+        renderDetailSheet();
       } else if (t === 'card') {
         initCardTab();
       } else if (t === 'compare') {
@@ -4910,9 +5064,9 @@ service cloud.firestore {
         const curLocChg = (d.loc && d.loc[activeInputCarrier]) ? d.loc[activeInputCarrier].chg : '도매';
 
         tr.innerHTML = `
-          <td class="p-2 text-center text-slate-400 font-medium whitespace-nowrap overflow-hidden">
-            <div class="flex items-center justify-center gap-1.5">
-              <div class="drag-handle cursor-grab active:cursor-grabbing p-1.5 rounded-lg bg-slate-50 hover:bg-blue-100 hover:text-blue-700 text-slate-400 select-none transition border border-slate-200/80 shadow-xs flex items-center justify-center"
+          <td class="p-1.5 text-center text-slate-400 font-medium whitespace-nowrap">
+            <div class="flex items-center justify-center gap-1">
+              <div class="drag-handle cursor-grab active:cursor-grabbing p-1.5 rounded-lg bg-slate-50 hover:bg-blue-100 hover:text-blue-700 text-slate-400 select-none transition border border-slate-200/80 shadow-xs flex items-center justify-center shrink-0"
                    title="마우스로 드래그하여 순서 변경 (위로 끌올 / 아래로 이동)"
                    draggable="true"
                    ondragstart="onRowDragStart(event, ${idx}, 'daily')"
@@ -4921,11 +5075,11 @@ service cloud.firestore {
                   <path d="M7 2a2 2 0 10.001 4.001A2 2 0 007 2zm0 6a2 2 0 10.001 4.001A2 2 0 007 8zm0 6a2 2 0 10.001 4.001A2 2 0 007 14zm6-12a2 2 0 10.001 4.001A2 2 0 0013 2zm0 6a2 2 0 10.001 4.001A2 2 0 0013 8zm0 6a2 2 0 10.001 4.001A2 2 0 0013 14z"></path>
                 </svg>
               </div>
-              <div class="flex flex-col gap-0.5">
+              <div class="flex flex-col gap-0.5 shrink-0">
                 <button onclick="moveDeviceDaily(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} class="w-4 h-3.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[8px] flex items-center justify-center" title="위로 한 칸">▲</button>
                 <button onclick="moveDeviceDaily(${idx}, 1)" ${idx === dailyRows.length - 1 ? 'disabled' : ''} class="w-4 h-3.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-20 font-bold text-slate-600 text-[8px] flex items-center justify-center" title="아래로 한 칸">▼</button>
               </div>
-              <button onclick="deleteDailyRow(${idx})" class="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50 text-xs ml-0.5" title="이 통신사에서 삭제 (넷가표 품절 연동)">✕</button>
+              <button type="button" onclick="deleteDailyRow(${idx})" class="p-1.5 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50 text-xs font-bold shrink-0 cursor-pointer transition" title="이 통신사에서 삭제 (넷가표 품절 연동)">✕</button>
             </div>
           </td>
           <td class="p-2 font-bold text-slate-800 overflow-hidden">
@@ -4994,6 +5148,9 @@ service cloud.firestore {
       renderSettingsTable();
       if (typeof renderAdPosterTable === 'function') {
         renderAdPosterTable();
+      }
+      if (typeof renderDetailSheet === 'function' && currentTab === 'detail') {
+        renderDetailSheet();
       }
     }
 
@@ -5597,7 +5754,7 @@ service cloud.firestore {
         'flip8': { prices: { SK: 168.3, KT: 168.3, LG: 168.3 }, sub: { SK: 50, KT: 50, LG: 50 } },
         'fold8': { prices: { SK: 227.81, KT: 227.81, LG: 227.81 }, sub: { SK: 60, KT: 60, LG: 60 } },
         'fold8u':{ prices: { SK: 257.73, KT: 257.73, LG: 257.73 }, sub: { SK: 50, KT: 50, LG: 50 } },
-        'ip17':  { prices: { SK: 145.2, KT: 128.7, LG: 145.2 }, sub: { SK: 45, KT: 45, LG: { mnp: 55, chg: 45 } } },
+        'ip17':  { prices: { SK: 145.2, KT: 145.2, LG: 145.2 }, sub: { SK: 45, KT: { mnp: 50, chg: 45 }, LG: { mnp: 55, chg: 45 } } },
         'ipair': { prices: { SK: 158.4, KT: 158.4, LG: 158.4 }, sub: { SK: 65, KT: 70, LG: 45 } },
         'ip17p': { prices: { SK: 178.2, KT: 178.2, LG: 178.2 }, sub: { SK: 45, KT: 45, LG: 45 } },
           'ipduo': { prices: { SK: 330, KT: 330, LG: 330 }, sub: { SK: 45, KT: 45, LG: 45 } }
@@ -5635,7 +5792,7 @@ service cloud.firestore {
       renderSettingsTable();
       render();
       showGeneralToast('🎉 [동기화 완료] 플립8(168.3만/50만), 폴드8 울트라(50만) 등 12개 기종 최신 크롤링 데이터 자동 적용 완료!');
-      alert(`🎉 [최신 크롤링 데이터 동기화 완료]\n\n총 ${updatedCount}개 기종의 출고가 및 공시지원금이 통신 3사 최신 크롤링 공식 데이터로 안전하게 업데이트되었습니다!\n\n• 갤럭시 Z 플립8: 출고가 168.3만 / 공시 50만 (전 통신사 일치)\n• 갤럭시 Z 폴드8 Ultra: 공시 50만\n• 갤럭시 S26: 출고가 125.4만/60만 (KT 인상재고는 140.36만/75만 유지)\n• 아이폰 AIR: SK 65만 / KT 70만 / LG 45만\n• 아이폰 17: SK 45만 / KT 45만 / LG 55만`);
+      alert(`🎉 [최신 크롤링 데이터 동기화 완료]\n\n총 ${updatedCount}개 기종의 출고가 및 공시지원금이 통신 3사 최신 크롤링 공식 데이터로 안전하게 업데이트되었습니다!\n\n• 갤럭시 Z 플립8: 출고가 168.3만 / 공시 50만 (전 통신사 일치)\n• 갤럭시 Z 폴드8 Ultra: 공시 50만\n• 갤럭시 S26: 출고가 125.4만/60만 (KT 인상재고는 140.36만/75만 유지)\n• 아이폰 AIR: SK 65만 / KT 70만 / LG 45만\n• 아이폰 17: 출고가 145.2만 · SK 45만 / KT 번이 50만·기변 45만 / LG 번이 55만·기변 45만`);
     }
 
     function renderSettingsTable() {
@@ -5723,7 +5880,7 @@ service cloud.firestore {
 
     // 신규 기종 추가 및 삭제 관리 함수들
                         // ==================== 통신 3사 수집 크롤링 플래그십 기종 풀 (88종) ====================
-    const CRAWLED_CATALOG_POOL = [{"id":"ip15128g","name":"iPhone 15 128G","prices":{"KT":124.3,"LG":124.3,"SK":124.3},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":65,"new":65,"chg":65}},"tag":"#아15","group":"IPHONE"},{"id":"ip15256g","name":"iPhone 15 256G","prices":{"KT":139.7,"LG":139.7,"SK":139.7},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":65,"new":65,"chg":65}},"tag":"#아15","group":"IPHONE"},{"id":"ip15512g","name":"iPhone 15 512G","prices":{"KT":169.4,"LG":169.4,"SK":169.4},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":65,"new":65,"chg":65}},"tag":"#아15","group":"IPHONE"},{"id":"ip15p128g","name":"iPhone 15 Plus 128G","prices":{"KT":134.2,"LG":134.2,"SK":134.2},"subs":{"KT":{"mnp":47,"new":47,"chg":47},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":47,"new":47,"chg":47}},"tag":"#아15","group":"IPHONE"},{"id":"ip15p512g","name":"iPhone 15 Plus 512G","prices":{"KT":179.3,"LG":179.3,"SK":179.3},"subs":{"KT":{"mnp":47,"new":47,"chg":47},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":47,"new":47,"chg":47}},"tag":"#아15","group":"IPHONE"},{"id":"ip15p128g","name":"iPhone 15 Pro 128G","prices":{"KT":154,"LG":154,"SK":154},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":65,"new":65,"chg":65}},"tag":"#","group":"IPHONE"},{"id":"ip15p1t","name":"iPhone 15 Pro 1T","prices":{"KT":229.9,"LG":229.9,"SK":229.9},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":65,"new":65,"chg":65}},"tag":"#","group":"IPHONE"},{"id":"ip15p256g","name":"iPhone 15 Pro 256G","prices":{"KT":169.4,"LG":169.4,"SK":169.4},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":65,"new":65,"chg":65}},"tag":"#","group":"IPHONE"},{"id":"ip15p512g","name":"iPhone 15 Pro 512G","prices":{"KT":199.1,"LG":199.1,"SK":199.1},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":65,"new":65,"chg":65}},"tag":"#","group":"IPHONE"},{"id":"ip16128g","name":"iPhone 16 128G","prices":{"KT":124.3,"LG":124.3,"SK":124.3},"subs":{"KT":{"mnp":22,"new":22,"chg":22},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#아16","group":"IPHONE"},{"id":"ip16256g","name":"iPhone 16 256G","prices":{"KT":139.7,"LG":139.7,"SK":139.7},"subs":{"KT":{"mnp":22,"new":22,"chg":22},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#아16","group":"IPHONE"},{"id":"ip16512g","name":"iPhone 16 512G","prices":{"KT":169.4,"LG":169.4,"SK":169.4},"subs":{"KT":{"mnp":22,"new":22,"chg":22},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#아16","group":"IPHONE"},{"id":"ip16p128g","name":"iPhone 16 Pro 128G","prices":{"KT":154,"LG":154,"SK":154},"subs":{"KT":{"mnp":22,"new":22,"chg":22},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ip16p1t","name":"iPhone 16 Pro 1T","prices":{"KT":229.9,"LG":229.9,"SK":229.9},"subs":{"KT":{"mnp":22,"new":22,"chg":22},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ip16p256g","name":"iPhone 16 Pro 256G","prices":{"KT":169.4,"LG":169.4,"SK":169.4},"subs":{"KT":{"mnp":22,"new":22,"chg":22},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ip16p512g","name":"iPhone 16 Pro 512G","prices":{"KT":199.1,"LG":199.1,"SK":199.1},"subs":{"KT":{"mnp":22,"new":22,"chg":22},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ip16pm1t","name":"iPhone 16 Pro Max 1T","prices":{"KT":249.7,"LG":249.7,"SK":249.7},"subs":{"KT":{"mnp":22,"new":22,"chg":22},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ip16pm256g","name":"iPhone 16 Pro Max 256G","prices":{"KT":189.2,"LG":189.2,"SK":189.2},"subs":{"KT":{"mnp":22,"new":22,"chg":22},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ip16pm512g","name":"iPhone 16 Pro Max 512G","prices":{"KT":220,"LG":220,"SK":220},"subs":{"KT":{"mnp":22,"new":22,"chg":22},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ip16e128g","name":"iPhone 16e 128G","prices":{"KT":99,"LG":99,"SK":99},"subs":{"KT":{"mnp":22,"new":22,"chg":22},"LG":{"mnp":20.4,"new":20.4,"chg":20.4},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#16e","group":"IPHONE"},{"id":"ip16e256g","name":"iPhone 16e 256G","prices":{"KT":113.3,"LG":113.3,"SK":113.3},"subs":{"KT":{"mnp":22,"new":22,"chg":22},"LG":{"mnp":20.4,"new":20.4,"chg":20.4},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#16e","group":"IPHONE"},{"id":"ip16e512g","name":"iPhone 16e 512G","prices":{"KT":143,"LG":143,"SK":143},"subs":{"KT":{"mnp":22,"new":22,"chg":22},"LG":{"mnp":20.4,"new":20.4,"chg":20.4},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#16e","group":"IPHONE"},{"id":"ip17256g","name":"iPhone 17 256G","prices":{"KT":128.7,"LG":145.2,"SK":145.2},"subs":{"KT":{"mnp":45,"new":45,"chg":45},"LG":{"mnp":55,"new":45,"chg":45},"SK":{"mnp":45,"new":45,"chg":45}},"tag":"#아17","group":"IPHONE"},{"id":"ip17512g","name":"iPhone 17 512G","prices":{"KT":158.4,"LG":176,"SK":176},"subs":{"KT":{"mnp":45,"new":45,"chg":45},"LG":{"mnp":55,"new":45,"chg":45},"SK":{"mnp":45,"new":45,"chg":45}},"tag":"#아17","group":"IPHONE"},{"id":"ip17p1t","name":"iPhone 17 Pro 1T","prices":{"KT":238.7,"LG":238.7,"SK":238.7},"subs":{"KT":{"mnp":45,"new":45,"chg":45},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":45,"new":45,"chg":45}},"tag":"#","group":"IPHONE"},{"id":"ip17p256g","name":"iPhone 17 Pro 256G","prices":{"KT":178.2,"LG":178.2,"SK":178.2},"subs":{"KT":{"mnp":45,"new":45,"chg":45},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":45,"new":45,"chg":45}},"tag":"#","group":"IPHONE"},{"id":"ip17p512g","name":"iPhone 17 Pro 512G","prices":{"KT":209,"LG":209,"SK":209},"subs":{"KT":{"mnp":45,"new":45,"chg":45},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":45,"new":45,"chg":45}},"tag":"#","group":"IPHONE"},{"id":"ip17pm1t","name":"iPhone 17 Pro Max 1T","prices":{"KT":258.5,"LG":258.5,"SK":258.5},"subs":{"KT":{"mnp":22.1,"new":22.1,"chg":22.1},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ip17pm256g","name":"iPhone 17 Pro Max 256G","prices":{"KT":198,"LG":198,"SK":198},"subs":{"KT":{"mnp":22.1,"new":22.1,"chg":22.1},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ip17pm2t","name":"iPhone 17 Pro Max 2T","prices":{"KT":319,"LG":319,"SK":319},"subs":{"KT":{"mnp":22.1,"new":22.1,"chg":22.1},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ip17pm512g","name":"iPhone 17 Pro Max 512G","prices":{"KT":228.8,"LG":228.8,"SK":228.8},"subs":{"KT":{"mnp":22.1,"new":22.1,"chg":22.1},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ip17e256g","name":"iPhone 17e 256G","prices":{"KT":99,"LG":99,"SK":99},"subs":{"KT":{"mnp":45,"new":45,"chg":45},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":12.8,"new":12.8,"chg":12.8}},"tag":"#17e","group":"IPHONE"},{"id":"ip17e512g","name":"iPhone 17e 512G","prices":{"KT":128.7,"LG":128.7,"SK":128.7},"subs":{"KT":{"mnp":45,"new":45,"chg":45},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":12.8,"new":12.8,"chg":12.8}},"tag":"#17e","group":"IPHONE"},{"id":"ip18p1t","name":"iPhone 18 Pro 1T","prices":{"KT":289.3,"LG":289.3,"SK":289.3},"subs":{"KT":{"mnp":45,"new":45,"chg":45},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":45,"new":45,"chg":45}},"tag":"#","group":"IPHONE"},{"id":"ip18p256g","name":"iPhone 18 Pro 256G","prices":{"KT":199.1,"LG":199.1,"SK":199.1},"subs":{"KT":{"mnp":45,"new":45,"chg":45},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":45,"new":45,"chg":45}},"tag":"#","group":"IPHONE"},{"id":"ip18p2t","name":"iPhone 18 Pro 2T","prices":{"KT":379.5,"LG":379.5,"SK":379.5},"subs":{"KT":{"mnp":45,"new":45,"chg":45},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":45,"new":45,"chg":45}},"tag":"#","group":"IPHONE"},{"id":"ip18p512g","name":"iPhone 18 Pro 512G","prices":{"KT":229.9,"LG":229.9,"SK":229.9},"subs":{"KT":{"mnp":45,"new":45,"chg":45},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":45,"new":45,"chg":45}},"tag":"#","group":"IPHONE"},{"id":"ip18pm1t","name":"iPhone 18 Pro Max 1T","prices":{"KT":309.1,"LG":309.1,"SK":309.1},"subs":{"KT":{"mnp":22.1,"new":22.1,"chg":22.1},"LG":{"mnp":20.4,"new":20.4,"chg":20.4},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ip18pm256g","name":"iPhone 18 Pro Max 256G","prices":{"KT":220,"LG":220,"SK":220},"subs":{"KT":{"mnp":22.1,"new":22.1,"chg":22.1},"LG":{"mnp":20.4,"new":20.4,"chg":20.4},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ip18pm2t","name":"iPhone 18 Pro Max 2T","prices":{"KT":399.3,"LG":399.3,"SK":399.3},"subs":{"KT":{"mnp":22.1,"new":22.1,"chg":22.1},"LG":{"mnp":20.4,"new":20.4,"chg":20.4},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ip18pm512g","name":"iPhone 18 Pro Max 512G","prices":{"KT":249.7,"LG":249.7,"SK":249.7},"subs":{"KT":{"mnp":22.1,"new":22.1,"chg":22.1},"LG":{"mnp":20.4,"new":20.4,"chg":20.4},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ipduo1t","name":"iPhone Duo 1T","tag":"#아이폰듀오","subs":{"KT":{"mnp":45,"new":45,"chg":45},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":45,"new":45,"chg":45}},"prices":{"KT":419.1,"LG":419.1,"SK":419.1},"group":"IPHONE"},{"id":"ipduo256g","name":"iPhone Duo 256G","tag":"#아이폰듀오","subs":{"KT":{"mnp":45,"new":45,"chg":45},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":45,"new":45,"chg":45}},"prices":{"KT":330,"LG":330,"SK":330},"group":"IPHONE"},{"id":"ipduo2t","name":"iPhone Duo 2T","tag":"#아이폰듀오","subs":{"KT":{"mnp":45,"new":45,"chg":45},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":45,"new":45,"chg":45}},"prices":{"KT":509.3,"LG":509.3,"SK":509.3},"group":"IPHONE"},{"id":"ipduo512g","name":"iPhone Duo 512G","tag":"#아이폰듀오","subs":{"KT":{"mnp":45,"new":45,"chg":45},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":45,"new":45,"chg":45}},"prices":{"KT":359.7,"LG":359.7,"SK":359.7},"group":"IPHONE"},{"id":"reip15128g","name":"RE iPhone 15 128G","prices":{"KT":77,"LG":77,"SK":77},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":65,"new":65,"chg":65}},"tag":"#아15","group":"IPHONE"},{"id":"reip15256g","name":"RE iPhone 15 256G","prices":{"KT":85.8,"LG":85.8,"SK":85.8},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":65,"new":65,"chg":65}},"tag":"#아15","group":"IPHONE"},{"id":"reip15p128g","name":"RE iPhone 15 Pro 128G","prices":{"KT":97.9,"LG":97.9,"SK":97.9},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":65,"new":65,"chg":65}},"tag":"#","group":"IPHONE"},{"id":"reip15p256g","name":"RE iPhone 15 Pro 256G","prices":{"KT":106.7,"LG":106.7,"SK":106.7},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":65,"new":65,"chg":65}},"tag":"#","group":"IPHONE"},{"id":"reip15pm256g","name":"RE iPhone 15 Pro Max 256G","prices":{"KT":115.5,"LG":115.5,"SK":115.5},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":47,"new":47,"chg":47}},"tag":"#","group":"IPHONE"},{"id":"s24u256g","name":"갤럭시 S24 울트라 256G","prices":{"KT":154.44,"LG":154.44,"SK":154.44},"subs":{"KT":{"mnp":55,"new":55,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":63,"new":63,"chg":63}},"tag":"#S24U","group":"S"},{"id":"s25256g","name":"갤럭시 S25 256G","prices":{"KT":115.5,"LG":115.5,"SK":115.5},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#S25","group":"S"},{"id":"s25512g","name":"갤럭시 S25 512G","prices":{"KT":129.8,"LG":129.8,"SK":129.8},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#S25","group":"S"},{"id":"s25fe256g","name":"갤럭시 S25 FE 256G","prices":{"KT":94.6,"LG":94.6,"SK":94.6},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#S25FE","group":"S"},{"id":"s25e256g","name":"갤럭시 S25 엣지 256G","prices":{"KT":125.4,"LG":125.4,"SK":125.4},"subs":{"KT":{"mnp":60,"new":60,"chg":60},"LG":{"mnp":60,"new":60,"chg":60},"SK":{"mnp":58,"new":58,"chg":58}},"tag":"#S25엣지","group":"S"},{"id":"s25e512g","name":"갤럭시 S25 엣지 512G","prices":{"KT":149.6,"LG":149.6,"SK":150.7},"subs":{"KT":{"mnp":60,"new":60,"chg":60},"LG":{"mnp":60,"new":60,"chg":60},"SK":{"mnp":58,"new":58,"chg":58}},"tag":"#S25엣지","group":"S"},{"id":"s25u1t","name":"갤럭시 S25 울트라 1T","prices":{"KT":212.74,"LG":212.74,"SK":212.74},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#S25U","group":"S"},{"id":"s25u256g","name":"갤럭시 S25 울트라 256G","prices":{"KT":169.84,"LG":169.84,"SK":169.84},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#S25U","group":"S"},{"id":"s25u512g","name":"갤럭시 S25 울트라 512G","prices":{"KT":184.14,"LG":184.14,"SK":184.14},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#S25U","group":"S"},{"id":"s25p256g","name":"갤럭시 S25+ 256G","prices":{"KT":135.3,"LG":135.3,"SK":135.3},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#S25+","group":"S"},{"id":"s25p512g","name":"갤럭시 S25+ 512G","prices":{"KT":149.6,"LG":149.6,"SK":149.6},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#S25+","group":"S"},{"id":"s26256g","name":"갤럭시 S26 256G","prices":{"KT":125.4,"LG":125.4,"SK":125.4},"subs":{"KT":{"mnp":60,"new":60,"chg":60},"LG":{"mnp":60,"new":60,"chg":60},"SK":{"mnp":60,"new":60,"chg":60}},"tag":"#S26","group":"S"},{"id":"s26512g","name":"갤럭시 S26 512G","prices":{"KT":150.7,"LG":150.7,"SK":150.7},"subs":{"KT":{"mnp":60,"new":60,"chg":60},"LG":{"mnp":60,"new":60,"chg":60},"SK":{"mnp":60,"new":60,"chg":60}},"tag":"#S26","group":"S"},{"id":"s26fe","name":"갤럭시 S26 FE","prices":{"KT":104.5,"LG":104.5,"SK":104.5},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#S26FE","group":"S"},{"id":"s26fe256g","name":"갤럭시 S26 FE 256G","prices":{"KT":104.5,"LG":104.5,"SK":104.5},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#S26FE","group":"S"},{"id":"s26u1t","name":"갤럭시 S26 울트라 1T","prices":{"KT":254.54,"LG":254.54,"SK":254.54},"subs":{"KT":{"mnp":60,"new":60,"chg":60},"LG":{"mnp":60,"new":60,"chg":60},"SK":{"mnp":60,"new":60,"chg":60}},"tag":"#S26U","group":"S"},{"id":"s26u256g","name":"갤럭시 S26 울트라 256G","prices":{"KT":179.74,"LG":179.74,"SK":179.74},"subs":{"KT":{"mnp":60,"new":60,"chg":60},"LG":{"mnp":60,"new":60,"chg":60},"SK":{"mnp":60,"new":60,"chg":60}},"tag":"#S26U","group":"S"},{"id":"s26u512g","name":"갤럭시 S26 울트라 512G","prices":{"KT":205.04,"LG":205.04,"SK":205.04},"subs":{"KT":{"mnp":60,"new":60,"chg":60},"LG":{"mnp":60,"new":60,"chg":60},"SK":{"mnp":60,"new":60,"chg":60}},"tag":"#S26U","group":"S"},{"id":"s26p256g","name":"갤럭시 S26+ 256G","prices":{"KT":145.2,"LG":145.2,"SK":145.2},"subs":{"KT":{"mnp":60,"new":60,"chg":60},"LG":{"mnp":60,"new":60,"chg":60},"SK":{"mnp":60,"new":60,"chg":60}},"tag":"#S26+","group":"S"},{"id":"s26p512g","name":"갤럭시 S26+ 512G","prices":{"KT":170.5,"LG":170.5,"SK":170.5},"subs":{"KT":{"mnp":60,"new":60,"chg":60},"LG":{"mnp":60,"new":60,"chg":60},"SK":{"mnp":60,"new":60,"chg":60}},"tag":"#S26+","group":"S"},{"id":"fold71t","name":"갤럭시 Z 폴드7 1T","prices":{"KT":293.37,"LG":293.37,"SK":293.37},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#폴드7","group":"FOLD"},{"id":"fold7256g","name":"갤럭시 Z 폴드7 256G","prices":{"KT":237.93,"LG":237.93,"SK":237.93},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#폴드7","group":"FOLD"},{"id":"fold7512g","name":"갤럭시 Z 폴드7 512G","prices":{"KT":253.77,"LG":253.77,"SK":253.77},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#폴드7","group":"FOLD"},{"id":"fold81t","name":"갤럭시 Z 폴드8 1T","prices":{"KT":315.26,"LG":315.26,"SK":315.26},"subs":{"KT":{"mnp":60,"new":60,"chg":60},"LG":{"mnp":60,"new":60,"chg":60},"SK":{"mnp":60,"new":60,"chg":60}},"tag":"#폴드8","group":"FOLD"},{"id":"fold8256g","name":"갤럭시 Z 폴드8 256G","prices":{"KT":227.81,"LG":227.81,"SK":227.81},"subs":{"KT":{"mnp":60,"new":60,"chg":60},"LG":{"mnp":60,"new":60,"chg":60},"SK":{"mnp":60,"new":60,"chg":60}},"tag":"#폴드8","group":"FOLD"},{"id":"fold8512g","name":"갤럭시 Z 폴드8 512G","prices":{"KT":253.11,"LG":253.11,"SK":253.11},"subs":{"KT":{"mnp":60,"new":60,"chg":60},"LG":{"mnp":60,"new":60,"chg":60},"SK":{"mnp":60,"new":60,"chg":60}},"tag":"#폴드8","group":"FOLD"},{"id":"fold8u1t","name":"갤럭시 Z 폴드8 울트라 1T","prices":{"KT":257.73,"LG":257.73,"SK":257.73},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#폴드8U","group":"FOLD"},{"id":"fold8u256g","name":"갤럭시 Z 폴드8 울트라 256G","prices":{"KT":257.73,"LG":257.73,"SK":257.73},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#폴드8U","group":"FOLD"},{"id":"fold8u512g","name":"갤럭시 Z 폴드8 울트라 512G","prices":{"KT":257.73,"LG":257.73,"SK":257.73},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#폴드8U","group":"FOLD"},{"id":"flip6256g","name":"갤럭시 Z 플립6 256G","prices":{"KT":148.5,"LG":148.5,"SK":148.5},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":60,"new":60,"chg":60}},"tag":"#플립6","group":"FOLD"},{"id":"flip7256g","name":"갤럭시 Z 플립7 256G","prices":{"KT":148.5,"LG":148.5,"SK":148.5},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#플립7","group":"FOLD"},{"id":"flip7512g","name":"갤럭시 Z 플립7 512G","prices":{"KT":164.34,"LG":164.34,"SK":164.34},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#플립7","group":"FOLD"},{"id":"flip7fe256g","name":"갤럭시 Z 플립7 FE 256G","prices":{"KT":119.9,"LG":119.9,"SK":119.9},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#플립7","group":"FOLD"},{"id":"flip8256g","name":"갤럭시 Z 플립8 256G","prices":{"KT":168.3,"LG":168.3,"SK":168.3},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#플립8","group":"FOLD"},{"id":"flip8512g","name":"갤럭시 Z 플립8 512G","prices":{"KT":168.3,"LG":168.3,"SK":168.3},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#플립8","group":"FOLD"}];
+    const CRAWLED_CATALOG_POOL = [{"id":"ip15128g","name":"iPhone 15 128G","prices":{"KT":124.3,"LG":124.3,"SK":124.3},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":65,"new":65,"chg":65}},"tag":"#아15","group":"IPHONE"},{"id":"ip15256g","name":"iPhone 15 256G","prices":{"KT":139.7,"LG":139.7,"SK":139.7},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":65,"new":65,"chg":65}},"tag":"#아15","group":"IPHONE"},{"id":"ip15512g","name":"iPhone 15 512G","prices":{"KT":169.4,"LG":169.4,"SK":169.4},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":65,"new":65,"chg":65}},"tag":"#아15","group":"IPHONE"},{"id":"ip15p128g","name":"iPhone 15 Plus 128G","prices":{"KT":134.2,"LG":134.2,"SK":134.2},"subs":{"KT":{"mnp":47,"new":47,"chg":47},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":47,"new":47,"chg":47}},"tag":"#아15","group":"IPHONE"},{"id":"ip15p512g","name":"iPhone 15 Plus 512G","prices":{"KT":179.3,"LG":179.3,"SK":179.3},"subs":{"KT":{"mnp":47,"new":47,"chg":47},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":47,"new":47,"chg":47}},"tag":"#아15","group":"IPHONE"},{"id":"ip15p128g","name":"iPhone 15 Pro 128G","prices":{"KT":154,"LG":154,"SK":154},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":65,"new":65,"chg":65}},"tag":"#","group":"IPHONE"},{"id":"ip15p1t","name":"iPhone 15 Pro 1T","prices":{"KT":229.9,"LG":229.9,"SK":229.9},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":65,"new":65,"chg":65}},"tag":"#","group":"IPHONE"},{"id":"ip15p256g","name":"iPhone 15 Pro 256G","prices":{"KT":169.4,"LG":169.4,"SK":169.4},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":65,"new":65,"chg":65}},"tag":"#","group":"IPHONE"},{"id":"ip15p512g","name":"iPhone 15 Pro 512G","prices":{"KT":199.1,"LG":199.1,"SK":199.1},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":65,"new":65,"chg":65}},"tag":"#","group":"IPHONE"},{"id":"ip16128g","name":"iPhone 16 128G","prices":{"KT":124.3,"LG":124.3,"SK":124.3},"subs":{"KT":{"mnp":22,"new":22,"chg":22},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#아16","group":"IPHONE"},{"id":"ip16256g","name":"iPhone 16 256G","prices":{"KT":139.7,"LG":139.7,"SK":139.7},"subs":{"KT":{"mnp":22,"new":22,"chg":22},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#아16","group":"IPHONE"},{"id":"ip16512g","name":"iPhone 16 512G","prices":{"KT":169.4,"LG":169.4,"SK":169.4},"subs":{"KT":{"mnp":22,"new":22,"chg":22},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#아16","group":"IPHONE"},{"id":"ip16p128g","name":"iPhone 16 Pro 128G","prices":{"KT":154,"LG":154,"SK":154},"subs":{"KT":{"mnp":22,"new":22,"chg":22},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ip16p1t","name":"iPhone 16 Pro 1T","prices":{"KT":229.9,"LG":229.9,"SK":229.9},"subs":{"KT":{"mnp":22,"new":22,"chg":22},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ip16p256g","name":"iPhone 16 Pro 256G","prices":{"KT":169.4,"LG":169.4,"SK":169.4},"subs":{"KT":{"mnp":22,"new":22,"chg":22},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ip16p512g","name":"iPhone 16 Pro 512G","prices":{"KT":199.1,"LG":199.1,"SK":199.1},"subs":{"KT":{"mnp":22,"new":22,"chg":22},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ip16pm1t","name":"iPhone 16 Pro Max 1T","prices":{"KT":249.7,"LG":249.7,"SK":249.7},"subs":{"KT":{"mnp":22,"new":22,"chg":22},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ip16pm256g","name":"iPhone 16 Pro Max 256G","prices":{"KT":189.2,"LG":189.2,"SK":189.2},"subs":{"KT":{"mnp":22,"new":22,"chg":22},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ip16pm512g","name":"iPhone 16 Pro Max 512G","prices":{"KT":220,"LG":220,"SK":220},"subs":{"KT":{"mnp":22,"new":22,"chg":22},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ip16e128g","name":"iPhone 16e 128G","prices":{"KT":99,"LG":99,"SK":99},"subs":{"KT":{"mnp":22,"new":22,"chg":22},"LG":{"mnp":20.4,"new":20.4,"chg":20.4},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#16e","group":"IPHONE"},{"id":"ip16e256g","name":"iPhone 16e 256G","prices":{"KT":113.3,"LG":113.3,"SK":113.3},"subs":{"KT":{"mnp":22,"new":22,"chg":22},"LG":{"mnp":20.4,"new":20.4,"chg":20.4},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#16e","group":"IPHONE"},{"id":"ip16e512g","name":"iPhone 16e 512G","prices":{"KT":143,"LG":143,"SK":143},"subs":{"KT":{"mnp":22,"new":22,"chg":22},"LG":{"mnp":20.4,"new":20.4,"chg":20.4},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#16e","group":"IPHONE"},{"id":"ip17256g","name":"iPhone 17 256G","prices":{"KT":145.2,"LG":145.2,"SK":145.2},"subs":{"KT":{"mnp":50,"new":45,"chg":45},"LG":{"mnp":55,"new":45,"chg":45},"SK":{"mnp":45,"new":45,"chg":45}},"tag":"#아17","group":"IPHONE"},{"id":"ip17512g","name":"iPhone 17 512G","prices":{"KT":158.4,"LG":176,"SK":176},"subs":{"KT":{"mnp":50,"new":45,"chg":45},"LG":{"mnp":55,"new":45,"chg":45},"SK":{"mnp":45,"new":45,"chg":45}},"tag":"#아17","group":"IPHONE"},{"id":"ip17p1t","name":"iPhone 17 Pro 1T","prices":{"KT":238.7,"LG":238.7,"SK":238.7},"subs":{"KT":{"mnp":45,"new":45,"chg":45},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":45,"new":45,"chg":45}},"tag":"#","group":"IPHONE"},{"id":"ip17p256g","name":"iPhone 17 Pro 256G","prices":{"KT":178.2,"LG":178.2,"SK":178.2},"subs":{"KT":{"mnp":45,"new":45,"chg":45},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":45,"new":45,"chg":45}},"tag":"#","group":"IPHONE"},{"id":"ip17p512g","name":"iPhone 17 Pro 512G","prices":{"KT":209,"LG":209,"SK":209},"subs":{"KT":{"mnp":45,"new":45,"chg":45},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":45,"new":45,"chg":45}},"tag":"#","group":"IPHONE"},{"id":"ip17pm1t","name":"iPhone 17 Pro Max 1T","prices":{"KT":258.5,"LG":258.5,"SK":258.5},"subs":{"KT":{"mnp":22.1,"new":22.1,"chg":22.1},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ip17pm256g","name":"iPhone 17 Pro Max 256G","prices":{"KT":198,"LG":198,"SK":198},"subs":{"KT":{"mnp":22.1,"new":22.1,"chg":22.1},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ip17pm2t","name":"iPhone 17 Pro Max 2T","prices":{"KT":319,"LG":319,"SK":319},"subs":{"KT":{"mnp":22.1,"new":22.1,"chg":22.1},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ip17pm512g","name":"iPhone 17 Pro Max 512G","prices":{"KT":228.8,"LG":228.8,"SK":228.8},"subs":{"KT":{"mnp":22.1,"new":22.1,"chg":22.1},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ip17e256g","name":"iPhone 17e 256G","prices":{"KT":99,"LG":99,"SK":99},"subs":{"KT":{"mnp":45,"new":45,"chg":45},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":12.8,"new":12.8,"chg":12.8}},"tag":"#17e","group":"IPHONE"},{"id":"ip17e512g","name":"iPhone 17e 512G","prices":{"KT":128.7,"LG":128.7,"SK":128.7},"subs":{"KT":{"mnp":45,"new":45,"chg":45},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":12.8,"new":12.8,"chg":12.8}},"tag":"#17e","group":"IPHONE"},{"id":"ip18p1t","name":"iPhone 18 Pro 1T","prices":{"KT":289.3,"LG":289.3,"SK":289.3},"subs":{"KT":{"mnp":45,"new":45,"chg":45},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":45,"new":45,"chg":45}},"tag":"#","group":"IPHONE"},{"id":"ip18p256g","name":"iPhone 18 Pro 256G","prices":{"KT":199.1,"LG":199.1,"SK":199.1},"subs":{"KT":{"mnp":45,"new":45,"chg":45},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":45,"new":45,"chg":45}},"tag":"#","group":"IPHONE"},{"id":"ip18p2t","name":"iPhone 18 Pro 2T","prices":{"KT":379.5,"LG":379.5,"SK":379.5},"subs":{"KT":{"mnp":45,"new":45,"chg":45},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":45,"new":45,"chg":45}},"tag":"#","group":"IPHONE"},{"id":"ip18p512g","name":"iPhone 18 Pro 512G","prices":{"KT":229.9,"LG":229.9,"SK":229.9},"subs":{"KT":{"mnp":45,"new":45,"chg":45},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":45,"new":45,"chg":45}},"tag":"#","group":"IPHONE"},{"id":"ip18pm1t","name":"iPhone 18 Pro Max 1T","prices":{"KT":309.1,"LG":309.1,"SK":309.1},"subs":{"KT":{"mnp":22.1,"new":22.1,"chg":22.1},"LG":{"mnp":20.4,"new":20.4,"chg":20.4},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ip18pm256g","name":"iPhone 18 Pro Max 256G","prices":{"KT":220,"LG":220,"SK":220},"subs":{"KT":{"mnp":22.1,"new":22.1,"chg":22.1},"LG":{"mnp":20.4,"new":20.4,"chg":20.4},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ip18pm2t","name":"iPhone 18 Pro Max 2T","prices":{"KT":399.3,"LG":399.3,"SK":399.3},"subs":{"KT":{"mnp":22.1,"new":22.1,"chg":22.1},"LG":{"mnp":20.4,"new":20.4,"chg":20.4},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ip18pm512g","name":"iPhone 18 Pro Max 512G","prices":{"KT":249.7,"LG":249.7,"SK":249.7},"subs":{"KT":{"mnp":22.1,"new":22.1,"chg":22.1},"LG":{"mnp":20.4,"new":20.4,"chg":20.4},"SK":{"mnp":22,"new":22,"chg":22}},"tag":"#","group":"IPHONE"},{"id":"ipduo1t","name":"iPhone Duo 1T","tag":"#아이폰듀오","subs":{"KT":{"mnp":45,"new":45,"chg":45},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":45,"new":45,"chg":45}},"prices":{"KT":419.1,"LG":419.1,"SK":419.1},"group":"IPHONE"},{"id":"ipduo256g","name":"iPhone Duo 256G","tag":"#아이폰듀오","subs":{"KT":{"mnp":45,"new":45,"chg":45},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":45,"new":45,"chg":45}},"prices":{"KT":330,"LG":330,"SK":330},"group":"IPHONE"},{"id":"ipduo2t","name":"iPhone Duo 2T","tag":"#아이폰듀오","subs":{"KT":{"mnp":45,"new":45,"chg":45},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":45,"new":45,"chg":45}},"prices":{"KT":509.3,"LG":509.3,"SK":509.3},"group":"IPHONE"},{"id":"ipduo512g","name":"iPhone Duo 512G","tag":"#아이폰듀오","subs":{"KT":{"mnp":45,"new":45,"chg":45},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":45,"new":45,"chg":45}},"prices":{"KT":359.7,"LG":359.7,"SK":359.7},"group":"IPHONE"},{"id":"reip15128g","name":"RE iPhone 15 128G","prices":{"KT":77,"LG":77,"SK":77},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":65,"new":65,"chg":65}},"tag":"#아15","group":"IPHONE"},{"id":"reip15256g","name":"RE iPhone 15 256G","prices":{"KT":85.8,"LG":85.8,"SK":85.8},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":65,"new":65,"chg":65}},"tag":"#아15","group":"IPHONE"},{"id":"reip15p128g","name":"RE iPhone 15 Pro 128G","prices":{"KT":97.9,"LG":97.9,"SK":97.9},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":65,"new":65,"chg":65}},"tag":"#","group":"IPHONE"},{"id":"reip15p256g","name":"RE iPhone 15 Pro 256G","prices":{"KT":106.7,"LG":106.7,"SK":106.7},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":65,"new":65,"chg":65}},"tag":"#","group":"IPHONE"},{"id":"reip15pm256g","name":"RE iPhone 15 Pro Max 256G","prices":{"KT":115.5,"LG":115.5,"SK":115.5},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":45,"new":45,"chg":45},"SK":{"mnp":47,"new":47,"chg":47}},"tag":"#","group":"IPHONE"},{"id":"s24u256g","name":"갤럭시 S24 울트라 256G","prices":{"KT":154.44,"LG":154.44,"SK":154.44},"subs":{"KT":{"mnp":55,"new":55,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":63,"new":63,"chg":63}},"tag":"#S24U","group":"S"},{"id":"s25256g","name":"갤럭시 S25 256G","prices":{"KT":115.5,"LG":115.5,"SK":115.5},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#S25","group":"S"},{"id":"s25512g","name":"갤럭시 S25 512G","prices":{"KT":129.8,"LG":129.8,"SK":129.8},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#S25","group":"S"},{"id":"s25fe256g","name":"갤럭시 S25 FE 256G","prices":{"KT":94.6,"LG":94.6,"SK":94.6},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#S25FE","group":"S"},{"id":"s25e256g","name":"갤럭시 S25 엣지 256G","prices":{"KT":125.4,"LG":125.4,"SK":125.4},"subs":{"KT":{"mnp":60,"new":60,"chg":60},"LG":{"mnp":60,"new":60,"chg":60},"SK":{"mnp":58,"new":58,"chg":58}},"tag":"#S25엣지","group":"S"},{"id":"s25e512g","name":"갤럭시 S25 엣지 512G","prices":{"KT":149.6,"LG":149.6,"SK":150.7},"subs":{"KT":{"mnp":60,"new":60,"chg":60},"LG":{"mnp":60,"new":60,"chg":60},"SK":{"mnp":58,"new":58,"chg":58}},"tag":"#S25엣지","group":"S"},{"id":"s25u1t","name":"갤럭시 S25 울트라 1T","prices":{"KT":212.74,"LG":212.74,"SK":212.74},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#S25U","group":"S"},{"id":"s25u256g","name":"갤럭시 S25 울트라 256G","prices":{"KT":169.84,"LG":169.84,"SK":169.84},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#S25U","group":"S"},{"id":"s25u512g","name":"갤럭시 S25 울트라 512G","prices":{"KT":184.14,"LG":184.14,"SK":184.14},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#S25U","group":"S"},{"id":"s25p256g","name":"갤럭시 S25+ 256G","prices":{"KT":135.3,"LG":135.3,"SK":135.3},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#S25+","group":"S"},{"id":"s25p512g","name":"갤럭시 S25+ 512G","prices":{"KT":149.6,"LG":149.6,"SK":149.6},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#S25+","group":"S"},{"id":"s26256g","name":"갤럭시 S26 256G","prices":{"KT":125.4,"LG":125.4,"SK":125.4},"subs":{"KT":{"mnp":60,"new":60,"chg":60},"LG":{"mnp":60,"new":60,"chg":60},"SK":{"mnp":60,"new":60,"chg":60}},"tag":"#S26","group":"S"},{"id":"s26512g","name":"갤럭시 S26 512G","prices":{"KT":150.7,"LG":150.7,"SK":150.7},"subs":{"KT":{"mnp":60,"new":60,"chg":60},"LG":{"mnp":60,"new":60,"chg":60},"SK":{"mnp":60,"new":60,"chg":60}},"tag":"#S26","group":"S"},{"id":"s26fe","name":"갤럭시 S26 FE","prices":{"KT":104.5,"LG":104.5,"SK":104.5},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#S26FE","group":"S"},{"id":"s26fe256g","name":"갤럭시 S26 FE 256G","prices":{"KT":104.5,"LG":104.5,"SK":104.5},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#S26FE","group":"S"},{"id":"s26u1t","name":"갤럭시 S26 울트라 1T","prices":{"KT":254.54,"LG":254.54,"SK":254.54},"subs":{"KT":{"mnp":60,"new":60,"chg":60},"LG":{"mnp":60,"new":60,"chg":60},"SK":{"mnp":60,"new":60,"chg":60}},"tag":"#S26U","group":"S"},{"id":"s26u256g","name":"갤럭시 S26 울트라 256G","prices":{"KT":179.74,"LG":179.74,"SK":179.74},"subs":{"KT":{"mnp":60,"new":60,"chg":60},"LG":{"mnp":60,"new":60,"chg":60},"SK":{"mnp":60,"new":60,"chg":60}},"tag":"#S26U","group":"S"},{"id":"s26u512g","name":"갤럭시 S26 울트라 512G","prices":{"KT":205.04,"LG":205.04,"SK":205.04},"subs":{"KT":{"mnp":60,"new":60,"chg":60},"LG":{"mnp":60,"new":60,"chg":60},"SK":{"mnp":60,"new":60,"chg":60}},"tag":"#S26U","group":"S"},{"id":"s26p256g","name":"갤럭시 S26+ 256G","prices":{"KT":145.2,"LG":145.2,"SK":145.2},"subs":{"KT":{"mnp":60,"new":60,"chg":60},"LG":{"mnp":60,"new":60,"chg":60},"SK":{"mnp":60,"new":60,"chg":60}},"tag":"#S26+","group":"S"},{"id":"s26p512g","name":"갤럭시 S26+ 512G","prices":{"KT":170.5,"LG":170.5,"SK":170.5},"subs":{"KT":{"mnp":60,"new":60,"chg":60},"LG":{"mnp":60,"new":60,"chg":60},"SK":{"mnp":60,"new":60,"chg":60}},"tag":"#S26+","group":"S"},{"id":"fold71t","name":"갤럭시 Z 폴드7 1T","prices":{"KT":293.37,"LG":293.37,"SK":293.37},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#폴드7","group":"FOLD"},{"id":"fold7256g","name":"갤럭시 Z 폴드7 256G","prices":{"KT":237.93,"LG":237.93,"SK":237.93},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#폴드7","group":"FOLD"},{"id":"fold7512g","name":"갤럭시 Z 폴드7 512G","prices":{"KT":253.77,"LG":253.77,"SK":253.77},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#폴드7","group":"FOLD"},{"id":"fold81t","name":"갤럭시 Z 폴드8 1T","prices":{"KT":315.26,"LG":315.26,"SK":315.26},"subs":{"KT":{"mnp":60,"new":60,"chg":60},"LG":{"mnp":60,"new":60,"chg":60},"SK":{"mnp":60,"new":60,"chg":60}},"tag":"#폴드8","group":"FOLD"},{"id":"fold8256g","name":"갤럭시 Z 폴드8 256G","prices":{"KT":227.81,"LG":227.81,"SK":227.81},"subs":{"KT":{"mnp":60,"new":60,"chg":60},"LG":{"mnp":60,"new":60,"chg":60},"SK":{"mnp":60,"new":60,"chg":60}},"tag":"#폴드8","group":"FOLD"},{"id":"fold8512g","name":"갤럭시 Z 폴드8 512G","prices":{"KT":253.11,"LG":253.11,"SK":253.11},"subs":{"KT":{"mnp":60,"new":60,"chg":60},"LG":{"mnp":60,"new":60,"chg":60},"SK":{"mnp":60,"new":60,"chg":60}},"tag":"#폴드8","group":"FOLD"},{"id":"fold8u1t","name":"갤럭시 Z 폴드8 울트라 1T","prices":{"KT":257.73,"LG":257.73,"SK":257.73},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#폴드8U","group":"FOLD"},{"id":"fold8u256g","name":"갤럭시 Z 폴드8 울트라 256G","prices":{"KT":257.73,"LG":257.73,"SK":257.73},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#폴드8U","group":"FOLD"},{"id":"fold8u512g","name":"갤럭시 Z 폴드8 울트라 512G","prices":{"KT":257.73,"LG":257.73,"SK":257.73},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#폴드8U","group":"FOLD"},{"id":"flip6256g","name":"갤럭시 Z 플립6 256G","prices":{"KT":148.5,"LG":148.5,"SK":148.5},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":60,"new":60,"chg":60}},"tag":"#플립6","group":"FOLD"},{"id":"flip7256g","name":"갤럭시 Z 플립7 256G","prices":{"KT":148.5,"LG":148.5,"SK":148.5},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#플립7","group":"FOLD"},{"id":"flip7512g","name":"갤럭시 Z 플립7 512G","prices":{"KT":164.34,"LG":164.34,"SK":164.34},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#플립7","group":"FOLD"},{"id":"flip7fe256g","name":"갤럭시 Z 플립7 FE 256G","prices":{"KT":119.9,"LG":119.9,"SK":119.9},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#플립7","group":"FOLD"},{"id":"flip8256g","name":"갤럭시 Z 플립8 256G","prices":{"KT":168.3,"LG":168.3,"SK":168.3},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#플립8","group":"FOLD"},{"id":"flip8512g","name":"갤럭시 Z 플립8 512G","prices":{"KT":168.3,"LG":168.3,"SK":168.3},"subs":{"KT":{"mnp":50,"new":50,"chg":50},"LG":{"mnp":50,"new":50,"chg":50},"SK":{"mnp":50,"new":50,"chg":50}},"tag":"#플립8","group":"FOLD"}];
 
     // ==================== 통신 3사 수집 크롤링 플래그십 기종 풀 (88종) & 검색 자동완성 ====================
     let catActiveGroup = 'ALL';
@@ -6007,6 +6164,9 @@ service cloud.firestore {
       };
 
       devices.push(newDevice);
+      if (Array.isArray(knownDeviceIds) && !knownDeviceIds.includes(newId)) {
+        knownDeviceIds.push(newId);
+      }
       calcRows.push(newId);
       ['SK', 'KT', 'LG'].forEach(c => {
         if (!dailyCarrierRows[c]) dailyCarrierRows[c] = devices.map(d => d.id);
@@ -6872,6 +7032,8 @@ service cloud.firestore {
 
           const data = doc.data();
           if (data && Array.isArray(data.devices) && data.devices.length > 0) {
+            const wasMasterLoaded = isMasterConfigLoaded;
+            isMasterConfigLoaded = true;
             const remoteList = data.devices;
             const remoteIds = new Set(remoteList.map(d => d.id));
 
@@ -6883,7 +7045,7 @@ service cloud.firestore {
               if (adCarrierOrders[c]) adCarrierOrders[c] = adCarrierOrders[c].filter(id => id === 'empty' || remoteIds.has(id));
             });
 
-            // 2. 기존 기종 정보 업데이트 및 신규 등록 기종 실시간 추가
+            // 2. 기존 기종 정보 업데이트 및 신규 등록 기종 실시간 추가 (이미 사용자가 삭제한 행은 재추가하지 않음)
             remoteList.forEach(masterD => {
               const localD = devices.find(d => d.id === masterD.id);
               if (localD) {
@@ -6905,11 +7067,17 @@ service cloud.firestore {
                   loc: { SK: { mnp: '도매', chg: '도매' }, KT: { mnp: '도매', chg: '도매' }, LG: { mnp: '도매', chg: '도매' } },
                   ad: { SK: { mnp: '0', chg: '0', note: '', hidden: false }, KT: { mnp: '0', chg: '0', note: '', hidden: false }, LG: { mnp: '0', chg: '0', note: '', hidden: false } }
                 });
-                if (!calcRows.includes(masterD.id)) calcRows.push(masterD.id);
-                ['SK', 'KT', 'LG'].forEach(c => {
-                  if (dailyCarrierRows[c] && !dailyCarrierRows[c].includes(masterD.id)) dailyCarrierRows[c].push(masterD.id);
-                  if (adCarrierOrders[c] && !adCarrierOrders[c].includes(masterD.id)) adCarrierOrders[c].push(masterD.id);
-                });
+                const isTrulyNewForStore = wasMasterLoaded || (Array.isArray(knownDeviceIds) && !knownDeviceIds.includes(masterD.id));
+                if (isTrulyNewForStore) {
+                  if (!calcRows.includes(masterD.id)) calcRows.push(masterD.id);
+                  ['SK', 'KT', 'LG'].forEach(c => {
+                    if (dailyCarrierRows[c] && !dailyCarrierRows[c].includes(masterD.id)) dailyCarrierRows[c].push(masterD.id);
+                    if (adCarrierOrders[c] && !adCarrierOrders[c].includes(masterD.id)) adCarrierOrders[c].push(masterD.id);
+                  });
+                }
+                if (Array.isArray(knownDeviceIds) && !knownDeviceIds.includes(masterD.id)) {
+                  knownDeviceIds.push(masterD.id);
+                }
               }
             });
 
@@ -6972,6 +7140,7 @@ service cloud.firestore {
         unsubscribeStoreData = null;
       }
       isStoreDataLoaded = false; // 매장 전환 또는 신규 구독 시 플래그 리셋 (로딩 전 저장 차단)
+      knownDeviceIds = null;
       if (!db) return;
 
       if (typeof subscribeStorePresence === 'function') {
@@ -7012,49 +7181,7 @@ service cloud.firestore {
               syncCarrierConditionInputs();
             }
 
-            // 행 레이아웃 복원 (유효하지 않은 기종만 정리하고 사용자가 삭제한 행은 그대로 영구 보존)
-            if (Array.isArray(data.calcRows) && data.calcRows.length > 0) {
-              calcRows = data.calcRows.filter(id => id === 'empty' || devices.some(d => d.id === id));
-              devices.forEach(d => {
-                if (d.id !== 'empty' && !calcRows.includes(d.id)) {
-                  calcRows.push(d.id);
-                }
-              });
-            }
-
-            if (data.dailyCarrierRows && typeof data.dailyCarrierRows === 'object') {
-              dailyCarrierRows = data.dailyCarrierRows;
-            }
-            ['SK', 'KT', 'LG'].forEach(c => {
-              if (!dailyCarrierRows[c] || !Array.isArray(dailyCarrierRows[c])) {
-                dailyCarrierRows[c] = devices.map(d => d.id);
-              } else {
-                dailyCarrierRows[c] = dailyCarrierRows[c].filter(id => id === 'empty' || devices.some(d => d.id === id));
-                devices.forEach(d => {
-                  if (d.id !== 'empty' && !dailyCarrierRows[c].includes(d.id)) {
-                    dailyCarrierRows[c].push(d.id);
-                  }
-                });
-              }
-            });
-
-            if (data.adCarrierOrders && typeof data.adCarrierOrders === 'object') {
-              adCarrierOrders = data.adCarrierOrders;
-            }
-            ['SK', 'KT', 'LG'].forEach(c => {
-              if (!adCarrierOrders[c] || !Array.isArray(adCarrierOrders[c])) {
-                adCarrierOrders[c] = devices.map(d => d.id);
-              } else {
-                adCarrierOrders[c] = adCarrierOrders[c].filter(id => id === 'empty' || devices.some(d => d.id === id));
-                devices.forEach(d => {
-                  if (d.id !== 'empty' && !adCarrierOrders[c].includes(d.id)) {
-                    adCarrierOrders[c].push(d.id);
-                  }
-                });
-              }
-            });
-
-            // ★ 리베이트/단가(rates), 단가처(locs), 광고가(ads) 데이터 복원
+            // ★ 리베이트/단가(rates), 단가처(locs), 광고가(ads) 및 행 레이아웃 데이터 복원
             // 최초 스냅샷(!isStoreDataLoaded)일 때는 반드시 메모리에 최신 실데이터를 100% 동기화 (PIN 입력 인터랙션 간섭 원천 배제)
             const isFirstLoadForStore = !isStoreDataLoaded;
             isStoreDataLoaded = true;
@@ -7070,6 +7197,41 @@ service cloud.firestore {
             const isUserInteracting = !isFirstLoadForStore && (isTyping || (Date.now() - lastUserActionTime < 3000) || !!storeSaveTimer);
 
             if (isFirstLoadForStore || !isUserInteracting) {
+              if (Array.isArray(data.knownDeviceIds)) {
+                knownDeviceIds = [...new Set([...data.knownDeviceIds, ...devices.map(d => d.id)])];
+              } else {
+                knownDeviceIds = devices.map(d => d.id);
+              }
+
+              // 행 레이아웃 복원 (사용자가 삭제한 행은 강제 복원하지 않고 100% 영구 보존)
+              if (Array.isArray(data.calcRows)) {
+                calcRows = isMasterConfigLoaded
+                  ? data.calcRows.filter(id => id === 'empty' || devices.some(d => d.id === id))
+                  : [...data.calcRows];
+              }
+
+              if (data.dailyCarrierRows && typeof data.dailyCarrierRows === 'object') {
+                dailyCarrierRows = JSON.parse(JSON.stringify(data.dailyCarrierRows));
+              }
+              ['SK', 'KT', 'LG'].forEach(c => {
+                if (!dailyCarrierRows[c] || !Array.isArray(dailyCarrierRows[c])) {
+                  dailyCarrierRows[c] = devices.map(d => d.id);
+                } else if (isMasterConfigLoaded) {
+                  dailyCarrierRows[c] = dailyCarrierRows[c].filter(id => id === 'empty' || devices.some(d => d.id === id));
+                }
+              });
+
+              if (data.adCarrierOrders && typeof data.adCarrierOrders === 'object') {
+                adCarrierOrders = JSON.parse(JSON.stringify(data.adCarrierOrders));
+              }
+              ['SK', 'KT', 'LG'].forEach(c => {
+                if (!adCarrierOrders[c] || !Array.isArray(adCarrierOrders[c])) {
+                  adCarrierOrders[c] = devices.map(d => d.id);
+                } else if (isMasterConfigLoaded) {
+                  adCarrierOrders[c] = adCarrierOrders[c].filter(id => id === 'empty' || devices.some(d => d.id === id));
+                }
+              });
+
               // rates, locs, ads 데이터 복원
               if (data.rates && Object.keys(data.rates).length > 0) {
                 Object.keys(data.rates).forEach(deviceId => {
@@ -7115,9 +7277,14 @@ service cloud.firestore {
                 });
               }
 
-              // 시세표 포스터 및 제휴카드 클라우드 데이터 동기화 복원
+              // 시세표 포스터, 시세 상세내역 및 제휴카드 클라우드 데이터 동기화 복원
               if (data.posterSettings && typeof applyStorePosterSettings === 'function') {
                 applyStorePosterSettings(data.posterSettings);
+              }
+              if (data.detailSettings && typeof applyStoreDetailSettings === 'function') {
+                applyStoreDetailSettings(data.detailSettings);
+              } else if (typeof loadDetailSettings === 'function') {
+                loadDetailSettings(currentStoreId);
               }
               if (data.cardSettings && typeof applyStoreCardSettings === 'function') {
                 applyStoreCardSettings(data.cardSettings);
@@ -7238,6 +7405,10 @@ service cloud.firestore {
 
         const posterSettings = (typeof getAdPosterDataForSave === 'function') ? getAdPosterDataForSave() : null;
         const cardSettings = (typeof getCardSettingsForSave === 'function') ? getCardSettingsForSave() : null;
+        const detailSettingsToSave = (typeof getDetailSettingsForSave === 'function') ? getDetailSettingsForSave() : null;
+
+        const mergedKnownIds = [...new Set([...(Array.isArray(knownDeviceIds) ? knownDeviceIds : []), ...devices.map(d => d.id)])];
+        knownDeviceIds = mergedKnownIds;
 
         const payload = {
           storeId: currentStoreId,
@@ -7249,12 +7420,14 @@ service cloud.firestore {
           calcRows: calcRows,
           dailyCarrierRows: dailyCarrierRows,
           adCarrierOrders: adCarrierOrders,
+          knownDeviceIds: mergedKnownIds,
           rates: rates,
           locs: locs,
           ads: ads
         };
         if (posterSettings) payload.posterSettings = posterSettings;
         if (cardSettings) payload.cardSettings = cardSettings;
+        if (detailSettingsToSave) payload.detailSettings = detailSettingsToSave;
 
         db.collection('stores').doc(currentStoreId).set(payload, { merge: true })
           .then(() => {
@@ -16126,6 +16299,736 @@ JSON 규격:
         setTimeout(() => {
           try { window.focus(); } catch(e) {}
         }, 800);
+      }, 500);
+    }
+
+    // ==================== TAB 5: 시세 상세내역 자동 산출 & 클립보드 복사 ====================
+    const DETAIL_THEME_PRESETS = {
+      purple: {
+        name: '단콕 퍼플',
+        headerBg: 'linear-gradient(135deg, #312e81, #5b21b6)',
+        cardBorder: '#c7d2fe',
+        thBg: '#f8fafc',
+        storeThBg: '#eef2ff',
+        storeThText: '#3730a3',
+        storeCellBg: '#f5f7ff',
+        storeNumText: '#4338ca',
+        extraText: '#6d28d9',
+        btnActive: 'bg-indigo-600 text-white shadow-2xs'
+      },
+      emerald: {
+        name: '에메랄드',
+        headerBg: 'linear-gradient(135deg, #065f46, #0d9488)',
+        cardBorder: '#a7f3d0',
+        thBg: '#f8fafc',
+        storeThBg: '#ecfdf5',
+        storeThText: '#065f46',
+        storeCellBg: '#f2fcf8',
+        storeNumText: '#047857',
+        extraText: '#0f766e',
+        btnActive: 'bg-emerald-600 text-white shadow-2xs'
+      },
+      navy: {
+        name: '클래식 네이비',
+        headerBg: 'linear-gradient(135deg, #0f172a, #1e40af)',
+        cardBorder: '#bfdbfe',
+        thBg: '#f8fafc',
+        storeThBg: '#eff6ff',
+        storeThText: '#1e3a8a',
+        storeCellBg: '#f4f9ff',
+        storeNumText: '#1d4ed8',
+        extraText: '#0369a1',
+        btnActive: 'bg-blue-700 text-white shadow-2xs'
+      },
+      crimson: {
+        name: '크림슨 레드',
+        headerBg: 'linear-gradient(135deg, #7f1d1d, #dc2626)',
+        cardBorder: '#fecdd3',
+        thBg: '#f8fafc',
+        storeThBg: '#fff1f2',
+        storeThText: '#9f1239',
+        storeCellBg: '#fff7f8',
+        storeNumText: '#be123c',
+        extraText: '#e11d48',
+        btnActive: 'bg-rose-600 text-white shadow-2xs'
+      },
+      slate: {
+        name: '모던 다크',
+        headerBg: 'linear-gradient(135deg, #09090b, #334155)',
+        cardBorder: '#cbd5e1',
+        thBg: '#f8fafc',
+        storeThBg: '#f1f5f9',
+        storeThText: '#0f172a',
+        storeCellBg: '#f8fafc',
+        storeNumText: '#0f172a',
+        extraText: '#334155',
+        btnActive: 'bg-slate-800 text-white shadow-2xs'
+      }
+    };
+
+    let detailSettings = null;
+
+    function parseDetailDefaultPlan(carrier) {
+      const defaults = {
+        SK: { planName: '베스트 109', planFee: 109000 },
+        KT: { planName: '초이스 더블', planFee: 120000 },
+        LG: { planName: '프리미어 슈퍼', planFee: 115000 }
+      };
+      const fallback = defaults[carrier] || { planName: '', planFee: 0 };
+      const condPlan = (carrierConditions && carrierConditions[carrier] && carrierConditions[carrier].plan) ? String(carrierConditions[carrier].plan) : '';
+      if (!condPlan) return fallback;
+      const feeMatch = condPlan.match(/([0-9]{2,3},[0-9]{3})/);
+      const feeNum = feeMatch ? parseInt(feeMatch[1].replace(/,/g, ''), 10) : fallback.planFee;
+      let cleanName = condPlan.replace(/\([^)]*\)/g, '').trim();
+      if (!cleanName) cleanName = fallback.planName;
+      return { planName: cleanName, planFee: feeNum };
+    }
+
+    function getDefaultDetailSettings(storeId = currentStoreId) {
+      const sId = storeId || 'myeongji';
+      const storeLabel = (sId === 'myeongji') ? '원조폰 명지점' : (sId === 'gwangan') ? '원조폰 광안점' : '단콕 테스트매장';
+      const skP = parseDetailDefaultPlan('SK');
+      const ktP = parseDetailDefaultPlan('KT');
+      const lgP = parseDetailDefaultPlan('LG');
+      const now = new Date();
+      const kstStr = new Intl.DateTimeFormat('ko-KR', { timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit' }).format(now).replace(/\s/g, '').replace(/\.$/, '');
+      return {
+        theme: 'purple',
+        marginMode: adMarginBase === 'all' ? 'all' : 'basic',
+        showExtraSub: adMarginBase === 'all',
+        hideInactive: true,
+        showFinalPrice: false,
+        title: `${storeLabel} 휴대폰 시세 상세내역`,
+        badgePill: '현금완납 기준',
+        dateBadge: `${kstStr} 기준`,
+        footerNote: '공통지원금 당일 공시 기준 · 현금완납 기준 · 선택약정: 공통지원금 대신 매월 요금 25% 할인 · 단위: 원',
+        plans: {
+          SK: { planName: skP.planName, planFee: skP.planFee, extraSub: adMarginBase === 'all' ? ((allAddDiscounts?.SK ?? 15) * 10000) : 0 },
+          KT: { planName: ktP.planName, planFee: ktP.planFee, extraSub: adMarginBase === 'all' ? ((allAddDiscounts?.KT ?? 15) * 10000) : 0 },
+          LG: { planName: lgP.planName, planFee: lgP.planFee, extraSub: adMarginBase === 'all' ? ((allAddDiscounts?.LG ?? 15) * 10000) : 0 }
+        },
+        sunyakMap: {}
+      };
+    }
+
+    function loadDetailSettings(storeId = currentStoreId) {
+      const sId = storeId || 'myeongji';
+      const base = getDefaultDetailSettings(sId);
+      try {
+        const raw = localStorage.getItem(`phone_detail_settings_${sId}`);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') {
+            detailSettings = {
+              ...base,
+              ...parsed,
+              plans: {
+                SK: { ...base.plans.SK, ...(parsed.plans?.SK || {}) },
+                KT: { ...base.plans.KT, ...(parsed.plans?.KT || {}) },
+                LG: { ...base.plans.LG, ...(parsed.plans?.LG || {}) }
+              },
+              sunyakMap: { ...(parsed.sunyakMap || {}) }
+            };
+          } else {
+            detailSettings = base;
+          }
+        } else {
+          detailSettings = base;
+        }
+      } catch(e) {
+        detailSettings = base;
+      }
+
+      // 오늘 날짜가 바뀌었으면 날짜 배지 자동 갱신
+      const todayKey = new Date().toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' });
+      if (detailSettings.savedDayKey !== todayKey) {
+        detailSettings.dateBadge = base.dateBadge;
+        detailSettings.savedDayKey = todayKey;
+      }
+
+      syncDetailControlsUI();
+    }
+
+    function getDetailSettingsForSave() {
+      if (!detailSettings) return null;
+      const titleEl = document.getElementById('detailStoreTitle');
+      const badgeEl = document.getElementById('detailBadgePill');
+      const dateEl = document.getElementById('detailDateBadge');
+      const footerEl = document.getElementById('detailFooterNote');
+      if (titleEl && titleEl.innerText.trim()) detailSettings.title = titleEl.innerText.trim();
+      if (badgeEl && badgeEl.innerText.trim()) detailSettings.badgePill = badgeEl.innerText.trim();
+      if (dateEl && dateEl.innerText.trim()) detailSettings.dateBadge = dateEl.innerText.trim();
+      if (footerEl && footerEl.innerText.trim()) detailSettings.footerNote = footerEl.innerText.trim();
+      detailSettings.savedDayKey = new Date().toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' });
+      return JSON.parse(JSON.stringify(detailSettings));
+    }
+
+    function saveDetailSettings(triggerCloud = true) {
+      if (!detailSettings) return;
+      const sId = currentStoreId || 'myeongji';
+      const data = getDetailSettingsForSave();
+      try {
+        localStorage.setItem(`phone_detail_settings_${sId}`, JSON.stringify(data));
+      } catch(e) {}
+      if (triggerCloud && db && isStoreDataLoaded) {
+        const actor = currentRole === 'master' ? '본사 (마스터)' : currentStoreName;
+        db.collection('stores').doc(sId).set({
+          detailSettings: data,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          updatedBy: actor
+        }, { merge: true }).catch(err => console.warn('Detail settings save error:', err));
+      }
+    }
+
+    function applyStoreDetailSettings(ds) {
+      if (!ds || typeof ds !== 'object') return;
+      const activeEl = document.activeElement;
+      if (activeEl && (activeEl.isContentEditable || activeEl.closest('#tab-detail'))) {
+        return;
+      }
+      const sId = currentStoreId || 'myeongji';
+      try {
+        localStorage.setItem(`phone_detail_settings_${sId}`, JSON.stringify(ds));
+      } catch(e) {}
+      if (currentTab === 'detail') {
+        loadDetailSettings(sId);
+        renderDetailSheet();
+      }
+    }
+
+    function syncDetailControlsUI() {
+      if (!detailSettings) return;
+      const theme = DETAIL_THEME_PRESETS[detailSettings.theme] || DETAIL_THEME_PRESETS.purple;
+
+      Object.keys(DETAIL_THEME_PRESETS).forEach(k => {
+        const b = document.getElementById(`detailThemeBtn-${k}`);
+        if (!b) return;
+        b.className = (k === detailSettings.theme)
+          ? `detail-theme-btn px-2.5 py-1 rounded-lg font-extrabold transition cursor-pointer ${DETAIL_THEME_PRESETS[k].btnActive}`
+          : 'detail-theme-btn px-2.5 py-1 rounded-lg font-bold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition cursor-pointer';
+      });
+
+      const btnBasic = document.getElementById('detailMarginModeBtn-basic');
+      const btnAll = document.getElementById('detailMarginModeBtn-all');
+      const modeBadge = document.getElementById('detailModeBadge');
+      if (btnBasic && btnAll) {
+        if (detailSettings.marginMode === 'all') {
+          btnAll.className = 'px-3 py-1 rounded-lg text-xs font-black transition cursor-pointer bg-white text-indigo-700 shadow-xs border border-indigo-200';
+          btnBasic.className = 'px-3 py-1 rounded-lg text-xs font-black transition cursor-pointer text-slate-500 hover:text-slate-900';
+          if (modeBadge) modeBadge.innerText = '풀부가(올부가) 광고가 자동 연동';
+        } else {
+          btnBasic.className = 'px-3 py-1 rounded-lg text-xs font-black transition cursor-pointer bg-white text-slate-900 shadow-xs border border-slate-200';
+          btnAll.className = 'px-3 py-1 rounded-lg text-xs font-black transition cursor-pointer text-slate-500 hover:text-slate-900';
+          if (modeBadge) modeBadge.innerText = '기본부가 광고가 자동 연동';
+        }
+      }
+
+      const chkExtra = document.getElementById('detailShowExtraSubChk');
+      const chkHide = document.getElementById('detailHideInactiveChk');
+      const chkFinal = document.getElementById('detailShowFinalPriceChk');
+      if (chkExtra) chkExtra.checked = !!detailSettings.showExtraSub;
+      if (chkHide) chkHide.checked = !!detailSettings.hideInactive;
+      if (chkFinal) chkFinal.checked = !!detailSettings.showFinalPrice;
+
+      ['SK', 'KT', 'LG'].forEach(c => {
+        const p = detailSettings.plans[c] || {};
+        const nameEl = document.getElementById(`detailPlanName-${c}`);
+        const feeEl = document.getElementById(`detailPlanFee-${c}`);
+        const extraEl = document.getElementById(`detailExtraSub-${c}`);
+        if (nameEl) nameEl.value = p.planName || '';
+        if (feeEl) feeEl.value = p.planFee ?? '';
+        if (extraEl) extraEl.value = p.extraSub ?? 0;
+      });
+
+      const card = document.getElementById('detailSheetCard');
+      const header = document.getElementById('detailHeaderBanner');
+      if (card) card.style.borderColor = theme.cardBorder;
+      if (header) header.style.background = theme.headerBg;
+
+      const titleEl = document.getElementById('detailStoreTitle');
+      const badgeEl = document.getElementById('detailBadgePill');
+      const dateEl = document.getElementById('detailDateBadge');
+      const footerEl = document.getElementById('detailFooterNote');
+      if (titleEl && detailSettings.title) titleEl.innerText = detailSettings.title;
+      if (badgeEl && detailSettings.badgePill) badgeEl.innerText = detailSettings.badgePill;
+      if (dateEl && detailSettings.dateBadge) dateEl.innerText = detailSettings.dateBadge;
+      if (footerEl && detailSettings.footerNote) footerEl.innerText = detailSettings.footerNote;
+    }
+
+    function setDetailTheme(themeKey) {
+      if (!detailSettings) loadDetailSettings(currentStoreId);
+      detailSettings.theme = themeKey;
+      syncDetailControlsUI();
+      renderDetailSheet();
+      saveDetailSettings(true);
+    }
+
+    function setDetailMarginMode(mode) {
+      if (!detailSettings) loadDetailSettings(currentStoreId);
+      detailSettings.marginMode = (mode === 'all') ? 'all' : 'basic';
+      if (detailSettings.marginMode === 'all') {
+        detailSettings.showExtraSub = true;
+        ['SK', 'KT', 'LG'].forEach(c => {
+          detailSettings.plans[c].extraSub = (allAddDiscounts && allAddDiscounts[c] !== undefined) ? Number(allAddDiscounts[c]) * 10000 : 150000;
+        });
+      } else {
+        detailSettings.showExtraSub = false;
+        ['SK', 'KT', 'LG'].forEach(c => {
+          detailSettings.plans[c].extraSub = 0;
+        });
+      }
+      syncDetailControlsUI();
+      renderDetailSheet();
+      saveDetailSettings(true);
+    }
+
+    function toggleDetailOption(optKey, checked) {
+      if (!detailSettings) loadDetailSettings(currentStoreId);
+      detailSettings[optKey] = !!checked;
+      if (optKey === 'showExtraSub' && checked) {
+        ['SK', 'KT', 'LG'].forEach(c => {
+          if (!detailSettings.plans[c].extraSub) {
+            detailSettings.plans[c].extraSub = (allAddDiscounts && allAddDiscounts[c] !== undefined) ? Number(allAddDiscounts[c]) * 10000 : 150000;
+          }
+        });
+        syncDetailControlsUI();
+      }
+      renderDetailSheet();
+      saveDetailSettings(true);
+    }
+
+    function updateDetailCarrierPlan(carrier, field, value) {
+      if (!detailSettings) loadDetailSettings(currentStoreId);
+      if (!detailSettings.plans[carrier]) detailSettings.plans[carrier] = { planName: '', planFee: 0, extraSub: 0 };
+      if (field === 'planName') {
+        detailSettings.plans[carrier].planName = value;
+      } else {
+        detailSettings.plans[carrier][field] = parseInt(String(value).replace(/[^0-9]/g, ''), 10) || 0;
+      }
+      renderDetailSheet();
+      saveDetailSettings(true);
+    }
+
+    function toggleDetailSunyak(carrier, deviceId) {
+      if (!detailSettings) loadDetailSettings(currentStoreId);
+      if (!detailSettings.sunyakMap) detailSettings.sunyakMap = {};
+      const key = `${carrier}_${deviceId}`;
+      detailSettings.sunyakMap[key] = !detailSettings.sunyakMap[key];
+      renderDetailSheet();
+      saveDetailSettings(true);
+    }
+
+    function syncDetailFromAd() {
+      if (!detailSettings) loadDetailSettings(currentStoreId);
+      ['SK', 'KT', 'LG'].forEach(c => {
+        const parsed = parseDetailDefaultPlan(c);
+        detailSettings.plans[c].planName = parsed.planName;
+        detailSettings.plans[c].planFee = parsed.planFee;
+        if (detailSettings.marginMode === 'all') {
+          detailSettings.plans[c].extraSub = (allAddDiscounts && allAddDiscounts[c] !== undefined) ? Number(allAddDiscounts[c]) * 10000 : 150000;
+        }
+      });
+      syncDetailControlsUI();
+      renderDetailSheet();
+      saveDetailSettings(true);
+      updateSaveProgressDone('새로고침 완료', '최신 광고가격 · 출고가 · 공시지원금이 시세 상세내역에 반영되었습니다.');
+    }
+
+    function initDetailTab() {
+      loadDetailSettings(currentStoreId);
+      renderDetailSheet();
+    }
+
+    function formatWon(val) {
+      if (val === null || val === undefined || isNaN(val)) return '-';
+      return Math.round(val).toLocaleString('ko-KR');
+    }
+
+    function renderDetailSheet() {
+      if (!detailSettings) loadDetailSettings(currentStoreId);
+      const thead = document.getElementById('detailTableHead');
+      const tbody = document.getElementById('detailSheetTableBody');
+      if (!thead || !tbody) return;
+
+      const theme = DETAIL_THEME_PRESETS[detailSettings.theme] || DETAIL_THEME_PRESETS.purple;
+      const showExtra = !!detailSettings.showExtraSub;
+      const showFinal = !!detailSettings.showFinalPrice;
+      const hideInactive = !!detailSettings.hideInactive;
+      const mode = detailSettings.marginMode || 'basic';
+
+      // 동적 헤더 & colgroup 생성 (960px 기준 겹침 0% 비율 배분)
+      const tableEl = document.getElementById('detailMainTable');
+      let colEl = document.getElementById('detailMainColGroup');
+      if (tableEl && !colEl) {
+        colEl = document.createElement('colgroup');
+        colEl.id = 'detailMainColGroup';
+        tableEl.insertBefore(colEl, thead);
+      }
+      if (colEl) {
+        if (showExtra && showFinal) {
+          colEl.innerHTML = `<col style="width:8%"><col style="width:18%"><col style="width:8%"><col style="width:11%"><col style="width:7%"><col style="width:6.5%"><col style="width:6.5%"><col style="width:7%"><col style="width:7%"><col style="width:7%"><col style="width:7%"><col style="width:7%">`;
+        } else if (showExtra && !showFinal) {
+          colEl.innerHTML = `<col style="width:8%"><col style="width:20%"><col style="width:9%"><col style="width:12%"><col style="width:7%"><col style="width:7%"><col style="width:7%"><col style="width:9%"><col style="width:10.5%"><col style="width:10.5%">`;
+        } else if (!showExtra && showFinal) {
+          colEl.innerHTML = `<col style="width:8%"><col style="width:19%"><col style="width:9%"><col style="width:12%"><col style="width:7%"><col style="width:7%"><col style="width:7%"><col style="width:8%"><col style="width:8%"><col style="width:7.5%"><col style="width:7.5%">`;
+        } else {
+          colEl.innerHTML = `<col style="width:8%"><col style="width:22%"><col style="width:10%"><col style="width:13%"><col style="width:8%"><col style="width:8%"><col style="width:8%"><col style="width:11.5%"><col style="width:11.5%">`;
+        }
+      }
+
+      const storeColSpan = (showExtra ? 3 : 2) + (showFinal ? 2 : 0);
+      thead.innerHTML = `
+        <tr class="border-b border-slate-200 text-[11px] font-black text-slate-700" style="background-color: ${theme.thBg};">
+          <th rowspan="2" class="p-2 border-r border-slate-200 text-center align-middle">통신사</th>
+          <th rowspan="2" class="p-2 border-r border-slate-200 text-center align-middle">모델명</th>
+          <th rowspan="2" class="p-2 border-r border-slate-200 text-center align-middle">출고가</th>
+          <th rowspan="2" class="p-2 border-r border-slate-200 text-center align-middle">요금제</th>
+          <th rowspan="2" class="p-2 border-r border-slate-200 text-center align-middle">기본료</th>
+          <th colspan="2" class="p-1.5 border-r border-slate-200 border-b border-slate-200 text-center align-middle">공통지원금</th>
+          <th colspan="${storeColSpan}" class="p-1.5 border-b border-slate-200 text-center align-middle" style="background-color: ${theme.storeThBg}; color: ${theme.storeThText};">매장지원금</th>
+        </tr>
+        <tr class="border-b-2 border-slate-300 text-[10px] font-extrabold text-slate-600" style="background-color: ${theme.thBg};">
+          <th class="p-1.5 border-r border-slate-200 text-center align-middle">번호이동</th>
+          <th class="p-1.5 border-r border-slate-200 text-center align-middle">기기변경</th>
+          ${showExtra ? `<th class="p-1.5 border-r border-slate-200 text-center align-middle" style="background-color: ${theme.storeThBg}; color: ${theme.storeThText};">추가지원금</th>` : ''}
+          <th class="p-1.5 border-r border-slate-200 text-center align-middle" style="background-color: ${theme.storeThBg}; color: ${theme.storeThText};">번호이동</th>
+          <th class="p-1.5 ${showFinal ? 'border-r border-slate-200' : ''} text-center align-middle" style="background-color: ${theme.storeThBg}; color: ${theme.storeThText};">기기변경</th>
+          ${showFinal ? `<th class="p-1.5 border-r border-slate-200 text-center align-middle bg-amber-50/70 text-amber-900">번이 완납가</th><th class="p-1.5 text-center align-middle bg-amber-50/70 text-amber-900">기변 완납가</th>` : ''}
+        </tr>
+      `;
+
+      tbody.innerHTML = '';
+
+      const carrierMeta = {
+        SK: { label: 'SK텔레콤', accent: '#f43f5e', text: '#e11d48', bg: '#fff1f2' },
+        KT: { label: 'KT', accent: '#334155', text: '#0f172a', bg: '#f8fafc' },
+        LG: { label: 'LG U+', accent: '#ec4899', text: '#db2777', bg: '#fdf2f8' }
+      };
+
+      ['SK', 'KT', 'LG'].forEach((carrier, cIdx) => {
+        const meta = carrierMeta[carrier];
+        const planCfg = detailSettings.plans[carrier] || parseDetailDefaultPlan(carrier);
+        const appliedExtraWon = showExtra ? (Number(planCfg.extraSub) || 0) : 0;
+
+        // 해당 통신사의 광고표 기종 순서 우선 활용
+        const orderedIds = (adCarrierOrders && Array.isArray(adCarrierOrders[carrier]) && adCarrierOrders[carrier].length > 0)
+          ? adCarrierOrders[carrier]
+          : devices.map(d => d.id);
+
+        const carrierDevices = orderedIds
+          .filter(id => id && id !== 'empty')
+          .map(id => devices.find(d => d.id === id))
+          .filter(Boolean);
+
+        const rowsToRender = [];
+        carrierDevices.forEach(d => {
+          const adData = getAdData(d, carrier, mode);
+          const isActive = isDeviceActiveInDaily(carrier, d.id) && !adData.hidden;
+          const mnpRaw = (adData.mnp !== undefined && adData.mnp !== null) ? String(adData.mnp).trim() : '';
+          const chgRaw = (adData.chg !== undefined && adData.chg !== null) ? String(adData.chg).trim() : '';
+
+          const mnpNum = (mnpRaw === '' || mnpRaw === '-' || mnpRaw === '품절') ? NaN : parseFloat(mnpRaw.replace(/[^0-9.-]/g, ''));
+          const chgNum = (chgRaw === '' || chgRaw === '-' || chgRaw === '품절') ? NaN : parseFloat(chgRaw.replace(/[^0-9.-]/g, ''));
+
+          const hasAnyPrice = !isNaN(mnpNum) || !isNaN(chgNum);
+          if (hideInactive && (!isActive || !hasAnyPrice)) {
+            return;
+          }
+
+          const factoryWon = Math.round(((d.prices && d.prices[carrier] !== undefined) ? Number(d.prices[carrier]) : Number(d.price || 0)) * 10000);
+          const isSunyak = !!(detailSettings.sunyakMap && detailSettings.sunyakMap[`${carrier}_${d.id}`]);
+          const subMnpWon = isSunyak ? 0 : Math.round(((d.sub && d.sub[carrier] && d.sub[carrier].mnp !== undefined) ? Number(d.sub[carrier].mnp) : 0) * 10000);
+          const subChgWon = isSunyak ? 0 : Math.round(((d.sub && d.sub[carrier] && d.sub[carrier].chg !== undefined) ? Number(d.sub[carrier].chg) : 0) * 10000);
+
+          const storeSubMnp = (isActive && !isNaN(mnpNum)) ? (factoryWon - subMnpWon - appliedExtraWon - Math.round(mnpNum * 10000)) : null;
+          const storeSubChg = (isActive && !isNaN(chgNum)) ? (factoryWon - subChgWon - appliedExtraWon - Math.round(chgNum * 10000)) : null;
+
+          rowsToRender.push({
+            d, isActive, isSunyak, factoryWon,
+            subMnpWon, subChgWon,
+            storeSubMnp, storeSubChg,
+            mnpWon: !isNaN(mnpNum) ? Math.round(mnpNum * 10000) : null,
+            chgWon: !isNaN(chgNum) ? Math.round(chgNum * 10000) : null
+          });
+        });
+
+        if (rowsToRender.length === 0) {
+          const tr = document.createElement('tr');
+          tr.className = cIdx > 0 ? 'border-t-2 border-slate-300' : '';
+          const totalCols = 7 + (showExtra ? 1 : 0) + 2 + (showFinal ? 2 : 0);
+          tr.innerHTML = `
+            <td class="p-2.5 font-black text-center border-r border-slate-200" style="border-left: 4px solid ${meta.accent}; color: ${meta.text}; background-color: ${meta.bg};">${meta.label}</td>
+            <td colspan="${totalCols - 1}" class="p-3 text-center text-slate-400 text-[11px] font-semibold">표시할 기종이 없습니다. (광고표에 가격을 입력하거나 '품절·미입력 기종 자동 숨김'을 해제해 주세요)</td>
+          `;
+          tbody.appendChild(tr);
+          return;
+        }
+
+        const rowCount = rowsToRender.length;
+        rowsToRender.forEach((row, rIdx) => {
+          const tr = document.createElement('tr');
+          tr.className = `hover:bg-slate-50/70 transition ${rIdx === 0 && cIdx > 0 ? 'border-t-2 border-slate-400' : 'border-t border-slate-100'}`;
+
+          let carrierColsHtml = '';
+          let planColsHtml = '';
+          let extraColHtml = '';
+
+          if (rIdx === 0) {
+            carrierColsHtml = `
+              <td rowspan="${rowCount}" class="p-2 font-black text-center align-middle border-r border-slate-200 text-xs" style="border-left: 4px solid ${meta.accent}; color: ${meta.text}; background-color: #ffffff;">
+                ${meta.label}
+              </td>
+            `;
+            planColsHtml = `
+              <td rowspan="${rowCount}" class="p-2 text-center align-middle border-r border-slate-200 font-bold text-slate-700 text-[11px] leading-snug break-keep bg-white">
+                ${planCfg.planName || '-'}
+              </td>
+              <td rowspan="${rowCount}" class="p-2 text-right align-middle border-r border-slate-200 font-bold text-slate-700 text-[11px] tabular-nums bg-white">
+                ${formatWon(planCfg.planFee || 0)}
+              </td>
+            `;
+            if (showExtra) {
+              extraColHtml = `
+                <td rowspan="${rowCount}" class="p-2 text-right align-middle border-r border-slate-200 font-black text-[11px] tabular-nums" style="background-color: ${theme.storeCellBg}; color: ${theme.extraText};">
+                  ${formatWon(appliedExtraWon)}
+                </td>
+              `;
+            }
+          }
+
+          // 공통지원금 영역 (선약 vs 동일 vs 차등)
+          let subColsHtml = '';
+          if (row.isSunyak) {
+            subColsHtml = `
+              <td colspan="2" class="p-1.5 border-r border-slate-200 text-center align-middle">
+                <span class="inline-block px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-amber-50 text-amber-800 border border-amber-200 whitespace-nowrap">
+                  선택약정 · 요금 25% 할인
+                </span>
+              </td>
+            `;
+          } else if (row.subMnpWon === row.subChgWon) {
+            subColsHtml = `
+              <td colspan="2" class="p-1.5 border-r border-slate-200 text-center align-middle font-bold text-slate-700 text-[11px] tabular-nums">
+                ${formatWon(row.subMnpWon)}
+              </td>
+            `;
+          } else {
+            subColsHtml = `
+              <td class="p-1.5 border-r border-slate-100 text-right align-middle font-bold text-slate-700 text-[11px] tabular-nums">${formatWon(row.subMnpWon)}</td>
+              <td class="p-1.5 border-r border-slate-200 text-right align-middle font-bold text-slate-700 text-[11px] tabular-nums">${formatWon(row.subChgWon)}</td>
+            `;
+          }
+
+          // 매장지원금 셀
+          const formatStoreSub = (val) => {
+            if (val === null) return `<span class="text-slate-300 font-semibold">-</span>`;
+            return formatWon(val);
+          };
+
+          const finalColsHtml = showFinal ? `
+            <td class="p-1.5 border-r border-slate-200 text-right align-middle font-extrabold text-[11px] tabular-nums bg-amber-50/30 ${row.mnpWon !== null && row.mnpWon < 0 ? 'text-rose-600' : 'text-slate-800'}">
+              ${row.mnpWon !== null ? formatWon(row.mnpWon) : '-'}
+            </td>
+            <td class="p-1.5 text-right align-middle font-extrabold text-[11px] tabular-nums bg-amber-50/30 ${row.chgWon !== null && row.chgWon < 0 ? 'text-rose-600' : 'text-slate-800'}">
+              ${row.chgWon !== null ? formatWon(row.chgWon) : '-'}
+            </td>
+          ` : '';
+
+          tr.innerHTML = `
+            ${carrierColsHtml}
+            <td class="px-2.5 py-2 border-r border-slate-200 text-left align-middle">
+              <div class="flex items-center justify-between gap-1">
+                <div class="flex items-center gap-1.5 min-w-0">
+                  <span class="font-extrabold text-slate-900 text-[11px] truncate">${row.d.name}</span>
+                  ${row.isSunyak ? `<span class="px-1.5 py-0.2 rounded text-[9px] font-black bg-amber-100 text-amber-800 border border-amber-200 shrink-0">선택약정</span>` : ''}
+                </div>
+                <button type="button" onclick="toggleDetailSunyak('${carrier}', '${row.d.id}')" class="detail-ui-action px-1.5 py-0.5 rounded text-[9px] font-bold border transition shrink-0 cursor-pointer ${row.isSunyak ? 'bg-amber-500 text-white border-amber-600' : 'bg-slate-100 hover:bg-amber-50 text-slate-500 border-slate-200'}" title="클릭하여 공시지원금 / 선택약정 전환">
+                  ${row.isSunyak ? '선약' : '공시'}
+                </button>
+              </div>
+            </td>
+            <td class="px-2 py-2 border-r border-slate-200 text-right align-middle font-bold text-slate-700 text-[11px] tabular-nums">
+              ${formatWon(row.factoryWon)}
+            </td>
+            ${planColsHtml}
+            ${subColsHtml}
+            ${extraColHtml}
+            <td class="px-2 py-2 border-r border-slate-100 text-right align-middle font-black text-[11px] tabular-nums" style="background-color: ${theme.storeCellBg}; color: ${theme.storeNumText};">
+              ${formatStoreSub(row.storeSubMnp)}
+            </td>
+            <td class="px-2 py-2 ${showFinal ? 'border-r border-slate-200' : ''} text-right align-middle font-black text-[11px] tabular-nums" style="background-color: ${theme.storeCellBg}; color: ${theme.storeNumText};">
+              ${formatStoreSub(row.storeSubChg)}
+            </td>
+            ${finalColsHtml}
+          `;
+          tbody.appendChild(tr);
+        });
+      });
+    }
+
+    // 시세 상세내역 고해상도 클립보드 복사 (기존 시세표 포스터 캡처 방식 100% 동일: htmlToImage -> html2canvas -> ClipboardItem)
+    async function copyDetailSheetToClipboard() {
+      const sheet = document.getElementById('detailSheetCard');
+      if (!sheet) {
+        alert("시세 상세내역 요소를 찾을 수 없습니다.");
+        return;
+      }
+
+      const copyBtn = document.getElementById('detailCopyBtn');
+      const originalBtnHtml = copyBtn ? copyBtn.innerHTML : '';
+      if (copyBtn) {
+        copyBtn.disabled = true;
+        copyBtn.innerHTML = `
+          <svg class="w-4 h-4 text-white animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+          <span>고화질 복사 중...</span>
+        `;
+        showSaveProgress('시세 상세내역 복사 중', '선명한 고화질 상세내역 이미지를 생성하고 있습니다');
+      }
+
+      if (document.fonts && document.fonts.ready) {
+        try { await document.fonts.ready; } catch(e) {}
+      }
+
+      const clone = sheet.cloneNode(true);
+      clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+      clone.querySelectorAll('.detail-ui-action').forEach(el => el.remove());
+
+      const offscreen = document.createElement('div');
+      offscreen.style.position = 'fixed';
+      offscreen.style.left = '-10000px';
+      offscreen.style.top = '0';
+      offscreen.style.zIndex = '-9999';
+      offscreen.style.pointerEvents = 'none';
+      offscreen.style.width = '960px';
+      offscreen.style.padding = '0';
+      offscreen.style.backgroundColor = '#ffffff';
+      offscreen.style.zoom = '1';
+      offscreen.style.transform = 'none';
+
+      clone.style.width = '960px';
+      clone.style.maxWidth = '960px';
+      clone.style.minWidth = '960px';
+      clone.style.margin = '0 auto';
+      clone.style.zoom = '1';
+      clone.style.transform = 'none';
+
+      offscreen.appendChild(clone);
+      document.body.appendChild(offscreen);
+
+      try {
+        let blobData = null;
+
+        // 1순위: html-to-image 네이티브 벡터 캡처
+        if (typeof htmlToImage !== 'undefined') {
+          try {
+            blobData = await htmlToImage.toBlob(clone, {
+              pixelRatio: 2,
+              backgroundColor: '#ffffff',
+              style: { zoom: '1', transform: 'none' }
+            });
+          } catch (nativeErr) {
+            console.warn("htmlToImage detail warning, fallback to canvas:", nativeErr);
+          }
+        }
+
+        // 2순위: html2canvas 폴백
+        if (!blobData && typeof html2canvas !== 'undefined') {
+          const canvas = await html2canvas(clone, {
+            scale: 2,
+            width: 960,
+            height: clone.scrollHeight,
+            windowWidth: 1200,
+            scrollX: 0,
+            scrollY: 0,
+            useCORS: true,
+            letterRendering: true,
+            backgroundColor: '#ffffff',
+            logging: false
+          });
+          blobData = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        }
+
+        if (offscreen.parentNode) document.body.removeChild(offscreen);
+
+        if (navigator.clipboard && navigator.clipboard.write && blobData) {
+          try {
+            await navigator.clipboard.write([
+              new ClipboardItem({ 'image/png': blobData })
+            ]);
+            updateSaveProgressDone('상세내역 복사 완료!', '시세 상세내역 이미지가 클립보드에 복사되었습니다. (Ctrl+V로 바로 붙여넣기)');
+          } catch (clipboardErr) {
+            console.warn("Detail clipboard write error:", clipboardErr);
+            hideSaveProgress();
+            alert("클립보드 복사 권한이 차단되어 있습니다.\n브라우저 주소창 왼쪽의 자물쇠/설정 아이콘에서 클립보드 권한을 '허용'해주세요.");
+          }
+        } else {
+          hideSaveProgress();
+          alert("현재 브라우저 환경에서 이미지 클립보드 복사 기능을 지원하지 않거나 권한이 차단되어 있습니다.\n최신 Chrome 또는 Edge 브라우저를 이용해주세요.");
+        }
+      } catch (err) {
+        if (offscreen.parentNode) document.body.removeChild(offscreen);
+        hideSaveProgress();
+        console.error("Detail capture error:", err);
+        alert("시세 상세내역 이미지 캡처 중 오류가 발생했습니다: " + err.message);
+      } finally {
+        if (offscreen.parentNode) document.body.removeChild(offscreen);
+        if (copyBtn) {
+          copyBtn.disabled = false;
+          copyBtn.innerHTML = originalBtnHtml;
+        }
+      }
+    }
+
+    function printDetailSheet() {
+      const sheet = document.getElementById('detailSheetCard');
+      if (!sheet) return;
+      const printClone = sheet.cloneNode(true);
+      printClone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+      printClone.querySelectorAll('.detail-ui-action').forEach(el => el.remove());
+
+      let printIframe = document.getElementById('detailPrintIframe');
+      if (printIframe) printIframe.remove();
+      printIframe = document.createElement('iframe');
+      printIframe.id = 'detailPrintIframe';
+      printIframe.style.position = 'fixed';
+      printIframe.style.right = '0';
+      printIframe.style.bottom = '0';
+      printIframe.style.width = '0';
+      printIframe.style.height = '0';
+      printIframe.style.border = '0';
+      document.body.appendChild(printIframe);
+
+      const parentStyles = Array.from(document.querySelectorAll('style')).map(s => s.outerHTML).join('\n');
+      const parentLinks = Array.from(document.querySelectorAll('link[rel="stylesheet"]')).map(l => l.outerHTML).join('\n');
+
+      const doc = printIframe.contentDocument || printIframe.contentWindow.document;
+      doc.open();
+      doc.write(`<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>${(document.getElementById('detailStoreTitle')?.innerText || '시세 상세내역').trim()}</title>
+  <script src="https://cdn.tailwindcss.com"><\/script>
+  ${parentLinks}
+  ${parentStyles}
+  <style>
+    @page { size: A4 portrait; margin: 8mm; }
+    * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    body { margin: 0; padding: 0; background: #ffffff; font-family: "Pretendard Variable", Pretendard, sans-serif !important; }
+    #detailSheetCard { width: 100% !important; max-width: 100% !important; box-shadow: none !important; }
+  </style>
+</head>
+<body>
+  ${printClone.outerHTML}
+  <script>
+    window.onafterprint = function() { try { window.parent.focus(); } catch(e) {} };
+  <\/script>
+</body>
+</html>`);
+      doc.close();
+      setTimeout(() => {
+        printIframe.contentWindow.focus();
+        printIframe.contentWindow.print();
       }, 500);
     }
 

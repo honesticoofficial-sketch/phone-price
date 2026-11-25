@@ -3849,3 +3849,35 @@ service cloud.firestore {
   - `CRAWLED_CATALOG_POOL` 내 Duo 4개 용량 확인 및 '듀오' 검색 매칭 확인.
   - 넷가표(Tab 1) DOM 행 렌더링 및 넷가 계산 정상 확인.
   - 라이브 증빙 캡처 완료 ([chapter87_duo_verified.png](file:///C:/Users/User01/.gemini/antigravity/brain/2f8eabdf-6a8a-4957-81f7-425939762cc2/chapter87_duo_verified.png)).
+
+---
+
+## 88. 📋 [제88장] KT 아이폰17 크롤링 원인 규명 및 분리 수집 보완, 리베이트 삭제 영구 보존 수정, '시세상세내역' 자동 산출·클립보드 복사 탭 신설 (2026-11-25)
+
+### 1) KT 아이폰17 출고가(145.2만) 및 번호이동 공통지원금(50만) 미반영 원인 규명 및 조치
+1. **원인 분석**:
+   - **번호이동 45만 오수집 원인**: KT 공식 모바일 페이지(`https://shop.kt.com/m/smart/supportAmtList.do`) 접속 시 `#sbscTypeCd` 가입유형 드롭다운의 초기 기본값이 `04 (기기변경)`으로 선택되어 있음. 기존 `scripts/pipeline_crawl_kt_choice120_safe.ps1`가 가입유형을 `02 (번호이동)`/`01 (신규)`로 전환하지 않고 기본 `04` 화면만 수집했고, `scripts/apply_comprehensive_sync.ps1`가 그 기변 값(45만)을 신규/번이/기변 3칸에 동일하게 복사하여 번호이동 실측값(50만)이 누락됨. (실측 결과 아이폰17 256GB KT 120k 초이스더블 기준: 번이 500,000원 / 기변 450,000원 / 신규 450,000원)
+   - **출고가 128.7만 잔존 원인**: KT 공식 공시지원금 페이지 자체에 `iPhone 17 256GB` 출고가가 여전히 `1,287,000원`(공시일 `2026.02.24`)으로 남아 있어 미반영 상태이며, 기존 `apply_comprehensive_sync.ps1`도 지원금(`subs`)만 갱신하고 출고가(`prices.KT`)는 갱신하지 않았으며, `index.html` 내 기본값과 `syncCrawledSubsidiesOnline()`에도 `KT: 128.7` / `KT: 45`로 고정되어 있었음.
+2. **조치 내역**:
+   - `scripts/pipeline_crawl_kt_choice120_safe.ps1`: 가입유형 `02(번호이동)` · `04(기기변경)` · `01(신규가입)`을 순차 전환하여 `subsidies: { NEW, MNP, CHG }`로 완전 분리 수집하고 `#moreView`를 전체 로딩(최대 15회)하도록 고도화.
+   - `scripts/apply_comprehensive_sync.ps1`: KT `NEW/MNP/CHG` 개별 매핑 및 인상된 출고가(`prices.KT`) 보호 반영(공식 페이지가 더 낮은 구 출고가일 경우 인상분 유지).
+   - `data/crawled_catalog_pool.json`, `data/crawled_subsidies_latest.json`, `index.html`(`ip17` 기본값, `CRAWLED_CATALOG_POOL`, `syncCrawledSubsidiesOnline`) 모두 KT 아이폰17 `출고가 145.2만 / 번이 50만 / 기변 45만`으로 동기화 완료.
+
+### 2) 리베이트 입력표(Tab 2) 행 삭제 불가 및 복원 버그 완전 해결
+1. **원인 분석**:
+   - `loadLayouts()` 및 Firestore `storeDocRef.onSnapshot` 내부에 `devices.forEach(d => { if (!dailyCarrierRows[c].includes(d.id)) dailyCarrierRows[c].push(d.id); })` 강제 복원 루프가 잔존하여, `[✕]`로 삭제해도 0.4초 뒤 클라우드 저장 완료 스냅샷이나 새로고침 시 삭제된 기종이 표 맨 아래에 즉시 재추가됨.
+   - 또한 `storeDocRef.onSnapshot`의 레이아웃 복원이 `isUserInteracting` 가드 바깥에 있어 삭제 직후 스냅샷에 덮어써질 위험이 있었으며, `#dailyTable` 1열 너비가 `75px` + `overflow-hidden`으로 좁아 `[✕]` 버튼이 잘릴 수 있었음.
+2. **조치 내역**:
+   - `loadLayouts()` 및 `storeDocRef.onSnapshot`에서 누락 기종 강제 복원 루프(`devices.forEach`) 전면 제거.
+   - `storeDocRef.onSnapshot` 레이아웃 복원을 `!isUserInteracting` 가드 내부로 이동하고, `knownDeviceIds` 추적을 통해 삭제된 행은 영구 유지하면서 향후 마스터에서 새로 등록하는 기종만 1회 자동 추가되도록 개선.
+   - `deleteDailyRow`, `deleteCalcRow`, `deleteAdRow`에 `markUserAction()` 추가 및 `#dailyTable` 1열 너비 `96px`(최소 `92px`) 확장 + `overflow-hidden` 제거.
+
+### 3) 신규 탭 '시세상세내역' (`#tab-detail`) 구축 및 클립보드 복사 구현
+1. **주요 기능**:
+   - 광고표(Tab 3)에 입력한 번호이동/기기변경 광고가격을 바탕으로 **출고가 · 요금제 · 기본료 · 공통지원금(번이/기변) · 추가지원금(올부가) · 매장지원금**을 원 단위로 자동 산출 (`매장지원금 = 출고가 - 공통지원금 - 추가지원금 - 광고가격`).
+   - `기본부가 광고가` ↔ `풀부가(올부가) 광고가` 연동 전환, 기종별 원클릭 `[공시/선약]` 전환(선택약정 시 공통지원금 0원 처리 및 `선택약정 · 요금 25% 할인` 배지 표기), `품절·미입력 기종 자동 숨김`, `현금완납가 함께 표시` 옵션 제공.
+   - 타점과 차별화된 5종 독자 테마(`단콕 퍼플`, `에메랄드`, `클래식 네이비`, `크림슨 레드`, `모던 다크`) 및 제목·날짜·요금제·안내문 인라인 편집 + 매장별 Firestore(`detailSettings`) 독립 저장.
+   - **기존 시세표 포스터와 100% 동일한 클립보드 복사 방식**: `copyDetailSheetToClipboard()` (`htmlToImage.toBlob` 1순위 -> `html2canvas` 2순위 -> `ClipboardItem` 클립보드 직접 복사, 파일 다운로드 없음) 및 격리 `iframe` 인쇄 지원.
+
+### 4) 샌드박스 브라우저 검증 (100% ALL PASS)
+- PIN `103105` 잠금 해제 -> Tab 2 `✕` 버튼 가시성/연속 6행 삭제 및 새로고침 후 영구 삭제 유지 확인 -> Tab 5 `시세상세내역` KT 아이폰17(1,452,000 / 500,000·450,000), 매장지원금 자동 계산, 올부가/선약 토글, 960px 레이아웃 겹침 0건 및 클립보드 복사 동작(`상세내역 복사 완료!`) 검증 완료 (JS 콘솔 에러 0건).

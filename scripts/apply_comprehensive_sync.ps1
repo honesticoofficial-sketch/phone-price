@@ -147,10 +147,23 @@ foreach ($item in $existingPool) {
     }
 
     if ($ktMatch) {
-        $subVal = [math]::Round($ktMatch.subsidy / 10000, 1)
-        $item.subs.KT.new = $subVal
-        $item.subs.KT.mnp = $subVal
-        $item.subs.KT.chg = $subVal
+        if ($ktMatch.PSObject.Properties['subsidies'] -and $ktMatch.subsidies) {
+            $item.subs.KT.new = [math]::Round($ktMatch.subsidies.NEW / 10000, 1)
+            $item.subs.KT.mnp = [math]::Round($ktMatch.subsidies.MNP / 10000, 1)
+            $item.subs.KT.chg = [math]::Round($ktMatch.subsidies.CHG / 10000, 1)
+        } else {
+            $subVal = [math]::Round($ktMatch.subsidy / 10000, 1)
+            $item.subs.KT.new = $subVal
+            $item.subs.KT.mnp = $subVal
+            $item.subs.KT.chg = $subVal
+        }
+        # 출고가(factoryPrice) 반영 (단, KT 공식 페이지 미반영으로 기존보다 낮은 출고가면 인상분 보존)
+        if ($ktMatch.factoryPrice -and [int]$ktMatch.factoryPrice -gt 0) {
+            $crawledPrice = [math]::Round($ktMatch.factoryPrice / 10000, 2)
+            if (-not $item.prices.KT -or $crawledPrice -gt [double]$item.prices.KT) {
+                $item.prices.KT = $crawledPrice
+            }
+        }
     }
 
     # ----------------------------------------------------

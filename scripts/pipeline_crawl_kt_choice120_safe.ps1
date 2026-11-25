@@ -102,50 +102,103 @@ try {
     }
     Write-Host "   ✅ [게이트 1 통과] 120,000원 초이스 더블 전산 세션 무결성 100% 확인" -ForegroundColor Green
 
-    # 4. 전체 리스트 로딩 (더보기 클릭)
-    Write-Host "`n4. 전체 단말 로딩..."
-    for ($i = 1; $i -le 6; $i++) {
+    # 4~5. 가입유형(02 번호이동 / 04 기기변경 / 01 신규가입)별 전체 단말 로딩 및 분리 추출
+    Write-Host "`n4~5. 가입유형(신규/번이/기변)별 전체 단말 로딩 및 분리 추출..."
+    $ktMap = @{}
+    $scrbTypes = @(
+        @{ code = "02"; key = "MNP"; label = "번호이동" },
+        @{ code = "04"; key = "CHG"; label = "기기변경" },
+        @{ code = "01"; key = "NEW"; label = "신규가입" }
+    )
+
+    foreach ($sc in $scrbTypes) {
+        $sCode = $sc.code
+        $sKey = $sc.key
+        Write-Host "   ▶ KT [$($sc.label) ($sCode)] 전환 및 목록 조회..."
         Invoke-CDPCmd "Runtime.evaluate" @{
             expression = @"
                 (() => {
-                    const btn = document.querySelector('#moreView, .btnProdMore');
-                    if (btn && btn.offsetParent !== null && !btn.disabled) { btn.click(); }
+                    const sel = document.getElementById('sbscTypeCd');
+                    if (sel) {
+                        sel.value = '$sCode';
+                        sel.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
                 })()
 "@
-        }
-        Start-Sleep -Seconds 2
-    }
+        } | Out-Null
+        Start-Sleep -Seconds 3
 
-    # 5. 전 단말 데이터 추출
-    Write-Host "`n5. 단말 데이터 추출..."
-    $extract = Invoke-CDPCmd "Runtime.evaluate" @{
-        expression = @"
-            (() => {
-                const list = [];
-                document.querySelectorAll('.prodListWrap li').forEach(li => {
-                    const name = li.querySelector('.prodInfo .prodName')?.innerText.trim();
-                    let fPrice = 0, sub = 0, date = '';
-                    const dateEl = li.querySelector('.prodInfo .date span:last-child');
-                    if (dateEl) date = dateEl.innerText.trim();
-
-                    li.querySelectorAll('.prodPayDetailIn li').forEach(subLi => {
-                        const tit = subLi.querySelector('.tit')?.innerText.trim() || '';
-                        const conts = subLi.querySelector('.conts')?.innerText.trim() || '';
-                        if (tit.includes('출고가')) fPrice = parseInt(conts.replace(/[^0-9]/g, ''), 10) || 0;
-                        if (tit.includes('공통지원금')) sub = parseInt(conts.replace(/[^0-9]/g, ''), 10) || 0;
-                    });
-                    if (name && (fPrice > 0 || sub > 0)) {
-                        list.push({ model: name, factoryPrice: fPrice, subsidy: sub, date: date });
-                    }
-                });
-                return list;
-            })()
+        # 전체 리스트 로딩 (더보기 클릭 - 남은 항목 없을 때까지 최대 15회)
+        for ($i = 1; $i -le 15; $i++) {
+            $moreRes = Invoke-CDPCmd "Runtime.evaluate" @{
+                expression = @"
+                    (() => {
+                        const btn = document.querySelector('#moreView, .btnProdMore');
+                        if (btn && btn.offsetParent !== null && !btn.disabled && getComputedStyle(btn).display !== 'none') {
+                            btn.click();
+                            return 'clicked';
+                        }
+                        return 'done';
+                    })()
 "@
-        returnByValue = $true
+                returnByValue = $true
+            }
+            if ($moreRes.result.result.value -eq 'done') { break }
+            Start-Sleep -Seconds 2
+        }
+
+        $extract = Invoke-CDPCmd "Runtime.evaluate" @{
+            expression = @"
+                (() => {
+                    const list = [];
+                    document.querySelectorAll('.prodListWrap li').forEach(li => {
+                        const name = li.querySelector('.prodInfo .prodName')?.innerText.trim();
+                        let fPrice = 0, sub = 0, date = '';
+                        const dateEl = li.querySelector('.prodInfo .date span:last-child');
+                        if (dateEl) date = dateEl.innerText.trim();
+
+                        li.querySelectorAll('.prodPayDetailIn li').forEach(subLi => {
+                            const tit = subLi.querySelector('.tit')?.innerText.trim() || '';
+                            const conts = subLi.querySelector('.conts')?.innerText.trim() || '';
+                            if (tit.includes('출고가')) fPrice = parseInt(conts.replace(/[^0-9]/g, ''), 10) || 0;
+                            if (tit.includes('공통지원금')) sub = parseInt(conts.replace(/[^0-9]/g, ''), 10) || 0;
+                        });
+                        if (name && (fPrice > 0 || sub > 0)) {
+                            list.push({ model: name, factoryPrice: fPrice, subsidy: sub, date: date });
+                        }
+                    });
+                    return list;
+                })()
+"@
+            returnByValue = $true
+        }
+
+        $itemsForType = $extract.result.result.value
+        Write-Host "     - [$($sc.label)] 수집: $($itemsForType.Count) 개"
+        foreach ($it in $itemsForType) {
+            $mKey = $it.model.Trim()
+            if (-not $ktMap.ContainsKey($mKey)) {
+                $ktMap[$mKey] = [ordered]@{
+                    carrier = "KT"
+                    model = $mKey
+                    factoryPrice = [int]$it.factoryPrice
+                    subsidy = [int]$it.subsidy
+                    subsidies = [ordered]@{ NEW = 0; MNP = 0; CHG = 0 }
+                    date = $it.date
+                }
+            }
+            $ktMap[$mKey].subsidies[$sKey] = [int]$it.subsidy
+            if ($sKey -eq "MNP") {
+                $ktMap[$mKey].subsidy = [int]$it.subsidy
+                if ([int]$it.factoryPrice -gt 0) {
+                    $ktMap[$mKey].factoryPrice = [int]$it.factoryPrice
+                }
+            }
+        }
     }
 
-    $crawled = $extract.result.result.value
-    Write-Host "   총 수집 단말: $($crawled.Count) 개"
+    $crawled = @($ktMap.Values)
+    Write-Host "   총 통합 수집 단말: $($crawled.Count) 개 (신규/번이/기변 완전 분리)"
 
     # 6. [보안 게이트 2] 세션 지속성 및 구조적 데이터 무결성 검증 (공시지원금 변동에 영향받지 않는 동적 무결성 검증)
     # 6-1. 수집 완료 직후 세션 불변성 재검증 (크롤링 중 세션 초기화/리셋 방지)
