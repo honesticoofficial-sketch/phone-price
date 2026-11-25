@@ -1331,7 +1331,7 @@
       <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs space-y-3">
         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-2.5">
           <div class="flex items-center gap-2.5">
-            <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 text-white flex items-center justify-center shadow-xs">
+            <span id="detailCtrlIconBox" class="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-xs">
               <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
             </span>
             <div>
@@ -1341,18 +1341,14 @@
                   기본부가 광고가 자동 연동
                 </span>
                 <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                  매장지원금 = 출고가 - 공통지원금 (- 추가지원금) - 광고가
+                  시세표 기종 & 넷가표 요금제 실시간 자동 동기화
                 </span>
               </div>
-              <p class="text-[11px] text-slate-500 mt-0.5">광고표(번이/기변)에 입력한 가격을 바탕으로 출고가 · 요금제 · 공통지원금 · 매장지원금이 자동 기입됩니다.</p>
+              <p class="text-[11px] text-slate-500 mt-0.5">광고표(번이/기변) 가격을 입력하면 시세표 기종의 출고가 · 넷가표 요금제 · 공통지원금 · 매장지원금이 자동 산출됩니다.</p>
             </div>
           </div>
 
           <div class="flex items-center gap-2 flex-wrap">
-            <button type="button" onclick="syncDetailFromAd()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1.5 cursor-pointer">
-              <svg class="w-4 h-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-              <span>광고가격 새로고침</span>
-            </button>
             <button type="button" id="detailCopyBtn" onclick="copyDetailSheetToClipboard()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs sm:text-sm font-extrabold shadow-sm transition flex items-center gap-1.5 cursor-pointer">
               <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
               <span>시세 상세내역 클립보드 복사</span>
@@ -1364,34 +1360,44 @@
           </div>
         </div>
 
-        <!-- 테마 프리셋 + 부가조건 모드 + 표시 옵션 -->
+        <!-- 색상 테마 지정(팔레트/스포이드/RGB/HEX/저장) + 연동 모드 + 옵션 -->
         <div class="flex flex-wrap items-center gap-3 text-xs">
-          <!-- 단콕 전용 테마 5종 -->
+          <!-- 1. 원클릭 빠른 색상 팔레트 -->
           <div class="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 flex-wrap">
-            <span class="font-bold text-slate-600 mr-1">독자 테마:</span>
-            <button type="button" onclick="setDetailTheme('purple')" id="detailThemeBtn-purple" class="detail-theme-btn px-2.5 py-1 rounded-lg font-extrabold bg-indigo-600 text-white shadow-2xs transition cursor-pointer">단콕 퍼플</button>
-            <button type="button" onclick="setDetailTheme('emerald')" id="detailThemeBtn-emerald" class="detail-theme-btn px-2.5 py-1 rounded-lg font-bold bg-white text-slate-600 border border-slate-200 hover:bg-emerald-50 transition cursor-pointer">에메랄드</button>
-            <button type="button" onclick="setDetailTheme('navy')" id="detailThemeBtn-navy" class="detail-theme-btn px-2.5 py-1 rounded-lg font-bold bg-white text-slate-600 border border-slate-200 hover:bg-sky-50 transition cursor-pointer">클래식 네이비</button>
-            <button type="button" onclick="setDetailTheme('crimson')" id="detailThemeBtn-crimson" class="detail-theme-btn px-2.5 py-1 rounded-lg font-bold bg-white text-slate-600 border border-slate-200 hover:bg-rose-50 transition cursor-pointer">크림슨 레드</button>
-            <button type="button" onclick="setDetailTheme('slate')" id="detailThemeBtn-slate" class="detail-theme-btn px-2.5 py-1 rounded-lg font-bold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 transition cursor-pointer">모던 다크</button>
+            <span class="font-bold text-slate-600 mr-1">단색 팔레트:</span>
+            <button type="button" onclick="applyDetailThemeColor('#4f46e5', true)" class="w-6 h-6 rounded-full border-2 border-white shadow-xs ring-1 ring-slate-300 hover:scale-110 transition cursor-pointer" style="background-color: #4f46e5;" title="단콕 퍼플 (#4F46E5)"></button>
+            <button type="button" onclick="applyDetailThemeColor('#059669', true)" class="w-6 h-6 rounded-full border-2 border-white shadow-xs ring-1 ring-slate-300 hover:scale-110 transition cursor-pointer" style="background-color: #059669;" title="에메랄드 (#059669)"></button>
+            <button type="button" onclick="applyDetailThemeColor('#1e40af', true)" class="w-6 h-6 rounded-full border-2 border-white shadow-xs ring-1 ring-slate-300 hover:scale-110 transition cursor-pointer" style="background-color: #1e40af;" title="클래식 네이비 (#1E40AF)"></button>
+            <button type="button" onclick="applyDetailThemeColor('#dc2626', true)" class="w-6 h-6 rounded-full border-2 border-white shadow-xs ring-1 ring-slate-300 hover:scale-110 transition cursor-pointer" style="background-color: #dc2626;" title="크림슨 레드 (#DC2626)"></button>
+            <button type="button" onclick="applyDetailThemeColor('#0284c7', true)" class="w-6 h-6 rounded-full border-2 border-white shadow-xs ring-1 ring-slate-300 hover:scale-110 transition cursor-pointer" style="background-color: #0284c7;" title="스카이 블루 (#0284C7)"></button>
+            <button type="button" onclick="applyDetailThemeColor('#7c3aed', true)" class="w-6 h-6 rounded-full border-2 border-white shadow-xs ring-1 ring-slate-300 hover:scale-110 transition cursor-pointer" style="background-color: #7c3aed;" title="바이올렛 (#7C3AED)"></button>
+            <button type="button" onclick="applyDetailThemeColor('#db2777', true)" class="w-6 h-6 rounded-full border-2 border-white shadow-xs ring-1 ring-slate-300 hover:scale-110 transition cursor-pointer" style="background-color: #db2777;" title="로즈 마젠타 (#DB2777)"></button>
+            <button type="button" onclick="applyDetailThemeColor('#0f172a', true)" class="w-6 h-6 rounded-full border-2 border-white shadow-xs ring-1 ring-slate-300 hover:scale-110 transition cursor-pointer" style="background-color: #0f172a;" title="모던 다크 (#0F172A)"></button>
           </div>
 
-          <!-- 연동 가격 조건 (기본부가 vs 풀부가) -->
+          <!-- 2. 스포이드 / RGB / HEX 직접 색상 지정 & 저장 -->
+          <div class="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
+            <label for="detailColorPicker" class="font-bold text-slate-600 cursor-pointer">직접 지정(스포이드/RGB):</label>
+            <input type="color" id="detailColorPicker" value="#4f46e5" oninput="applyDetailThemeColor(this.value, false)" class="w-7 h-7 rounded cursor-pointer border-0 p-0 bg-transparent" title="클릭하여 색상/RGB/스포이드 선택" />
+            <div class="flex items-center gap-1">
+              <span class="text-slate-400 font-mono font-bold">#</span>
+              <input type="text" id="detailHexInput" value="4F46E5" maxlength="6" oninput="onDetailHexColorInput(this.value)" class="w-20 px-1.5 py-0.5 font-mono font-extrabold uppercase border border-slate-300 rounded focus:ring-1 focus:ring-indigo-500 bg-white" placeholder="4F46E5" />
+            </div>
+            <button type="button" onclick="saveDetailColorWithToast()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-extrabold text-[11px] transition cursor-pointer">저장</button>
+          </div>
+
+          <!-- 3. 연동 가격 조건 (기본부가 vs 풀부가) -->
           <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
-            <span class="text-xs font-bold text-slate-600 pl-2 pr-1">연동 기준:</span>
-            <button type="button" id="detailMarginModeBtn-basic" onclick="setDetailMarginMode('basic')" class="px-3 py-1 rounded-lg text-xs font-black transition cursor-pointer bg-white text-slate-900 shadow-xs border border-slate-200">
+            <span class="font-bold text-slate-600 pl-2 pr-1">연동 기준:</span>
+            <button type="button" id="detailMarginModeBtn-basic" onclick="setDetailMarginMode('basic')" class="px-3 py-1 rounded-lg font-black transition cursor-pointer bg-white text-slate-900 shadow-xs border border-slate-200">
               기본부가 광고가
             </button>
-            <button type="button" id="detailMarginModeBtn-all" onclick="setDetailMarginMode('all')" class="px-3 py-1 rounded-lg text-xs font-black transition cursor-pointer text-slate-500 hover:text-slate-900">
+            <button type="button" id="detailMarginModeBtn-all" onclick="setDetailMarginMode('all')" class="px-3 py-1 rounded-lg font-black transition cursor-pointer text-slate-500 hover:text-slate-900">
               풀부가(올부가) 광고가
             </button>
           </div>
 
-          <!-- 추가 옵션 토글들 -->
-          <label class="inline-flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 font-bold text-slate-700 cursor-pointer select-none">
-            <input type="checkbox" id="detailShowExtraSubChk" onchange="toggleDetailOption('showExtraSub', this.checked)" checked class="w-3.5 h-3.5 rounded border-slate-300 text-indigo-600 cursor-pointer" />
-            <span>추가지원금(올부가) 칸 표시</span>
-          </label>
+          <!-- 4. 표시 옵션 -->
           <label class="inline-flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 font-bold text-slate-700 cursor-pointer select-none">
             <input type="checkbox" id="detailHideInactiveChk" onchange="toggleDetailOption('hideInactive', this.checked)" checked class="w-3.5 h-3.5 rounded border-slate-300 text-indigo-600 cursor-pointer" />
             <span>품절·미입력 기종 자동 숨김</span>
@@ -1401,35 +1407,13 @@
             <span>현금완납가(광고가) 함께 표시</span>
           </label>
         </div>
-
-        <!-- 통신사별 요금제명 / 기본료 / 추가지원금 간편 편집 바 -->
-        <div class="grid grid-cols-1 xl:grid-cols-3 gap-2.5 pt-1 text-xs">
-          <div class="flex flex-wrap items-center gap-1.5 bg-rose-50/50 border border-rose-200/80 rounded-xl px-2.5 py-2 overflow-hidden">
-            <span class="font-black text-rose-700 shrink-0 w-8">SKT</span>
-            <input type="text" id="detailPlanName-SK" oninput="updateDetailCarrierPlan('SK', 'planName', this.value)" class="flex-1 min-w-[90px] px-2 py-1 bg-white border border-rose-200 rounded-lg font-bold text-slate-800 text-[11px]" placeholder="요금제명" />
-            <input type="number" id="detailPlanFee-SK" oninput="updateDetailCarrierPlan('SK', 'planFee', this.value)" class="w-20 shrink-0 px-1.5 py-1 bg-white border border-rose-200 rounded-lg font-bold text-slate-800 text-[11px] text-right" placeholder="기본료" title="월 기본료(원)" />
-            <input type="number" id="detailExtraSub-SK" oninput="updateDetailCarrierPlan('SK', 'extraSub', this.value)" class="w-20 shrink-0 px-1.5 py-1 bg-white border border-rose-200 rounded-lg font-bold text-indigo-700 text-[11px] text-right" placeholder="추가지원" title="추가지원금(원)" />
-          </div>
-          <div class="flex flex-wrap items-center gap-1.5 bg-blue-50/50 border border-blue-200/80 rounded-xl px-2.5 py-2 overflow-hidden">
-            <span class="font-black text-blue-700 shrink-0 w-8">KT</span>
-            <input type="text" id="detailPlanName-KT" oninput="updateDetailCarrierPlan('KT', 'planName', this.value)" class="flex-1 min-w-[90px] px-2 py-1 bg-white border border-blue-200 rounded-lg font-bold text-slate-800 text-[11px]" placeholder="요금제명" />
-            <input type="number" id="detailPlanFee-KT" oninput="updateDetailCarrierPlan('KT', 'planFee', this.value)" class="w-20 shrink-0 px-1.5 py-1 bg-white border border-blue-200 rounded-lg font-bold text-slate-800 text-[11px] text-right" placeholder="기본료" title="월 기본료(원)" />
-            <input type="number" id="detailExtraSub-KT" oninput="updateDetailCarrierPlan('KT', 'extraSub', this.value)" class="w-20 shrink-0 px-1.5 py-1 bg-white border border-blue-200 rounded-lg font-bold text-indigo-700 text-[11px] text-right" placeholder="추가지원" title="추가지원금(원)" />
-          </div>
-          <div class="flex flex-wrap items-center gap-1.5 bg-pink-50/50 border border-pink-200/80 rounded-xl px-2.5 py-2 overflow-hidden">
-            <span class="font-black text-pink-700 shrink-0 w-8">LG</span>
-            <input type="text" id="detailPlanName-LG" oninput="updateDetailCarrierPlan('LG', 'planName', this.value)" class="flex-1 min-w-[90px] px-2 py-1 bg-white border border-pink-200 rounded-lg font-bold text-slate-800 text-[11px]" placeholder="요금제명" />
-            <input type="number" id="detailPlanFee-LG" oninput="updateDetailCarrierPlan('LG', 'planFee', this.value)" class="w-20 shrink-0 px-1.5 py-1 bg-white border border-pink-200 rounded-lg font-bold text-slate-800 text-[11px] text-right" placeholder="기본료" title="월 기본료(원)" />
-            <input type="number" id="detailExtraSub-LG" oninput="updateDetailCarrierPlan('LG', 'extraSub', this.value)" class="w-20 shrink-0 px-1.5 py-1 bg-white border border-pink-200 rounded-lg font-bold text-indigo-700 text-[11px] text-right" placeholder="추가지원" title="추가지원금(원)" />
-          </div>
-        </div>
       </div>
 
       <!-- 시세 상세내역 캡처 카드 본체 -->
       <div class="flex justify-start lg:justify-center overflow-x-auto py-2">
         <div id="detailSheetCard" class="w-[960px] min-w-[960px] bg-white rounded-3xl shadow-xl border-2 border-indigo-200 overflow-hidden text-slate-900 transition-all shrink-0" style="font-family: 'Pretendard Variable', Pretendard, sans-serif;">
           <!-- 상단 독자 헤더 배너 -->
-          <div id="detailHeaderBanner" class="px-6 py-5 text-white flex flex-wrap items-center justify-between gap-3" style="background: linear-gradient(135deg, #312e81, #4f46e5);">
+          <div id="detailHeaderBanner" class="px-6 py-5 text-white flex items-start justify-between gap-4" style="background: linear-gradient(135deg, #312e81, #4f46e5);">
             <div class="space-y-1.5">
               <div class="flex items-center gap-2 flex-wrap">
                 <span id="detailBadgePill" contenteditable="true" onblur="saveDetailSettings(false)" class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-white/20 text-white border border-white/30 tracking-tight focus:outline-none">
@@ -1443,10 +1427,13 @@
                 단콕 휴대폰 시세 상세내역
               </h2>
             </div>
-            <div class="text-right">
+            <div class="text-right shrink-0 space-y-1">
               <div class="text-[11px] font-bold text-white/75">공시 및 시세 적용 기준</div>
-              <div id="detailDateBadge" contenteditable="true" onblur="saveDetailSettings(false)" class="mt-0.5 inline-block px-3 py-1 rounded-xl bg-white/15 border border-white/25 text-xs font-black text-white focus:outline-none">
+              <div id="detailDateBadge" contenteditable="true" onblur="saveDetailSettings(false)" class="inline-block px-3 py-1 rounded-xl bg-white/15 border border-white/25 text-xs font-black text-white focus:outline-none">
                 2026.11.25 기준
+              </div>
+              <div id="detailPaybackNotice" contenteditable="true" onblur="saveDetailSettings(false)" class="text-[11px] font-extrabold text-amber-200 leading-tight focus:outline-none">
+                모든 매장지원금은 페이백 금액 제외 추가지원금으로 모두 반영됩니다.
               </div>
             </div>
           </div>
@@ -1467,7 +1454,7 @@
             <!-- 하단 안내 문구 -->
             <div class="mt-3 flex flex-wrap items-center justify-between gap-2 px-1 text-[11px] text-slate-500 font-semibold">
               <span id="detailFooterNote" contenteditable="true" onblur="saveDetailSettings(false)" class="focus:outline-none">
-                공통지원금 당일 공시 기준 · 현금완납 기준 · 선택약정: 공통지원금 대신 매월 요금 25% 할인 · 단위: 원
+                공통지원금 2026년 11월 25일 16시 25분 기준 · 현금완납 기준 · 선택약정: 공통지원금 대신 매월 요금 25% 할인 · 단위: 원
               </span>
               <span class="font-extrabold text-slate-400">DAN KOK SYSTEM</span>
             </div>
@@ -3192,6 +3179,9 @@ service cloud.firestore {
 
       const fieldKo = { plan: '요금제', add1: '부가1', add2: '부가2', add3: '부가3', add4: '부가4', note: '특이사항' }[field] || field;
       scheduleStoreSave('부가조건 설정', `${carrier} ${fieldKo}: ${oldVal || '-'} → ${val}`);
+      if (field === 'plan' && typeof renderDetailSheet === 'function' && currentTab === 'detail') {
+        renderDetailSheet();
+      }
     }
 
     function loadDiscounts() {
@@ -16303,70 +16293,33 @@ JSON 규격:
     }
 
     // ==================== TAB 5: 시세 상세내역 자동 산출 & 클립보드 복사 ====================
-    const DETAIL_THEME_PRESETS = {
-      purple: {
-        name: '단콕 퍼플',
-        headerBg: 'linear-gradient(135deg, #312e81, #5b21b6)',
-        cardBorder: '#c7d2fe',
-        thBg: '#f8fafc',
-        storeThBg: '#eef2ff',
-        storeThText: '#3730a3',
-        storeCellBg: '#f5f7ff',
-        storeNumText: '#4338ca',
-        extraText: '#6d28d9',
-        btnActive: 'bg-indigo-600 text-white shadow-2xs'
-      },
-      emerald: {
-        name: '에메랄드',
-        headerBg: 'linear-gradient(135deg, #065f46, #0d9488)',
-        cardBorder: '#a7f3d0',
-        thBg: '#f8fafc',
-        storeThBg: '#ecfdf5',
-        storeThText: '#065f46',
-        storeCellBg: '#f2fcf8',
-        storeNumText: '#047857',
-        extraText: '#0f766e',
-        btnActive: 'bg-emerald-600 text-white shadow-2xs'
-      },
-      navy: {
-        name: '클래식 네이비',
-        headerBg: 'linear-gradient(135deg, #0f172a, #1e40af)',
-        cardBorder: '#bfdbfe',
-        thBg: '#f8fafc',
-        storeThBg: '#eff6ff',
-        storeThText: '#1e3a8a',
-        storeCellBg: '#f4f9ff',
-        storeNumText: '#1d4ed8',
-        extraText: '#0369a1',
-        btnActive: 'bg-blue-700 text-white shadow-2xs'
-      },
-      crimson: {
-        name: '크림슨 레드',
-        headerBg: 'linear-gradient(135deg, #7f1d1d, #dc2626)',
-        cardBorder: '#fecdd3',
-        thBg: '#f8fafc',
-        storeThBg: '#fff1f2',
-        storeThText: '#9f1239',
-        storeCellBg: '#fff7f8',
-        storeNumText: '#be123c',
-        extraText: '#e11d48',
-        btnActive: 'bg-rose-600 text-white shadow-2xs'
-      },
-      slate: {
-        name: '모던 다크',
-        headerBg: 'linear-gradient(135deg, #09090b, #334155)',
-        cardBorder: '#cbd5e1',
-        thBg: '#f8fafc',
-        storeThBg: '#f1f5f9',
-        storeThText: '#0f172a',
-        storeCellBg: '#f8fafc',
-        storeNumText: '#0f172a',
-        extraText: '#334155',
-        btnActive: 'bg-slate-800 text-white shadow-2xs'
-      }
-    };
-
     let detailSettings = null;
+
+    function hexToRgbTuple(hex) {
+      let clean = String(hex || '#4f46e5').replace('#', '').trim();
+      if (clean.length === 3) clean = clean.split('').map(c => c + c).join('');
+      if (!/^[0-9A-Fa-f]{6}$/.test(clean)) clean = '4f46e5';
+      const n = parseInt(clean, 16);
+      return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+    }
+
+    function computeDetailThemeFromColor(hexColor) {
+      const [r, g, b] = hexToRgbTuple(hexColor);
+      const darkR = Math.max(0, Math.round(r * 0.62));
+      const darkG = Math.max(0, Math.round(g * 0.62));
+      const darkB = Math.max(0, Math.round(b * 0.62));
+      const hexNorm = '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
+      return {
+        hex: hexNorm,
+        headerBg: `linear-gradient(135deg, rgb(${darkR}, ${darkG}, ${darkB}), ${hexNorm})`,
+        cardBorder: `rgba(${r}, ${g}, ${b}, 0.35)`,
+        thBg: '#f8fafc',
+        storeThBg: `rgba(${r}, ${g}, ${b}, 0.11)`,
+        storeThText: `rgb(${darkR}, ${darkG}, ${darkB})`,
+        storeCellBg: `rgba(${r}, ${g}, ${b}, 0.055)`,
+        storeNumText: hexNorm
+      };
+    }
 
     function parseDetailDefaultPlan(carrier) {
       const defaults = {
@@ -16375,38 +16328,61 @@ JSON 규격:
         LG: { planName: '프리미어 슈퍼', planFee: 115000 }
       };
       const fallback = defaults[carrier] || { planName: '', planFee: 0 };
-      const condPlan = (carrierConditions && carrierConditions[carrier] && carrierConditions[carrier].plan) ? String(carrierConditions[carrier].plan) : '';
+      const condPlan = (carrierConditions && carrierConditions[carrier] && carrierConditions[carrier].plan) ? String(carrierConditions[carrier].plan).trim() : '';
       if (!condPlan) return fallback;
-      const feeMatch = condPlan.match(/([0-9]{2,3},[0-9]{3})/);
+      const feeMatch = condPlan.match(/([0-9]{1,3}(?:,[0-9]{3})+)/) || condPlan.match(/([0-9]{5,6})\s*원?/);
       const feeNum = feeMatch ? parseInt(feeMatch[1].replace(/,/g, ''), 10) : fallback.planFee;
-      let cleanName = condPlan.replace(/\([^)]*\)/g, '').trim();
+      let cleanName = condPlan.replace(/\([^)]*\)/g, '').replace(/[0-9]{1,3}(?:,[0-9]{3})+\s*원?/g, '').replace(/[0-9]{5,6}\s*원/g, '').trim();
       if (!cleanName) cleanName = fallback.planName;
       return { planName: cleanName, planFee: feeNum };
+    }
+
+    function formatDetailLiveTimestamp() {
+      const now = new Date();
+      const parts = new Intl.DateTimeFormat('ko-KR', {
+        timeZone: 'Asia/Seoul',
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', hour12: false
+      }).formatToParts(now);
+      const get = (t) => parts.find(p => p.type === t)?.value || '';
+      const hh = get('hour') === '24' ? '00' : get('hour');
+      return `${get('year')}년 ${get('month')}월 ${get('day')}일 ${hh}시 ${get('minute')}분`;
+    }
+
+    function buildDetailFooterWithNowTime(currentText = '') {
+      const liveStamp = `공통지원금 ${formatDetailLiveTimestamp()} 기준`;
+      const defaultTail = '현금완납 기준 · 선택약정: 공통지원금 대신 매월 요금 25% 할인 · 단위: 원';
+      const txt = String(currentText || '').trim();
+      if (!txt) return `${liveStamp} · ${defaultTail}`;
+      if (/공통지원금\s*[^·]*기준/.test(txt)) {
+        return txt.replace(/공통지원금\s*[^·]*기준/, liveStamp);
+      }
+      return `${liveStamp} · ${defaultTail}`;
+    }
+
+    function stampDetailLiveFooterTime() {
+      const footerEl = document.getElementById('detailFooterNote');
+      const nextText = buildDetailFooterWithNowTime(footerEl ? footerEl.innerText : (detailSettings?.footerNote || ''));
+      if (footerEl) footerEl.innerText = nextText;
+      if (detailSettings) detailSettings.footerNote = nextText;
+      return nextText;
     }
 
     function getDefaultDetailSettings(storeId = currentStoreId) {
       const sId = storeId || 'myeongji';
       const storeLabel = (sId === 'myeongji') ? '원조폰 명지점' : (sId === 'gwangan') ? '원조폰 광안점' : '단콕 테스트매장';
-      const skP = parseDetailDefaultPlan('SK');
-      const ktP = parseDetailDefaultPlan('KT');
-      const lgP = parseDetailDefaultPlan('LG');
       const now = new Date();
       const kstStr = new Intl.DateTimeFormat('ko-KR', { timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit' }).format(now).replace(/\s/g, '').replace(/\.$/, '');
       return {
-        theme: 'purple',
+        themeColor: '#4f46e5',
         marginMode: adMarginBase === 'all' ? 'all' : 'basic',
-        showExtraSub: adMarginBase === 'all',
         hideInactive: true,
         showFinalPrice: false,
         title: `${storeLabel} 휴대폰 시세 상세내역`,
         badgePill: '현금완납 기준',
         dateBadge: `${kstStr} 기준`,
-        footerNote: '공통지원금 당일 공시 기준 · 현금완납 기준 · 선택약정: 공통지원금 대신 매월 요금 25% 할인 · 단위: 원',
-        plans: {
-          SK: { planName: skP.planName, planFee: skP.planFee, extraSub: adMarginBase === 'all' ? ((allAddDiscounts?.SK ?? 15) * 10000) : 0 },
-          KT: { planName: ktP.planName, planFee: ktP.planFee, extraSub: adMarginBase === 'all' ? ((allAddDiscounts?.KT ?? 15) * 10000) : 0 },
-          LG: { planName: lgP.planName, planFee: lgP.planFee, extraSub: adMarginBase === 'all' ? ((allAddDiscounts?.LG ?? 15) * 10000) : 0 }
-        },
+        paybackNotice: '모든 매장지원금은 페이백 금액 제외 추가지원금으로 모두 반영됩니다.',
+        footerNote: buildDetailFooterWithNowTime(''),
         sunyakMap: {}
       };
     }
@@ -16422,13 +16398,9 @@ JSON 규격:
             detailSettings = {
               ...base,
               ...parsed,
-              plans: {
-                SK: { ...base.plans.SK, ...(parsed.plans?.SK || {}) },
-                KT: { ...base.plans.KT, ...(parsed.plans?.KT || {}) },
-                LG: { ...base.plans.LG, ...(parsed.plans?.LG || {}) }
-              },
               sunyakMap: { ...(parsed.sunyakMap || {}) }
             };
+            if (!detailSettings.themeColor) detailSettings.themeColor = base.themeColor;
           } else {
             detailSettings = base;
           }
@@ -16439,7 +16411,6 @@ JSON 규격:
         detailSettings = base;
       }
 
-      // 오늘 날짜가 바뀌었으면 날짜 배지 자동 갱신
       const todayKey = new Date().toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' });
       if (detailSettings.savedDayKey !== todayKey) {
         detailSettings.dateBadge = base.dateBadge;
@@ -16454,10 +16425,12 @@ JSON 규격:
       const titleEl = document.getElementById('detailStoreTitle');
       const badgeEl = document.getElementById('detailBadgePill');
       const dateEl = document.getElementById('detailDateBadge');
+      const paybackEl = document.getElementById('detailPaybackNotice');
       const footerEl = document.getElementById('detailFooterNote');
       if (titleEl && titleEl.innerText.trim()) detailSettings.title = titleEl.innerText.trim();
       if (badgeEl && badgeEl.innerText.trim()) detailSettings.badgePill = badgeEl.innerText.trim();
       if (dateEl && dateEl.innerText.trim()) detailSettings.dateBadge = dateEl.innerText.trim();
+      if (paybackEl && paybackEl.innerText.trim()) detailSettings.paybackNotice = paybackEl.innerText.trim();
       if (footerEl && footerEl.innerText.trim()) detailSettings.footerNote = footerEl.innerText.trim();
       detailSettings.savedDayKey = new Date().toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' });
       return JSON.parse(JSON.stringify(detailSettings));
@@ -16498,47 +16471,37 @@ JSON 규격:
 
     function syncDetailControlsUI() {
       if (!detailSettings) return;
-      const theme = DETAIL_THEME_PRESETS[detailSettings.theme] || DETAIL_THEME_PRESETS.purple;
+      const theme = computeDetailThemeFromColor(detailSettings.themeColor || '#4f46e5');
 
-      Object.keys(DETAIL_THEME_PRESETS).forEach(k => {
-        const b = document.getElementById(`detailThemeBtn-${k}`);
-        if (!b) return;
-        b.className = (k === detailSettings.theme)
-          ? `detail-theme-btn px-2.5 py-1 rounded-lg font-extrabold transition cursor-pointer ${DETAIL_THEME_PRESETS[k].btnActive}`
-          : 'detail-theme-btn px-2.5 py-1 rounded-lg font-bold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition cursor-pointer';
-      });
+      const picker = document.getElementById('detailColorPicker');
+      const hexInp = document.getElementById('detailHexInput');
+      if (picker) picker.value = theme.hex;
+      if (hexInp) hexInp.value = theme.hex.replace('#', '').toUpperCase();
+
+      const copyBtn = document.getElementById('detailCopyBtn');
+      const iconBox = document.getElementById('detailCtrlIconBox');
+      if (copyBtn) copyBtn.style.backgroundColor = theme.hex;
+      if (iconBox) iconBox.style.backgroundColor = theme.hex;
 
       const btnBasic = document.getElementById('detailMarginModeBtn-basic');
       const btnAll = document.getElementById('detailMarginModeBtn-all');
       const modeBadge = document.getElementById('detailModeBadge');
       if (btnBasic && btnAll) {
         if (detailSettings.marginMode === 'all') {
-          btnAll.className = 'px-3 py-1 rounded-lg text-xs font-black transition cursor-pointer bg-white text-indigo-700 shadow-xs border border-indigo-200';
-          btnBasic.className = 'px-3 py-1 rounded-lg text-xs font-black transition cursor-pointer text-slate-500 hover:text-slate-900';
+          btnAll.className = 'px-3 py-1 rounded-lg font-black transition cursor-pointer bg-white text-indigo-700 shadow-xs border border-indigo-200';
+          btnBasic.className = 'px-3 py-1 rounded-lg font-black transition cursor-pointer text-slate-500 hover:text-slate-900';
           if (modeBadge) modeBadge.innerText = '풀부가(올부가) 광고가 자동 연동';
         } else {
-          btnBasic.className = 'px-3 py-1 rounded-lg text-xs font-black transition cursor-pointer bg-white text-slate-900 shadow-xs border border-slate-200';
-          btnAll.className = 'px-3 py-1 rounded-lg text-xs font-black transition cursor-pointer text-slate-500 hover:text-slate-900';
+          btnBasic.className = 'px-3 py-1 rounded-lg font-black transition cursor-pointer bg-white text-slate-900 shadow-xs border border-slate-200';
+          btnAll.className = 'px-3 py-1 rounded-lg font-black transition cursor-pointer text-slate-500 hover:text-slate-900';
           if (modeBadge) modeBadge.innerText = '기본부가 광고가 자동 연동';
         }
       }
 
-      const chkExtra = document.getElementById('detailShowExtraSubChk');
       const chkHide = document.getElementById('detailHideInactiveChk');
       const chkFinal = document.getElementById('detailShowFinalPriceChk');
-      if (chkExtra) chkExtra.checked = !!detailSettings.showExtraSub;
       if (chkHide) chkHide.checked = !!detailSettings.hideInactive;
       if (chkFinal) chkFinal.checked = !!detailSettings.showFinalPrice;
-
-      ['SK', 'KT', 'LG'].forEach(c => {
-        const p = detailSettings.plans[c] || {};
-        const nameEl = document.getElementById(`detailPlanName-${c}`);
-        const feeEl = document.getElementById(`detailPlanFee-${c}`);
-        const extraEl = document.getElementById(`detailExtraSub-${c}`);
-        if (nameEl) nameEl.value = p.planName || '';
-        if (feeEl) feeEl.value = p.planFee ?? '';
-        if (extraEl) extraEl.value = p.extraSub ?? 0;
-      });
 
       const card = document.getElementById('detailSheetCard');
       const header = document.getElementById('detailHeaderBanner');
@@ -16548,35 +16511,48 @@ JSON 규격:
       const titleEl = document.getElementById('detailStoreTitle');
       const badgeEl = document.getElementById('detailBadgePill');
       const dateEl = document.getElementById('detailDateBadge');
+      const paybackEl = document.getElementById('detailPaybackNotice');
       const footerEl = document.getElementById('detailFooterNote');
       if (titleEl && detailSettings.title) titleEl.innerText = detailSettings.title;
       if (badgeEl && detailSettings.badgePill) badgeEl.innerText = detailSettings.badgePill;
       if (dateEl && detailSettings.dateBadge) dateEl.innerText = detailSettings.dateBadge;
+      if (paybackEl && detailSettings.paybackNotice) paybackEl.innerText = detailSettings.paybackNotice;
       if (footerEl && detailSettings.footerNote) footerEl.innerText = detailSettings.footerNote;
     }
 
-    function setDetailTheme(themeKey) {
+    function applyDetailThemeColor(color, shouldSave = true) {
+      if (!color || !/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(color)) return;
       if (!detailSettings) loadDetailSettings(currentStoreId);
-      detailSettings.theme = themeKey;
+      detailSettings.themeColor = color;
+      syncDetailControlsUI();
+      renderDetailSheet();
+      if (shouldSave) saveDetailSettings(true);
+    }
+
+    function onDetailHexColorInput(val) {
+      val = String(val || '').replace(/[^0-9A-Fa-f]/g, '');
+      if (val.length === 6 || val.length === 3) {
+        applyDetailThemeColor('#' + val, true);
+      }
+    }
+
+    function saveDetailColorWithToast() {
+      const hexInp = document.getElementById('detailHexInput');
+      if (hexInp) {
+        const clean = hexInp.value.replace(/[^0-9A-Fa-f]/g, '');
+        if (clean.length === 6 || clean.length === 3) {
+          detailSettings.themeColor = '#' + clean;
+        }
+      }
       syncDetailControlsUI();
       renderDetailSheet();
       saveDetailSettings(true);
+      updateSaveProgressDone('테마 색상 저장 완료', '선택하신 상세내역 테마 색상이 저장되었습니다.');
     }
 
     function setDetailMarginMode(mode) {
       if (!detailSettings) loadDetailSettings(currentStoreId);
       detailSettings.marginMode = (mode === 'all') ? 'all' : 'basic';
-      if (detailSettings.marginMode === 'all') {
-        detailSettings.showExtraSub = true;
-        ['SK', 'KT', 'LG'].forEach(c => {
-          detailSettings.plans[c].extraSub = (allAddDiscounts && allAddDiscounts[c] !== undefined) ? Number(allAddDiscounts[c]) * 10000 : 150000;
-        });
-      } else {
-        detailSettings.showExtraSub = false;
-        ['SK', 'KT', 'LG'].forEach(c => {
-          detailSettings.plans[c].extraSub = 0;
-        });
-      }
       syncDetailControlsUI();
       renderDetailSheet();
       saveDetailSettings(true);
@@ -16585,26 +16561,6 @@ JSON 규격:
     function toggleDetailOption(optKey, checked) {
       if (!detailSettings) loadDetailSettings(currentStoreId);
       detailSettings[optKey] = !!checked;
-      if (optKey === 'showExtraSub' && checked) {
-        ['SK', 'KT', 'LG'].forEach(c => {
-          if (!detailSettings.plans[c].extraSub) {
-            detailSettings.plans[c].extraSub = (allAddDiscounts && allAddDiscounts[c] !== undefined) ? Number(allAddDiscounts[c]) * 10000 : 150000;
-          }
-        });
-        syncDetailControlsUI();
-      }
-      renderDetailSheet();
-      saveDetailSettings(true);
-    }
-
-    function updateDetailCarrierPlan(carrier, field, value) {
-      if (!detailSettings) loadDetailSettings(currentStoreId);
-      if (!detailSettings.plans[carrier]) detailSettings.plans[carrier] = { planName: '', planFee: 0, extraSub: 0 };
-      if (field === 'planName') {
-        detailSettings.plans[carrier].planName = value;
-      } else {
-        detailSettings.plans[carrier][field] = parseInt(String(value).replace(/[^0-9]/g, ''), 10) || 0;
-      }
       renderDetailSheet();
       saveDetailSettings(true);
     }
@@ -16618,23 +16574,10 @@ JSON 규격:
       saveDetailSettings(true);
     }
 
-    function syncDetailFromAd() {
-      if (!detailSettings) loadDetailSettings(currentStoreId);
-      ['SK', 'KT', 'LG'].forEach(c => {
-        const parsed = parseDetailDefaultPlan(c);
-        detailSettings.plans[c].planName = parsed.planName;
-        detailSettings.plans[c].planFee = parsed.planFee;
-        if (detailSettings.marginMode === 'all') {
-          detailSettings.plans[c].extraSub = (allAddDiscounts && allAddDiscounts[c] !== undefined) ? Number(allAddDiscounts[c]) * 10000 : 150000;
-        }
-      });
-      syncDetailControlsUI();
-      renderDetailSheet();
-      saveDetailSettings(true);
-      updateSaveProgressDone('새로고침 완료', '최신 광고가격 · 출고가 · 공시지원금이 시세 상세내역에 반영되었습니다.');
-    }
-
     function initDetailTab() {
+      if (typeof loadAdPosterSettings === 'function') {
+        loadAdPosterSettings(currentStoreId);
+      }
       loadDetailSettings(currentStoreId);
       renderDetailSheet();
     }
@@ -16644,19 +16587,37 @@ JSON 규격:
       return Math.round(val).toLocaleString('ko-KR');
     }
 
+    function getDetailPosterDeviceList() {
+      const storeKey = currentStoreId || 'myeongji';
+      let rows = (Array.isArray(posterDeviceRows) && posterDeviceRows.length > 0) ? posterDeviceRows : null;
+      if (!rows) {
+        try {
+          const saved = localStorage.getItem(`phone_ad_poster_device_rows_${storeKey}`);
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed) && parsed.length > 0) rows = parsed;
+          }
+        } catch(e) {}
+      }
+      if (!rows && typeof getInitialPosterDeviceRows === 'function') {
+        rows = getInitialPosterDeviceRows();
+      }
+      const uniqueIds = [...new Set((rows || []).filter(id => id && id !== 'empty'))];
+      return uniqueIds.map(id => devices.find(d => d.id === id)).filter(Boolean);
+    }
+
     function renderDetailSheet() {
       if (!detailSettings) loadDetailSettings(currentStoreId);
       const thead = document.getElementById('detailTableHead');
       const tbody = document.getElementById('detailSheetTableBody');
       if (!thead || !tbody) return;
 
-      const theme = DETAIL_THEME_PRESETS[detailSettings.theme] || DETAIL_THEME_PRESETS.purple;
-      const showExtra = !!detailSettings.showExtraSub;
+      const theme = computeDetailThemeFromColor(detailSettings.themeColor || '#4f46e5');
       const showFinal = !!detailSettings.showFinalPrice;
       const hideInactive = !!detailSettings.hideInactive;
       const mode = detailSettings.marginMode || 'basic';
 
-      // 동적 헤더 & colgroup 생성 (960px 기준 겹침 0% 비율 배분)
+      // 동적 헤더 & colgroup 생성 (추가지원금 칸 제거, 960px 기준 깔끔한 비율)
       const tableEl = document.getElementById('detailMainTable');
       let colEl = document.getElementById('detailMainColGroup');
       if (tableEl && !colEl) {
@@ -16665,18 +16626,14 @@ JSON 규격:
         tableEl.insertBefore(colEl, thead);
       }
       if (colEl) {
-        if (showExtra && showFinal) {
-          colEl.innerHTML = `<col style="width:8%"><col style="width:18%"><col style="width:8%"><col style="width:11%"><col style="width:7%"><col style="width:6.5%"><col style="width:6.5%"><col style="width:7%"><col style="width:7%"><col style="width:7%"><col style="width:7%"><col style="width:7%">`;
-        } else if (showExtra && !showFinal) {
-          colEl.innerHTML = `<col style="width:8%"><col style="width:20%"><col style="width:9%"><col style="width:12%"><col style="width:7%"><col style="width:7%"><col style="width:7%"><col style="width:9%"><col style="width:10.5%"><col style="width:10.5%">`;
-        } else if (!showExtra && showFinal) {
-          colEl.innerHTML = `<col style="width:8%"><col style="width:19%"><col style="width:9%"><col style="width:12%"><col style="width:7%"><col style="width:7%"><col style="width:7%"><col style="width:8%"><col style="width:8%"><col style="width:7.5%"><col style="width:7.5%">`;
+        if (showFinal) {
+          colEl.innerHTML = `<col style="width:6.5%"><col style="width:19.5%"><col style="width:8.5%"><col style="width:11.5%"><col style="width:7.5%"><col style="width:8%"><col style="width:8%"><col style="width:8%"><col style="width:8%"><col style="width:7.25%"><col style="width:7.25%">`;
         } else {
-          colEl.innerHTML = `<col style="width:8%"><col style="width:22%"><col style="width:10%"><col style="width:13%"><col style="width:8%"><col style="width:8%"><col style="width:8%"><col style="width:11.5%"><col style="width:11.5%">`;
+          colEl.innerHTML = `<col style="width:7%"><col style="width:22%"><col style="width:9.5%"><col style="width:12.5%"><col style="width:8.5%"><col style="width:9.5%"><col style="width:9.5%"><col style="width:10.75%"><col style="width:10.75%">`;
         }
       }
 
-      const storeColSpan = (showExtra ? 3 : 2) + (showFinal ? 2 : 0);
+      const storeColSpan = 2 + (showFinal ? 2 : 0);
       thead.innerHTML = `
         <tr class="border-b border-slate-200 text-[11px] font-black text-slate-700" style="background-color: ${theme.thBg};">
           <th rowspan="2" class="p-2 border-r border-slate-200 text-center align-middle">통신사</th>
@@ -16690,7 +16647,6 @@ JSON 규격:
         <tr class="border-b-2 border-slate-300 text-[10px] font-extrabold text-slate-600" style="background-color: ${theme.thBg};">
           <th class="p-1.5 border-r border-slate-200 text-center align-middle">번호이동</th>
           <th class="p-1.5 border-r border-slate-200 text-center align-middle">기기변경</th>
-          ${showExtra ? `<th class="p-1.5 border-r border-slate-200 text-center align-middle" style="background-color: ${theme.storeThBg}; color: ${theme.storeThText};">추가지원금</th>` : ''}
           <th class="p-1.5 border-r border-slate-200 text-center align-middle" style="background-color: ${theme.storeThBg}; color: ${theme.storeThText};">번호이동</th>
           <th class="p-1.5 ${showFinal ? 'border-r border-slate-200' : ''} text-center align-middle" style="background-color: ${theme.storeThBg}; color: ${theme.storeThText};">기기변경</th>
           ${showFinal ? `<th class="p-1.5 border-r border-slate-200 text-center align-middle bg-amber-50/70 text-amber-900">번이 완납가</th><th class="p-1.5 text-center align-middle bg-amber-50/70 text-amber-900">기변 완납가</th>` : ''}
@@ -16700,28 +16656,21 @@ JSON 규격:
       tbody.innerHTML = '';
 
       const carrierMeta = {
-        SK: { label: 'SK텔레콤', accent: '#f43f5e', text: '#e11d48', bg: '#fff1f2' },
+        SK: { label: 'SKT', accent: '#f43f5e', text: '#e11d48', bg: '#fff1f2' },
         KT: { label: 'KT', accent: '#334155', text: '#0f172a', bg: '#f8fafc' },
         LG: { label: 'LG U+', accent: '#ec4899', text: '#db2777', bg: '#fdf2f8' }
       };
 
+      // 시세표(TAB 4)에 등록된 기종 목록만 그대로 연동
+      const posterDevices = getDetailPosterDeviceList();
+
       ['SK', 'KT', 'LG'].forEach((carrier, cIdx) => {
         const meta = carrierMeta[carrier];
-        const planCfg = detailSettings.plans[carrier] || parseDetailDefaultPlan(carrier);
-        const appliedExtraWon = showExtra ? (Number(planCfg.extraSub) || 0) : 0;
-
-        // 해당 통신사의 광고표 기종 순서 우선 활용
-        const orderedIds = (adCarrierOrders && Array.isArray(adCarrierOrders[carrier]) && adCarrierOrders[carrier].length > 0)
-          ? adCarrierOrders[carrier]
-          : devices.map(d => d.id);
-
-        const carrierDevices = orderedIds
-          .filter(id => id && id !== 'empty')
-          .map(id => devices.find(d => d.id === id))
-          .filter(Boolean);
+        // 넷가표(TAB 1) 기준 요금제 & 기본료 실시간 자동 동기화
+        const planCfg = parseDetailDefaultPlan(carrier);
 
         const rowsToRender = [];
-        carrierDevices.forEach(d => {
+        posterDevices.forEach(d => {
           const adData = getAdData(d, carrier, mode);
           const isActive = isDeviceActiveInDaily(carrier, d.id) && !adData.hidden;
           const mnpRaw = (adData.mnp !== undefined && adData.mnp !== null) ? String(adData.mnp).trim() : '';
@@ -16740,8 +16689,8 @@ JSON 규격:
           const subMnpWon = isSunyak ? 0 : Math.round(((d.sub && d.sub[carrier] && d.sub[carrier].mnp !== undefined) ? Number(d.sub[carrier].mnp) : 0) * 10000);
           const subChgWon = isSunyak ? 0 : Math.round(((d.sub && d.sub[carrier] && d.sub[carrier].chg !== undefined) ? Number(d.sub[carrier].chg) : 0) * 10000);
 
-          const storeSubMnp = (isActive && !isNaN(mnpNum)) ? (factoryWon - subMnpWon - appliedExtraWon - Math.round(mnpNum * 10000)) : null;
-          const storeSubChg = (isActive && !isNaN(chgNum)) ? (factoryWon - subChgWon - appliedExtraWon - Math.round(chgNum * 10000)) : null;
+          const storeSubMnp = (isActive && !isNaN(mnpNum)) ? (factoryWon - subMnpWon - Math.round(mnpNum * 10000)) : null;
+          const storeSubChg = (isActive && !isNaN(chgNum)) ? (factoryWon - subChgWon - Math.round(chgNum * 10000)) : null;
 
           rowsToRender.push({
             d, isActive, isSunyak, factoryWon,
@@ -16755,10 +16704,10 @@ JSON 규격:
         if (rowsToRender.length === 0) {
           const tr = document.createElement('tr');
           tr.className = cIdx > 0 ? 'border-t-2 border-slate-300' : '';
-          const totalCols = 7 + (showExtra ? 1 : 0) + 2 + (showFinal ? 2 : 0);
+          const totalCols = 9 + (showFinal ? 2 : 0);
           tr.innerHTML = `
             <td class="p-2.5 font-black text-center border-r border-slate-200" style="border-left: 4px solid ${meta.accent}; color: ${meta.text}; background-color: ${meta.bg};">${meta.label}</td>
-            <td colspan="${totalCols - 1}" class="p-3 text-center text-slate-400 text-[11px] font-semibold">표시할 기종이 없습니다. (광고표에 가격을 입력하거나 '품절·미입력 기종 자동 숨김'을 해제해 주세요)</td>
+            <td colspan="${totalCols - 1}" class="p-3 text-center text-slate-400 text-[11px] font-semibold">표시할 기종이 없습니다. (시세표에 등록된 기종의 광고가격을 입력하거나 '품절·미입력 기종 자동 숨김'을 해제해 주세요)</td>
           `;
           tbody.appendChild(tr);
           return;
@@ -16771,7 +16720,6 @@ JSON 규격:
 
           let carrierColsHtml = '';
           let planColsHtml = '';
-          let extraColHtml = '';
 
           if (rIdx === 0) {
             carrierColsHtml = `
@@ -16783,20 +16731,13 @@ JSON 규격:
               <td rowspan="${rowCount}" class="p-2 text-center align-middle border-r border-slate-200 font-bold text-slate-700 text-[11px] leading-snug break-keep bg-white">
                 ${planCfg.planName || '-'}
               </td>
-              <td rowspan="${rowCount}" class="p-2 text-right align-middle border-r border-slate-200 font-bold text-slate-700 text-[11px] tabular-nums bg-white">
+              <td rowspan="${rowCount}" class="p-2 text-center align-middle border-r border-slate-200 font-bold text-slate-700 text-[11px] tabular-nums bg-white">
                 ${formatWon(planCfg.planFee || 0)}
               </td>
             `;
-            if (showExtra) {
-              extraColHtml = `
-                <td rowspan="${rowCount}" class="p-2 text-right align-middle border-r border-slate-200 font-black text-[11px] tabular-nums" style="background-color: ${theme.storeCellBg}; color: ${theme.extraText};">
-                  ${formatWon(appliedExtraWon)}
-                </td>
-              `;
-            }
           }
 
-          // 공통지원금 영역 (선약 vs 동일 vs 차등)
+          // 공통지원금 영역 (중앙 정렬)
           let subColsHtml = '';
           if (row.isSunyak) {
             subColsHtml = `
@@ -16814,22 +16755,21 @@ JSON 규격:
             `;
           } else {
             subColsHtml = `
-              <td class="p-1.5 border-r border-slate-100 text-right align-middle font-bold text-slate-700 text-[11px] tabular-nums">${formatWon(row.subMnpWon)}</td>
-              <td class="p-1.5 border-r border-slate-200 text-right align-middle font-bold text-slate-700 text-[11px] tabular-nums">${formatWon(row.subChgWon)}</td>
+              <td class="px-1 py-1.5 border-r border-slate-100 text-center align-middle font-bold text-slate-700 text-[11px] tabular-nums whitespace-nowrap">${formatWon(row.subMnpWon)}</td>
+              <td class="px-1 py-1.5 border-r border-slate-200 text-center align-middle font-bold text-slate-700 text-[11px] tabular-nums whitespace-nowrap">${formatWon(row.subChgWon)}</td>
             `;
           }
 
-          // 매장지원금 셀
           const formatStoreSub = (val) => {
             if (val === null) return `<span class="text-slate-300 font-semibold">-</span>`;
             return formatWon(val);
           };
 
           const finalColsHtml = showFinal ? `
-            <td class="p-1.5 border-r border-slate-200 text-right align-middle font-extrabold text-[11px] tabular-nums bg-amber-50/30 ${row.mnpWon !== null && row.mnpWon < 0 ? 'text-rose-600' : 'text-slate-800'}">
+            <td class="p-1.5 border-r border-slate-200 text-center align-middle font-extrabold text-[11px] tabular-nums bg-amber-50/30 ${row.mnpWon !== null && row.mnpWon < 0 ? 'text-rose-600' : 'text-slate-800'}">
               ${row.mnpWon !== null ? formatWon(row.mnpWon) : '-'}
             </td>
-            <td class="p-1.5 text-right align-middle font-extrabold text-[11px] tabular-nums bg-amber-50/30 ${row.chgWon !== null && row.chgWon < 0 ? 'text-rose-600' : 'text-slate-800'}">
+            <td class="p-1.5 text-center align-middle font-extrabold text-[11px] tabular-nums bg-amber-50/30 ${row.chgWon !== null && row.chgWon < 0 ? 'text-rose-600' : 'text-slate-800'}">
               ${row.chgWon !== null ? formatWon(row.chgWon) : '-'}
             </td>
           ` : '';
@@ -16847,16 +16787,15 @@ JSON 규격:
                 </button>
               </div>
             </td>
-            <td class="px-2 py-2 border-r border-slate-200 text-right align-middle font-bold text-slate-700 text-[11px] tabular-nums">
+            <td class="px-2 py-2 border-r border-slate-200 text-center align-middle font-bold text-slate-700 text-[11px] tabular-nums">
               ${formatWon(row.factoryWon)}
             </td>
             ${planColsHtml}
             ${subColsHtml}
-            ${extraColHtml}
-            <td class="px-2 py-2 border-r border-slate-100 text-right align-middle font-black text-[11px] tabular-nums" style="background-color: ${theme.storeCellBg}; color: ${theme.storeNumText};">
+            <td class="px-2 py-2 border-r border-slate-100 text-center align-middle font-black text-[11px] tabular-nums" style="background-color: ${theme.storeCellBg}; color: ${theme.storeNumText};">
               ${formatStoreSub(row.storeSubMnp)}
             </td>
-            <td class="px-2 py-2 ${showFinal ? 'border-r border-slate-200' : ''} text-right align-middle font-black text-[11px] tabular-nums" style="background-color: ${theme.storeCellBg}; color: ${theme.storeNumText};">
+            <td class="px-2 py-2 ${showFinal ? 'border-r border-slate-200' : ''} text-center align-middle font-black text-[11px] tabular-nums" style="background-color: ${theme.storeCellBg}; color: ${theme.storeNumText};">
               ${formatStoreSub(row.storeSubChg)}
             </td>
             ${finalColsHtml}
@@ -16864,6 +16803,7 @@ JSON 규격:
           tbody.appendChild(tr);
         });
       });
+      stampDetailLiveFooterTime();
     }
 
     // 시세 상세내역 고해상도 클립보드 복사 (기존 시세표 포스터 캡처 방식 100% 동일: htmlToImage -> html2canvas -> ClipboardItem)
@@ -16873,6 +16813,7 @@ JSON 규격:
         alert("시세 상세내역 요소를 찾을 수 없습니다.");
         return;
       }
+      stampDetailLiveFooterTime();
 
       const copyBtn = document.getElementById('detailCopyBtn');
       const originalBtnHtml = copyBtn ? copyBtn.innerHTML : '';
@@ -16982,6 +16923,7 @@ JSON 규격:
     function printDetailSheet() {
       const sheet = document.getElementById('detailSheetCard');
       if (!sheet) return;
+      stampDetailLiveFooterTime();
       const printClone = sheet.cloneNode(true);
       printClone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
       printClone.querySelectorAll('.detail-ui-action').forEach(el => el.remove());
