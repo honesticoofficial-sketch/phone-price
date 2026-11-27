@@ -142,7 +142,7 @@
       #pinModal, header, #navTabWrapper, #viewFilterBox, 
       #tab-calc, #tab-daily, #tab-ad, #tab-compare, #tab-request,
       #cardEditorPanel, #cardTopControls, #cardAlertBanner,
-      #historyModal, #subsidyChangesModal, #settingsModal, #newRequestModal, #copyPriceModal, #addDeviceModal, 
+      #historyModal, #subsidyChangesModal, #siteUpdatesModal, #settingsModal, #newRequestModal, #copyPriceModal, #addDeviceModal, 
       #qrCropperModal, #geminiKeyModal, #storeContactModal,
       .no-print, .help-btn {
         display: none !important;
@@ -342,6 +342,14 @@
           <span class="help-btn" onmouseenter="showHelpTip(event, this, '<b>공시지원금 변동내역</b><br>갤럭시 S시리즈, FE시리즈, 아이폰, 폴더블류 모델의 공통지원금 및 출고가 변동 이력을 날짜별로 확인합니다.<br>• 당일(오늘) 변동내역이 있으면 버튼 옆에 색상 표시가 나타납니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>공시지원금 변동내역</b><br>갤럭시 S시리즈, FE시리즈, 아이폰, 폴더블류 모델의 공통지원금 및 출고가 변동 이력을 날짜별로 확인합니다.<br>• 당일(오늘) 변동내역이 있으면 버튼 옆에 색상 표시가 나타납니다.')" title="변동내역 안내">?</span>
         </button>
 
+        <!-- 사이트 업데이트 내역 모달 버튼 -->
+        <button id="btnSiteUpdates" onclick="openSiteUpdatesModal()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 transition">
+          <svg class="w-3.5 h-3.5 text-purple-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+          </svg>
+          <span>업데이트 내역</span>
+        </button>
+
         <button id="btnMasterSettings" onclick="openSettingsModal()" class="hidden items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white shadow-xs transition">
           <svg class="w-3.5 h-3.5 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
@@ -440,12 +448,9 @@
       <div id="viewFilterBox" class="flex items-center gap-1 text-xs bg-white p-1 rounded-xl border border-slate-200 shadow-2xs">
         <span class="text-[11px] font-bold text-slate-400 pl-1.5 flex items-center">
           보기
-          <button type="button" class="help-btn mr-1" onmouseenter="showHelpTip(event, this, '<b>보기 모드 필터</b><br>• 전체 보기: 기본 넷가와 올부가 넷가를 모두 표시합니다.<br>• 기본부가만: 추가 할인 없는 기본 조건 넷가만 봅니다.<br>• 올부가만: 추가 할인이 적용된 최종 조건 넷가만 집중해서 봅니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>보기 모드 필터</b><br>• 전체 보기: 기본 넷가와 올부가 넷가를 모두 표시합니다.<br>• 기본부가만: 추가 할인 없는 기본 조건 넷가만 봅니다.<br>• 올부가만: 추가 할인이 적용된 최종 조건 넷가만 집중해서 봅니다.')" title="보기 모드 안내">?</button>:
+          <button type="button" class="help-btn mr-1" onmouseenter="showHelpTip(event, this, '<b>보기 모드 필터</b><br>• 기본부가만: 추가 할인 없는 기본 조건 넷가만 봅니다.<br>• 올부가만 보기: 추가 할인이 적용된 최종 조건 넷가만 집중해서 봅니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>보기 모드 필터</b><br>• 기본부가만: 추가 할인 없는 기본 조건 넷가만 봅니다.<br>• 올부가만 보기: 추가 할인이 적용된 최종 조건 넷가만 집중해서 봅니다.')" title="보기 모드 안내">?</button>:
         </span>
-        <button onclick="setNetDisplayMode('both')" id="dispMode-both" class="px-3 py-1.5 rounded-lg font-bold bg-slate-900 text-white shadow-xs transition">
-          전체 보기 (기본 + 올부가)
-        </button>
-        <button onclick="setNetDisplayMode('basic')" id="dispMode-basic" class="px-3 py-1.5 rounded-lg font-semibold text-slate-600 hover:text-slate-900 transition">
+        <button onclick="setNetDisplayMode('basic')" id="dispMode-basic" class="px-3 py-1.5 rounded-lg font-bold bg-slate-900 text-white shadow-xs transition">
           기본부가만
         </button>
         <button onclick="setNetDisplayMode('all')" id="dispMode-all" class="px-3 py-1.5 rounded-lg font-semibold text-slate-600 hover:text-slate-900 transition">
@@ -930,7 +935,7 @@
             </div>
 
             <div class="overflow-x-auto border border-slate-200 rounded-xl">
-              <table id="adTable" class="w-full text-xs text-left border-collapse" style="table-layout: fixed; min-width: 840px;">
+              <table id="adTable" class="w-full text-xs text-left border-collapse" style="table-layout: fixed; min-width: 720px;">
                 <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 select-none">
                   <tr>
                     <th class="relative p-2.5 text-center" style="width: 74px;">
@@ -983,13 +988,6 @@
                       <span class="flex items-center justify-center">
                         <span id="adMarginThTitle">예상마진 (올부가넷가)</span>
                         <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>예상 순이익 (마진)</b><br>광고가격 - 기준넷가 = 1대 개통 시 매장에 남는 순이익입니다. 녹색은 흑자 마진, 적색은 손실을 의미합니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>예상 순이익 (마진)</b><br>광고가격 - 기준넷가 = 1대 개통 시 매장에 남는 순이익입니다. 녹색은 흑자 마진, 적색은 손실을 의미합니다.')" title="예상마진 안내">?</button>
-                      </span>
-                      <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
-                    </th>
-                    <th class="relative p-2.5" style="width: 130px;">
-                      <span class="flex items-center">
-                        <span id="adNoteThTitle">올부가 비고</span>
-                        <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>비고 메모</b><br>예: *인상전, 재고소량, 선약단가 등 광고 텍스트 옆에 괄호로 붙을 메모입니다.<br>올부가/기본부가 각각 따로 저장됩니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>비고 메모</b><br>예: *인상전, 재고소량, 선약단가 등 광고 텍스트 옆에 괄호로 붙을 메모입니다.<br>올부가/기본부가 각각 따로 저장됩니다.')" title="비고 안내">?</button>
                       </span>
                       <div class="column-resizer" onmousedown="initColResize(event, this)" title="경계선을 드래그하여 열 너비 조절"></div>
                     </th>
@@ -2365,6 +2363,35 @@ service cloud.firestore {
       </div>
     </div>
 
+    <!-- ==================== 5.6. 사이트 업데이트 내역 모달 ==================== -->
+    <div id="siteUpdatesModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-3 hidden">
+      <div class="bg-white rounded-3xl shadow-2xl max-w-3xl w-full p-6 border border-slate-200 space-y-4 max-h-[86vh] flex flex-col">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div>
+            <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+              <span class="w-7 h-7 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center border border-purple-100">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                </svg>
+              </span>
+              <span>단콕 업데이트 내역</span>
+            </h3>
+            <p class="text-xs text-slate-500 mt-1">사이트에 새롭게 추가되거나 편리하게 개선된 기능들을 날짜별로 안내해 드립니다.</p>
+          </div>
+          <button onclick="closeSiteUpdatesModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-lg transition">&times;</button>
+        </div>
+
+        <div id="siteUpdatesContainer" class="overflow-y-auto flex-1 space-y-3 pr-1"></div>
+
+        <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+          <span class="text-slate-400 text-[11px]">기능 개선 요청은 상단 [버그&개선요청] 탭에서 언제든 남겨주세요.</span>
+          <button onclick="closeSiteUpdatesModal()" class="px-5 py-2 rounded-xl bg-slate-900 text-white font-bold hover:bg-slate-800 shadow-xs transition">
+            닫기
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- ==================== 대리점 단가 매장 간 복사 모달 (마스터 전용) ==================== -->
     <div id="copyPriceModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-4 hidden">
       <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 border border-slate-200 space-y-4">
@@ -3368,7 +3395,7 @@ service cloud.firestore {
     let currentTab = "calc";
     let activeInputCarrier = "SK";
     let activeAdCarrier = "SK";
-    let netDisplayMode = "both";
+    let netDisplayMode = "basic";
     let adMarginBase = (function() {
       try {
         return localStorage.getItem('phone_ad_margin_base_myeongji') || localStorage.getItem('phone_ad_margin_base') || 'basic';
@@ -5010,9 +5037,11 @@ service cloud.firestore {
     }
 
     function setNetDisplayMode(m) {
+      if (m !== 'basic' && m !== 'all') m = 'basic';
       netDisplayMode = m;
-      ['both', 'basic', 'all'].forEach(x => {
+      ['basic', 'all'].forEach(x => {
         const btn = document.getElementById(`dispMode-${x}`);
+        if (!btn) return;
         if (x === m) {
           btn.className = "px-3 py-1.5 rounded-lg font-bold bg-slate-900 text-white shadow-xs transition";
         } else {
@@ -5146,25 +5175,10 @@ service cloud.firestore {
       const locText = (d.loc && d.loc[carrier] && d.loc[carrier][type]) ? d.loc[carrier][type] : '';
       const locHtml = locText ? `<div class="text-[10px] text-slate-400 font-normal leading-none mt-0.5 tracking-tight">${locText}</div>` : '';
 
-      if (netDisplayMode === 'basic') {
-        return `<div class="py-1 flex flex-col items-center justify-center">${formatNetSimple(basicNet, true)}${locHtml}</div>`;
-      } else if (netDisplayMode === 'all') {
+      if (netDisplayMode === 'all') {
         return `<div class="py-1 flex flex-col items-center justify-center">${formatNetSimple(allNet, true)}${locHtml}</div>`;
-      } else {
-        return `
-          <div class="py-1 space-y-1 whitespace-nowrap">
-            <div class="flex items-center justify-between text-xs px-1">
-              <span class="text-slate-500 font-bold text-xs">기본</span>
-              ${formatNetSimple(basicNet, false)}
-            </div>
-            <div class="flex items-center justify-between text-xs px-1 pt-1 border-t border-slate-100">
-              <span class="text-blue-600 font-black text-xs">올부가</span>
-              ${formatNetSimple(allNet, false)}
-            </div>
-            ${locText ? `<div class="text-[10px] text-slate-400 font-normal text-right pr-1 pt-0.5 leading-none tracking-tight">${locText}</div>` : ''}
-          </div>
-        `;
       }
+      return `<div class="py-1 flex flex-col items-center justify-center">${formatNetSimple(basicNet, true)}${locHtml}</div>`;
     }
 
     function moveDevice(index, direction) {
@@ -5888,7 +5902,7 @@ service cloud.firestore {
                 </button>
               </div>
             </td>
-            <td colspan="7" class="p-2.5 text-center text-slate-400 text-xs font-medium tracking-widest select-none">
+            <td colspan="6" class="p-2.5 text-center text-slate-400 text-xs font-medium tracking-widest select-none">
               <span class="inline-flex items-center gap-2 text-slate-400">
                 <span class="w-16 h-px bg-slate-200"></span>
                 <span>구분선 (복사 시 빈 줄)</span>
@@ -6033,20 +6047,6 @@ service cloud.firestore {
           <!-- 예상 마진 (번/기) 실시간 노출 -->
           <td id="margin-cell-${d.id}" class="p-2 text-center bg-emerald-50/50 text-[11px] overflow-hidden truncate">
             ${formatMarginBadge(marginMnp)} / ${formatMarginBadge(marginChg)}
-          </td>
-
-          <!-- 비고 -->
-          <td class="p-2 overflow-visible relative">
-            <input type="text"
-                   data-cell-id="adnote_${d.id}_${activeAdCarrier}"
-                   value="${adData.note || ''}"
-                   data-orig-val="${adData.note || ''}"
-                   placeholder="비고(선택)"
-                   onfocus="this.select(); if(this.dataset.origVal===undefined) this.dataset.origVal = this.value"
-                   onkeydown="if(event.key==='Enter') this.blur(); if(event.key==='Escape'){this.value=this.dataset.origVal||''; this.blur();}"
-                   oninput="updateAdValLive('${d.id}', 'note', this.value)"
-                   onchange="updateAdValCommit('${d.id}', 'note', this.value, this)"
-                   class="w-full px-2 py-1 bg-white border border-slate-200 rounded text-xs text-slate-600 focus:ring-1 focus:ring-blue-500" />
           </td>
         `;
         adBody.appendChild(tr);
@@ -6205,9 +6205,6 @@ service cloud.firestore {
       };
 
       let updatedCount = 0;
-      const syncChangeEntries = [];
-      const planLabels = { SK: '베스트 109', KT: '초이스 더블 / 110', LG: '프리미어 105 / 115' };
-      const todayKst = (typeof getKstTodayStr === 'function') ? getKstTodayStr() : '';
       devices.forEach(d => {
         const item = crawledMaster[d.id];
         if (!item) return;
@@ -6218,65 +6215,23 @@ service cloud.firestore {
         const isS26KtHiked = (d.id === 's26' && (d.prices.KT || 0) >= 140);
 
         ['SK', 'KT', 'LG'].forEach(c => {
-          const prevPrice = Number(d.prices[c] || 0);
-          const prevMnp = Number((d.sub[c] && d.sub[c].mnp) || 0);
-          const prevChg = Number((d.sub[c] && d.sub[c].chg) || 0);
           if (d.id === 's26' && c === 'KT' && isS26KtHiked) {
             d.prices.KT = 140.36;
             d.sub.KT = { mnp: 75, chg: 75 };
           } else {
-            const nextPrice = Number(item.prices[c] || 0);
-            const subVal = item.sub[c];
-            const nextMnp = (typeof subVal === 'object' && subVal !== null) ? Number(subVal.mnp || 0) : Number(subVal || 0);
-            const nextChg = (typeof subVal === 'object' && subVal !== null) ? Number(subVal.chg || 0) : Number(subVal || 0);
-
-            if (prevPrice !== nextPrice && nextPrice > 0) {
-              syncChangeEntries.push({
-                id: `${todayKst}_${c}_${d.id}_price_${Math.round(nextPrice * 10000)}`,
-                date: todayKst,
-                carrier: c,
-                modelName: d.name,
-                modelCode: d.tag || '',
-                changeType: '출고가변동',
-                factoryPriceWon: Math.round(nextPrice * 10000),
-                planName: planLabels[c] || '',
-                oldAmountWon: Math.round(prevPrice * 10000),
-                newAmountWon: Math.round(nextPrice * 10000),
-                scrbType: '공통',
-                source: '본사동기화'
-              });
-            }
-            if (prevMnp !== nextMnp || prevChg !== nextChg) {
-              const oldWon = Math.round(prevMnp * 10000);
-              const newWon = Math.round(nextMnp * 10000);
-              const cType = newWon >= oldWon ? '상승' : '하락';
-              const scrb = (nextMnp === nextChg) ? '번이/기변' : `번이 ${(nextMnp)}만·기변 ${(nextChg)}만`;
-              syncChangeEntries.push({
-                id: `${todayKst}_${c}_${d.id}_sub_${newWon}`,
-                date: todayKst,
-                carrier: c,
-                modelName: d.name,
-                modelCode: d.tag || '',
-                changeType: cType,
-                factoryPriceWon: Math.round(nextPrice * 10000),
-                planName: planLabels[c] || '',
-                oldAmountWon: oldWon,
-                newAmountWon: newWon,
-                scrbType: scrb,
-                source: '본사동기화'
-              });
-            }
             d.prices[c] = item.prices[c];
-            d.sub[c] = { mnp: nextMnp, chg: nextChg };
+            const subVal = item.sub[c];
+            if (typeof subVal === 'object' && subVal !== null) {
+              d.sub[c] = { mnp: subVal.mnp, chg: subVal.chg };
+            } else {
+              d.sub[c] = { mnp: subVal, chg: subVal };
+            }
           }
         });
         if (d.prices.SK) d.price = d.prices.SK;
         updatedCount++;
       });
 
-      if (syncChangeEntries.length > 0 && typeof recordSubsidyChangeEntries === 'function') {
-        recordSubsidyChangeEntries(syncChangeEntries);
-      }
       scheduleMasterSave('공시/출고가 자동 동기화', '최신 통신 3사 크롤링 데이터 기반 출고가 및 공통지원금 일괄 자동 동기화 완료');
       renderSettingsTable();
       render();
@@ -6668,29 +6623,6 @@ service cloud.firestore {
 
       scheduleMasterSave('기종 추가', `신규 기종 '${name}' 등록 완료`);
       saveLayouts('기종 추가', `신규 기종 '${name}' 레이아웃 등록`);
-      if (typeof recordSubsidyChangeEntries === 'function' && typeof isSubsidyChangeTargetModel === 'function' && isSubsidyChangeTargetModel(name)) {
-        const todayKst = getKstTodayStr();
-        const planLabels = { SK: '베스트 109', KT: '초이스 110', LG: '프리미어 105' };
-        const newEntries = [
-          { carrier: 'SK', fp: pSK, sub: sSK_mnp },
-          { carrier: 'KT', fp: pKT, sub: sKT_mnp },
-          { carrier: 'LG', fp: pLG, sub: sLG_mnp }
-        ].filter(x => x.fp > 0 || x.sub > 0).map(x => ({
-          id: `${todayKst}_${x.carrier}_${newId}_new`,
-          date: todayKst,
-          carrier: x.carrier,
-          modelName: name,
-          modelCode: tag || '',
-          changeType: '신규',
-          factoryPriceWon: Math.round(x.fp * 10000),
-          planName: planLabels[x.carrier],
-          oldAmountWon: 0,
-          newAmountWon: Math.round(x.sub * 10000),
-          scrbType: '신규 출시',
-          source: '본사등록'
-        }));
-        if (newEntries.length > 0) recordSubsidyChangeEntries(newEntries);
-      }
       renderSettingsTable();
       render();
       closeAddDeviceModal();
@@ -6949,24 +6881,6 @@ service cloud.firestore {
         d.prices[carrier] = numVal;
         if (carrier === 'SK') d.price = numVal;
         scheduleMasterSave('출고가/공시 설정', `${d.name} (${carrier}) 출고가: ${oldVal}만 → ${numVal}만원`);
-        if (typeof recordSubsidyChangeEntries === 'function' && typeof isSubsidyChangeTargetModel === 'function' && isSubsidyChangeTargetModel(d.name)) {
-          const planLabels = { SK: '베스트 109', KT: '초이스 110', LG: '프리미어 105' };
-          const todayKst = getKstTodayStr();
-          recordSubsidyChangeEntries([{
-            id: `${todayKst}_${carrier}_${d.id}_price_${Math.round(numVal * 10000)}`,
-            date: todayKst,
-            carrier: carrier,
-            modelName: d.name,
-            modelCode: d.tag || '',
-            changeType: '출고가변동',
-            factoryPriceWon: Math.round(numVal * 10000),
-            planName: planLabels[carrier] || '',
-            oldAmountWon: Math.round((Number(oldVal) || 0) * 10000),
-            newAmountWon: Math.round(numVal * 10000),
-            scrbType: '출고가',
-            source: '본사설정'
-          }]);
-        }
         renderCalcTable();
         renderDailyTable();
         renderAdSection();
@@ -6983,27 +6897,6 @@ service cloud.firestore {
         d.sub[carrier][type] = numVal;
         const typeKo = type === 'mnp' ? '번이' : '기변';
         scheduleMasterSave('출고가/공시 설정', `${d.name} (${carrier} ${typeKo}) 공시지원금: ${oldVal}만 → ${numVal}만원`);
-        if (typeof recordSubsidyChangeEntries === 'function' && typeof isSubsidyChangeTargetModel === 'function' && isSubsidyChangeTargetModel(d.name)) {
-          const planLabels = { SK: '베스트 109', KT: '초이스 110', LG: '프리미어 105' };
-          const todayKst = getKstTodayStr();
-          const fp = (d.prices && d.prices[carrier]) ? d.prices[carrier] : (d.price || 0);
-          const oldWon = Math.round((Number(oldVal) || 0) * 10000);
-          const newWon = Math.round(numVal * 10000);
-          recordSubsidyChangeEntries([{
-            id: `${todayKst}_${carrier}_${d.id}_${type}_${newWon}`,
-            date: todayKst,
-            carrier: carrier,
-            modelName: d.name,
-            modelCode: d.tag || '',
-            changeType: newWon >= oldWon ? '상승' : '하락',
-            factoryPriceWon: Math.round((Number(fp) || 0) * 10000),
-            planName: planLabels[carrier] || '',
-            oldAmountWon: oldWon,
-            newAmountWon: newWon,
-            scrbType: typeKo,
-            source: '본사설정'
-          }]);
-        }
         renderCalcTable();
         renderDailyTable();
         renderAdSection();
@@ -8618,122 +8511,9 @@ service cloud.firestore {
 
     // ==================== 5.5. 기종별 공시지원금 변동내역 시스템 ====================
     const SUBSIDY_TARGET_FILTER_NOTE = '*공통지원금 변동내역은 갤럭시 S시리즈,FE시리즈,아이폰,폴더블류 모델만 표시됩니다.';
-    const DEFAULT_VERIFIED_SUBSIDY_CHANGES = [
-      {
-        id: '2026-11-16_KT_s26_price_1403600',
-        date: '2026-11-16',
-        carrier: 'KT',
-        modelName: '갤럭시 S26 256G',
-        modelCode: '#S26',
-        changeType: '출고가변동',
-        factoryPriceWon: 1403600,
-        planName: '초이스 110 / 더블',
-        oldAmountWon: 1254000,
-        newAmountWon: 1403600,
-        scrbType: '출고가 인상재고',
-        source: '본사반영'
-      },
-      {
-        id: '2026-11-13_KT_ipair_1t_700000',
-        date: '2026-11-13',
-        carrier: 'KT',
-        modelName: '아이폰 AIR 1TB',
-        modelCode: 'AIP-AIR-1TB',
-        changeType: '상승',
-        factoryPriceWon: 2189000,
-        planName: '초이스110 / 폰케어',
-        oldAmountWon: 600000,
-        newAmountWon: 700000,
-        scrbType: '공통',
-        source: '통신사공식'
-      },
-      {
-        id: '2026-11-13_KT_ipair_512_700000',
-        date: '2026-11-13',
-        carrier: 'KT',
-        modelName: '아이폰 AIR 512G',
-        modelCode: 'AIP-AIR-512',
-        changeType: '상승',
-        factoryPriceWon: 1881000,
-        planName: '초이스110 / 폰케어',
-        oldAmountWon: 600000,
-        newAmountWon: 700000,
-        scrbType: '공통',
-        source: '통신사공식'
-      },
-      {
-        id: '2026-11-13_KT_ipair_256_700000',
-        date: '2026-11-13',
-        carrier: 'KT',
-        modelName: '아이폰 AIR 256G',
-        modelCode: 'AIP-AIR-256',
-        changeType: '상승',
-        factoryPriceWon: 1584000,
-        planName: '초이스110 / 폰케어',
-        oldAmountWon: 600000,
-        newAmountWon: 700000,
-        scrbType: '공통',
-        source: '통신사공식'
-      },
-      {
-        id: '2026-11-01_SK_s25e_256_580000',
-        date: '2026-11-01',
-        carrier: 'SK',
-        modelName: '갤럭시 S25 엣지 256G',
-        modelCode: 'SM-S937N',
-        changeType: '상승',
-        factoryPriceWon: 1254000,
-        planName: '베스트 109',
-        oldAmountWon: 500000,
-        newAmountWon: 580000,
-        scrbType: '공통',
-        source: '통신사공식'
-      },
-      {
-        id: '2026-10-30_KT_s25e_256_600000',
-        date: '2026-10-30',
-        carrier: 'KT',
-        modelName: '갤럭시 S25 엣지 256G',
-        modelCode: 'SM-S937NK',
-        changeType: '상승',
-        factoryPriceWon: 1254000,
-        planName: '초이스 110',
-        oldAmountWon: 500000,
-        newAmountWon: 600000,
-        scrbType: '공통',
-        source: '통신사공식'
-      },
-      {
-        id: '2026-10-29_LG_s25e_256_600000',
-        date: '2026-10-29',
-        carrier: 'LG',
-        modelName: '갤럭시 S25 엣지 256G',
-        modelCode: 'SM-S937N',
-        changeType: '상승',
-        factoryPriceWon: 1254000,
-        planName: '프리미어 105 / 플러스95',
-        oldAmountWon: 500000,
-        newAmountWon: 600000,
-        scrbType: '공통',
-        source: '통신사공식'
-      },
-      {
-        id: '2026-10-24_KT_s26u_256_600000',
-        date: '2026-10-24',
-        carrier: 'KT',
-        modelName: '갤럭시 S26 Ultra 256G',
-        modelCode: 'SM-S948NK',
-        changeType: '상승',
-        factoryPriceWon: 1797400,
-        planName: '초이스 110',
-        oldAmountWon: 500000,
-        newAmountWon: 600000,
-        scrbType: '공통',
-        source: '통신사공식'
-      }
-    ];
+    const DEFAULT_VERIFIED_SUBSIDY_CHANGES = [];
 
-    let subsidyChangesList = [...DEFAULT_VERIFIED_SUBSIDY_CHANGES];
+    let subsidyChangesList = [];
     let subsidyChangesLastSyncedAt = '';
     let subsidyCarrierFilter = 'ALL';
     let subsidyTypeFilter = 'ALL';
@@ -8835,15 +8615,10 @@ service cloud.firestore {
       unsubscribeSubsidyChanges = db.collection('global_config').doc('subsidy_changes')
         .onSnapshot((doc) => {
           if (!doc.exists) {
-            seedSubsidyChangesIfNeeded();
-            subsidyChangesList = [...DEFAULT_VERIFIED_SUBSIDY_CHANGES];
+            subsidyChangesList = [];
           } else {
             const data = doc.data() || {};
-            if (Array.isArray(data.changes) && data.changes.length > 0) {
-              subsidyChangesList = data.changes;
-            } else {
-              subsidyChangesList = [...DEFAULT_VERIFIED_SUBSIDY_CHANGES];
-            }
+            subsidyChangesList = Array.isArray(data.changes) ? data.changes : [];
             if (data.lastSyncedAt) subsidyChangesLastSyncedAt = data.lastSyncedAt;
           }
           updateSubsidyChangesButtonIndicator();
@@ -8855,19 +8630,14 @@ service cloud.firestore {
           console.warn("Subsidy changes subscription error:", err);
           updateSubsidyChangesButtonIndicator();
         });
-
-      if (!hasCheckedLiveSubsidySession) {
-        hasCheckedLiveSubsidySession = true;
-        refreshSubsidyChangesLive(true);
-      }
     }
 
     function seedSubsidyChangesIfNeeded() {
       if (!db) return;
       db.collection('global_config').doc('subsidy_changes').set({
-        changes: DEFAULT_VERIFIED_SUBSIDY_CHANGES,
+        changes: [],
         lastSyncedAt: new Date().toISOString(),
-        updatedBy: '시스템 기준선'
+        updatedBy: '초기화'
       }, { merge: true }).catch(e => console.warn("Seed subsidy_changes err:", e));
     }
 
@@ -8904,42 +8674,32 @@ service cloud.firestore {
 
     async function refreshSubsidyChangesLive(silent = false) {
       const btn = document.getElementById('btnRefreshSubsidyChanges');
-      if (!window.location.protocol.startsWith('http')) {
-        if (!silent) {
-          updateSubsidyChangesButtonIndicator();
-          renderSubsidyChangesModal();
-        }
-        return;
-      }
       if (btn && !silent) {
         btn.disabled = true;
         btn.classList.add('opacity-60');
       }
       try {
-        const res = await fetch('/api/subsidy-changes', { method: 'GET', cache: 'no-store' });
-        if (res.ok) {
-          const data = await res.json();
-          if (data && Array.isArray(data.changes) && data.changes.length > 0) {
-            subsidyChangesList = data.changes;
+        if (db) {
+          const doc = await db.collection('global_config').doc('subsidy_changes').get();
+          if (doc.exists) {
+            const data = doc.data() || {};
+            subsidyChangesList = Array.isArray(data.changes) ? data.changes : [];
             if (data.lastSyncedAt) subsidyChangesLastSyncedAt = data.lastSyncedAt;
-            updateSubsidyChangesButtonIndicator();
-            const modal = document.getElementById('subsidyChangesModal');
-            if (modal && !modal.classList.contains('hidden')) {
-              renderSubsidyChangesModal();
-            }
+          } else {
+            subsidyChangesList = [];
           }
-          if (!silent) {
-            const msg = (data && data.newDetectedCount > 0)
-              ? `📢 신규 공시지원금 변동 ${data.newDetectedCount}건이 감지되었습니다!`
-              : '✅ 최신 공시지원금 변동내역 확인 완료';
-            if (typeof showGeneralToast === 'function') showGeneralToast(msg);
-          }
-        } else if (!silent && typeof showGeneralToast === 'function') {
-          showGeneralToast('✅ 클라우드 저장 변동내역 기준으로 표시 중입니다.');
+        }
+        updateSubsidyChangesButtonIndicator();
+        const modal = document.getElementById('subsidyChangesModal');
+        if (modal && !modal.classList.contains('hidden')) {
+          renderSubsidyChangesModal();
+        }
+        if (!silent && typeof showGeneralToast === 'function') {
+          showGeneralToast('✅ 공시지원금 변동내역을 최신 상태로 확인했습니다.');
         }
       } catch (e) {
         if (!silent && typeof showGeneralToast === 'function') {
-          showGeneralToast('✅ 클라우드 저장 변동내역 기준으로 표시 중입니다.');
+          showGeneralToast('✅ 현재 저장된 변동내역을 표시 중입니다.');
         }
       } finally {
         if (btn && !silent) {
@@ -9039,7 +8799,7 @@ service cloud.firestore {
       if (items.length === 0) {
         container.innerHTML = `
           <div class="p-10 text-center text-slate-400 border border-dashed border-slate-200 rounded-2xl bg-slate-50/50">
-            <div class="text-sm font-bold text-slate-500">조건에 맞는 공시지원금 변동내역이 없습니다.</div>
+            <div class="text-sm font-bold text-slate-500">등록된 공시지원금 변동내역이 없습니다.</div>
             <div class="text-[11px] text-slate-400 mt-1">${SUBSIDY_TARGET_FILTER_NOTE}</div>
           </div>
         `;
@@ -9064,11 +8824,11 @@ service cloud.firestore {
         const rowsHtml = isCollapsed ? '' : rows.map(item => {
           let carrierBadge = '';
           if (item.carrier === 'SK') {
-            carrierBadge = `<span class="inline-flex items-center justify-center w-11 py-1 rounded-lg text-[11px] font-black bg-rose-50 text-rose-600 border border-rose-200">SKT</span>`;
+            carrierBadge = `<span class="inline-flex items-center justify-center w-11 py-1 rounded-lg text-[11px] font-black bg-rose-50 text-rose-600 border border-rose-200">SK</span>`;
           } else if (item.carrier === 'KT') {
-            carrierBadge = `<span class="inline-flex items-center justify-center w-11 py-1 rounded-lg text-[11px] font-black bg-slate-900 text-white"><span class="text-red-500 mr-0.5">k</span>t</span>`;
+            carrierBadge = `<span class="inline-flex items-center justify-center w-11 py-1 rounded-lg text-[11px] font-black bg-blue-50 text-blue-600 border border-blue-200">KT</span>`;
           } else {
-            carrierBadge = `<span class="inline-flex items-center justify-center w-11 py-1 rounded-lg text-[11px] font-black bg-pink-50 text-pink-600 border border-pink-200">LGU+</span>`;
+            carrierBadge = `<span class="inline-flex items-center justify-center w-11 py-1 rounded-lg text-[11px] font-black bg-pink-50 text-pink-600 border border-pink-200">LG</span>`;
           }
 
           let typePill = '';
@@ -9128,6 +8888,79 @@ service cloud.firestore {
           </div>
         `;
       }).join('');
+    }
+
+    // ==================== 5.6. 사이트 업데이트 내역 모달 ====================
+    const SITE_UPDATES_DATA = [
+      {
+        date: '2026. 11. 27',
+        tag: '최신',
+        title: '공시지원금 변동내역 · 화면 간소화 및 업데이트 내역 추가',
+        items: [
+          '매장 계정에서는 [공시 & 출고가 설정] 버튼이 깔끔하게 숨겨지고, 전 매장 공용 [공시지원금 변동내역] 버튼을 추가했습니다. 당일 변동내역이 있으면 버튼 옆에 색상 표시가 뜹니다.',
+          '상단에 [업데이트 내역] 버튼을 추가해 사이트 개선사항을 언제든 쉽게 확인할 수 있습니다.',
+          '넷가표에서 불필요한 [전체 보기]를 없애고 접속 시 바로 [기본부가] 기준으로 표시되도록 개선했습니다.',
+          '광고가격(문구) 표에서 [비고] 칸을 정리해 [예상마진]이 마지막 칸으로 깔끔하게 마무리되도록 수정했습니다.'
+        ]
+      },
+      {
+        date: '2026. 11. 26',
+        tag: '매장 격리',
+        title: '테스트매장1 · 테스트매장2 독립 운영 및 매장별 데이터 완전 분리',
+        items: [
+          '테스트매장1(111111) · 테스트매장2(222222)를 추가해 실제 영업 매장과 섞이지 않도록 100% 독립 분리했습니다.',
+          '각 매장 로그인 시 본인 매장의 단가·변경내역·요청함·제휴카드·상세내역만 보이도록 보안을 강화했습니다.'
+        ]
+      },
+      {
+        date: '2026. 11. 25',
+        tag: '시세표·상세내역',
+        title: '광고가격 추천가 자동지정 · 공시/선약 열 분리 · 시세상세내역 개편',
+        items: [
+          '광고가격(문구) 상단에 [광고가격 자동지정] 버튼을 추가해 추천 마진 가격을 한 번에 채울 수 있습니다.',
+          '광고가격(문구)의 [공시/선약] 전환을 전용 열로 분리해 시세상세내역·마진과 바로 연동됩니다.',
+          '시세상세내역 매장지원금을 [추가지원금 200,000원 고정] + [번호이동 / 기기변경] 3열 구조로 개편했습니다.'
+        ]
+      },
+      {
+        date: '2026. 11. 24',
+        tag: '실시간 협업',
+        title: 'S26 출고가인상 체크박스 & 동시접속 작업자 표시',
+        items: [
+          '단가표/광고표에서 [출고가인상반영] 체크박스 한 번으로 S26 일반/인상 재고를 전환할 수 있습니다.',
+          '같은 매장에서 여러 명이 동시 작업할 때 상단 접속자 표시와 수정 중인 칸 색상 테두리 안내가 제공됩니다.'
+        ]
+      }
+    ];
+
+    function openSiteUpdatesModal() {
+      renderSiteUpdatesModal();
+      const modal = document.getElementById('siteUpdatesModal');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeSiteUpdatesModal() {
+      const modal = document.getElementById('siteUpdatesModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function renderSiteUpdatesModal() {
+      const container = document.getElementById('siteUpdatesContainer');
+      if (!container) return;
+      container.innerHTML = SITE_UPDATES_DATA.map((upd, idx) => `
+        <div class="p-4 rounded-2xl border ${idx === 0 ? 'border-purple-200 bg-purple-50/40' : 'border-slate-200 bg-white'} space-y-2">
+          <div class="flex items-center justify-between gap-2 flex-wrap">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black ${idx === 0 ? 'bg-purple-600 text-white' : 'bg-slate-100 text-slate-700'}">${escapeHtml(upd.date)}</span>
+              <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold ${idx === 0 ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-500'}">${escapeHtml(upd.tag)}</span>
+            </div>
+          </div>
+          <h4 class="text-sm font-extrabold text-slate-900">${escapeHtml(upd.title)}</h4>
+          <ul class="space-y-1 text-xs text-slate-600 list-disc pl-4 leading-relaxed">
+            ${upd.items.map(line => `<li>${escapeHtml(line)}</li>`).join('')}
+          </ul>
+        </div>
+      `).join('');
     }
 
     // ==================== 6. 버그 신고 및 기능 개선 요청 시스템 ====================
@@ -15881,11 +15714,7 @@ JSON 규격:
   
     // ==================== 넷가표 클립보드 복사 & PDF 인쇄 기능 ====================
     async function copyNetTableToClipboard() {
-      const modeKo = (netDisplayMode === 'both') 
-        ? '전체보기 (기본 + 올부가)' 
-        : (netDisplayMode === 'basic') 
-          ? '기본조건 넷가' 
-          : '올부가 최종 넷가';
+      const modeKo = (netDisplayMode === 'all') ? '올부가 최종 넷가' : '기본조건 넷가';
 
       const now = new Date();
       const days = ['일', '월', '화', '수', '목', '금', '토'];
