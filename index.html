@@ -6964,8 +6964,6 @@ service cloud.firestore {
       if (typeof renderDynamicStoreControls === 'function') {
         renderDynamicStoreControls();
       }
-      badge.classList.remove('hidden');
-      badge.classList.add('flex');
 
       if (currentRole === 'master') {
         const activeMeta = getStoreMeta(currentStoreId);
@@ -6996,7 +6994,8 @@ service cloud.firestore {
       } else {
         const stMeta = getStoreMeta(currentStoreId);
         badgeText.innerText = currentStoreName || stMeta.name;
-        badge.className = stMeta.badgeClass;
+        badge.classList.add('hidden');
+        badge.classList.remove('flex');
         if (switcher) {
           switcher.classList.add('hidden');
           switcher.classList.remove('flex');
@@ -7058,8 +7057,14 @@ service cloud.firestore {
         switchTab('calc');
       }
 
+      if (typeof getWorkerStorePrefix === 'function' && currentStoreId) {
+        myWorkerName = `${getWorkerStorePrefix(currentStoreId)}${myWorkerNum || 1}`;
+      }
       if (typeof updateMyWorkerBadgeUI === 'function') {
         updateMyWorkerBadgeUI();
+      }
+      if (typeof updateCollaboratorBadgesUI === 'function') {
+        updateCollaboratorBadgesUI();
       }
     }
 
@@ -7227,23 +7232,10 @@ service cloud.firestore {
 
     function updateMyWorkerBadgeUI() {
       const badge = document.getElementById('myWorkerBadge');
-      const dot = document.getElementById('myWorkerDot');
-      const text = document.getElementById('myWorkerText');
-      if (!badge || !dot || !text) return;
-
-      if (!isUnlocked) {
-        badge.classList.add('hidden');
-        badge.classList.remove('flex');
-        return;
-      }
-
-      badge.classList.remove('hidden');
-      badge.classList.add('flex');
-      badge.style.borderColor = myWorkerColor.border;
-      badge.style.backgroundColor = myWorkerColor.bg;
-      badge.style.color = myWorkerColor.text;
-      dot.className = `w-2 h-2 rounded-full ${myWorkerColor.dot} animate-pulse`;
-      text.innerText = `내 작업자: ${myWorkerName} (${myWorkerColor.label})`;
+      if (!badge) return;
+      // 상단 접속자 협업 바에 '명지1 (나)' 형태로 이미 표시되므로 중복 배지는 항상 숨김
+      badge.classList.add('hidden');
+      badge.classList.remove('flex');
     }
 
     function updateCollaboratorBadgesUI() {
