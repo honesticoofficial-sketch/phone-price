@@ -109,111 +109,16 @@ module.exports = async function handler(req, res) {
       if (parsed.sktSnapshot && typeof parsed.sktSnapshot === 'object') prevSktSnapshot = parsed.sktSnapshot;
     }
 
-    // 2. SKT 최신 공식 공시 조회
-    const todayStr = getKstTodayStr();
-    const currentSkt = await fetchSktBest109();
-    const newlyDetected = [];
-
-    if (Object.keys(prevSktSnapshot).length > 0) {
-      for (const code of Object.keys(currentSkt)) {
-        const cur = currentSkt[code];
-        const prev = prevSktSnapshot[code];
-        const effDate = cur.effDate || todayStr;
-        if (!prev) {
-          if (effDate === todayStr) {
-            newlyDetected.push({
-              id: `${effDate}_SK_${code}_new`,
-              date: effDate,
-              carrier: 'SK',
-              modelName: cur.modelName,
-              modelCode: cur.modelCode,
-              changeType: '신규',
-              factoryPriceWon: cur.factoryPriceWon,
-              planName: '베스트 109',
-              oldAmountWon: 0,
-              newAmountWon: cur.subsidyWon,
-              scrbType: '번호이동',
-              source: '통신사공식'
-            });
-          }
-          continue;
-        }
-
-        if (cur.subsidyWon !== prev.subsidyWon) {
-          const cType = cur.subsidyWon > prev.subsidyWon ? '상승' : '하락';
-          newlyDetected.push({
-            id: `${todayStr}_SK_${code}_sub_${cur.subsidyWon}`,
-            date: todayStr,
-            carrier: 'SK',
-            modelName: cur.modelName,
-            modelCode: cur.modelCode,
-            changeType: cType,
-            factoryPriceWon: cur.factoryPriceWon,
-            planName: '베스트 109',
-            oldAmountWon: prev.subsidyWon,
-            newAmountWon: cur.subsidyWon,
-            scrbType: '번호이동',
-            source: '통신사공식'
-          });
-        } else if (cur.factoryPriceWon !== prev.factoryPriceWon) {
-          newlyDetected.push({
-            id: `${todayStr}_SK_${code}_price_${cur.factoryPriceWon}`,
-            date: todayStr,
-            carrier: 'SK',
-            modelName: cur.modelName,
-            modelCode: cur.modelCode,
-            changeType: '출고가변동',
-            factoryPriceWon: cur.factoryPriceWon,
-            planName: '베스트 109',
-            oldAmountWon: prev.factoryPriceWon,
-            newAmountWon: cur.factoryPriceWon,
-            scrbType: '출고가',
-            source: '통신사공식'
-          });
-        }
-      }
-    }
-
-    // 3. 병합 및 Firestore 저장
-    const mergedMap = new Map();
-    for (const item of [...newlyDetected, ...existingChanges]) {
-      if (!item || !isTargetFlagshipModel(item.modelName)) continue;
-      const dStr = normalizeDateStr(item.date) || todayStr;
-      const key = item.id || `${dStr}_${item.carrier}_${item.modelName}_${item.changeType}_${item.newAmountWon}`;
-      if (!mergedMap.has(key)) mergedMap.set(key, { ...item, id: key, date: dStr });
-    }
-    const mergedChanges = Array.from(mergedMap.values())
-      .sort((a, b) => (b.date || '').localeCompare(a.date || ''))
-      .slice(0, 120);
-
-    const lastSyncedAt = new Date().toISOString();
-    const shouldWrite = !docExists || newlyDetected.length > 0 || Object.keys(prevSktSnapshot).length === 0;
-
-    if (shouldWrite) {
-      const payload = {
-        fields: {
-          changes: toFsValue(mergedChanges),
-          sktSnapshot: toFsValue(currentSkt),
-          lastSyncedAt: toFsValue(lastSyncedAt),
-          updatedBy: toFsValue('Vercel 실시간 조회')
-        }
-      };
-      await fetch(FIRESTORE_DOC_URL, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-    }
-
-    const todayCount = mergedChanges.filter(c => c.date === todayStr).length;
+    // 읽기 전용 조회 (사용자 확인 없이 Firestore에 자동 반영하지 않음)
+    const todayCount = existingChanges.filter(c => normalizeDateStr(c.date) === todayStr && isTargetFlagshipModel(c.modelName)).length;
     res.status(200).json({
       ok: true,
       today: todayStr,
       todayCount,
-      newDetectedCount: newlyDetected.length,
-      totalCount: mergedChanges.length,
-      lastSyncedAt,
-      changes: mergedChanges
+      newDetectedCount: 0,
+      totalCount: existingChanges.length,
+      lastSyncedAt: new Date().toISOString(),
+      changes: existingChanges
     });
   } catch (err) {
     res.status(200).json({
