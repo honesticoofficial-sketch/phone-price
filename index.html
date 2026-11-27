@@ -6087,27 +6087,20 @@ service cloud.firestore {
       updateAdValCommit(id, field, val, null);
     }
 
-    // 광고 문구 생성 (통신사 독자 순서 적용 및 숨김 처리된 기종 제외)
+    // 광고 문구 생성 (통신사 독자 순서 적용, 숨김 기종 제외, 직접 추가한 구분선에서만 빈 줄 삽입)
     function generateAdString(carrier) {
       let outputLines = [];
-      let lastGroup = null;
 
       const carrierDevices = getCarrierDeviceList(carrier);
       carrierDevices.forEach(d => {
         if (d.id === 'empty' || d.isEmpty) {
           outputLines.push("");
-          lastGroup = null;
           return;
         }
 
         const adData = getAdData(d, carrier, adMarginBase);
         // 숨김 처리된 기종은 광고 문구에서 완전히 제외
         if (adData && adData.hidden) return;
-
-        if (lastGroup !== null && lastGroup !== d.group) {
-          outputLines.push("");
-        }
-        lastGroup = d.group;
 
         if (adData && (adData.mnp !== '' || adData.chg !== '' || adData.note !== '')) {
           let pricePart = "";
@@ -8873,6 +8866,7 @@ service cloud.firestore {
           '상단에 [업데이트 내역] 버튼을 추가하고, 중복되던 상단 접속 배지와 탭별 안내 배지를 정리해 화면을 훨씬 깔끔하게 개선했습니다.',
           '넷가표에서 [전체 보기]를 없애고 접속 시 바로 [기본부가] 기준으로 표시되도록 변경했습니다.',
           '광고가격 표에서 [비고] 칸을 정리해 [예상마진]이 마지막 칸으로 나오도록 수정했고, [숨김]을 눌러도 행 순서나 시세표에 영향 없이 오른쪽 게시 문구에서만 빠지도록 개선했습니다.',
+          '광고가격 문구 생성 시 기종 종류가 바뀔 때마다 들어가던 자동 줄바꿈을 없애고, 직접 [구분선(줄바꿈) 추가]를 넣은 위치에서만 빈 줄이 들어가도록 수정했습니다.',
           '탭 이름을 [광고가격] / [시세표]로 간결하게 바꾸고, 모든 탭과 본문 제목 아이콘의 색상과 모양을 하나로 통일했습니다.'
         ]
       },
