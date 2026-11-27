@@ -1033,10 +1033,6 @@
             <div>
               <div class="flex items-center gap-2 flex-wrap">
                 <span class="font-black text-xs sm:text-sm text-slate-900">시세표 테두리 & 브랜드 포인트 색상 설정</span>
-                <span id="posterAdModeBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-purple-50 text-purple-700 border border-purple-200">
-                  올부가 광고가 연동 중
-                </span>
-                <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200">문구·조건 실시간 자동저장</span>
               </div>
               <p class="text-[11px] text-slate-500">배경은 눈이 편안한 화이트로 고정되며, 브랜드 테마 색상은 외곽 테두리와 표 헤더 포인트로 깔끔하게 적용됩니다.</p>
             </div>
@@ -1369,12 +1365,6 @@
             <div>
               <div class="flex items-center gap-2 flex-wrap">
                 <span class="font-black text-xs sm:text-sm text-slate-900">시세 상세내역 자동 생성기</span>
-                <span id="detailModeBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-indigo-50 text-indigo-700 border border-indigo-200">
-                  기본부가 광고가 자동 연동
-                </span>
-                <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                  시세표 기종 & 넷가표 요금제 실시간 자동 동기화
-                </span>
               </div>
               <p class="text-[11px] text-slate-500 mt-0.5">광고표(번이/기변) 가격 및 공시/선약 설정을 바꾸면 시세상세내역의 출고가 · 요금제 · 공통지원금 · 매장지원금이 자동 산출됩니다.</p>
             </div>
@@ -16287,15 +16277,6 @@ JSON 규격:
         }
       }
 
-      // posterAdModeBadge 업데이트
-      const adBadge = document.getElementById('posterAdModeBadge');
-      if (adBadge) {
-        adBadge.innerText = (posterMarginMode === 'all') ? '올부가 광고가 연동 중' : '기본부가 광고가 연동 중';
-        adBadge.className = (posterMarginMode === 'all')
-          ? 'px-2.5 py-0.5 rounded-full text-[10px] font-black bg-indigo-50 text-indigo-700 border border-indigo-200'
-          : 'px-2.5 py-0.5 rounded-full text-[10px] font-black bg-slate-100 text-slate-700 border border-slate-300';
-      }
-
       // 단일 시세표 셀 렌더링 헬퍼 (품절, 130만/마이너스 빨간색, 넷가 이하 느낌표 + 팝업)
       function renderPosterPriceCell(d, carrier, type, isBorder2) {
         const adData = getAdData(d, carrier, posterMarginMode);
@@ -17712,16 +17693,13 @@ JSON 규격:
 
       const btnBasic = document.getElementById('detailMarginModeBtn-basic');
       const btnAll = document.getElementById('detailMarginModeBtn-all');
-      const modeBadge = document.getElementById('detailModeBadge');
       if (btnBasic && btnAll) {
         if (detailSettings.marginMode === 'all') {
           btnAll.className = 'px-3 py-1 rounded-lg font-black transition cursor-pointer bg-white text-indigo-700 shadow-xs border border-indigo-200';
           btnBasic.className = 'px-3 py-1 rounded-lg font-black transition cursor-pointer text-slate-500 hover:text-slate-900';
-          if (modeBadge) modeBadge.innerText = '풀부가(올부가) 광고가 자동 연동';
         } else {
           btnBasic.className = 'px-3 py-1 rounded-lg font-black transition cursor-pointer bg-white text-slate-900 shadow-xs border border-slate-200';
           btnAll.className = 'px-3 py-1 rounded-lg font-black transition cursor-pointer text-slate-500 hover:text-slate-900';
-          if (modeBadge) modeBadge.innerText = '기본부가 광고가 자동 연동';
         }
       }
 
