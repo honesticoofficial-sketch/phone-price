@@ -398,22 +398,22 @@
           <span>넷가표</span>
         </button>
         <button onclick="switchTab('daily')" id="tabBtn-daily" class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-extrabold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition">
-          <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg class="w-4 h-4 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
           </svg>
           <span>리베이트입력</span>
         </button>
         <button onclick="switchTab('ad')" id="tabBtn-ad" class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-extrabold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition">
-          <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg class="w-4 h-4 text-sky-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
           </svg>
-          <span>광고가격(문구)</span>
+          <span>광고가격</span>
         </button>
         <button onclick="switchTab('adtable')" id="tabBtn-adtable" class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-extrabold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition">
           <svg class="w-4 h-4 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
           </svg>
-          <span>광고가격(시세표)</span>
+          <span>시세표</span>
         </button>
         <button onclick="switchTab('detail')" id="tabBtn-detail" class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-extrabold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition">
           <svg class="w-4 h-4 text-indigo-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -435,7 +435,7 @@
           <span>경쟁사시세비교</span>
         </button>
         <button onclick="switchTab('request')" id="tabBtn-request" class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-extrabold bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition relative">
-          <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg class="w-4 h-4 text-teal-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
             <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
           </svg>
@@ -764,15 +764,19 @@
     <div id="tab-daily" class="space-y-4 hidden">
       <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-4">
         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
-          <div>
-            <h2 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-              <svg class="w-4 h-4 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-              <span>오늘자 대리점 단가(리베이트) 직접 입력</span>
-              <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>오늘자 대리점 단가 입력표</b><br>대리점에서 매일 아침 수신되는 리베이트 단가를 기종별, 통신사별로 입력하는 공간입니다. 번이/기변 단가와 거래처(도매/온라인 등)를 매장별로 독립 관리합니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>오늘자 대리점 단가 입력표</b><br>대리점에서 매일 아침 수신되는 리베이트 단가를 기종별, 통신사별로 입력하는 공간입니다. 번이/기변 단가와 거래처(도매/온라인 등)를 매장별로 독립 관리합니다.')" title="단가 입력 안내">?</button>
-            </h2>
-            <p class="text-xs text-slate-500 mt-0.5">
-              단가처 드롭다운(도매/온라인/특판/K1) · 기종 드롭다운(구분선 지원) · 넷가표와 완전히 분리된 독립 순서
-            </p>
+          <div class="flex items-center gap-2.5">
+            <span class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shadow-xs shrink-0">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            </span>
+            <div>
+              <h2 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                <span>오늘자 대리점 단가(리베이트) 직접 입력</span>
+                <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>오늘자 대리점 단가 입력표</b><br>대리점에서 매일 아침 수신되는 리베이트 단가를 기종별, 통신사별로 입력하는 공간입니다. 번이/기변 단가와 거래처(도매/온라인 등)를 매장별로 독립 관리합니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>오늘자 대리점 단가 입력표</b><br>대리점에서 매일 아침 수신되는 리베이트 단가를 기종별, 통신사별로 입력하는 공간입니다. 번이/기변 단가와 거래처(도매/온라인 등)를 매장별로 독립 관리합니다.')" title="단가 입력 안내">?</button>
+              </h2>
+              <p class="text-xs text-slate-500 mt-0.5">
+                단가처 드롭다운(도매/온라인/특판/K1) · 기종 드롭다운(구분선 지원) · 넷가표와 완전히 분리된 독립 순서
+              </p>
+            </div>
           </div>
           <!-- 통신사 선택 및 행 추가 -->
           <div class="flex flex-wrap items-center gap-2">
@@ -865,17 +869,21 @@
         
         <!-- 상단 헤더, 마진 기준 선택 & 원클릭 복사 -->
         <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
-          <div>
-            <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
-              <svg class="w-4 h-4 text-slate-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <div class="flex items-center gap-2.5">
+            <span class="w-8 h-8 rounded-xl bg-sky-600 text-white flex items-center justify-center font-bold text-xs shadow-xs shrink-0">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
               </svg>
-              <span>성지특가 광고표 & 마진 시뮬레이션</span>
-              <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>성지특가 광고표 & 마진 시뮬레이션</b><br>오늘 입력된 단가와 마진을 바탕으로 네이버 카페/밴드/당근 등에 즉시 게시할 수 있는 광고 시세표 문구를 자동 생성합니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>성지특가 광고표 & 마진 시뮬레이션</b><br>오늘 입력된 단가와 마진을 바탕으로 네이버 카페/밴드/당근 등에 즉시 게시할 수 있는 광고 시세표 문구를 자동 생성합니다.')" title="광고표 안내">?</button>
-            </h2>
-            <p class="text-xs text-slate-500 mt-0.5">
-              통신사별(SK·KT·LG) 독자 순서/숨김 지원 · 엑셀식 열 너비 조절(경계선 드래그) · 기종명 직접 수정
-            </p>
+            </span>
+            <div>
+              <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                <span>성지특가 광고표 & 마진 시뮬레이션</span>
+                <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>성지특가 광고표 & 마진 시뮬레이션</b><br>오늘 입력된 단가와 마진을 바탕으로 네이버 카페/밴드/당근 등에 즉시 게시할 수 있는 광고 시세표 문구를 자동 생성합니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>성지특가 광고표 & 마진 시뮬레이션</b><br>오늘 입력된 단가와 마진을 바탕으로 네이버 카페/밴드/당근 등에 즉시 게시할 수 있는 광고 시세표 문구를 자동 생성합니다.')" title="광고표 안내">?</button>
+              </h2>
+              <p class="text-xs text-slate-500 mt-0.5">
+                통신사별(SK·KT·LG) 독자 순서/숨김 지원 · 엑셀식 열 너비 조절(경계선 드래그) · 기종명 직접 수정
+              </p>
+            </div>
           </div>
 
           <!-- 우측: 광고 운영 모드 선택 (올부가 vs 기본부가 단가/마진 분리) & 복사 버튼 -->
@@ -8882,7 +8890,7 @@ service cloud.firestore {
           '매장 계정에서는 [공시 & 출고가 설정] 버튼이 깔끔하게 숨겨지고, 전 매장 공용 [공시지원금 변동내역] 버튼을 추가했습니다. 당일 변동내역이 있으면 버튼 옆에 색상 표시가 뜹니다.',
           '상단에 [업데이트 내역] 버튼을 추가해 사이트 개선사항을 언제든 쉽게 확인할 수 있습니다.',
           '넷가표에서 불필요한 [전체 보기]를 없애고 접속 시 바로 [기본부가] 기준으로 표시되도록 개선했습니다.',
-          '광고가격(문구) 표에서 [비고] 칸을 정리해 [예상마진]이 마지막 칸으로 깔끔하게 마무리되도록 수정했습니다.'
+          '광고가격 표에서 [비고] 칸을 정리해 [예상마진]이 마지막 칸으로 깔끔하게 마무리되도록 수정하고, 탭 이름을 [광고가격] / [시세표]로 직관적으로 정리했습니다.'
         ]
       },
       {
