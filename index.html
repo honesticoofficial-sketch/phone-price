@@ -786,6 +786,11 @@
               <span class="help-btn" onmouseenter="showHelpTip(event, this, '<b>대리점 단가 매장 간 복사 (본사 전용)</b><br>바쁜 시간대에 한쪽 매장(예: 명지점)에서 입력한 당일 단가를 다른 매장(예: 광안점)으로 원클릭 복사하여 덮어씌웁니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>대리점 단가 매장 간 복사 (본사 전용)</b><br>바쁜 시간대에 한쪽 매장(예: 명지점)에서 입력한 당일 단가를 다른 매장(예: 광안점)으로 원클릭 복사하여 덮어씌웁니다.')" title="단가 복사 안내">?</span>
             </button>
 
+            <button id="btnRebateAutoInput" type="button" onclick="openRebateAutoModal()" class="hidden px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-extrabold shadow-xs items-center gap-1.5 transition cursor-pointer" title="단가표 이미지와 정책을 붙여넣어 리베이트를 자동 입력합니다">
+              <svg class="w-3.5 h-3.5 text-indigo-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              <span>단가입력</span>
+            </button>
+
             <button onclick="addDailyRow('empty')" class="px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold text-slate-700 shadow-2xs flex items-center gap-1.5 transition">
               <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
               <span>행 추가</span>
@@ -806,58 +811,97 @@
           </div>
         </div>
 
-        <div class="overflow-x-auto border border-slate-200 rounded-xl">
-          <table id="dailyTable" class="w-full text-xs text-left border-collapse" style="table-layout: fixed; min-width: 680px;">
-            <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 select-none">
-              <tr>
-                <th class="relative p-2.5 text-center" style="width: 96px; min-width: 92px;">
-                  <span class="flex items-center justify-center">
-                    순서
-                    <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>단가표 순서 이동</b><br>좌측 핸들 아이콘을 마우스로 잡고 위아래로 끌어서 배치 순서를 바꿀 수 있습니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>단가표 순서 이동</b><br>좌측 핸들 아이콘을 마우스로 잡고 위아래로 끌어서 배치 순서를 바꿀 수 있습니다.')" title="순서 이동 안내">?</button>
-                  </span>
-                  <div class="column-resizer" onmousedown="initColResize(event, this, 'dailyTable')" title="경계선을 드래그하여 열 너비 조절"></div>
-                </th>
-                <th class="relative p-2.5" style="width: 210px;">
-                  <span class="flex items-center">
-                    기종 선택 (드롭다운)
-                    <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>기종 선택 드롭다운</b><br>단가를 입력할 모델을 선택합니다. 넷가표와 완전히 독립적이므로 자유롭게 순서를 구성할 수 있습니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>기종 선택 드롭다운</b><br>단가를 입력할 모델을 선택합니다. 넷가표와 완전히 독립적이므로 자유롭게 순서를 구성할 수 있습니다.')" title="기종 선택 안내">?</button>
-                  </span>
-                  <div class="column-resizer" onmousedown="initColResize(event, this, 'dailyTable')" title="경계선을 드래그하여 열 너비 조절"></div>
-                </th>
-                <th class="relative p-2.5 text-center" style="width: 105px;">
-                  <span class="flex items-center justify-center">
-                    번호이동 단가
-                    <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>번호이동 대리점 단가 (리베이트)</b><br>통신사 번호이동 개통 시 대리점에서 매장에 지급하는 단가(만원)입니다. 숫자만 입력하거나 품절 시 0 또는 비워두실 수 있습니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>번호이동 대리점 단가 (리베이트)</b><br>통신사 번호이동 개통 시 대리점에서 매장에 지급하는 단가(만원)입니다. 숫자만 입력하거나 품절 시 0 또는 비워두실 수 있습니다.')" title="번이 단가 안내">?</button>
-                  </span>
-                  <div class="column-resizer" onmousedown="initColResize(event, this, 'dailyTable')" title="경계선을 드래그하여 열 너비 조절"></div>
-                </th>
-                <th class="relative p-2.5 text-center" style="width: 95px;">
-                  <span class="flex items-center justify-center">
-                    번이 단가처
-                    <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>단가처 (거래처)</b><br>도매, 온라인, 특판, K1 등 해당 단가를 주는 거래처명을 지정합니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>단가처 (거래처)</b><br>도매, 온라인, 특판, K1 등 해당 단가를 주는 거래처명을 지정합니다.')" title="단가처 안내">?</button>
-                  </span>
-                  <div class="column-resizer" onmousedown="initColResize(event, this, 'dailyTable')" title="경계선을 드래그하여 열 너비 조절"></div>
-                </th>
-                <th class="relative p-2.5 text-center" style="width: 105px;">
-                  <span class="flex items-center justify-center">
-                    기기변경 단가
-                    <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>기기변경 대리점 단가 (리베이트)</b><br>통신사 기기변경 개통 시 대리점에서 매장에 지급하는 단가(만원)입니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>기기변경 대리점 단가 (리베이트)</b><br>통신사 기기변경 개통 시 대리점에서 매장에 지급하는 단가(만원)입니다.')" title="기변 단가 안내">?</button>
-                  </span>
-                  <div class="column-resizer" onmousedown="initColResize(event, this, 'dailyTable')" title="경계선을 드래그하여 열 너비 조절"></div>
-                </th>
-                <th class="relative p-2.5 text-center" style="width: 95px;">
-                  <span class="flex items-center justify-center">
-                    기변 단가처
-                    <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>기기변경 단가처</b><br>기변 단가를 제공하는 거래처명을 지정합니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>기기변경 단가처</b><br>기변 단가를 제공하는 거래처명을 지정합니다.')" title="단가처 안내">?</button>
-                  </span>
-                  <div class="column-resizer" onmousedown="initColResize(event, this, 'dailyTable')" title="경계선을 드래그하여 열 너비 조절"></div>
-                </th>
-              </tr>
-            </thead>
-            <tbody id="dailyTableBody" class="divide-y divide-slate-100">
-              <!-- JS 렌더링 -->
-            </tbody>
-          </table>
+        <!-- 테스트매장2 전용: 공시단가 / 선약단가 전환 및 채널 가산 요약 바 -->
+        <div id="dailyTest2ControlsBar" class="hidden flex-wrap items-center justify-between gap-3 bg-slate-50/90 border border-slate-200 rounded-xl px-3.5 py-2">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">단가 구분</span>
+            <div class="inline-flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200 shadow-2xs">
+              <button type="button" id="dailyRateTypeBtn-gongsi" onclick="setDailyRateType('gongsi')" class="px-3 py-1 rounded-lg text-xs font-black bg-indigo-600 text-white shadow-2xs transition cursor-pointer">공시단가</button>
+              <button type="button" id="dailyRateTypeBtn-sunyak" onclick="setDailyRateType('sunyak')" class="px-3 py-1 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer">선약단가</button>
+            </div>
+            <span class="text-[11px] text-slate-500 font-medium hidden sm:inline">공시·선약 단가를 각각 보관하고 광고가격에서 자동 연동합니다.</span>
+          </div>
+          <div id="dailyTest2BonusSummary" class="flex items-center gap-1.5 flex-wrap text-[11px] font-bold text-slate-600">
+            <span class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-slate-700">도매 +10만</span>
+            <span class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-slate-700">온라인 +13만</span>
+          </div>
+        </div>
+
+        <div id="dailyMainSplitContainer" class="grid grid-cols-1 gap-4 items-start">
+          <div class="overflow-x-auto border border-slate-200 rounded-xl min-w-0">
+            <table id="dailyTable" class="w-full text-xs text-left border-collapse" style="table-layout: fixed; min-width: 680px;">
+              <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 select-none">
+                <tr>
+                  <th class="relative p-2.5 text-center" style="width: 96px; min-width: 92px;">
+                    <span class="flex items-center justify-center">
+                      순서
+                      <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>단가표 순서 이동</b><br>좌측 핸들 아이콘을 마우스로 잡고 위아래로 끌어서 배치 순서를 바꿀 수 있습니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>단가표 순서 이동</b><br>좌측 핸들 아이콘을 마우스로 잡고 위아래로 끌어서 배치 순서를 바꿀 수 있습니다.')" title="순서 이동 안내">?</button>
+                    </span>
+                    <div class="column-resizer" onmousedown="initColResize(event, this, 'dailyTable')" title="경계선을 드래그하여 열 너비 조절"></div>
+                  </th>
+                  <th class="relative p-2.5" style="width: 210px;">
+                    <span class="flex items-center">
+                      기종 선택 (드롭다운)
+                      <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>기종 선택 드롭다운</b><br>단가를 입력할 모델을 선택합니다. 넷가표와 완전히 독립적이므로 자유롭게 순서를 구성할 수 있습니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>기종 선택 드롭다운</b><br>단가를 입력할 모델을 선택합니다. 넷가표와 완전히 독립적이므로 자유롭게 순서를 구성할 수 있습니다.')" title="기종 선택 안내">?</button>
+                    </span>
+                    <div class="column-resizer" onmousedown="initColResize(event, this, 'dailyTable')" title="경계선을 드래그하여 열 너비 조절"></div>
+                  </th>
+                  <th class="relative p-2.5 text-center" style="width: 105px;">
+                    <span class="flex items-center justify-center">
+                      번호이동 단가
+                      <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>번호이동 대리점 단가 (리베이트)</b><br>통신사 번호이동 개통 시 대리점에서 매장에 지급하는 단가(만원)입니다. 숫자만 입력하거나 품절 시 0 또는 비워두실 수 있습니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>번호이동 대리점 단가 (리베이트)</b><br>통신사 번호이동 개통 시 대리점에서 매장에 지급하는 단가(만원)입니다. 숫자만 입력하거나 품절 시 0 또는 비워두실 수 있습니다.')" title="번이 단가 안내">?</button>
+                    </span>
+                    <div class="column-resizer" onmousedown="initColResize(event, this, 'dailyTable')" title="경계선을 드래그하여 열 너비 조절"></div>
+                  </th>
+                  <th class="relative p-2.5 text-center" style="width: 95px;">
+                    <span class="flex items-center justify-center">
+                      번이 단가처
+                      <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>단가처 (거래처)</b><br>도매, 온라인, 특판, K1 등 해당 단가를 주는 거래처명을 지정합니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>단가처 (거래처)</b><br>도매, 온라인, 특판, K1 등 해당 단가를 주는 거래처명을 지정합니다.')" title="단가처 안내">?</button>
+                    </span>
+                    <div class="column-resizer" onmousedown="initColResize(event, this, 'dailyTable')" title="경계선을 드래그하여 열 너비 조절"></div>
+                  </th>
+                  <th class="relative p-2.5 text-center" style="width: 105px;">
+                    <span class="flex items-center justify-center">
+                      기기변경 단가
+                      <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>기기변경 대리점 단가 (리베이트)</b><br>통신사 기기변경 개통 시 대리점에서 매장에 지급하는 단가(만원)입니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>기기변경 대리점 단가 (리베이트)</b><br>통신사 기기변경 개통 시 대리점에서 매장에 지급하는 단가(만원)입니다.')" title="기변 단가 안내">?</button>
+                    </span>
+                    <div class="column-resizer" onmousedown="initColResize(event, this, 'dailyTable')" title="경계선을 드래그하여 열 너비 조절"></div>
+                  </th>
+                  <th class="relative p-2.5 text-center" style="width: 95px;">
+                    <span class="flex items-center justify-center">
+                      기변 단가처
+                      <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>기기변경 단가처</b><br>기변 단가를 제공하는 거래처명을 지정합니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>기기변경 단가처</b><br>기변 단가를 제공하는 거래처명을 지정합니다.')" title="단가처 안내">?</button>
+                    </span>
+                    <div class="column-resizer" onmousedown="initColResize(event, this, 'dailyTable')" title="경계선을 드래그하여 열 너비 조절"></div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="dailyTableBody" class="divide-y divide-slate-100">
+                <!-- JS 렌더링 -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- 테스트매장2 전용: 단가표 미포함 정책 · 별도 분류 사이드 패널 -->
+          <aside id="dailyUnlistedPolicyPanel" class="hidden border border-slate-200 rounded-xl bg-slate-50/70 p-4 space-y-3 min-w-0">
+            <div class="flex items-center justify-between gap-2 border-b border-slate-200 pb-2.5">
+              <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+                </span>
+                <div>
+                  <h3 class="text-xs font-extrabold text-slate-900">단가표 미포함 · 정책 정리</h3>
+                  <p id="dailyUnlistedPolicySubtitle" class="text-[11px] text-slate-500">단가입력 분석 후 자동 분류됩니다.</p>
+                </div>
+              </div>
+              <button type="button" onclick="clearTest2PolicyNotesForCarrier()" class="text-[11px] font-bold text-slate-400 hover:text-rose-600 transition cursor-pointer" title="현재 통신사 정책 메모 비우기">비우기</button>
+            </div>
+            <div id="dailyUnlistedPolicyBody" class="space-y-2.5 text-xs">
+              <div class="text-center py-6 text-slate-400 text-[11px] leading-relaxed">
+                상단 <strong class="text-indigo-600">단가입력</strong> 버튼으로 이미지와 정책 문구를 넣으면, 미포함 기종·추가지원금·부가/그레이드 조건이 여기에 자동 정리됩니다.
+              </div>
+            </div>
+          </aside>
         </div>
       </div>
     </div>
@@ -2825,6 +2869,228 @@ service cloud.firestore {
       </div>
     </div>
 
+    <!-- ==================== 단가표 이미지 & 정책 AI 자동입력 모달 (테스트매장2 전용) ==================== -->
+    <div id="rebateAutoModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-3 hidden">
+      <div class="bg-white rounded-3xl shadow-2xl max-w-3xl w-full border border-slate-200/90 flex flex-col max-h-[90vh] overflow-hidden">
+        <!-- 모달 헤더 -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/60 shrink-0">
+          <div class="flex items-center gap-3">
+            <span class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-xs shrink-0">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            </span>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="text-sm sm:text-base font-extrabold text-slate-900">단가표 이미지 · 정책 AI 자동입력</h3>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-100 text-amber-800 border border-amber-200">테스트2 시범</span>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-0.5">통신사·단가처 선택 후 단가표 이미지와 별도 정책을 넣으면 공시/선약 리베이트를 자동 계산해 입력합니다.</p>
+            </div>
+          </div>
+          <button type="button" onclick="closeRebateAutoModal()" class="w-8 h-8 rounded-full bg-white hover:bg-slate-100 border border-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center font-bold text-lg transition cursor-pointer">&times;</button>
+        </div>
+
+        <!-- STEP 1: 입력 설정 화면 -->
+        <div id="rebateAutoStepInput" class="p-6 space-y-4 overflow-y-auto flex-1">
+          <!-- 1. 통신사 선택 -->
+          <div class="space-y-2">
+            <label class="text-xs font-extrabold text-slate-800 flex items-center gap-1.5">
+              <span class="w-5 h-5 rounded-md bg-slate-100 text-slate-700 inline-flex items-center justify-center text-[11px] font-black">1</span>
+              <span>통신사 선택</span>
+            </label>
+            <div class="grid grid-cols-3 gap-2">
+              <button type="button" onclick="selectRebateAutoCarrier('SK')" id="rebateAutoCarrierBtn-SK" class="py-2 rounded-xl border-2 text-xs font-black transition cursor-pointer">SK</button>
+              <button type="button" onclick="selectRebateAutoCarrier('KT')" id="rebateAutoCarrierBtn-KT" class="py-2 rounded-xl border-2 text-xs font-black transition cursor-pointer">KT</button>
+              <button type="button" onclick="selectRebateAutoCarrier('LG')" id="rebateAutoCarrierBtn-LG" class="py-2 rounded-xl border-2 text-xs font-black transition cursor-pointer">LG</button>
+            </div>
+          </div>
+
+          <!-- 2. 단가처별 이미지 & 별도 정책 슬롯 (도매 3장 / 온라인 3장 / 기타 K1·특판 4장) -->
+          <div class="space-y-2.5">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <label class="text-xs font-extrabold text-slate-800 flex items-center gap-1.5">
+                <span class="w-5 h-5 rounded-md bg-slate-100 text-slate-700 inline-flex items-center justify-center text-[11px] font-black">2</span>
+                <span>단가처별 이미지 &amp; 별도 정책 넣기 <span class="text-slate-400 font-semibold">(원하는 처만 넣어도 자동 비교 입력)</span></span>
+              </label>
+              <button type="button" onclick="clearAllRebateAutoSlots()" id="btnClearAllRebateSlots" class="hidden text-[11px] font-bold text-rose-600 hover:text-rose-700 transition cursor-pointer">전체 슬롯 비우기</button>
+            </div>
+
+            <!-- 3개 단가처 탭 버튼 -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <button type="button" onclick="selectRebateSlot('wholesale')" id="rebateSlotTab-wholesale" class="p-2.5 rounded-2xl border-2 text-left transition cursor-pointer">
+                <div class="flex items-center justify-between gap-1">
+                  <span class="text-xs font-black">도매</span>
+                  <span id="rebateSlotCountBadge-wholesale" class="px-1.5 py-0.5 rounded-md text-[10px] font-black bg-slate-100 text-slate-600">사진 0/3</span>
+                </div>
+                <div id="rebateSlotMeta-wholesale" class="text-[10px] text-slate-500 mt-1 truncate">가산 +10만 · 정책 미입력</div>
+              </button>
+
+              <button type="button" onclick="selectRebateSlot('online')" id="rebateSlotTab-online" class="p-2.5 rounded-2xl border-2 text-left transition cursor-pointer">
+                <div class="flex items-center justify-between gap-1">
+                  <span class="text-xs font-black">온라인</span>
+                  <span id="rebateSlotCountBadge-online" class="px-1.5 py-0.5 rounded-md text-[10px] font-black bg-slate-100 text-slate-600">사진 0/3</span>
+                </div>
+                <div id="rebateSlotMeta-online" class="text-[10px] text-slate-500 mt-1 truncate">가산 +13만 · 정책 미입력</div>
+              </button>
+
+              <div id="rebateSlotTab-etc" onclick="selectRebateSlot('etc')" class="p-2.5 rounded-2xl border-2 text-left transition cursor-pointer">
+                <div class="flex items-center justify-between gap-1">
+                  <div class="flex items-center gap-1" onclick="event.stopPropagation()">
+                    <span class="text-xs font-black">기타</span>
+                    <select id="rebateEtcChannelSelect" onchange="changeRebateEtcChannel(this.value)" class="px-1.5 py-0.5 rounded-md border border-slate-300 bg-white text-[11px] font-black text-indigo-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer">
+                      <option value="K1">K1</option>
+                      <option value="특판">특판</option>
+                    </select>
+                  </div>
+                  <span id="rebateSlotCountBadge-etc" class="px-1.5 py-0.5 rounded-md text-[10px] font-black bg-slate-100 text-slate-600">사진 0/4</span>
+                </div>
+                <div id="rebateSlotMeta-etc" class="text-[10px] text-slate-500 mt-1 truncate">K1 가산 +0만 · 정책 미입력</div>
+              </div>
+            </div>
+
+            <!-- 활성 슬롯 편집 카드 -->
+            <div class="border border-slate-200 rounded-2xl p-4 bg-slate-50/50 space-y-3.5">
+              <div class="flex flex-wrap items-center justify-between gap-2 bg-indigo-50/80 border border-indigo-200/80 rounded-xl px-3.5 py-2">
+                <div class="flex items-center gap-2 text-xs font-bold text-indigo-950">
+                  <span id="rebateActiveSlotPill" class="px-2 py-0.5 rounded-md bg-indigo-600 text-white text-[11px] font-black">도매</span>
+                  <span>채널 추가 리베이트</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-bold text-slate-500">+</span>
+                  <input type="number" step="0.5" id="rebateAutoChannelBonusInput" oninput="updateTest2ChannelBonusInput(this.value)" class="w-20 px-2.5 py-1 text-center font-black text-sm bg-white border border-indigo-300 rounded-lg text-indigo-900 focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                  <span class="text-xs font-bold text-slate-600">만원</span>
+                  <button type="button" onclick="clearCurrentRebateSlot()" id="btnClearCurrentRebateSlot" class="hidden ml-2 text-[11px] font-bold text-rose-600 hover:text-rose-700 transition cursor-pointer">이 칸 비우기</button>
+                </div>
+              </div>
+
+              <!-- 이미지 붙여넣기 & 파일 선택 (현재 선택된 슬롯 전용) -->
+              <div id="rebateDropZone" tabindex="0"
+                   onclick="focusRebateDropZone(event)"
+                   ondragover="onRebateDropZoneDragOver(event)"
+                   ondragleave="onRebateDropZoneDragLeave(event)"
+                   ondrop="onRebateDropZoneDrop(event)"
+                   class="relative border-2 border-dashed border-slate-300 hover:border-indigo-400 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/15 bg-white hover:bg-indigo-50/20 rounded-2xl p-4 text-center transition outline-none cursor-pointer">
+                <input type="file" id="rebateFileInput" accept="image/*" multiple class="hidden" onchange="handleRebateFileSelect(event)" />
+                <div class="flex flex-col items-center gap-2">
+                  <span class="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                  </span>
+                  <div class="space-y-0.5">
+                    <p class="text-xs font-extrabold text-slate-800">
+                      <span id="rebateDropZoneSlotLabel" class="text-indigo-700">[도매]</span> 영역 클릭 후 <span class="px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 font-black">Ctrl + V</span> 붙여넣기 <span id="rebateDropZoneLimitHint" class="text-slate-500 font-semibold">(최대 3장)</span>
+                    </p>
+                    <p class="text-[11px] text-slate-500">공시·선약 등 단가표 이미지를 드래그하거나 파일 선택 버튼으로 넣을 수 있습니다.</p>
+                  </div>
+                  <button type="button" onclick="event.stopPropagation(); document.getElementById('rebateFileInput').click()" class="mt-0.5 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-300 text-xs font-extrabold text-slate-700 shadow-2xs transition cursor-pointer">
+                    <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                    <span>컴퓨터에서 파일 선택</span>
+                  </button>
+                </div>
+              </div>
+
+              <div id="rebateImagePreviewGrid" class="hidden grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
+
+              <!-- 현재 슬롯 별도 정책 / 미포함 지원금 텍스트 -->
+              <div class="space-y-1.5">
+                <label for="rebatePolicyTextInput" class="text-xs font-extrabold text-slate-700 flex items-center justify-between gap-2">
+                  <span><span id="rebatePolicySlotLabel" class="text-indigo-700">[도매]</span> 별도 정책 · 미포함 지원금 붙여넣기</span>
+                  <span class="text-[11px] font-medium text-slate-400">해당 단가처 공지글 그대로 입력</span>
+                </label>
+                <textarea id="rebatePolicyTextInput" oninput="updateCurrentRebateSlotPolicyText(this.value)" rows="3" placeholder="예: ✅단가표 포함 그레이드 / ❌단가표 미포함 추가지원금정책 / 010 청년·ZEM 정책 등 해당 단가처 공지 내용을 붙여넣으세요..." class="w-full px-3 py-2 bg-white border border-slate-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/15 rounded-xl text-xs text-slate-800 font-medium focus:outline-none resize-y"></textarea>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-x-5 gap-y-2 pt-0.5 text-xs font-bold text-slate-700">
+              <label class="inline-flex items-center gap-1.5 cursor-pointer select-none">
+                <input type="checkbox" id="rebateOptIncludeAddons" checked class="w-3.5 h-3.5 rounded border-slate-300 text-indigo-600 focus:ring-1 focus:ring-indigo-500 cursor-pointer" />
+                <span>하단 부가서비스 전부 가입 반영 (추가금 가산·차감 제외)</span>
+              </label>
+              <label class="inline-flex items-center gap-1.5 cursor-pointer select-none">
+                <input type="checkbox" id="rebateOptIncludePolicy" checked class="w-3.5 h-3.5 rounded border-slate-300 text-indigo-600 focus:ring-1 focus:ring-indigo-500 cursor-pointer" />
+                <span>미포함 추가지원금 정책 반영 (선약 기변 등)</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+            <button type="button" onclick="closeRebateAutoModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition cursor-pointer">취소</button>
+            <button type="button" onclick="runRebateAutoAnalysis()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black shadow-sm transition cursor-pointer">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              <span>AI 단가 분석 및 자동입력</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 2: 로딩 화면 -->
+        <div id="rebateAutoStepLoading" class="hidden p-10 flex flex-col items-center justify-center text-center space-y-5 flex-1">
+          <div class="relative w-16 h-16 flex items-center justify-center">
+            <div class="absolute inset-0 rounded-full border-4 border-indigo-100"></div>
+            <div class="absolute inset-0 rounded-full border-4 border-indigo-600 border-t-transparent animate-spin"></div>
+            <svg class="w-7 h-7 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          </div>
+          <div class="space-y-1.5">
+            <h4 class="text-base font-black text-slate-900">단가표와 정책을 분석하고 있습니다...</h4>
+            <p id="rebateAutoLoadingMsg" class="text-xs font-semibold text-slate-500">이미지 상단 채널·공시/선약 구분 및 기종별 단가를 추출 중입니다.</p>
+          </div>
+        </div>
+
+        <!-- STEP 3: 완료 & 결과 확인 화면 -->
+        <div id="rebateAutoStepResult" class="hidden p-6 space-y-4 overflow-y-auto flex-1">
+          <div id="rebateResultHeaderBanner" class="flex flex-wrap items-center justify-between gap-3 bg-emerald-50 border border-emerald-200 rounded-2xl p-4">
+            <div class="flex items-center gap-3">
+              <span class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <div>
+                <h4 id="rebateResultTitle" class="text-sm font-black text-emerald-950">자동입력 완료!</h4>
+                <p id="rebateResultSubtitle" class="text-xs font-semibold text-emerald-700 mt-0.5"></p>
+              </div>
+            </div>
+            <span id="rebateResultDetectedPill" class="px-2.5 py-1 rounded-lg bg-white border border-emerald-200 text-xs font-black text-emerald-800"></span>
+          </div>
+
+          <div id="rebateResultMismatchBanner" class="hidden flex items-center justify-between gap-3 bg-amber-50 border border-amber-300 rounded-2xl px-4 py-3 text-xs">
+            <div class="flex items-center gap-2 font-bold text-amber-900">
+              <svg class="w-4 h-4 text-amber-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+              <span id="rebateResultMismatchText"></span>
+            </div>
+          </div>
+
+          <!-- 반영된 기종 단가 테이블 -->
+          <div class="border border-slate-200 rounded-2xl overflow-hidden">
+            <div class="bg-slate-50 px-4 py-2 border-b border-slate-200 flex items-center justify-between text-xs font-extrabold text-slate-700">
+              <span>리베이트 입력표 자동 반영 내역</span>
+              <span id="rebateResultFormulaTag" class="text-[11px] font-bold text-indigo-600"></span>
+            </div>
+            <div class="overflow-x-auto max-h-60">
+              <table class="w-full text-xs text-left border-collapse">
+                <thead class="bg-slate-50/80 text-slate-600 font-bold border-b border-slate-200 sticky top-0">
+                  <tr>
+                    <th class="p-2.5">기종</th>
+                    <th class="p-2.5 text-center">공시 (번이 / 기변)</th>
+                    <th class="p-2.5 text-center">선약 (번이 / 기변)</th>
+                    <th class="p-2.5 text-center">단가처</th>
+                    <th class="p-2.5">산정 근거</th>
+                  </tr>
+                </thead>
+                <tbody id="rebateResultPreviewBody" class="divide-y divide-slate-100"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 단가표 미포함 / 별도 정책 요약 -->
+          <div id="rebateResultPolicyBox" class="border border-slate-200 rounded-2xl p-3.5 bg-slate-50/70 space-y-2 text-xs"></div>
+
+          <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-100">
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="showRebateAutoStep('input')" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition cursor-pointer">다시 입력하기</button>
+              <button type="button" id="btnUndoRebateAutoApply" onclick="undoLastRebateAutoApply()" class="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold transition cursor-pointer">방금 반영 되돌리기</button>
+            </div>
+            <button type="button" onclick="confirmCloseRebateAutoResult()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black shadow-xs transition cursor-pointer">완료 (리베이트 입력표 확인)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- ==================== 매장 정보(전화번호/주소) 설정 모달 ==================== -->
     <div id="storeContactModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-4 hidden">
       <div class="bg-white rounded-3xl shadow-2xl p-6 max-w-lg w-full border border-slate-200/80 space-y-4 max-h-[90vh] overflow-y-auto">
@@ -3607,6 +3873,38 @@ service cloud.firestore {
 
     // 단가처 드롭다운 옵션 목록
     const LOCATION_OPTIONS = ["도매", "온라인", "특판", "K1"];
+
+    // ==================== 테스트매장2 전용 시범 기능 상태 ====================
+    let activeDailyRateType = 'gongsi'; // 'gongsi' | 'sunyak'
+    let test2ChannelBonuses = { '도매': 10, '온라인': 13, 'K1': 0, '특판': 0 };
+    let test2PolicyNotes = { SK: null, KT: null, LG: null };
+
+    function isTest2FeatureEnabled() {
+      return currentStoreId === 'test2';
+    }
+
+    function getDefaultSunyakRateMap() {
+      return { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } };
+    }
+
+    function getDefaultSunyakLocMap() {
+      return { SK: { mnp: '도매', chg: '도매' }, KT: { mnp: '도매', chg: '도매' }, LG: { mnp: '도매', chg: '도매' } };
+    }
+
+    function isLowSubModelForSunyakGongsi(d, carrier) {
+      if (!d || !carrier || !isTest2FeatureEnabled()) return false;
+      const subMnp = getEffectiveDeviceSub(d, carrier, 'mnp');
+      const subChg = getEffectiveDeviceSub(d, carrier, 'chg');
+      const hasValid = !isNaN(subMnp) || !isNaN(subChg);
+      if (!hasValid) return false;
+      return (!isNaN(subMnp) && subMnp <= 30) || (!isNaN(subChg) && subChg <= 30);
+    }
+
+    function isAdSunyakForGongsi(d, carrier) {
+      if (!d || !carrier || !isTest2FeatureEnabled()) return false;
+      const cAd = d.ad && d.ad[carrier];
+      return !!(cAd && cAd.sunyakForGongsi);
+    }
 
     // 3. 기기 마스터 데이터
     let devices = [
@@ -5118,12 +5416,20 @@ service cloud.firestore {
       }
     }
 
-    function calcNet(d, carrier, type, mode = 'basic', ignoreSub = false) {
+    function calcNet(d, carrier, type, mode = 'basic', ignoreSub = false, useSunyakRate = false) {
       if (d.coming) return null;
       // 탭 2 해당 통신사 목록에서 X로 삭제된 기종은 자동으로 품절 처리!
       if (!isDeviceActiveInDaily(carrier, d.id)) return null;
 
-      const rateVal = d.rate[carrier][type];
+      let rateVal = (d.rate && d.rate[carrier]) ? d.rate[carrier][type] : undefined;
+      if (useSunyakRate && d.rateSunyak && d.rateSunyak[carrier]) {
+        const sVal = d.rateSunyak[carrier][type];
+        if (sVal !== undefined && sVal !== '' && sVal !== null && sVal !== 0 && sVal !== '0') {
+          rateVal = sVal;
+        } else if (sVal === '품절') {
+          rateVal = '품절';
+        }
+      }
       if (rateVal === '품절' || rateVal === '' || rateVal === null || isNaN(rateVal)) return null;
 
       const release = getEffectiveDevicePrice(d, carrier);
@@ -5148,7 +5454,12 @@ service cloud.firestore {
     }
 
     function calcAdNet(d, carrier, type, mode = adMarginBase) {
-      return calcNet(d, carrier, type, mode, isAdSunyak(d, carrier));
+      const sunyakMode = isAdSunyak(d, carrier);
+      if (isTest2FeatureEnabled()) {
+        const useSunyakRate = sunyakMode || isAdSunyakForGongsi(d, carrier);
+        return calcNet(d, carrier, type, mode, sunyakMode, useSunyakRate);
+      }
+      return calcNet(d, carrier, type, mode, sunyakMode);
     }
 
     function formatNetSimple(val, isLarge = false) {
@@ -5431,11 +5742,58 @@ service cloud.firestore {
     }
 
     // ==================== 2. 대리점 단가 입력표 (TAB 2) 렌더링 ====================
+    function setDailyRateType(rateType) {
+      activeDailyRateType = (rateType === 'sunyak') ? 'sunyak' : 'gongsi';
+      ['gongsi', 'sunyak'].forEach(t => {
+        const btn = document.getElementById(`dailyRateTypeBtn-${t}`);
+        if (!btn) return;
+        if (t === activeDailyRateType) {
+          btn.className = "px-3 py-1 rounded-lg text-xs font-black bg-indigo-600 text-white shadow-2xs transition cursor-pointer";
+        } else {
+          btn.className = "px-3 py-1 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer";
+        }
+      });
+      renderDailyTable();
+    }
+
+    function updateTest2DailyUiVisibility() {
+      const enabled = isTest2FeatureEnabled();
+      const autoBtn = document.getElementById('btnRebateAutoInput');
+      const ctrlBar = document.getElementById('dailyTest2ControlsBar');
+      const policyPanel = document.getElementById('dailyUnlistedPolicyPanel');
+      const splitWrap = document.getElementById('dailyMainSplitContainer');
+
+      if (autoBtn) {
+        autoBtn.classList.toggle('hidden', !enabled);
+        autoBtn.classList.toggle('flex', enabled);
+      }
+      if (ctrlBar) {
+        ctrlBar.classList.toggle('hidden', !enabled);
+        ctrlBar.classList.toggle('flex', enabled);
+      }
+      if (policyPanel) {
+        policyPanel.classList.toggle('hidden', !enabled);
+      }
+      if (splitWrap) {
+        splitWrap.className = enabled
+          ? 'grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_340px] gap-4 items-start'
+          : 'grid grid-cols-1 gap-4 items-start';
+      }
+      if (enabled && typeof renderTest2BonusSummary === 'function') {
+        renderTest2BonusSummary();
+      }
+      if (enabled && typeof renderDailyUnlistedPolicyPanel === 'function') {
+        renderDailyUnlistedPolicyPanel();
+      }
+    }
+
     function renderDailyTable() {
       const dailyBody = document.getElementById('dailyTableBody');
       if (!dailyBody) return;
       dailyBody.innerHTML = '';
 
+      const isTest2 = isTest2FeatureEnabled();
+      const isSunyakView = isTest2 && activeDailyRateType === 'sunyak';
       const dailyRows = getDailyRows(activeInputCarrier);
       dailyRows.forEach((rowId, idx) => {
         const tr = document.createElement('tr');
@@ -5480,8 +5838,23 @@ service cloud.firestore {
         const d = devices.find(x => x.id === rowId);
         if (!d) return;
 
-        const curLocMnp = (d.loc && d.loc[activeInputCarrier]) ? d.loc[activeInputCarrier].mnp : '도매';
-        const curLocChg = (d.loc && d.loc[activeInputCarrier]) ? d.loc[activeInputCarrier].chg : '도매';
+        const rateObj = isSunyakView
+          ? ((d.rateSunyak && d.rateSunyak[activeInputCarrier]) ? d.rateSunyak[activeInputCarrier] : { mnp: 0, chg: 0 })
+          : ((d.rate && d.rate[activeInputCarrier]) ? d.rate[activeInputCarrier] : { mnp: 0, chg: 0 });
+        const altObj = isSunyakView
+          ? ((d.rate && d.rate[activeInputCarrier]) ? d.rate[activeInputCarrier] : { mnp: 0, chg: 0 })
+          : ((d.rateSunyak && d.rateSunyak[activeInputCarrier]) ? d.rateSunyak[activeInputCarrier] : { mnp: 0, chg: 0 });
+        const locObj = isSunyakView
+          ? ((d.locSunyak && d.locSunyak[activeInputCarrier]) ? d.locSunyak[activeInputCarrier] : (d.loc && d.loc[activeInputCarrier]))
+          : (d.loc && d.loc[activeInputCarrier]);
+
+        const curLocMnp = locObj ? locObj.mnp : '도매';
+        const curLocChg = locObj ? locObj.chg : '도매';
+        const altLabel = isSunyakView ? '공시' : '선약';
+        const altMnpHint = (isTest2 && altObj && altObj.mnp !== undefined && altObj.mnp !== '' && altObj.mnp !== 0 && altObj.mnp !== '0')
+          ? `<div class="mt-0.5 text-[10px] font-bold text-slate-400">${altLabel} ${altObj.mnp}</div>` : '';
+        const altChgHint = (isTest2 && altObj && altObj.chg !== undefined && altObj.chg !== '' && altObj.chg !== 0 && altObj.chg !== '0')
+          ? `<div class="mt-0.5 text-[10px] font-bold text-slate-400">${altLabel} ${altObj.chg}</div>` : '';
 
         tr.innerHTML = `
           <td class="p-1.5 text-center text-slate-400 font-medium whitespace-nowrap">
@@ -5522,36 +5895,38 @@ service cloud.firestore {
           <!-- 번이 단가 -->
           <td class="p-2 text-center overflow-visible relative">
             <input type="text"
-                   data-cell-id="rate_${d.id}_${activeInputCarrier}_mnp"
-                   value="${d.rate[activeInputCarrier].mnp}"
-                   data-orig-val="${d.rate[activeInputCarrier].mnp}"
+                   data-cell-id="${isSunyakView ? 'rateSunyak' : 'rate'}_${d.id}_${activeInputCarrier}_mnp"
+                   value="${rateObj.mnp}"
+                   data-orig-val="${rateObj.mnp}"
                    onfocus="this.select(); if(this.dataset.origVal===undefined) this.dataset.origVal = this.value"
                    onkeydown="if(event.key==='Enter') this.blur(); if(event.key==='Escape'){this.value=this.dataset.origVal||''; this.blur();}"
                    oninput="updateRateLive('${d.id}', 'mnp', this.value)"
                    onchange="updateRate('${d.id}', 'mnp', this.value, this)"
-                   class="w-full max-w-[85px] px-2 py-1 text-center font-black bg-white border border-slate-300 rounded-lg text-slate-900 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+                   class="w-full max-w-[85px] px-2 py-1 text-center font-black bg-white border ${isSunyakView ? 'border-amber-300 text-amber-900 focus:ring-amber-500' : 'border-slate-300 text-slate-900 focus:ring-blue-500'} rounded-lg text-sm focus:ring-2 focus:outline-none" />
+            ${altMnpHint}
           </td>
           <!-- 번이 단가처 드롭다운 -->
           <td class="p-2 text-center overflow-visible relative">
-            <select data-cell-id="loc_${d.id}_${activeInputCarrier}_mnp" onchange="updateLocation('${d.id}', 'mnp', this.value)" class="w-full max-w-[85px] px-1 py-1 bg-white border border-slate-300 rounded-lg text-xs font-medium text-slate-700 focus:ring-1 focus:ring-blue-500">
+            <select data-cell-id="${isSunyakView ? 'locSunyak' : 'loc'}_${d.id}_${activeInputCarrier}_mnp" onchange="updateLocation('${d.id}', 'mnp', this.value)" class="w-full max-w-[85px] px-1 py-1 bg-white border border-slate-300 rounded-lg text-xs font-medium text-slate-700 focus:ring-1 focus:ring-blue-500">
               ${LOCATION_OPTIONS.map(opt => `<option value="${opt}" ${opt === curLocMnp ? 'selected' : ''}>${opt}</option>`).join('')}
             </select>
           </td>
           <!-- 기변 단가 -->
           <td class="p-2 text-center overflow-visible relative">
             <input type="text"
-                   data-cell-id="rate_${d.id}_${activeInputCarrier}_chg"
-                   value="${d.rate[activeInputCarrier].chg}"
-                   data-orig-val="${d.rate[activeInputCarrier].chg}"
+                   data-cell-id="${isSunyakView ? 'rateSunyak' : 'rate'}_${d.id}_${activeInputCarrier}_chg"
+                   value="${rateObj.chg}"
+                   data-orig-val="${rateObj.chg}"
                    onfocus="this.select(); if(this.dataset.origVal===undefined) this.dataset.origVal = this.value"
                    onkeydown="if(event.key==='Enter') this.blur(); if(event.key==='Escape'){this.value=this.dataset.origVal||''; this.blur();}"
                    oninput="updateRateLive('${d.id}', 'chg', this.value)"
                    onchange="updateRate('${d.id}', 'chg', this.value, this)"
-                   class="w-full max-w-[85px] px-2 py-1 text-center font-black bg-white border border-slate-300 rounded-lg text-slate-900 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+                   class="w-full max-w-[85px] px-2 py-1 text-center font-black bg-white border ${isSunyakView ? 'border-amber-300 text-amber-900 focus:ring-amber-500' : 'border-slate-300 text-slate-900 focus:ring-blue-500'} rounded-lg text-sm focus:ring-2 focus:outline-none" />
+            ${altChgHint}
           </td>
           <!-- 기변 단가처 드롭다운 -->
           <td class="p-2 text-center overflow-visible relative">
-            <select data-cell-id="loc_${d.id}_${activeInputCarrier}_chg" onchange="updateLocation('${d.id}', 'chg', this.value)" class="w-full max-w-[85px] px-1 py-1 bg-white border border-slate-300 rounded-lg text-xs font-medium text-slate-700 focus:ring-1 focus:ring-blue-500">
+            <select data-cell-id="${isSunyakView ? 'locSunyak' : 'loc'}_${d.id}_${activeInputCarrier}_chg" onchange="updateLocation('${d.id}', 'chg', this.value)" class="w-full max-w-[85px] px-1 py-1 bg-white border border-slate-300 rounded-lg text-xs font-medium text-slate-700 focus:ring-1 focus:ring-blue-500">
               ${LOCATION_OPTIONS.map(opt => `<option value="${opt}" ${opt === curLocChg ? 'selected' : ''}>${opt}</option>`).join('')}
             </select>
           </td>
@@ -5559,6 +5934,7 @@ service cloud.firestore {
         dailyBody.appendChild(tr);
       });
       if (typeof renderPresenceHighlights === 'function') renderPresenceHighlights();
+      if (isTest2 && typeof renderDailyUnlistedPolicyPanel === 'function') renderDailyUnlistedPolicyPanel();
     }
 
     function render() {
@@ -5566,6 +5942,7 @@ service cloud.firestore {
       renderDailyTable();
       renderAdSection();
       renderSettingsTable();
+      if (typeof updateTest2DailyUiVisibility === 'function') updateTest2DailyUiVisibility();
       if (typeof renderAdPosterTable === 'function') {
         renderAdPosterTable();
       }
@@ -5578,9 +5955,16 @@ service cloud.firestore {
       if (typeof markUserAction === 'function') markUserAction();
       const d = devices.find(x => x.id === id);
       if (d) {
-        if (!d.rate) d.rate = { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } };
-        if (!d.rate[activeInputCarrier]) d.rate[activeInputCarrier] = { mnp: 0, chg: 0 };
-        d.rate[activeInputCarrier][type] = val;
+        const isSunyakEdit = isTest2FeatureEnabled() && activeDailyRateType === 'sunyak';
+        if (isSunyakEdit) {
+          if (!d.rateSunyak) d.rateSunyak = getDefaultSunyakRateMap();
+          if (!d.rateSunyak[activeInputCarrier]) d.rateSunyak[activeInputCarrier] = { mnp: 0, chg: 0 };
+          d.rateSunyak[activeInputCarrier][type] = val;
+        } else {
+          if (!d.rate) d.rate = { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } };
+          if (!d.rate[activeInputCarrier]) d.rate[activeInputCarrier] = { mnp: 0, chg: 0 };
+          d.rate[activeInputCarrier][type] = val;
+        }
         renderCalcTable();
         if (currentTab === 'ad') {
           updateActiveAdMarginsOnly();
@@ -5588,8 +5972,15 @@ service cloud.firestore {
         // 최신 리베이트 데이터 로컬스토리지 즉시 안전 백업 (네트워크 지연이나 리로드 시 롤백 원천 차단)
         try {
           const backupRates = {};
-          devices.forEach(item => { if (item.rate) backupRates[item.id] = item.rate; });
+          const backupSunyakRates = {};
+          devices.forEach(item => {
+            if (item.rate) backupRates[item.id] = item.rate;
+            if (item.rateSunyak) backupSunyakRates[item.id] = item.rateSunyak;
+          });
           localStorage.setItem('phone_rates_backup_' + currentStoreId, JSON.stringify(backupRates));
+          if (isTest2FeatureEnabled()) {
+            localStorage.setItem('phone_sunyak_rates_backup_' + currentStoreId, JSON.stringify(backupSunyakRates));
+          }
         } catch(e) {}
         scheduleStoreSave('', '');
       }
@@ -5600,13 +5991,24 @@ service cloud.firestore {
       if (typeof markUserAction === 'function') markUserAction();
       const d = devices.find(x => x.id === id);
       if (d) {
-        if (!d.loc) d.loc = { SK: { mnp: '도매', chg: '도매' }, KT: { mnp: '도매', chg: '도매' }, LG: { mnp: '도매', chg: '도매' } };
-        if (!d.loc[activeInputCarrier]) d.loc[activeInputCarrier] = { mnp: '도매', chg: '도매' };
-        const oldVal = d.loc[activeInputCarrier][type];
-        if (oldVal === val) return;
-        d.loc[activeInputCarrier][type] = val;
+        const isSunyakEdit = isTest2FeatureEnabled() && activeDailyRateType === 'sunyak';
+        let oldVal = '도매';
+        if (isSunyakEdit) {
+          if (!d.locSunyak) d.locSunyak = getDefaultSunyakLocMap();
+          if (!d.locSunyak[activeInputCarrier]) d.locSunyak[activeInputCarrier] = { mnp: '도매', chg: '도매' };
+          oldVal = d.locSunyak[activeInputCarrier][type];
+          if (oldVal === val) return;
+          d.locSunyak[activeInputCarrier][type] = val;
+        } else {
+          if (!d.loc) d.loc = { SK: { mnp: '도매', chg: '도매' }, KT: { mnp: '도매', chg: '도매' }, LG: { mnp: '도매', chg: '도매' } };
+          if (!d.loc[activeInputCarrier]) d.loc[activeInputCarrier] = { mnp: '도매', chg: '도매' };
+          oldVal = d.loc[activeInputCarrier][type];
+          if (oldVal === val) return;
+          d.loc[activeInputCarrier][type] = val;
+        }
         const typeKo = type === 'mnp' ? '번이' : '기변';
-        scheduleStoreSave('대리점 단가 입력', `${d.name} (${activeInputCarrier} ${typeKo}) 단가처: ${oldVal || '도매'} → ${val}`);
+        const kindKo = isSunyakEdit ? '선약 ' : '';
+        scheduleStoreSave('대리점 단가 입력', `${d.name} (${activeInputCarrier} ${kindKo}${typeKo}) 단가처: ${oldVal || '도매'} → ${val}`);
       }
     }
 
@@ -5628,12 +6030,18 @@ service cloud.firestore {
       if (typeof markUserAction === 'function') markUserAction();
       const d = devices.find(x => x.id === id);
       if (d) {
+        const isSunyakEdit = isTest2FeatureEnabled() && activeDailyRateType === 'sunyak';
+        const targetMap = isSunyakEdit
+          ? (d.rateSunyak || (d.rateSunyak = getDefaultSunyakRateMap()))
+          : (d.rate || (d.rate = { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } }));
+        if (!targetMap[activeInputCarrier]) targetMap[activeInputCarrier] = { mnp: 0, chg: 0 };
+
         const origVal = (inputEl && inputEl.dataset && inputEl.dataset.origVal !== undefined)
           ? inputEl.dataset.origVal
-          : (d.rate[activeInputCarrier][type] || '');
+          : (targetMap[activeInputCarrier][type] || '');
         if (String(origVal).trim() === String(val).trim()) return;
 
-        d.rate[activeInputCarrier][type] = val;
+        targetMap[activeInputCarrier][type] = val;
         // 중요: 단가 입력 중인 dailyTable의 DOM을 파괴하지 않고, 연동되는 넷가표만 실시간 갱신하여 인풋 포커스 유지!
         renderCalcTable();
         if (currentTab === 'ad') {
@@ -5642,11 +6050,19 @@ service cloud.firestore {
         // 최신 리베이트 데이터 로컬스토리지 즉시 안전 백업
         try {
           const backupRates = {};
-          devices.forEach(item => { if (item.rate) backupRates[item.id] = item.rate; });
+          const backupSunyakRates = {};
+          devices.forEach(item => {
+            if (item.rate) backupRates[item.id] = item.rate;
+            if (item.rateSunyak) backupSunyakRates[item.id] = item.rateSunyak;
+          });
           localStorage.setItem('phone_rates_backup_' + currentStoreId, JSON.stringify(backupRates));
+          if (isTest2FeatureEnabled()) {
+            localStorage.setItem('phone_sunyak_rates_backup_' + currentStoreId, JSON.stringify(backupSunyakRates));
+          }
         } catch(e) {}
         const typeKo = type === 'mnp' ? '번이' : '기변';
-        scheduleStoreSave('대리점 단가 입력', `${d.name} (${activeInputCarrier} ${typeKo}) 단가: ${origVal || '-'} → ${val}만`);
+        const kindKo = isSunyakEdit ? '선약 ' : '';
+        scheduleStoreSave('대리점 단가 입력', `${d.name} (${activeInputCarrier} ${kindKo}${typeKo}) 단가: ${origVal || '-'} → ${val}만`);
         if (inputEl) inputEl.dataset.origVal = val;
       }
     }
@@ -5769,6 +6185,17 @@ service cloud.firestore {
       if (typeof renderDetailSheet === 'function') renderDetailSheet();
       if (typeof renderAdPosterTable === 'function') renderAdPosterTable();
       scheduleStoreSave('성지특가 광고', `${d.name} (${activeAdCarrier}) 개통기준: ${next ? '공시 → 선약(선택약정)' : '선약 → 공시(공통지원금)'}`);
+    }
+
+    function toggleAdSunyakForGongsi(deviceId, checked) {
+      if (!isTest2FeatureEnabled()) return;
+      const d = devices.find(x => x.id === deviceId);
+      if (!d) return;
+      if (!d.ad) d.ad = {};
+      if (!d.ad[activeAdCarrier]) d.ad[activeAdCarrier] = { mnp: '', chg: '', note: '', hidden: false, tag: '' };
+      d.ad[activeAdCarrier].sunyakForGongsi = !!checked;
+      renderAdSection();
+      scheduleStoreSave('성지특가 광고', `${d.name} (${activeAdCarrier}) 선약단가 공시적용: ${checked ? '적용' : '해제'}`);
     }
 
     function calcAdMargin(d, carrier, type) {
@@ -5951,6 +6378,17 @@ service cloud.firestore {
                     title="${isSunyak ? '현재 선택약정 기준 (클릭 시 공시지원금으로 전환)' : '현재 공시지원금 기준 (클릭 시 선택약정으로 전환)'}">
               ${isSunyak ? '선약' : '공시'}
             </button>
+            ${(!isSunyak && isTest2FeatureEnabled() && isLowSubModelForSunyakGongsi(d, activeAdCarrier)) ? `
+              <div class="mt-1 flex justify-center">
+                <label class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-indigo-50 border border-indigo-200 text-[10px] font-extrabold text-indigo-700 hover:bg-indigo-100 cursor-pointer select-none whitespace-nowrap" title="공시지원금이 30만원 이하인 기종은 선약단가를 공시 조건에 적용해 내방 유도 후 선약으로 상담 전환할 수 있습니다.">
+                  <input type="checkbox"
+                         ${isAdSunyakForGongsi(d, activeAdCarrier) ? 'checked' : ''}
+                         onchange="toggleAdSunyakForGongsi('${d.id}', this.checked)"
+                         class="w-3 h-3 rounded border-indigo-300 text-indigo-600 focus:ring-1 focus:ring-indigo-500 cursor-pointer" />
+                  <span>선약단가 공시적용</span>
+                </label>
+              </div>
+            ` : ''}
           </td>
 
           <!-- 기종 선택 드롭다운 & 광고 표기명 직접 수정 -->
@@ -7039,6 +7477,9 @@ service cloud.firestore {
       if (typeof updateCollaboratorBadgesUI === 'function') {
         updateCollaboratorBadgesUI();
       }
+      if (typeof updateTest2DailyUiVisibility === 'function') {
+        updateTest2DailyUiVisibility();
+      }
     }
 
     function updateTabBadgesForRole() {
@@ -7083,6 +7524,9 @@ service cloud.firestore {
     function resetStoreDeviceData(storeId = currentStoreId, restoreLocalBackup = true) {
       const sId = storeId || 'myeongji';
       let rBackup = null, lBackup = null, aBackup = null;
+      let srBackup = null, slBackup = null;
+      test2ChannelBonuses = { '도매': 10, '온라인': 13, 'K1': 0, '특판': 0 };
+      test2PolicyNotes = { SK: null, KT: null, LG: null };
       if (restoreLocalBackup) {
         try {
           const rs = localStorage.getItem('phone_rates_backup_' + sId);
@@ -7091,12 +7535,22 @@ service cloud.firestore {
           if (ls) lBackup = JSON.parse(ls);
           const as = localStorage.getItem('phone_ads_backup_' + sId);
           if (as) aBackup = JSON.parse(as);
+          const srs = localStorage.getItem('phone_sunyak_rates_backup_' + sId);
+          if (srs) srBackup = JSON.parse(srs);
+          const sls = localStorage.getItem('phone_sunyak_locs_backup_' + sId);
+          if (sls) slBackup = JSON.parse(sls);
+          const bonusSaved = localStorage.getItem('phone_test2_bonuses_' + sId);
+          if (bonusSaved) test2ChannelBonuses = { ...test2ChannelBonuses, ...JSON.parse(bonusSaved) };
+          const notesSaved = localStorage.getItem('phone_test2_policy_notes_' + sId);
+          if (notesSaved) test2PolicyNotes = { ...test2PolicyNotes, ...JSON.parse(notesSaved) };
         } catch (e) {}
       }
       devices.forEach(d => {
         if (!d || d.id === 'empty') return;
         d.rate = (rBackup && rBackup[d.id]) ? JSON.parse(JSON.stringify(rBackup[d.id])) : { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } };
         d.loc = (lBackup && lBackup[d.id]) ? JSON.parse(JSON.stringify(lBackup[d.id])) : { SK: { mnp: '도매', chg: '도매' }, KT: { mnp: '도매', chg: '도매' }, LG: { mnp: '도매', chg: '도매' } };
+        d.rateSunyak = (srBackup && srBackup[d.id]) ? JSON.parse(JSON.stringify(srBackup[d.id])) : getDefaultSunyakRateMap();
+        d.locSunyak = (slBackup && slBackup[d.id]) ? JSON.parse(JSON.stringify(slBackup[d.id])) : getDefaultSunyakLocMap();
         d.ad = (aBackup && aBackup[d.id]) ? JSON.parse(JSON.stringify(aBackup[d.id])) : {
           SK: { mnp: '', chg: '', note: '', hidden: false, sunyak: false, tag: d.tag || '' },
           KT: { mnp: '', chg: '', note: '', hidden: false, sunyak: false, tag: d.tag || '' },
@@ -7796,6 +8250,32 @@ service cloud.firestore {
                   }
                 });
               }
+              if (data.sunyakRates && typeof data.sunyakRates === 'object') {
+                Object.keys(data.sunyakRates).forEach(deviceId => {
+                  const localD = devices.find(d => d.id === deviceId);
+                  if (localD && data.sunyakRates[deviceId]) {
+                    localD.rateSunyak = data.sunyakRates[deviceId];
+                  }
+                });
+                try { localStorage.setItem('phone_sunyak_rates_backup_' + currentStoreId, JSON.stringify(data.sunyakRates)); } catch(e) {}
+              }
+              if (data.sunyakLocs && typeof data.sunyakLocs === 'object') {
+                Object.keys(data.sunyakLocs).forEach(deviceId => {
+                  const localD = devices.find(d => d.id === deviceId);
+                  if (localD && data.sunyakLocs[deviceId]) {
+                    localD.locSunyak = data.sunyakLocs[deviceId];
+                  }
+                });
+                try { localStorage.setItem('phone_sunyak_locs_backup_' + currentStoreId, JSON.stringify(data.sunyakLocs)); } catch(e) {}
+              }
+              if (data.test2ChannelBonuses && typeof data.test2ChannelBonuses === 'object') {
+                test2ChannelBonuses = { '도매': 10, '온라인': 13, 'K1': 0, '특판': 0, ...data.test2ChannelBonuses };
+                try { localStorage.setItem('phone_test2_bonuses_' + currentStoreId, JSON.stringify(test2ChannelBonuses)); } catch(e) {}
+              }
+              if (data.test2PolicyNotes && typeof data.test2PolicyNotes === 'object') {
+                test2PolicyNotes = { SK: null, KT: null, LG: null, ...data.test2PolicyNotes };
+                try { localStorage.setItem('phone_test2_policy_notes_' + currentStoreId, JSON.stringify(test2PolicyNotes)); } catch(e) {}
+              }
               if (data.ads) {
                 Object.keys(data.ads).forEach(deviceId => {
                   const localD = devices.find(d => d.id === deviceId);
@@ -7921,16 +8401,28 @@ service cloud.firestore {
       const rates = {};
       const locs = {};
       const ads = {};
+      const sunyakRates = {};
+      const sunyakLocs = {};
       devices.forEach(d => {
         if (!d || d.id === 'empty') return;
         rates[d.id] = d.rate;
         locs[d.id] = d.loc;
         ads[d.id] = d.ad;
+        if (sId === 'test2') {
+          sunyakRates[d.id] = d.rateSunyak || getDefaultSunyakRateMap();
+          sunyakLocs[d.id] = d.locSunyak || getDefaultSunyakLocMap();
+        }
       });
       try {
         localStorage.setItem('phone_rates_backup_' + sId, JSON.stringify(rates));
         localStorage.setItem('phone_locs_backup_' + sId, JSON.stringify(locs));
         localStorage.setItem('phone_ads_backup_' + sId, JSON.stringify(ads));
+        if (sId === 'test2') {
+          localStorage.setItem('phone_sunyak_rates_backup_' + sId, JSON.stringify(sunyakRates));
+          localStorage.setItem('phone_sunyak_locs_backup_' + sId, JSON.stringify(sunyakLocs));
+          localStorage.setItem('phone_test2_bonuses_' + sId, JSON.stringify(test2ChannelBonuses));
+          localStorage.setItem('phone_test2_policy_notes_' + sId, JSON.stringify(test2PolicyNotes));
+        }
         localStorage.setItem('phone_calc_rows_backup_' + sId, JSON.stringify(calcRows));
         localStorage.setItem('phone_calc_rows_' + sId, JSON.stringify(calcRows));
         localStorage.setItem('phone_daily_carrier_rows_' + sId, JSON.stringify(dailyCarrierRows));
@@ -7940,12 +8432,12 @@ service cloud.firestore {
         localStorage.setItem('phone_s26_hike_' + sId, JSON.stringify(storeS26Hike));
         localStorage.setItem('phone_ad_margin_base_' + sId, adMarginBase);
       } catch(e) {}
-      return { rates, locs, ads };
+      return { rates, locs, ads, sunyakRates, sunyakLocs };
     }
 
     function executeStoreSave(targetStoreId, category = '', description = '') {
       const sId = targetStoreId || currentStoreId || 'myeongji';
-      const { rates, locs, ads } = saveStoreLocalBackups(sId);
+      const { rates, locs, ads, sunyakRates, sunyakLocs } = saveStoreLocalBackups(sId);
 
       const storeLabel = getStoreMeta(sId).name;
       const actor = currentRole === 'master' ? `본사 (마스터 - ${storeLabel})` : currentStoreName;
@@ -7975,6 +8467,12 @@ service cloud.firestore {
         locs: locs,
         ads: ads
       };
+      if (sId === 'test2') {
+        payload.sunyakRates = sunyakRates;
+        payload.sunyakLocs = sunyakLocs;
+        payload.test2ChannelBonuses = JSON.parse(JSON.stringify(test2ChannelBonuses));
+        payload.test2PolicyNotes = JSON.parse(JSON.stringify(test2PolicyNotes));
+      }
       if (posterSettings) payload.posterSettings = posterSettings;
       if (cardSettings) payload.cardSettings = cardSettings;
       if (detailSettingsToSave) payload.detailSettings = detailSettingsToSave;
@@ -18423,6 +18921,803 @@ JSON 규격:
       colorPresetsCache = list;
       renderColorPresetLoadList();
       persistColorPresetsToCloud();
+    }
+
+    // ==================== 테스트매장2 전용: 단가표 이미지 · 정책 AI 자동입력 엔진 ====================
+    let rebateAutoState = {
+      carrier: 'SK',
+      activeSlot: 'wholesale', // 'wholesale' | 'online' | 'etc'
+      etcChannel: 'K1',        // 'K1' | '특판'
+      slots: {
+        wholesale: { maxImages: 3, images: [], policyText: '' },
+        online: { maxImages: 3, images: [], policyText: '' },
+        etc: { maxImages: 4, images: [], policyText: '' }
+      },
+      lastBackup: null
+    };
+
+    function getRebateSlotChannelName(slotKey) {
+      if (slotKey === 'wholesale') return '도매';
+      if (slotKey === 'online') return '온라인';
+      return rebateAutoState.etcChannel || 'K1';
+    }
+
+    function openRebateAutoModal() {
+      if (!isTest2FeatureEnabled()) {
+        alert('해당 기능은 테스트매장2 시범 운영 중입니다.');
+        return;
+      }
+      rebateAutoState.carrier = activeInputCarrier || 'SK';
+      selectRebateAutoCarrier(rebateAutoState.carrier);
+      const etcSel = document.getElementById('rebateEtcChannelSelect');
+      if (etcSel) etcSel.value = rebateAutoState.etcChannel || 'K1';
+      selectRebateSlot(rebateAutoState.activeSlot || 'wholesale');
+      renderAllRebateSlotTabMeta();
+      showRebateAutoStep('input');
+
+      const modal = document.getElementById('rebateAutoModal');
+      if (modal) modal.classList.remove('hidden');
+      setTimeout(() => {
+        const dz = document.getElementById('rebateDropZone');
+        if (dz) dz.focus();
+      }, 60);
+    }
+
+    function closeRebateAutoModal() {
+      const modal = document.getElementById('rebateAutoModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function showRebateAutoStep(step) {
+      const steps = {
+        input: document.getElementById('rebateAutoStepInput'),
+        loading: document.getElementById('rebateAutoStepLoading'),
+        result: document.getElementById('rebateAutoStepResult')
+      };
+      Object.keys(steps).forEach(k => {
+        if (!steps[k]) return;
+        steps[k].classList.toggle('hidden', k !== step);
+        if (step === 'loading' && k === 'loading') steps[k].classList.add('flex');
+        else if (k === 'loading') steps[k].classList.remove('flex');
+      });
+    }
+
+    function selectRebateAutoCarrier(carrier) {
+      rebateAutoState.carrier = carrier;
+      const styles = {
+        SK: 'border-rose-500 bg-rose-50 text-rose-700 shadow-2xs',
+        KT: 'border-blue-500 bg-blue-50 text-blue-700 shadow-2xs',
+        LG: 'border-pink-500 bg-pink-50 text-pink-700 shadow-2xs'
+      };
+      ['SK', 'KT', 'LG'].forEach(c => {
+        const btn = document.getElementById(`rebateAutoCarrierBtn-${c}`);
+        if (!btn) return;
+        btn.className = (c === carrier)
+          ? `py-2 rounded-xl border-2 text-xs font-black transition cursor-pointer ${styles[c]}`
+          : 'py-2 rounded-xl border-2 border-slate-200 bg-white hover:bg-slate-50 text-xs font-bold text-slate-500 transition cursor-pointer';
+      });
+    }
+
+    function selectRebateSlot(slotKey) {
+      if (!rebateAutoState.slots[slotKey]) slotKey = 'wholesale';
+      rebateAutoState.activeSlot = slotKey;
+      const chName = getRebateSlotChannelName(slotKey);
+      const slotData = rebateAutoState.slots[slotKey];
+
+      ['wholesale', 'online', 'etc'].forEach(k => {
+        const tab = document.getElementById(`rebateSlotTab-${k}`);
+        if (!tab) return;
+        tab.className = (k === slotKey)
+          ? 'p-2.5 rounded-2xl border-2 border-indigo-600 bg-indigo-50/70 text-indigo-950 text-left shadow-2xs transition cursor-pointer'
+          : 'p-2.5 rounded-2xl border-2 border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-left transition cursor-pointer';
+      });
+
+      const pill = document.getElementById('rebateActiveSlotPill');
+      const bonusInput = document.getElementById('rebateAutoChannelBonusInput');
+      const dzSlotLabel = document.getElementById('rebateDropZoneSlotLabel');
+      const dzLimitHint = document.getElementById('rebateDropZoneLimitHint');
+      const polSlotLabel = document.getElementById('rebatePolicySlotLabel');
+      const polTextarea = document.getElementById('rebatePolicyTextInput');
+
+      if (pill) pill.innerText = chName;
+      if (bonusInput) bonusInput.value = (test2ChannelBonuses && test2ChannelBonuses[chName] !== undefined) ? test2ChannelBonuses[chName] : 0;
+      if (dzSlotLabel) dzSlotLabel.innerText = `[${chName}]`;
+      if (dzLimitHint) dzLimitHint.innerText = `(최대 ${slotData.maxImages}장)`;
+      if (polSlotLabel) polSlotLabel.innerText = `[${chName}]`;
+      if (polTextarea) polTextarea.value = slotData.policyText || '';
+
+      renderRebateImagePreviews();
+      renderAllRebateSlotTabMeta();
+    }
+
+    function changeRebateEtcChannel(val) {
+      rebateAutoState.etcChannel = (val === '특판') ? '특판' : 'K1';
+      selectRebateSlot('etc');
+    }
+
+    function updateCurrentRebateSlotPolicyText(val) {
+      const slot = rebateAutoState.slots[rebateAutoState.activeSlot];
+      if (!slot) return;
+      slot.policyText = val;
+      renderAllRebateSlotTabMeta();
+    }
+
+    function updateTest2ChannelBonusInput(val) {
+      const ch = getRebateSlotChannelName(rebateAutoState.activeSlot);
+      const num = parseFloat(val);
+      test2ChannelBonuses[ch] = isNaN(num) ? 0 : num;
+      renderTest2BonusSummary();
+      renderAllRebateSlotTabMeta();
+      scheduleStoreSave('', '');
+    }
+
+    function renderAllRebateSlotTabMeta() {
+      let totalImgs = 0;
+      let totalText = 0;
+      ['wholesale', 'online', 'etc'].forEach(k => {
+        const s = rebateAutoState.slots[k];
+        const ch = getRebateSlotChannelName(k);
+        const bonus = Number(test2ChannelBonuses[ch] || 0);
+        const imgCount = s.images.length;
+        const hasPol = (s.policyText || '').trim().length > 0;
+        totalImgs += imgCount;
+        if (hasPol) totalText++;
+
+        const badge = document.getElementById(`rebateSlotCountBadge-${k}`);
+        const meta = document.getElementById(`rebateSlotMeta-${k}`);
+        if (badge) {
+          badge.innerText = `사진 ${imgCount}/${s.maxImages}`;
+          badge.className = imgCount > 0
+            ? 'px-1.5 py-0.5 rounded-md text-[10px] font-black bg-indigo-600 text-white'
+            : 'px-1.5 py-0.5 rounded-md text-[10px] font-black bg-slate-100 text-slate-600';
+        }
+        if (meta) {
+          const sign = bonus >= 0 ? `+${bonus}만` : `${bonus}만`;
+          meta.innerText = `${k === 'etc' ? ch + ' ' : ''}가산 ${sign} · ${hasPol ? '정책 입력됨 ✓' : '정책 미입력'}`;
+        }
+      });
+
+      const curSlot = rebateAutoState.slots[rebateAutoState.activeSlot];
+      const clearCurBtn = document.getElementById('btnClearCurrentRebateSlot');
+      const clearAllBtn = document.getElementById('btnClearAllRebateSlots');
+      if (clearCurBtn) clearCurBtn.classList.toggle('hidden', !(curSlot.images.length > 0 || (curSlot.policyText || '').trim().length > 0));
+      if (clearAllBtn) clearAllBtn.classList.toggle('hidden', !(totalImgs > 0 || totalText > 0));
+    }
+
+    function renderTest2BonusSummary() {
+      const wrap = document.getElementById('dailyTest2BonusSummary');
+      if (!wrap) return;
+      wrap.innerHTML = LOCATION_OPTIONS.map(ch => {
+        const bonus = Number(test2ChannelBonuses[ch] || 0);
+        const sign = bonus > 0 ? `+${bonus}만` : (bonus < 0 ? `${bonus}만` : '±0만');
+        return `<span class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-slate-700">${ch} ${sign}</span>`;
+      }).join('');
+    }
+
+    function focusRebateDropZone(e) {
+      const dz = document.getElementById('rebateDropZone');
+      if (dz) dz.focus();
+    }
+
+    function onRebateDropZoneDragOver(e) {
+      e.preventDefault();
+      const dz = document.getElementById('rebateDropZone');
+      if (dz) dz.classList.add('border-indigo-500', 'bg-indigo-50/70');
+    }
+
+    function onRebateDropZoneDragLeave(e) {
+      const dz = document.getElementById('rebateDropZone');
+      if (dz) dz.classList.remove('border-indigo-500', 'bg-indigo-50/70');
+    }
+
+    function onRebateDropZoneDrop(e) {
+      e.preventDefault();
+      onRebateDropZoneDragLeave(e);
+      const files = e.dataTransfer && e.dataTransfer.files ? Array.from(e.dataTransfer.files) : [];
+      appendRebateImageFiles(files);
+    }
+
+    function handleRebateFileSelect(e) {
+      const files = e.target && e.target.files ? Array.from(e.target.files) : [];
+      appendRebateImageFiles(files);
+      e.target.value = '';
+    }
+
+    function compressRebateImageFile(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error('이미지 파일을 읽지 못했습니다.'));
+        reader.onload = () => {
+          const img = new Image();
+          img.onerror = () => reject(new Error('올바른 이미지 파일이 아닙니다.'));
+          img.onload = () => {
+            const maxDim = 1800;
+            let w = img.naturalWidth || img.width;
+            let h = img.naturalHeight || img.height;
+            if (w > maxDim || h > maxDim) {
+              const scale = Math.min(maxDim / w, maxDim / h);
+              w = Math.round(w * scale);
+              h = Math.round(h * scale);
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, w, h);
+            ctx.drawImage(img, 0, 0, w, h);
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+            const base64 = dataUrl.split(',')[1] || '';
+            resolve({
+              id: 'img_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
+              name: file.name || '붙여넣기 이미지',
+              dataUrl,
+              base64,
+              mimeType: 'image/jpeg'
+            });
+          };
+          img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function appendRebateImageFiles(files, slotKey = rebateAutoState.activeSlot) {
+      const slot = rebateAutoState.slots[slotKey];
+      if (!slot) return;
+      const imageFiles = (files || []).filter(f => f && ((f.type && f.type.startsWith('image/')) || /\.(png|jpe?g|webp|bmp|gif)$/i.test(f.name || '')));
+      if (imageFiles.length === 0) return;
+
+      const remaining = slot.maxImages - slot.images.length;
+      if (remaining <= 0) {
+        alert(`[${getRebateSlotChannelName(slotKey)}] 이미지는 최대 ${slot.maxImages}장까지만 넣을 수 있습니다.`);
+        return;
+      }
+      const toAdd = imageFiles.slice(0, remaining);
+      if (imageFiles.length > remaining) {
+        alert(`[${getRebateSlotChannelName(slotKey)}] 최대 ${slot.maxImages}장 제한으로 앞의 ${remaining}장만 추가됩니다.`);
+      }
+      for (const f of toAdd) {
+        try {
+          const processed = await compressRebateImageFile(f);
+          slot.images.push(processed);
+        } catch (err) {
+          console.warn('Rebate image load warning:', err);
+        }
+      }
+      renderRebateImagePreviews();
+      renderAllRebateSlotTabMeta();
+    }
+
+    function removeRebateAutoImage(idx) {
+      const slot = rebateAutoState.slots[rebateAutoState.activeSlot];
+      if (!slot) return;
+      slot.images.splice(idx, 1);
+      renderRebateImagePreviews();
+      renderAllRebateSlotTabMeta();
+    }
+
+    function clearCurrentRebateSlot() {
+      const slot = rebateAutoState.slots[rebateAutoState.activeSlot];
+      if (!slot) return;
+      slot.images = [];
+      slot.policyText = '';
+      const polTextarea = document.getElementById('rebatePolicyTextInput');
+      if (polTextarea) polTextarea.value = '';
+      renderRebateImagePreviews();
+      renderAllRebateSlotTabMeta();
+    }
+
+    function clearAllRebateAutoSlots() {
+      ['wholesale', 'online', 'etc'].forEach(k => {
+        rebateAutoState.slots[k].images = [];
+        rebateAutoState.slots[k].policyText = '';
+      });
+      const polTextarea = document.getElementById('rebatePolicyTextInput');
+      if (polTextarea) polTextarea.value = '';
+      renderRebateImagePreviews();
+      renderAllRebateSlotTabMeta();
+    }
+
+    function renderRebateImagePreviews() {
+      const grid = document.getElementById('rebateImagePreviewGrid');
+      if (!grid) return;
+      const slot = rebateAutoState.slots[rebateAutoState.activeSlot];
+      const imgs = slot ? slot.images : [];
+      if (imgs.length === 0) {
+        grid.classList.add('hidden');
+        grid.innerHTML = '';
+        return;
+      }
+      const chName = getRebateSlotChannelName(rebateAutoState.activeSlot);
+      grid.classList.remove('hidden');
+      grid.innerHTML = imgs.map((item, idx) => `
+        <div class="relative group border border-slate-200 rounded-xl overflow-hidden bg-white shadow-2xs">
+          <img src="${item.dataUrl}" alt="${escapeHtml(chName)} ${idx + 1}" class="w-full h-24 object-cover object-top" />
+          <div class="px-2 py-1 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-1">
+            <span class="text-[10px] font-bold text-slate-600 truncate">${escapeHtml(chName)} #${idx + 1}</span>
+          </div>
+          <button type="button" onclick="removeRebateAutoImage(${idx})" class="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-slate-900/75 hover:bg-rose-600 text-white text-xs font-black flex items-center justify-center shadow transition cursor-pointer" title="이미지 삭제">&times;</button>
+        </div>
+      `).join('');
+    }
+
+    // 모달이 열려 있을 때 Ctrl+V 이미지를 현재 활성화된 단가처 슬롯(도매/온라인/기타)으로 캡처
+    document.addEventListener('paste', function(e) {
+      const modal = document.getElementById('rebateAutoModal');
+      if (!modal || modal.classList.contains('hidden')) return;
+      const stepInput = document.getElementById('rebateAutoStepInput');
+      if (!stepInput || stepInput.classList.contains('hidden')) return;
+
+      const items = e.clipboardData && e.clipboardData.items ? Array.from(e.clipboardData.items) : [];
+      const imgFiles = items
+        .filter(it => it.type && it.type.startsWith('image/'))
+        .map(it => it.getAsFile())
+        .filter(Boolean);
+      if (imgFiles.length > 0) {
+        e.preventDefault();
+        appendRebateImageFiles(imgFiles, rebateAutoState.activeSlot);
+      }
+    });
+
+    function buildTargetDevicesPromptSummary(carrier) {
+      return devices
+        .filter(d => d && d.id !== 'empty')
+        .map(d => {
+          const effPrice = getEffectiveDevicePrice(d, carrier);
+          const subMnp = getEffectiveDeviceSub(d, carrier, 'mnp');
+          const subChg = getEffectiveDeviceSub(d, carrier, 'chg');
+          let aliasHint = '';
+          if (d.id === 's26') aliasHint = ' (주의: 출고가 140.36만=갤26new/SM-S942N_NEW, 125.4만=갤26/SM-S942N 중 현재 매장 출고가 ' + effPrice + '만에 맞는 행을 매칭)';
+          if (d.id === 'fold8') aliasHint = ' (폴드8 / SM-F971N, 512G 아님)';
+          if (d.id === 'flip8') aliasHint = ' (플립8 / SM-F776N, 512G 아님)';
+          if (d.id === 'fold8u') aliasHint = ' (폴드8울트라 / SM-F976N, 512G 아님)';
+          if (d.id === 'ip17') aliasHint = ' (아17 / IP17_256GB_NEW)';
+          if (d.id === 'ipair') aliasHint = ' (아17에어 / IPA_256GB)';
+          if (d.id === 'ip17p') aliasHint = ' (아17프로 / IP17P_256GG)';
+          if (d.id === 'iphone18_m37r') aliasHint = ' (아18프로 / IP18P_256GB)';
+          if (d.id === 'iphone18_ocr3') aliasHint = ' (아18프로맥스 / IP18PM_256GB)';
+          if (d.id === 'iphonedu_l7y0') aliasHint = ' (아18듀오 / IP_DUO_256GW)';
+          return `- id="${d.id}", name="${d.name}", 현재매장출고가=${effPrice}만, 공시지원금(번이/기변)=${subMnp}/${subChg}만${aliasHint}`;
+        })
+        .join('\n');
+    }
+
+    function buildRebatePromptForSlot(carrier, channel, channelBonus, policyText, imgCount) {
+      const planCfg = (typeof carrierConditions !== 'undefined' && carrierConditions[carrier])
+        ? `${carrierConditions[carrier].planName || ''} (${carrierConditions[carrier].plan || ''})`
+        : '';
+      const catalogText = buildTargetDevicesPromptSummary(carrier);
+      return `
+당신은 대한민국 휴대폰 판매점의 통신사(${carrier}) 일일 대리점 단가표(리베이트) 및 정책 정산 전문가입니다.
+첨부된 단가표 이미지(${imgCount}장)와 아래 별도 정책 공지글을 읽고, **우리 매장 기종 목록에 등록된 모델만** 정확히 매칭하여 아래 JSON 형식으로 반환하세요. (마크다운 코드블록 백틱 없이 순수 JSON만 반환)
+
+[선택된 조건]
+- 통신사: ${carrier}
+- 단가처 슬롯: ${channel}
+- 매장 기준 메인 요금제: ${planCfg || '플래그십 메인 최고구간 (예: SK 프리미엄 109 / P_109구간, KT 초이스/스페셜, LG 프리미어 등)'}
+
+[우리 매장 기종 목록 — 반드시 이 id 목록에 있는 모델만 matchedDevices에 포함하고, 목록에 없는 구형 모델(예: 아이폰16, 저가 A시리즈 등)은 matchedDevices에서 제외하세요]
+${catalogText}
+
+[첨부 별도 정책 문구]
+${policyText ? policyText : '(별도 붙여넣기 텍스트 없음)'}
+
+★ 절대 준수 판독 규칙 (오답 방지 핵심):
+1. 이미지 좌측 상단의 단가처 표기(예: "SK_도매", "SK_온라인", "KT_도매" 등)와 날짜, 각 이미지가 공시개통인지 선약개통인지 정확히 읽어주세요.
+2. 표의 칸 밀림 주의: "신규" 열이 비어있는 경우가 매우 많습니다! 반드시 각 열 헤더의 "MNP(번호이동)"와 "기변(기기변경)" 열에 정확히 위치한 숫자(만원 단위)를 그대로 추출하세요. 해당 칸이 빈칸이거나 품절이면 null을 반환하세요.
+3. rawGongsi / rawSunyak 에는 이미지 표에 적힌 **원본 1차 단가(만원 단위 숫자)** 만 넣으세요. (채널 가산금 ${channelBonus}만 원, 하단 부가, 미포함 추가지원금은 절대로 raw 숫자에 미리 더하지 마세요 — 앱 JS가 정확히 가산합니다!)
+4. 만약 한 화면에 SK_Y / SK_D 처럼 하위 라인이 2개 있는 경우, 표준 수치(차이가 있으면 두 라인 중 유리하거나 기준에 맞는 수치를 취하고 note에 차이 기록)를 넣어주세요.
+5. 이미지 하단의 부가서비스/특별점 부가 판독:
+   - "✅ ... 반영 (미가입시 차감)" 처럼 이미 표 숫자에 반영된 항목은 addonBonusMan에 더하지 마세요 (모두 가입 조건이므로 차감=0).
+   - "추가 5000" 또는 "보험 가입시 추가 5,000원" 처럼 가입 시 **추가로 더해지는 금액**만 만원 단위로 변환해 addonBonusMan(예: 5000원 -> 0.5)에 넣으세요.
+6. 별도 정책 문구에서 번이/기변 일반 개통에 실제로 더할 수 있는 추가지원금 정책이 있으면 policyAdjustments 배열에 구조화하고, "010 신규", "010 청년", "010 ZEM", "✅단가표 포함 그레이드" 조건은 unlistedPolicies에 분류해 주세요.
+
+JSON 응답 스키마:
+{
+  "sheetDate": "이미지 상단 날짜 (예: 2026. 11. 26)",
+  "detectedHeader": "이미지 좌측 상단 표기 (예: SK_도매)",
+  "detectedChannel": "도매 | 온라인 | K1 | 특판 중 이미지에서 판독한 단가처 (불명확하면 빈 문자열)",
+  "planTier": "기준 요금제 구간명 (예: P_109구간 프리미엄 109)",
+  "addonBonusMan": 0.5,
+  "addonSummary": "하단 부가 판독 요약",
+  "matchedDevices": [
+    {
+      "deviceId": "매장 기종 id",
+      "sheetModelName": "이미지 속 모델 표기명",
+      "rawGongsiMnp": 22,
+      "rawGongsiChg": 19,
+      "rawSunyakMnp": 47,
+      "rawSunyakChg": 65,
+      "note": "특이사항"
+    }
+  ],
+  "policyAdjustments": [
+    {
+      "title": "미포함 선약 기변 추가지원금",
+      "contractType": "sunyak",
+      "moveType": "chg",
+      "amountMan": 5,
+      "includeDeviceIds": [],
+      "excludeDeviceIds": [],
+      "conditionNote": "조건 요약"
+    }
+  ],
+  "unlistedPolicies": [
+    {
+      "category": "추가지원금 | 010신규/청년/ZEM | 그레이드/유의사항 | 부가서비스",
+      "title": "정책 제목",
+      "detail": "상세 조건",
+      "badgeText": "+25만 등 핵심 수치"
+    }
+  ]
+}
+`;
+    }
+
+    async function runRebateAutoAnalysis() {
+      const apiKey = geminiApiKey || DEFAULT_GEMINI_KEY;
+      if (!apiKey) {
+        alert('AI 분석 키가 없습니다. 관리자에게 문의해 주세요.');
+        return;
+      }
+
+      const activeSlots = ['wholesale', 'online', 'etc']
+        .map(k => ({
+          key: k,
+          channel: getRebateSlotChannelName(k),
+          images: rebateAutoState.slots[k].images || [],
+          policyText: (rebateAutoState.slots[k].policyText || '').trim()
+        }))
+        .filter(s => s.images.length > 0 || s.policyText.length > 0);
+
+      if (activeSlots.every(s => s.images.length === 0)) {
+        alert('도매 · 온라인 · 기타 슬롯 중 최소 한 곳에 단가표 이미지를 넣어주세요!');
+        return;
+      }
+
+      const carrier = rebateAutoState.carrier || 'SK';
+      const includeAddons = !!document.getElementById('rebateOptIncludeAddons')?.checked;
+      const includePolicy = !!document.getElementById('rebateOptIncludePolicy')?.checked;
+
+      showRebateAutoStep('loading');
+      const loadingMsg = document.getElementById('rebateAutoLoadingMsg');
+
+      try {
+        const channelResults = [];
+        for (let i = 0; i < activeSlots.length; i++) {
+          const slot = activeSlots[i];
+          const chBonus = Number(test2ChannelBonuses[slot.channel] || 0);
+          if (loadingMsg) {
+            loadingMsg.innerText = `[${i + 1}/${activeSlots.length}] ${carrier} ${slot.channel} 단가표(${slot.images.length}장)와 정책 문구 분석 중...`;
+          }
+          if (slot.images.length === 0) {
+            // 텍스트만 있는 경우에도 정책 정리용으로 파싱
+            const parts = [{ text: buildRebatePromptForSlot(carrier, slot.channel, chBonus, slot.policyText, 0) }];
+            const data = await executeGeminiGenerateContent(apiKey, parts);
+            const parsed = extractJsonFromGeminiResponse(data);
+            channelResults.push({ channel: slot.channel, channelBonus: chBonus, parsed });
+          } else {
+            const parts = slot.images.map(img => ({ inlineData: { mimeType: img.mimeType || 'image/jpeg', data: img.base64 } }));
+            parts.push({ text: buildRebatePromptForSlot(carrier, slot.channel, chBonus, slot.policyText, slot.images.length) });
+            const data = await executeGeminiGenerateContent(apiKey, parts);
+            const parsed = extractJsonFromGeminiResponse(data);
+            channelResults.push({ channel: slot.channel, channelBonus: chBonus, parsed });
+          }
+        }
+
+        if (loadingMsg) loadingMsg.innerText = '단가처별 최고 리베이트를 비교 산정하고 입력표에 반영하는 중...';
+        applyMultiChannelRebatesToTest2Store(channelResults, {
+          carrier,
+          includeAddons,
+          includePolicy
+        });
+      } catch (err) {
+        console.error('Rebate auto analysis error:', err);
+        showRebateAutoStep('input');
+        alert('단가표 분석 중 오류가 발생했습니다:\n' + (err.message || err));
+      }
+    }
+
+    function applyMultiChannelRebatesToTest2Store(channelResults, opts) {
+      const { carrier, includeAddons, includePolicy } = opts;
+      const resultsArr = Array.isArray(channelResults) ? channelResults : [];
+      const round2 = (n) => Math.round(n * 100) / 100;
+
+      // 되돌리기 스냅샷 저장
+      rebateAutoState.lastBackup = {
+        carrier,
+        rates: JSON.parse(JSON.stringify(devices.map(d => ({
+          id: d.id,
+          rate: d.rate ? d.rate[carrier] : null,
+          loc: d.loc ? d.loc[carrier] : null,
+          rateSunyak: d.rateSunyak ? d.rateSunyak[carrier] : null,
+          locSunyak: d.locSunyak ? d.locSunyak[carrier] : null
+        })))),
+        policyNote: test2PolicyNotes[carrier] ? JSON.parse(JSON.stringify(test2PolicyNotes[carrier])) : null
+      };
+
+      // 기종별·채널별 후보 수집 맵: candidates[deviceId][gongsiMnp | gongsiChg | sunyakMnp | sunyakChg] = [{ channel, total, formula }]
+      const candidatesByDev = {};
+      const mismatches = [];
+      const channelSections = [];
+
+      resultsArr.forEach(entry => {
+        const ch = entry.channel;
+        const chBonus = Number(entry.channelBonus || 0);
+        const parsed = entry.parsed || {};
+        const addonBonus = includeAddons ? (Number(parsed.addonBonusMan) || 0) : 0;
+        const adjustments = (includePolicy && Array.isArray(parsed.policyAdjustments)) ? parsed.policyAdjustments : [];
+        const matched = Array.isArray(parsed.matchedDevices) ? parsed.matchedDevices : [];
+        const unlisted = Array.isArray(parsed.unlistedPolicies) ? parsed.unlistedPolicies : [];
+
+        const detectedCh = (parsed.detectedChannel || '').trim();
+        if (detectedCh && LOCATION_OPTIONS.includes(detectedCh) && detectedCh !== ch) {
+          mismatches.push(`[${ch}] 슬롯 이미지 상단 표기가 '${parsed.detectedHeader || detectedCh}'로 인식됨`);
+        }
+
+        channelSections.push({
+          channel: ch,
+          channelBonus: chBonus,
+          sheetDate: parsed.sheetDate || '',
+          detectedHeader: parsed.detectedHeader || `${carrier}_${ch}`,
+          planTier: parsed.planTier || '',
+          addonSummary: parsed.addonSummary || '',
+          addonBonus,
+          unlistedPolicies: unlisted,
+          appliedAdjustments: adjustments
+        });
+
+        matched.forEach(item => {
+          const d = devices.find(x => x.id === item.deviceId);
+          if (!d) return;
+          if (!candidatesByDev[d.id]) {
+            candidatesByDev[d.id] = { d, gongsiMnp: [], gongsiChg: [], sunyakMnp: [], sunyakChg: [], notes: [] };
+          }
+          if (item.note) candidatesByDev[d.id].notes.push(`${ch}: ${item.note}`);
+
+          const getAdjSum = (contractType, moveType) => {
+            return adjustments.reduce((acc, adj) => {
+              const cMatch = !adj.contractType || adj.contractType === 'all' || adj.contractType === contractType;
+              const mMatch = !adj.moveType || adj.moveType === 'all' || adj.moveType === moveType;
+              if (!cMatch || !mMatch) return acc;
+              const inc = Array.isArray(adj.includeDeviceIds) && adj.includeDeviceIds.length > 0;
+              if (inc && !adj.includeDeviceIds.includes(d.id)) return acc;
+              const exc = Array.isArray(adj.excludeDeviceIds) && adj.excludeDeviceIds.includes(d.id);
+              if (exc) return acc;
+              return acc + (Number(adj.amountMan) || 0);
+            }, 0);
+          };
+
+          const pushCandidate = (bucketKey, rawVal, contractType, moveType) => {
+            if (rawVal === null || rawVal === undefined || rawVal === '' || isNaN(Number(rawVal))) return;
+            const base = Number(rawVal);
+            const pol = getAdjSum(contractType, moveType);
+            const total = round2(base + chBonus + addonBonus + pol);
+            const parts = [`1차 ${base}`];
+            if (chBonus) parts.push(`${ch} ${chBonus > 0 ? '+' : ''}${chBonus}`);
+            if (addonBonus) parts.push(`부가 +${addonBonus}`);
+            if (pol) parts.push(`정책 +${pol}`);
+            candidatesByDev[d.id][bucketKey].push({
+              channel: ch,
+              total,
+              formula: `${ch}(${total}: ${parts.join(' ')})`
+            });
+          };
+
+          pushCandidate('gongsiMnp', item.rawGongsiMnp, 'gongsi', 'mnp');
+          pushCandidate('gongsiChg', item.rawGongsiChg, 'gongsi', 'chg');
+          pushCandidate('sunyakMnp', item.rawSunyakMnp, 'sunyak', 'mnp');
+          pushCandidate('sunyakChg', item.rawSunyakChg, 'sunyak', 'chg');
+        });
+      });
+
+      const pickBest = (list) => {
+        if (!list || list.length === 0) return null;
+        return list.reduce((best, cur) => (cur.total > best.total ? cur : best), list[0]);
+      };
+
+      const previewRows = [];
+      Object.values(candidatesByDev).forEach(entry => {
+        const d = entry.d;
+        if (!d.rate) d.rate = { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } };
+        if (!d.rate[carrier]) d.rate[carrier] = { mnp: 0, chg: 0 };
+        if (!d.loc) d.loc = { SK: { mnp: '도매', chg: '도매' }, KT: { mnp: '도매', chg: '도매' }, LG: { mnp: '도매', chg: '도매' } };
+        if (!d.loc[carrier]) d.loc[carrier] = { mnp: '도매', chg: '도매' };
+        if (!d.rateSunyak) d.rateSunyak = getDefaultSunyakRateMap();
+        if (!d.rateSunyak[carrier]) d.rateSunyak[carrier] = { mnp: 0, chg: 0 };
+        if (!d.locSunyak) d.locSunyak = getDefaultSunyakLocMap();
+        if (!d.locSunyak[carrier]) d.locSunyak[carrier] = { mnp: '도매', chg: '도매' };
+
+        const bestGMnp = pickBest(entry.gongsiMnp);
+        const bestGChg = pickBest(entry.gongsiChg);
+        const bestSMnp = pickBest(entry.sunyakMnp);
+        const bestSChg = pickBest(entry.sunyakChg);
+
+        if (bestGMnp) { d.rate[carrier].mnp = bestGMnp.total; d.loc[carrier].mnp = bestGMnp.channel; }
+        if (bestGChg) { d.rate[carrier].chg = bestGChg.total; d.loc[carrier].chg = bestGChg.channel; }
+        if (bestSMnp) { d.rateSunyak[carrier].mnp = bestSMnp.total; d.locSunyak[carrier].mnp = bestSMnp.channel; }
+        if (bestSChg) { d.rateSunyak[carrier].chg = bestSChg.total; d.locSunyak[carrier].chg = bestSChg.channel; }
+
+        const compareText = [];
+        if (entry.gongsiMnp.length) compareText.push(`공시번이[${entry.gongsiMnp.map(x => x.formula).join(' vs ')}]`);
+        if (entry.gongsiChg.length) compareText.push(`공시기변[${entry.gongsiChg.map(x => x.formula).join(' vs ')}]`);
+        if (entry.sunyakMnp.length) compareText.push(`선약번이[${entry.sunyakMnp.map(x => x.formula).join(' vs ')}]`);
+        if (entry.sunyakChg.length) compareText.push(`선약기변[${entry.sunyakChg.map(x => x.formula).join(' vs ')}]`);
+
+        previewRows.push({
+          name: d.name,
+          gongsiMnpHtml: bestGMnp ? `${bestGMnp.total} <span class="text-[10px] px-1 py-0.5 rounded bg-slate-100 text-slate-600">${escapeHtml(bestGMnp.channel)}</span>` : '-',
+          gongsiChgHtml: bestGChg ? `${bestGChg.total} <span class="text-[10px] px-1 py-0.5 rounded bg-slate-100 text-slate-600">${escapeHtml(bestGChg.channel)}</span>` : '-',
+          sunyakMnpHtml: bestSMnp ? `${bestSMnp.total} <span class="text-[10px] px-1 py-0.5 rounded bg-amber-100 text-amber-800">${escapeHtml(bestSMnp.channel)}</span>` : '-',
+          sunyakChgHtml: bestSChg ? `${bestSChg.total} <span class="text-[10px] px-1 py-0.5 rounded bg-amber-100 text-amber-800">${escapeHtml(bestSChg.channel)}</span>` : '-',
+          channelSummary: [bestGMnp?.channel, bestGChg?.channel].filter((v, i, a) => v && a.indexOf(v) === i).join(' / ') || '-',
+          detailText: compareText.join(' · ') + (entry.notes.length ? ` (${entry.notes.join(', ')})` : '')
+        });
+      });
+
+      const usedChannels = channelSections.map(s => s.channel);
+      test2PolicyNotes[carrier] = {
+        channelSummary: usedChannels.join(' · '),
+        updatedAt: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }),
+        sections: channelSections
+      };
+
+      const titleEl = document.getElementById('rebateResultTitle');
+      const subEl = document.getElementById('rebateResultSubtitle');
+      const pillEl = document.getElementById('rebateResultDetectedPill');
+      const mismatchBanner = document.getElementById('rebateResultMismatchBanner');
+      const mismatchText = document.getElementById('rebateResultMismatchText');
+      const formulaTag = document.getElementById('rebateResultFormulaTag');
+      const previewBody = document.getElementById('rebateResultPreviewBody');
+      const policyBox = document.getElementById('rebateResultPolicyBox');
+
+      if (titleEl) titleEl.innerText = `${carrier} 단가처별 비교 자동입력 완료 (${previewRows.length}개 기종)`;
+      if (subEl) subEl.innerText = `${usedChannels.join(' + ')} 채널 중 번이/기변별 최고 단가처 자동 채택`;
+      if (pillEl) pillEl.innerText = channelSections.map(s => `${s.channel}${s.sheetDate ? '(' + s.sheetDate + ')' : ''}`).join(' · ');
+      if (formulaTag) formulaTag.innerText = channelSections.map(s => `${s.channel} +${s.channelBonus}만`).join(' / ');
+
+      if (mismatchBanner && mismatchText) {
+        if (mismatches.length > 0) {
+          mismatchText.innerText = mismatches.join(' / ') + ' — 필요 시 되돌리기 후 슬롯을 확인해 주세요.';
+          mismatchBanner.classList.remove('hidden');
+        } else {
+          mismatchBanner.classList.add('hidden');
+        }
+      }
+
+      if (previewBody) {
+        previewBody.innerHTML = previewRows.length === 0
+          ? `<tr><td colspan="5" class="p-6 text-center text-slate-400">매장 기종 목록과 매칭된 모델이 없습니다.</td></tr>`
+          : previewRows.map(r => `
+            <tr class="hover:bg-slate-50/70">
+              <td class="p-2.5 font-extrabold text-slate-800 whitespace-nowrap">${escapeHtml(r.name)}</td>
+              <td class="p-2.5 text-center font-black text-slate-900 whitespace-nowrap">${r.gongsiMnpHtml} / ${r.gongsiChgHtml}</td>
+              <td class="p-2.5 text-center font-black text-amber-700 whitespace-nowrap">${r.sunyakMnpHtml} / ${r.sunyakChgHtml}</td>
+              <td class="p-2.5 text-center font-bold text-indigo-700 whitespace-nowrap">${escapeHtml(r.channelSummary)}</td>
+              <td class="p-2.5 text-[11px] text-slate-500">${escapeHtml(r.detailText)}</td>
+            </tr>
+          `).join('');
+      }
+
+      if (policyBox) {
+        policyBox.innerHTML = buildUnlistedPolicyHtml(test2PolicyNotes[carrier]);
+      }
+
+      activeInputCarrier = carrier;
+      setCarrierInput(carrier);
+      render();
+      scheduleStoreSave('AI 단가 자동입력', `${carrier} (${usedChannels.join('·')}) 단가표 ${previewRows.length}개 기종 최고단가 비교 반영`);
+      showRebateAutoStep('result');
+    }
+
+    function buildUnlistedPolicyHtml(noteObj) {
+      if (!noteObj) {
+        return `<div class="text-center py-6 text-slate-400 text-[11px] leading-relaxed">상단 <strong class="text-indigo-600">단가입력</strong> 버튼으로 도매·온라인·기타 단가표와 정책을 넣으면, 미포함 기종·추가지원금·부가/그레이드 조건이 여기에 단가처별로 정리됩니다.</div>`;
+      }
+
+      // 다중 섹션 포맷 & 단일 레거시 호환
+      const sections = Array.isArray(noteObj.sections) && noteObj.sections.length > 0
+        ? noteObj.sections
+        : [noteObj];
+
+      const catBadgeColors = {
+        '추가지원금': 'bg-emerald-100 text-emerald-800',
+        '010신규/청년/ZEM': 'bg-purple-100 text-purple-800',
+        '그레이드/유의사항': 'bg-amber-100 text-amber-800',
+        '부가서비스': 'bg-sky-100 text-sky-800'
+      };
+
+      const topBar = `
+        <div class="flex flex-wrap items-center justify-between gap-1.5 bg-white border border-slate-200 rounded-xl px-3 py-2">
+          <span class="text-[11px] font-black text-slate-800">${escapeHtml(noteObj.channelSummary || sections.map(s => s.channel).join(' · '))}</span>
+          <span class="text-[10px] font-bold text-indigo-600">${noteObj.updatedAt || ''} 반영</span>
+        </div>
+      `;
+
+      const secHtml = sections.map(sec => {
+        const list = Array.isArray(sec.unlistedPolicies) ? sec.unlistedPolicies : [];
+        const adj = Array.isArray(sec.appliedAdjustments) ? sec.appliedAdjustments : [];
+        return `
+          <div class="border border-slate-200/90 rounded-xl bg-white/80 p-2.5 space-y-2">
+            <div class="flex items-center justify-between gap-1 border-b border-slate-100 pb-1.5">
+              <span class="px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200 text-[11px] font-black">${escapeHtml(sec.channel || sec.detectedHeader || '채널')}</span>
+              <span class="text-[10px] font-semibold text-slate-400 truncate">${escapeHtml(sec.sheetDate || '')} ${sec.planTier ? '· ' + escapeHtml(sec.planTier) : ''}</span>
+            </div>
+            ${adj.length > 0 ? `
+              <div class="bg-emerald-50/80 border border-emerald-200 rounded-lg p-2 space-y-1">
+                <div class="text-[10px] font-black text-emerald-800">자동 가산 반영</div>
+                ${adj.map(a => `
+                  <div class="flex items-start justify-between gap-2 text-[11px] text-emerald-950 font-semibold">
+                    <span>• ${escapeHtml(a.title || a.conditionNote || '추가지원금')}</span>
+                    <span class="font-black text-emerald-700 shrink-0">+${a.amountMan}만</span>
+                  </div>
+                `).join('')}
+              </div>
+            ` : ''}
+            ${list.length > 0 ? list.map(u => {
+              const cls = catBadgeColors[u.category] || 'bg-slate-200 text-slate-700';
+              return `
+                <div class="bg-slate-50/70 border border-slate-200/80 rounded-lg p-2 space-y-0.5">
+                  <div class="flex items-center justify-between gap-1.5">
+                    <span class="px-1.5 py-0.5 rounded text-[10px] font-black ${cls}">${escapeHtml(u.category || '기타')}</span>
+                    ${u.badgeText ? `<span class="text-[11px] font-black text-indigo-700">${escapeHtml(u.badgeText)}</span>` : ''}
+                  </div>
+                  <div class="text-xs font-extrabold text-slate-900">${escapeHtml(u.title || '')}</div>
+                  <div class="text-[11px] text-slate-600 leading-snug">${escapeHtml(u.detail || '')}</div>
+                </div>
+              `;
+            }).join('') : `<div class="text-[11px] text-slate-400 text-center py-1">미포함 별도 정책 없음</div>`}
+          </div>
+        `;
+      }).join('');
+
+      return topBar + `<div class="space-y-2.5">${secHtml}</div>`;
+    }
+
+    function renderDailyUnlistedPolicyPanel() {
+      const bodyEl = document.getElementById('dailyUnlistedPolicyBody');
+      const subEl = document.getElementById('dailyUnlistedPolicySubtitle');
+      if (!bodyEl) return;
+      const noteObj = test2PolicyNotes && test2PolicyNotes[activeInputCarrier];
+      if (subEl) {
+        subEl.innerText = noteObj
+          ? `${activeInputCarrier} · ${noteObj.channelSummary || '단가처별 정리 완료'}`
+          : `${activeInputCarrier} 단가입력 후 자동 분류됩니다.`;
+      }
+      bodyEl.innerHTML = buildUnlistedPolicyHtml(noteObj);
+    }
+
+    function clearTest2PolicyNotesForCarrier() {
+      if (!isTest2FeatureEnabled()) return;
+      if (!test2PolicyNotes) test2PolicyNotes = { SK: null, KT: null, LG: null };
+      test2PolicyNotes[activeInputCarrier] = null;
+      renderDailyUnlistedPolicyPanel();
+      scheduleStoreSave('', '');
+    }
+
+    function undoLastRebateAutoApply() {
+      const snap = rebateAutoState.lastBackup;
+      if (!snap) return;
+      const c = snap.carrier;
+      snap.rates.forEach(r => {
+        const d = devices.find(x => x.id === r.id);
+        if (!d) return;
+        if (r.rate && d.rate) d.rate[c] = JSON.parse(JSON.stringify(r.rate));
+        if (r.loc && d.loc) d.loc[c] = JSON.parse(JSON.stringify(r.loc));
+        if (r.rateSunyak && d.rateSunyak) d.rateSunyak[c] = JSON.parse(JSON.stringify(r.rateSunyak));
+        if (r.locSunyak && d.locSunyak) d.locSunyak[c] = JSON.parse(JSON.stringify(r.locSunyak));
+      });
+      test2PolicyNotes[c] = snap.policyNote ? JSON.parse(JSON.stringify(snap.policyNote)) : null;
+      rebateAutoState.lastBackup = null;
+      render();
+      scheduleStoreSave('AI 단가 자동입력 되돌리기', `${c} 자동 반영 직전 상태로 복구`);
+      closeRebateAutoModal();
+    }
+
+    function confirmCloseRebateAutoResult() {
+      closeRebateAutoModal();
+      render();
     }
 
   </script>
