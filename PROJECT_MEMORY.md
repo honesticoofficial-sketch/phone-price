@@ -4059,3 +4059,5 @@ service cloud.firestore {
    - 기존 `2026. 11. 26` 업데이트 안내 문구에서 지점명·PIN 번호를 모두 제거하고, 기능 중심의 안전한 공통 안내 문구로 교체.
 2. **자동 보안 마스킹 필터 (`sanitizeSiteUpdateText`) 탑재**:
    - `renderSiteUpdatesModal()` 렌더링 시 등록된 모든 매장 PIN(`STORES_CONFIG`), 마스터 PIN, 6자리 숫자 코드, 전화번호(`010-...`), API 키/토큰 패턴을 자동으로 차단·마스킹하여 실수로라도 민감정보가 화면에 노출되지 않도록 2중 방어선 구축.
+3. **상단 중복 접속 배지 정리 (`#userBadge` · `#myWorkerBadge` 숨김)**:
+   - 일반 매장 화면 상단에서 `접속자: ● 명지1 (나)` 배지와 중복되던 앞쪽 2개 배지(`#userBadge`, `#myWorkerBadge`)를 숨겨 깔끔한 단일 접속자 표시로 간소화.
