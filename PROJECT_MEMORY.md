@@ -4018,3 +4018,21 @@ service cloud.firestore {
    - **시세표/제휴카드 메모리 잔류 차단**: `loadAdPosterSettings()`에서 매장 전환 시 `posterDeviceRows`/`posterMarginMode`를 해당 매장 저장값으로 즉시 재초기화하고, `loadCardSettings()` 및 `getSafeStoreContact()`가 타 매장(`myeongji`)으로 폴백되지 않도록 보강.
 3. **Edge CDP 브라우저 자동화 검증 완료 (`verify_test_stores.ps1`)**:
    - `111111` / `222222` / `152411` / `152422` / `103105` 전 계정 로그인, 매장별 요청함·히스토리·제휴카드·단가복사 차단 및 마스터 전환/복사 모달 동작 100% PASS (JS 콘솔 오류 0건).
+
+---
+
+## 99. 📢 [제99장] 일반 매장 `공시&출고가 설정` 숨김 & 기종별 공시지원금 변동내역 모달·당일 변동 색상 알림 구축 (2026-11-27)
+
+1. **`공시 & 출고가 설정` 버튼 마스터(`103105`) 전용 노출 제어**:
+   - 상단 헤더의 `공시 & 출고가 설정` 버튼(`#btnMasterSettings`)을 일반 매장(`명지점`, `광안점`, `테스트매장1`, `테스트매장2`)에서는 완전히 숨기고 오직 **본사 마스터(`103105`) 계정에서만 노출**되도록 개선.
+2. **전 매장 공용 `공시지원금 변동내역` 버튼 & 당일 변동 색상 표시 (`#btnSubsidyChanges`)**:
+   - 헤더에 `공시지원금 변동내역` 버튼을 신설하여 모든 매장이 기종별 공통지원금·출고가 변동 이력을 즉시 조회 가능.
+   - **당일 기준(KST) 변동내역 존재 시**: 버튼 배경·테두리가 로즈(Rose) 계열로 강조되고 옆에 펄스 점(`animate-pulse`)이 포함된 **`오늘 N`** 색상 배지 자동 표시 (당일 변동 없으면 깔끔한 기본 스타일 유지).
+3. **플래그십 전용 필터 & 안내 문구 및 날짜별 아코디언 UI (`#subsidyChangesModal`)**:
+   - 모달 상단에 **`*공통지원금 변동내역은 갤럭시 S시리즈,FE시리즈,아이폰,폴더블류 모델만 표시됩니다.`** 안내 문구 상시 표시.
+   - 키즈폰, 갤럭시 A시리즈, 워치, 태블릿, 외산폰은 자동 제외(`isSubsidyChangeTargetModel`)되고 플래그십 대상 모델만 날짜별 아코디언(`지원금 상승` / `지원금 하락` / `NEW 출시` / `출고가 변동`)으로 깔끔하게 그룹화 표시.
+4. **실시간 동기화 연동 (`global_config/subsidy_changes` + Vercel `/api/subsidy-changes.js` + `scripts/sync_subsidy_changes.ps1`)**:
+   - Firestore `global_config/subsidy_changes` 실시간 구독 및 본사 마스터 설정/동기화 수정 시 자동 기록 연동.
+   - Vercel 서버리스 API(`/api/subsidy-changes.js`) 및 로컬 3사 크롤링 비교 스크립트(`scripts/sync_subsidy_changes.ps1`) 구축.
+5. **Edge CDP 브라우저 검증 완료 (`verify_subsidy_changes.ps1`)**:
+   - 일반 매장(`152411`) 설정 버튼 숨김, 마스터(`103105`) 설정 버튼 노출, 당일 변동 유무에 따른 색상 배지 전환, 안내 문구 및 키즈폰/A시리즈 제외 필터링 100% PASS.
