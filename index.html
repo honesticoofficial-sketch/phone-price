@@ -8905,11 +8905,11 @@ service cloud.firestore {
       },
       {
         date: '2026. 11. 26',
-        tag: '매장 격리',
-        title: '테스트매장1 · 테스트매장2 독립 운영 및 매장별 데이터 완전 분리',
+        tag: '보안 강화',
+        title: '매장별 데이터 독립 운영 및 보안 격리 강화',
         items: [
-          '테스트매장1(111111) · 테스트매장2(222222)를 추가해 실제 영업 매장과 섞이지 않도록 100% 독립 분리했습니다.',
-          '각 매장 로그인 시 본인 매장의 단가·변경내역·요청함·제휴카드·상세내역만 보이도록 보안을 강화했습니다.'
+          '지점별 단가·광고·제휴카드·상세내역 데이터가 서로 섞이지 않도록 매장별 저장 공간을 완전히 분리했습니다.',
+          '각 매장 로그인 시 본인 매장의 데이터·변경내역·요청함만 조회되도록 보안 격리를 강화했습니다.'
         ]
       },
       {
@@ -8944,6 +8944,29 @@ service cloud.firestore {
       if (modal) modal.classList.add('hidden');
     }
 
+    function sanitizeSiteUpdateText(rawText) {
+      let text = String(rawText || '');
+      // 1. 등록된 매장 PIN 및 마스터 PIN 절대 노출 차단
+      try {
+        const sensitivePins = [];
+        if (typeof MASTER_PIN !== 'undefined' && MASTER_PIN) sensitivePins.push(String(MASTER_PIN));
+        if (typeof STORES_CONFIG !== 'undefined' && STORES_CONFIG) {
+          Object.values(STORES_CONFIG).forEach(st => {
+            if (st && st.pin) sensitivePins.push(String(st.pin));
+          });
+        }
+        sensitivePins.forEach(pin => {
+          if (pin) text = text.split(pin).join('******');
+        });
+      } catch (e) {}
+      // 2. 6자리 P코드/비밀번호 패턴, 전화번호, API 키, 토큰 패턴 자동 마스킹
+      text = text.replace(/\(\s*\d{4,8}\s*\)/g, '');
+      text = text.replace(/\b\d{6}\b/g, '******');
+      text = text.replace(/0\d{1,2}[-\s]?\d{3,4}[-\s]?\d{4}/g, '[연락처 비공개]');
+      text = text.replace(/(AIza[0-9A-Za-z_-]{15,}|ghp_[0-9A-Za-z]{15,})/g, '[보안키 비공개]');
+      return text.replace(/\s{2,}/g, ' ').trim();
+    }
+
     function renderSiteUpdatesModal() {
       const container = document.getElementById('siteUpdatesContainer');
       if (!container) return;
@@ -8951,13 +8974,13 @@ service cloud.firestore {
         <div class="p-4 rounded-2xl border ${idx === 0 ? 'border-purple-200 bg-purple-50/40' : 'border-slate-200 bg-white'} space-y-2">
           <div class="flex items-center justify-between gap-2 flex-wrap">
             <div class="flex items-center gap-2">
-              <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black ${idx === 0 ? 'bg-purple-600 text-white' : 'bg-slate-100 text-slate-700'}">${escapeHtml(upd.date)}</span>
-              <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold ${idx === 0 ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-500'}">${escapeHtml(upd.tag)}</span>
+              <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black ${idx === 0 ? 'bg-purple-600 text-white' : 'bg-slate-100 text-slate-700'}">${escapeHtml(sanitizeSiteUpdateText(upd.date))}</span>
+              <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold ${idx === 0 ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-500'}">${escapeHtml(sanitizeSiteUpdateText(upd.tag))}</span>
             </div>
           </div>
-          <h4 class="text-sm font-extrabold text-slate-900">${escapeHtml(upd.title)}</h4>
+          <h4 class="text-sm font-extrabold text-slate-900">${escapeHtml(sanitizeSiteUpdateText(upd.title))}</h4>
           <ul class="space-y-1 text-xs text-slate-600 list-disc pl-4 leading-relaxed">
-            ${upd.items.map(line => `<li>${escapeHtml(line)}</li>`).join('')}
+            ${upd.items.map(line => `<li>${escapeHtml(sanitizeSiteUpdateText(line))}</li>`).join('')}
           </ul>
         </div>
       `).join('');
