@@ -856,15 +856,16 @@
           </div>
         </div>
 
-        <!-- 테스트매장2 전용: 공시단가 / 선약단가 전환 및 채널 가산 요약 바 -->
+        <!-- 테스트매장2 전용: 기종별 단가 기준 안내 · 전체 보기 보조 & 채널 가산 요약 바 -->
         <div id="dailyTest2ControlsBar" class="hidden flex-wrap items-center justify-between gap-3 bg-slate-50/90 border border-slate-200 rounded-xl px-3.5 py-2">
           <div class="flex items-center gap-2 flex-wrap">
-            <span class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">단가 구분</span>
+            <span class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">보기 기준</span>
             <div class="inline-flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200 shadow-2xs">
-              <button type="button" id="dailyRateTypeBtn-gongsi" onclick="setDailyRateType('gongsi')" class="px-3 py-1 rounded-lg text-xs font-black bg-indigo-600 text-white shadow-2xs transition cursor-pointer">공시단가</button>
-              <button type="button" id="dailyRateTypeBtn-sunyak" onclick="setDailyRateType('sunyak')" class="px-3 py-1 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer">선약단가</button>
+              <button type="button" id="dailyRateTypeBtn-auto" onclick="setDailyRateType('auto')" class="px-3 py-1 rounded-lg text-xs font-black bg-indigo-600 text-white shadow-2xs transition cursor-pointer">기종별 선택</button>
+              <button type="button" id="dailyRateTypeBtn-gongsi" onclick="setDailyRateType('gongsi')" class="px-3 py-1 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer">공시단가 전체</button>
+              <button type="button" id="dailyRateTypeBtn-sunyak" onclick="setDailyRateType('sunyak')" class="px-3 py-1 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer">선약단가 전체</button>
             </div>
-            <span class="text-[11px] text-slate-500 font-medium hidden sm:inline">공시·선약 단가를 각각 보관하고 광고가격에서 자동 연동합니다.</span>
+            <span class="text-[11px] text-slate-500 font-medium hidden sm:inline">표 안의 기종별 [공시/선약] · 30만 미만 [선약단가 공시적용] 체크와 넷가·광고가 자동 연동됩니다.</span>
           </div>
           <div id="dailyTest2BonusSummary" class="flex items-center gap-1.5 flex-wrap text-[11px] font-bold text-slate-600">
             <span class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-slate-700">도매 +10만</span>
@@ -905,6 +906,13 @@
                     <span class="flex items-center">
                       기종 선택 (드롭다운)
                       <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>기종 선택 드롭다운</b><br>단가를 입력할 모델을 선택합니다. 넷가표와 완전히 독립적이므로 자유롭게 순서를 구성할 수 있습니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>기종 선택 드롭다운</b><br>단가를 입력할 모델을 선택합니다. 넷가표와 완전히 독립적이므로 자유롭게 순서를 구성할 수 있습니다.')" title="기종 선택 안내">?</button>
+                    </span>
+                    <div class="column-resizer" onmousedown="initColResize(event, this, 'dailyTable')" title="경계선을 드래그하여 열 너비 조절"></div>
+                  </th>
+                  <th id="dailyThModeCol" class="hidden relative p-2.5 text-center" style="width: 124px;">
+                    <span class="flex items-center justify-center">
+                      기준 (공시/선약)
+                      <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>기종별 공시 · 선약 · 30만 미만 체크</b><br>기종마다 [공시]와 [선약]을 따로 선택할 수 있습니다.<br>• 공시지원금 30만원 미만 기종은 <b>[선약단가 공시적용]</b> 체크 시 공통지원금을 유지한 채 선약단가로 계산됩니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>기종별 공시 · 선약 · 30만 미만 체크</b><br>기종마다 [공시]와 [선약]을 따로 선택할 수 있습니다.<br>• 공시지원금 30만원 미만 기종은 <b>[선약단가 공시적용]</b> 체크 시 공통지원금을 유지한 채 선약단가로 계산됩니다.')" title="기준 안내">?</button>
                     </span>
                     <div class="column-resizer" onmousedown="initColResize(event, this, 'dailyTable')" title="경계선을 드래그하여 열 너비 조절"></div>
                   </th>
@@ -3949,7 +3957,7 @@ service cloud.firestore {
     const LOCATION_OPTIONS = ["도매", "온라인", "특판", "K1"];
 
     // ==================== 테스트매장2 전용 시범 기능 상태 ====================
-    let activeDailyRateType = 'gongsi'; // 'gongsi' | 'sunyak'
+    let activeDailyRateType = 'auto'; // 'auto' (기종별 기준) | 'gongsi' | 'sunyak'
     let test2ChannelBonuses = { '도매': 10, '온라인': 13, 'K1': 0, '특판': 0 };
     let test2PolicyNotes = { SK: null, KT: null, LG: null };
 
@@ -3971,13 +3979,21 @@ service cloud.firestore {
       const subChg = getEffectiveDeviceSub(d, carrier, 'chg');
       const hasValid = !isNaN(subMnp) || !isNaN(subChg);
       if (!hasValid) return false;
-      return (!isNaN(subMnp) && subMnp <= 30) || (!isNaN(subChg) && subChg <= 30);
+      return (!isNaN(subMnp) && subMnp < 30) || (!isNaN(subChg) && subChg < 30);
     }
 
     function isAdSunyakForGongsi(d, carrier) {
       if (!d || !carrier || !isTest2FeatureEnabled()) return false;
       const cAd = d.ad && d.ad[carrier];
       return !!(cAd && cAd.sunyakForGongsi);
+    }
+
+    function getDailyRowActiveRateType(d, carrier) {
+      if (!isTest2FeatureEnabled()) return 'gongsi';
+      if (activeDailyRateType === 'gongsi' || activeDailyRateType === 'sunyak') {
+        return activeDailyRateType;
+      }
+      return (d && (isAdSunyak(d, carrier) || isAdSunyakForGongsi(d, carrier))) ? 'sunyak' : 'gongsi';
     }
 
     // 3. 기기 마스터 데이터
@@ -5551,14 +5567,26 @@ service cloud.firestore {
     function renderCell(d, carrier, type) {
       if (d.coming) return `<span class="text-slate-400">출시전</span>`;
 
-      const basicNet = calcNet(d, carrier, type, 'basic');
-      const allNet = calcNet(d, carrier, type, 'all');
+      const isTest2 = isTest2FeatureEnabled();
+      const sunyakMode = isTest2 && isAdSunyak(d, carrier);
+      const sunyakForGongsi = isTest2 && !sunyakMode && isAdSunyakForGongsi(d, carrier);
+      const useSunyakRate = sunyakMode || sunyakForGongsi;
+
+      const basicNet = calcNet(d, carrier, type, 'basic', sunyakMode, useSunyakRate);
+      const allNet = calcNet(d, carrier, type, 'all', sunyakMode, useSunyakRate);
 
       if (basicNet === null) return `<span class="text-slate-400 font-normal">품절</span>`;
 
       // 단가처 (도매, 온라인 등) 추출
-      const locText = (d.loc && d.loc[carrier] && d.loc[carrier][type]) ? d.loc[carrier][type] : '';
-      const locHtml = locText ? `<div class="text-[10px] text-slate-400 font-normal leading-none mt-0.5 tracking-tight">${locText}</div>` : '';
+      const locText = useSunyakRate
+        ? ((d.locSunyak && d.locSunyak[carrier] && d.locSunyak[carrier][type]) ? d.locSunyak[carrier][type] : ((d.loc && d.loc[carrier] && d.loc[carrier][type]) ? d.loc[carrier][type] : ''))
+        : ((d.loc && d.loc[carrier] && d.loc[carrier][type]) ? d.loc[carrier][type] : '');
+      const modeSubTag = sunyakMode
+        ? `<span class="text-amber-600 font-bold ml-0.5">· 선약</span>`
+        : (sunyakForGongsi ? `<span class="text-indigo-600 font-bold ml-0.5">· 선약공시</span>` : '');
+      const locHtml = (locText || modeSubTag)
+        ? `<div class="text-[10px] text-slate-400 font-normal leading-none mt-0.5 tracking-tight">${locText}${modeSubTag}</div>`
+        : '';
 
       if (netDisplayMode === 'all') {
         return `<div class="py-1 flex flex-col items-center justify-center">${formatNetSimple(allNet, true)}${locHtml}</div>`;
@@ -5816,8 +5844,8 @@ service cloud.firestore {
 
     // ==================== 2. 대리점 단가 입력표 (TAB 2) 렌더링 ====================
     function setDailyRateType(rateType) {
-      activeDailyRateType = (rateType === 'sunyak') ? 'sunyak' : 'gongsi';
-      ['gongsi', 'sunyak'].forEach(t => {
+      activeDailyRateType = (rateType === 'sunyak' || rateType === 'gongsi') ? rateType : 'auto';
+      ['auto', 'gongsi', 'sunyak'].forEach(t => {
         const btn = document.getElementById(`dailyRateTypeBtn-${t}`);
         if (!btn) return;
         if (t === activeDailyRateType) {
@@ -5833,6 +5861,7 @@ service cloud.firestore {
       const enabled = isTest2FeatureEnabled();
       const autoBtn = document.getElementById('btnRebateAutoInput');
       const ctrlBar = document.getElementById('dailyTest2ControlsBar');
+      const modeCol = document.getElementById('dailyThModeCol');
       const policyPanel = document.getElementById('dailyUnlistedPolicyPanel');
       const splitWrap = document.getElementById('dailyMainSplitContainer');
       const dailyTabText = document.getElementById('tabBtnDailyText');
@@ -5848,6 +5877,9 @@ service cloud.firestore {
       if (ctrlBar) {
         ctrlBar.classList.toggle('hidden', !enabled);
         ctrlBar.classList.toggle('flex', enabled);
+      }
+      if (modeCol) {
+        modeCol.classList.toggle('hidden', !enabled);
       }
       if (policyPanel) {
         policyPanel.classList.toggle('hidden', !enabled);
@@ -5875,7 +5907,6 @@ service cloud.firestore {
       dailyBody.innerHTML = '';
 
       const isTest2 = isTest2FeatureEnabled();
-      const isSunyakView = isTest2 && activeDailyRateType === 'sunyak';
       const dailyRows = getDailyRows(activeInputCarrier);
       dailyRows.forEach((rowId, idx) => {
         const tr = document.createElement('tr');
@@ -5905,7 +5936,7 @@ service cloud.firestore {
                 <svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-purple-600 shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
               </button>
             </td>
-            <td colspan="4" class="p-2.5 bg-slate-50/40 text-slate-400 text-center select-none text-xs font-medium tracking-widest">
+            <td colspan="${isTest2 ? 5 : 4}" class="p-2.5 bg-slate-50/40 text-slate-400 text-center select-none text-xs font-medium tracking-widest">
               <span class="inline-flex items-center gap-2 text-slate-400">
                 <span class="w-12 h-px bg-slate-200"></span>
                 <span>구분선</span>
@@ -5919,6 +5950,12 @@ service cloud.firestore {
 
         const d = devices.find(x => x.id === rowId);
         if (!d) return;
+
+        const rowRateType = getDailyRowActiveRateType(d, activeInputCarrier);
+        const isSunyakView = isTest2 && (rowRateType === 'sunyak');
+        const isDeviceSunyak = isTest2 && isAdSunyak(d, activeInputCarrier);
+        const isDeviceSunyakGongsi = isTest2 && !isDeviceSunyak && isAdSunyakForGongsi(d, activeInputCarrier);
+        const showLowSubCheck = isTest2 && !isDeviceSunyak && isLowSubModelForSunyakGongsi(d, activeInputCarrier);
 
         const rateObj = isSunyakView
           ? ((d.rateSunyak && d.rateSunyak[activeInputCarrier]) ? d.rateSunyak[activeInputCarrier] : { mnp: 0, chg: 0 })
@@ -5947,6 +5984,30 @@ service cloud.firestore {
         const altChgHint = isTest2
           ? `<div data-alt-hint="${d.id}_${activeInputCarrier}_chg" class="mt-0.5 text-[10px] font-bold text-slate-400 inline-block ${hasAltChg ? '' : 'hidden'}">${hasAltChg ? `${altLabel} ${altObj.chg}` : ''}</div>`
           : '';
+        const inputBorderCls = isSunyakView
+          ? (isDeviceSunyakGongsi ? 'border-indigo-300 text-indigo-900 focus:ring-indigo-500' : 'border-amber-300 text-amber-900 focus:ring-amber-500')
+          : 'border-slate-300 text-slate-900 focus:ring-blue-500';
+        const dailyModeColHtml = isTest2 ? `
+          <td class="p-2 text-center align-middle">
+            <div class="flex flex-col items-center gap-1">
+              <button type="button"
+                      onclick="setAdSunyakForCarrier('${d.id}', '${activeInputCarrier}', ${!isDeviceSunyak})"
+                      class="px-2.5 py-1 rounded-lg text-[11px] font-black border transition cursor-pointer ${isDeviceSunyak ? 'bg-amber-500 text-white border-amber-600 hover:bg-amber-600 shadow-2xs' : 'bg-slate-100 text-slate-700 border-slate-300 hover:bg-amber-50 hover:text-amber-700 hover:border-amber-300'}"
+                      title="${isDeviceSunyak ? '현재 선약 기준 (클릭 시 공시로 전환)' : '현재 공시 기준 (클릭 시 선약으로 전환)'}">
+                ${isDeviceSunyak ? '선약' : '공시'}
+              </button>
+              ${showLowSubCheck ? `
+                <label class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-indigo-50 border border-indigo-200 text-[10px] font-extrabold text-indigo-700 hover:bg-indigo-100 cursor-pointer select-none whitespace-nowrap" title="공시지원금 30만원 미만 기종은 공시 기준을 유지한 채 선약단가로 계산할 수 있습니다.">
+                  <input type="checkbox"
+                         ${isDeviceSunyakGongsi ? 'checked' : ''}
+                         onchange="toggleSunyakForGongsiForCarrier('${d.id}', '${activeInputCarrier}', this.checked)"
+                         class="w-3 h-3 rounded border-indigo-300 text-indigo-600 focus:ring-1 focus:ring-indigo-500 cursor-pointer" />
+                  <span>선약단가 공시적용</span>
+                </label>
+              ` : ''}
+            </div>
+          </td>
+        ` : '';
 
         tr.innerHTML = `
           <td class="p-1.5 text-center text-slate-400 font-medium whitespace-nowrap">
@@ -5984,6 +6045,7 @@ service cloud.firestore {
               </div>
             ` : ''}
           </td>
+          ${dailyModeColHtml}
           <!-- 번이 단가 -->
           <td class="p-2 text-center overflow-visible relative">
             <input type="text"
@@ -5995,7 +6057,7 @@ service cloud.firestore {
                    onkeydown="if(event.key==='Enter') this.blur(); if(event.key==='Escape'){this.value=this.dataset.origVal||''; this.blur();}"
                    oninput="updateRateLive('${d.id}', 'mnp', this.value)"
                    onchange="updateRate('${d.id}', 'mnp', this.value, this)"
-                   class="w-full max-w-[85px] px-2 py-1 text-center font-black bg-white border ${isSunyakView ? 'border-amber-300 text-amber-900 focus:ring-amber-500' : 'border-slate-300 text-slate-900 focus:ring-blue-500'} rounded-lg text-sm focus:ring-2 focus:outline-none${mnpGlowCls}" />
+                   class="w-full max-w-[85px] px-2 py-1 text-center font-black bg-white border ${inputBorderCls} rounded-lg text-sm focus:ring-2 focus:outline-none${mnpGlowCls}" />
             ${mnpDeltaHtml}
             ${altMnpHint}
           </td>
@@ -6004,7 +6066,7 @@ service cloud.firestore {
             <select data-device-id="${d.id}" data-cell-id="${isSunyakView ? 'locSunyak' : 'loc'}_${d.id}_${activeInputCarrier}_mnp" onchange="updateLocation('${d.id}', 'mnp', this.value, this)" class="w-full max-w-[85px] px-1 py-1 bg-white border border-slate-300 rounded-lg text-xs font-medium text-slate-700 focus:ring-1 focus:ring-blue-500">
               ${LOCATION_OPTIONS.map(opt => `<option value="${opt}" ${opt === curLocMnp ? 'selected' : ''}>${opt}</option>`).join('')}
             </select>
-            ${isTest2 && typeof getTest2ChannelCompareHintHtml === 'function' ? getTest2ChannelCompareHintHtml(activeInputCarrier, d.id, isSunyakView ? 'sunyak' : 'gongsi', 'mnp', curLocMnp) : ''}
+            ${isTest2 && typeof getTest2ChannelCompareHintHtml === 'function' ? getTest2ChannelCompareHintHtml(activeInputCarrier, d.id, rowRateType, 'mnp', curLocMnp) : ''}
           </td>
           <!-- 기변 단가 -->
           <td class="p-2 text-center overflow-visible relative">
@@ -6017,7 +6079,7 @@ service cloud.firestore {
                    onkeydown="if(event.key==='Enter') this.blur(); if(event.key==='Escape'){this.value=this.dataset.origVal||''; this.blur();}"
                    oninput="updateRateLive('${d.id}', 'chg', this.value)"
                    onchange="updateRate('${d.id}', 'chg', this.value, this)"
-                   class="w-full max-w-[85px] px-2 py-1 text-center font-black bg-white border ${isSunyakView ? 'border-amber-300 text-amber-900 focus:ring-amber-500' : 'border-slate-300 text-slate-900 focus:ring-blue-500'} rounded-lg text-sm focus:ring-2 focus:outline-none${chgGlowCls}" />
+                   class="w-full max-w-[85px] px-2 py-1 text-center font-black bg-white border ${inputBorderCls} rounded-lg text-sm focus:ring-2 focus:outline-none${chgGlowCls}" />
             ${chgDeltaHtml}
             ${altChgHint}
           </td>
@@ -6026,7 +6088,7 @@ service cloud.firestore {
             <select data-device-id="${d.id}" data-cell-id="${isSunyakView ? 'locSunyak' : 'loc'}_${d.id}_${activeInputCarrier}_chg" onchange="updateLocation('${d.id}', 'chg', this.value, this)" class="w-full max-w-[85px] px-1 py-1 bg-white border border-slate-300 rounded-lg text-xs font-medium text-slate-700 focus:ring-1 focus:ring-blue-500">
               ${LOCATION_OPTIONS.map(opt => `<option value="${opt}" ${opt === curLocChg ? 'selected' : ''}>${opt}</option>`).join('')}
             </select>
-            ${isTest2 && typeof getTest2ChannelCompareHintHtml === 'function' ? getTest2ChannelCompareHintHtml(activeInputCarrier, d.id, isSunyakView ? 'sunyak' : 'gongsi', 'chg', curLocChg) : ''}
+            ${isTest2 && typeof getTest2ChannelCompareHintHtml === 'function' ? getTest2ChannelCompareHintHtml(activeInputCarrier, d.id, rowRateType, 'chg', curLocChg) : ''}
           </td>
         `;
         dailyBody.appendChild(tr);
@@ -6053,7 +6115,7 @@ service cloud.firestore {
       if (typeof markUserAction === 'function') markUserAction();
       const d = devices.find(x => x.id === id);
       if (d) {
-        const isSunyakEdit = isTest2FeatureEnabled() && activeDailyRateType === 'sunyak';
+        const isSunyakEdit = isTest2FeatureEnabled() && getDailyRowActiveRateType(d, activeInputCarrier) === 'sunyak';
         if (isSunyakEdit) {
           if (!d.rateSunyak) d.rateSunyak = getDefaultSunyakRateMap();
           if (!d.rateSunyak[activeInputCarrier]) d.rateSunyak[activeInputCarrier] = { mnp: 0, chg: 0 };
@@ -6090,7 +6152,7 @@ service cloud.firestore {
       const d = devices.find(x => x.id === id);
       if (d) {
         const isTest2 = isTest2FeatureEnabled();
-        const isSunyakEdit = isTest2 && activeDailyRateType === 'sunyak';
+        const isSunyakEdit = isTest2 && getDailyRowActiveRateType(d, activeInputCarrier) === 'sunyak';
         const contractType = isSunyakEdit ? 'sunyak' : 'gongsi';
         let oldVal = '도매';
         let rateChangedMsg = '';
@@ -6198,7 +6260,7 @@ service cloud.firestore {
       if (typeof markUserAction === 'function') markUserAction();
       const d = devices.find(x => x.id === id);
       if (d) {
-        const isSunyakEdit = isTest2FeatureEnabled() && activeDailyRateType === 'sunyak';
+        const isSunyakEdit = isTest2FeatureEnabled() && getDailyRowActiveRateType(d, activeInputCarrier) === 'sunyak';
         const targetMap = isSunyakEdit
           ? (d.rateSunyak || (d.rateSunyak = getDefaultSunyakRateMap()))
           : (d.rate || (d.rate = { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } }));
@@ -6330,40 +6392,57 @@ service cloud.firestore {
       alert(`✅ [복사 완료]\n\n${activeAdCarrier} 기종들의 ${fromKo} 광고 가격이 ${toKo} 광고표로 성공적으로 복사되었습니다!`);
     }
 
-    function setAdSunyak(deviceId, useSunyak) {
+    function setAdSunyakForCarrier(deviceId, carrier, useSunyak) {
+      const targetCarrier = carrier || activeAdCarrier;
       const d = devices.find(x => x.id === deviceId);
-      if (!d) return;
+      if (!d || !targetCarrier) return;
       if (!d.ad) d.ad = {};
-      if (!d.ad[activeAdCarrier]) d.ad[activeAdCarrier] = { mnp: '', chg: '', note: '', hidden: false, tag: '' };
-      const prev = isAdSunyak(d, activeAdCarrier);
+      if (!d.ad[targetCarrier]) d.ad[targetCarrier] = { mnp: '', chg: '', note: '', hidden: false, tag: '' };
+      const prev = isAdSunyak(d, targetCarrier);
       const next = !!useSunyak;
       if (prev === next) return;
 
-      d.ad[activeAdCarrier].sunyak = next;
+      d.ad[targetCarrier].sunyak = next;
       if (typeof detailSettings !== 'undefined' && detailSettings) {
         if (!detailSettings.sunyakMap) detailSettings.sunyakMap = {};
-        detailSettings.sunyakMap[`${activeAdCarrier}_${d.id}`] = next;
+        detailSettings.sunyakMap[`${targetCarrier}_${d.id}`] = next;
         try {
           const storeKey = currentStoreId || 'myeongji';
           localStorage.setItem(`phone_detail_settings_${storeKey}`, JSON.stringify(detailSettings));
         } catch (e) {}
       }
 
+      renderCalcTable();
+      if (typeof renderDailyTable === 'function') renderDailyTable();
       renderAdSection();
       if (typeof renderDetailSheet === 'function') renderDetailSheet();
       if (typeof renderAdPosterTable === 'function') renderAdPosterTable();
-      scheduleStoreSave('성지특가 광고', `${d.name} (${activeAdCarrier}) 개통기준: ${next ? '공시 → 선약(선택약정)' : '선약 → 공시(공통지원금)'}`);
+      scheduleStoreSave('성지특가 광고', `${d.name} (${targetCarrier}) 개통기준: ${next ? '공시 → 선약(선택약정)' : '선약 → 공시(공통지원금)'}`);
+    }
+
+    function setAdSunyak(deviceId, useSunyak) {
+      return setAdSunyakForCarrier(deviceId, activeAdCarrier, useSunyak);
+    }
+
+    function toggleSunyakForGongsiForCarrier(deviceId, carrier, checked) {
+      if (!isTest2FeatureEnabled()) return;
+      const targetCarrier = carrier || activeAdCarrier;
+      const d = devices.find(x => x.id === deviceId);
+      if (!d || !targetCarrier) return;
+      if (!d.ad) d.ad = {};
+      if (!d.ad[targetCarrier]) d.ad[targetCarrier] = { mnp: '', chg: '', note: '', hidden: false, tag: '' };
+      d.ad[targetCarrier].sunyakForGongsi = !!checked;
+
+      renderCalcTable();
+      if (typeof renderDailyTable === 'function') renderDailyTable();
+      renderAdSection();
+      if (typeof renderDetailSheet === 'function') renderDetailSheet();
+      if (typeof renderAdPosterTable === 'function') renderAdPosterTable();
+      scheduleStoreSave('성지특가 광고', `${d.name} (${targetCarrier}) 선약단가 공시적용: ${checked ? '적용' : '해제'}`);
     }
 
     function toggleAdSunyakForGongsi(deviceId, checked) {
-      if (!isTest2FeatureEnabled()) return;
-      const d = devices.find(x => x.id === deviceId);
-      if (!d) return;
-      if (!d.ad) d.ad = {};
-      if (!d.ad[activeAdCarrier]) d.ad[activeAdCarrier] = { mnp: '', chg: '', note: '', hidden: false, tag: '' };
-      d.ad[activeAdCarrier].sunyakForGongsi = !!checked;
-      renderAdSection();
-      scheduleStoreSave('성지특가 광고', `${d.name} (${activeAdCarrier}) 선약단가 공시적용: ${checked ? '적용' : '해제'}`);
+      return toggleSunyakForGongsiForCarrier(deviceId, activeAdCarrier, checked);
     }
 
     function calcAdMargin(d, carrier, type) {
@@ -6548,7 +6627,7 @@ service cloud.firestore {
             </button>
             ${(!isSunyak && isTest2FeatureEnabled() && isLowSubModelForSunyakGongsi(d, activeAdCarrier)) ? `
               <div class="mt-1 flex justify-center">
-                <label class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-indigo-50 border border-indigo-200 text-[10px] font-extrabold text-indigo-700 hover:bg-indigo-100 cursor-pointer select-none whitespace-nowrap" title="공시지원금이 30만원 이하인 기종은 선약단가를 공시 조건에 적용해 내방 유도 후 선약으로 상담 전환할 수 있습니다.">
+                <label class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-indigo-50 border border-indigo-200 text-[10px] font-extrabold text-indigo-700 hover:bg-indigo-100 cursor-pointer select-none whitespace-nowrap" title="공시지원금이 30만원 미만인 기종은 선약단가를 공시 조건에 적용해 내방 유도 후 선약으로 상담 전환할 수 있습니다.">
                   <input type="checkbox"
                          ${isAdSunyakForGongsi(d, activeAdCarrier) ? 'checked' : ''}
                          onchange="toggleAdSunyakForGongsi('${d.id}', this.checked)"
@@ -19309,7 +19388,9 @@ JSON 규격:
         }
 
         if (item.carrier === activeInputCarrier) {
-          if (item.contractType === activeDailyRateType) {
+          const rowDev = devices.find(x => x.id === item.deviceId);
+          const visibleType = getDailyRowActiveRateType(rowDev, item.carrier);
+          if (item.contractType === visibleType) {
             const inputEl = document.querySelector(`input[data-cell-id="${item.cellId}"]`);
             if (inputEl) {
               inputEl.classList.remove('rebate-cell-glow');
@@ -19339,17 +19420,16 @@ JSON 규격:
             offTabBtnTypes.add(item.contractType);
             const hintEl = document.querySelector(`[data-alt-hint="${item.deviceId}_${item.carrier}_${item.moveType}"]`);
             if (hintEl) {
-              if (hasDelta) {
-                const label = item.contractType === 'sunyak' ? '선약' : '공시';
-                const diff = Math.round((Number(item.newVal) - Number(item.prevVal)) * 100) / 100;
-                const diffStr = diff > 0 ? `+${diff}` : `${diff}`;
-                hintEl.innerText = `${label} ${item.prevVal}→${item.newVal}(${diffStr})`;
-                hintEl.classList.remove('hidden');
+              const label = item.contractType === 'sunyak' ? '선약' : '공시';
+              const hasNewVal = item.newVal !== undefined && item.newVal !== '' && item.newVal !== 0 && item.newVal !== '0';
+              hintEl.innerText = hasNewVal ? `${label} ${item.newVal}` : '';
+              hintEl.classList.toggle('hidden', !hasNewVal);
+              if (hasNewVal) {
+                hintEl.classList.remove('rebate-hint-glow');
+                void hintEl.offsetWidth;
+                hintEl.classList.add('rebate-hint-glow');
+                setTimeout(() => hintEl.classList.remove('rebate-hint-glow'), 2200);
               }
-              hintEl.classList.remove('rebate-hint-glow');
-              void hintEl.offsetWidth;
-              hintEl.classList.add('rebate-hint-glow');
-              setTimeout(() => hintEl.classList.remove('rebate-hint-glow'), 2200);
             }
           }
         }
@@ -20493,7 +20573,8 @@ JSON 응답 스키마:
               changedItems.push({ cellId, deviceId, carrier, contractType, moveType, prevVal, newVal: calc.total });
 
               if (carrier === activeInputCarrier) {
-                if (contractType === activeDailyRateType) {
+                const visibleType = getDailyRowActiveRateType(d, carrier);
+                if (contractType === visibleType) {
                   const inputEl = document.querySelector(`input[data-cell-id="${cellId}"]`);
                   if (inputEl) {
                     inputEl.value = calc.total;
@@ -20524,10 +20605,18 @@ JSON 응답 스키마:
       if (changedItems.length === 0) {
         showPolicyChangeNoticeBanner(`<span>현재 표에 해당 조건의 영향을 받는 단가처 기종이 없습니다.</span>`, true);
       } else {
-        const curTabCount = changedItems.filter(x => x.contractType === activeDailyRateType).length;
-        const otherType = activeDailyRateType === 'gongsi' ? 'sunyak' : 'gongsi';
-        const otherLabel = otherType === 'sunyak' ? '선약단가' : '공시단가';
-        const otherCount = changedItems.filter(x => x.contractType === otherType).length;
+        const visibleChanged = changedItems.filter(x => {
+          const rDev = devices.find(d => d.id === x.deviceId);
+          return x.contractType === getDailyRowActiveRateType(rDev, x.carrier);
+        });
+        const hiddenChanged = changedItems.filter(x => {
+          const rDev = devices.find(d => d.id === x.deviceId);
+          return x.contractType !== getDailyRowActiveRateType(rDev, x.carrier);
+        });
+        const curTabCount = visibleChanged.length;
+        const otherCount = hiddenChanged.length;
+        const otherType = otherCount > 0 ? hiddenChanged[0].contractType : (activeDailyRateType === 'gongsi' ? 'sunyak' : 'gongsi');
+        const otherLabel = otherType === 'sunyak' ? '선약단가 전체' : '공시단가 전체';
         const sample = changedItems[0];
         const diff = Math.round((sample.newVal - sample.prevVal) * 100) / 100;
         const diffStr = diff > 0 ? `+${diff}만` : `${diff}만`;
