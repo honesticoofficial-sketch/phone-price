@@ -6170,7 +6170,7 @@ service cloud.firestore {
 
         // 테스트매장2: 선택한 단가처에 분석된 단가가 있는지 먼저 검사 (없으면 알림 후 되돌림)
         let calc = null;
-        if (isTest2 && typeof test2PolicyNotes !== 'undefined' && test2PolicyNotes[activeInputCarrier]) {
+        if (isTest2 && test2PolicyNotes && test2PolicyNotes[activeInputCarrier]) {
           const noteObj = test2PolicyNotes[activeInputCarrier];
           if (!noteObj.rawCandidatesByDevice || Object.keys(noteObj.rawCandidatesByDevice).length === 0) {
             alert(`현재 [${activeInputCarrier}] 데이터는 이전 버전에서 분석된 기록이라 단가처별 비교 단가가 저장되어 있지 않습니다.\n상단 [AI 자동단가입력]을 한 번 다시 실행하시면 도매·온라인 전환 시 단가가 즉시 바뀝니다.`);
@@ -6192,9 +6192,7 @@ service cloud.firestore {
           if (!calc || calc.total === null || calc.total === undefined) {
             const typeKo = type === 'mnp' ? '번이' : '기변';
             const kindKo = isSunyakEdit ? '선약' : '공시';
-            alert(`[${d.name}] 기종은 [${activeInputCarrier} · ${val}] 단가표에 ${kindKo} ${typeKo} 단가가 없거나 품절 상태입니다.`);
-            if (selectEl) selectEl.value = oldVal;
-            return;
+            alert(`[${d.name}] 기종은 [${activeInputCarrier} · ${val}] 단가표에 ${kindKo} ${typeKo} 단가가 없어 [품절]로 표시됩니다.`);
           }
         }
 
@@ -6204,19 +6202,21 @@ service cloud.firestore {
           d.loc[activeInputCarrier][type] = val;
         }
 
-        if (isTest2 && calc) {
+        if (isTest2 && test2PolicyNotes && test2PolicyNotes[activeInputCarrier] && test2PolicyNotes[activeInputCarrier].rawCandidatesByDevice) {
           const targetRateMap = isSunyakEdit
             ? (d.rateSunyak || (d.rateSunyak = getDefaultSunyakRateMap()))
             : (d.rate || (d.rate = { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } }));
           if (!targetRateMap[activeInputCarrier]) targetRateMap[activeInputCarrier] = { mnp: 0, chg: 0 };
-          const prevRate = Number(targetRateMap[activeInputCarrier][type]);
-          targetRateMap[activeInputCarrier][type] = calc.total;
+          const prevRateRaw = targetRateMap[activeInputCarrier][type];
+          const prevRate = Number(prevRateRaw);
+          const nextRateVal = (calc && calc.total !== null && calc.total !== undefined) ? calc.total : '품절';
+          targetRateMap[activeInputCarrier][type] = nextRateVal;
 
           const cellId = `${isSunyakEdit ? 'rateSunyak' : 'rate'}_${d.id}_${activeInputCarrier}_${type}`;
           const inputEl = document.querySelector(`input[data-cell-id="${cellId}"]`);
           if (inputEl) {
-            inputEl.value = calc.total;
-            inputEl.dataset.origVal = calc.total;
+            inputEl.value = nextRateVal;
+            inputEl.dataset.origVal = nextRateVal;
           }
           if (typeof triggerRebateCellGlow === 'function') {
             triggerRebateCellGlow([{
@@ -6226,14 +6226,16 @@ service cloud.firestore {
               contractType,
               moveType: type,
               prevVal: isNaN(prevRate) ? null : prevRate,
-              newVal: calc.total
+              newVal: nextRateVal
             }]);
           }
           if (typeof saveStoreLocalBackups === 'function') saveStoreLocalBackups();
           if (typeof refreshTest2ChannelHintCell === 'function') refreshTest2ChannelHintCell(activeInputCarrier, d.id, contractType, type, val);
           renderCalcTable();
           if (currentTab === 'ad') updateActiveAdMarginsOnly();
-          rateChangedMsg = ` (단가 자동전환: ${isNaN(prevRate) ? '-' : prevRate} → ${calc.total}만)`;
+          rateChangedMsg = nextRateVal === '품절'
+            ? ` (해당 단가처 미기재 → 품절 처리)`
+            : ` (단가 자동전환: ${isNaN(prevRate) ? '-' : prevRate} → ${nextRateVal}만)`;
         }
 
         const typeKo = type === 'mnp' ? '번이' : '기변';
@@ -7608,23 +7610,9 @@ service cloud.firestore {
             { contractType: 'sunyak', moveType: 'chg', rateMap: d.rateSunyak, locMap: d.locSunyak, prefix: 'rateSunyak' }
           ].forEach(cfg => {
             const curCh = cfg.locMap[carrier][cfg.moveType] || '도매';
-            let calc = (typeof computeRebateForDeviceChannel === 'function')
+            const calc = (typeof computeRebateForDeviceChannel === 'function')
               ? computeRebateForDeviceChannel(carrier, 's26', cfg.contractType, cfg.moveType, curCh)
               : null;
-            if (!calc) {
-              const allSecs = Array.isArray(test2PolicyNotes[carrier].sections) ? test2PolicyNotes[carrier].sections : [];
-              const candidates = allSecs
-                .map(s => {
-                  const res = computeRebateForDeviceChannel(carrier, 's26', cfg.contractType, cfg.moveType, s.channel);
-                  return res ? { channel: s.channel, total: res.total } : null;
-                })
-                .filter(Boolean);
-              if (candidates.length > 0) {
-                const best = candidates.reduce((b, cur) => (cur.total > b.total ? cur : b), candidates[0]);
-                calc = { total: best.total };
-                cfg.locMap[carrier][cfg.moveType] = best.channel;
-              }
-            }
             if (calc && calc.total !== null && calc.total !== undefined) {
               const prevVal = Number(cfg.rateMap[carrier][cfg.moveType]);
               if (prevVal !== calc.total) {
@@ -20448,12 +20436,24 @@ JSON 응답 스키마:
         rawCandidatesByDevice: mergedRawByDevice
       };
 
-      // 병합된 전체 단가처 후보를 기준으로 기종별 최고 단가처 비교·선정 (s26_new는 s26에서 통합 처리)
+      // 전기종 우선 기본 단가처('도매') 및 사용자가 기존에 설정해둔 단가처를 자동 변경하지 않고 유지한 채 해당 단가처 금액을 반영
       const changedItems = [];
       let touchedDeviceCount = 0;
-      const targetDeviceIds = [...new Set(
-        Object.keys(mergedRawByDevice).map(k => (k === 's26_new' ? 's26' : k))
-      )];
+      const channelsWithDataByBucket = { gongsiMnp: new Set(), gongsiChg: new Set(), sunyakMnp: new Set(), sunyakChg: new Set() };
+      Object.values(mergedRawByDevice).forEach(entry => {
+        if (!entry) return;
+        ['gongsiMnp', 'gongsiChg', 'sunyakMnp', 'sunyakChg'].forEach(bk => {
+          (entry[bk] || []).forEach(c => {
+            if (c && c.channel) channelsWithDataByBucket[bk].add(c.channel);
+          });
+        });
+      });
+
+      const activeDailyRows = (typeof getDailyRows === 'function' ? getDailyRows(carrier) : []).filter(id => id && id !== 'empty');
+      const targetDeviceIds = [...new Set([
+        ...activeDailyRows,
+        ...Object.keys(mergedRawByDevice).map(k => (k === 's26_new' ? 's26' : k))
+      ])];
       targetDeviceIds.forEach(devId => {
         const d = devices.find(x => x.id === devId);
         if (!d) return;
@@ -20473,33 +20473,41 @@ JSON 응답 스키마:
           { bk: 'sunyakMnp', contractType: 'sunyak', moveType: 'mnp', rateMap: d.rateSunyak, locMap: d.locSunyak, prefix: 'rateSunyak' },
           { bk: 'sunyakChg', contractType: 'sunyak', moveType: 'chg', rateMap: d.rateSunyak, locMap: d.locSunyak, prefix: 'rateSunyak' }
         ].forEach(cfg => {
-          const rawChannelSet = new Set();
-          (mergedRawByDevice[devId]?.[cfg.bk] || []).forEach(c => { if (c && c.channel) rawChannelSet.add(c.channel); });
-          if (devId === 's26') {
-            (mergedRawByDevice['s26_new']?.[cfg.bk] || []).forEach(c => { if (c && c.channel) rawChannelSet.add(c.channel); });
-          }
-          const candidates = Array.from(rawChannelSet)
-            .map(chName => {
-              const calc = computeRebateForDeviceChannel(carrier, devId, cfg.contractType, cfg.moveType, chName);
-              return calc ? { channel: chName, total: calc.total } : null;
-            })
-            .filter(Boolean);
-          if (candidates.length === 0) return;
+          if (!cfg.locMap[carrier][cfg.moveType]) cfg.locMap[carrier][cfg.moveType] = '도매';
+          const configuredChannel = cfg.locMap[carrier][cfg.moveType];
+          const isChannelAnalyzed = usedChannels.includes(configuredChannel);
+          if (!isChannelAnalyzed) return; // 아직 분석하지 않은 단가처는 단가처 설정·기존 단가를 유지
 
-          const best = candidates.reduce((b, cur) => (cur.total > b.total ? cur : b), candidates[0]);
-          const prevVal = Number(cfg.rateMap[carrier][cfg.moveType]);
-          cfg.rateMap[carrier][cfg.moveType] = best.total;
-          cfg.locMap[carrier][cfg.moveType] = best.channel;
-          devTouched = true;
-          changedItems.push({
-            cellId: `${cfg.prefix}_${d.id}_${carrier}_${cfg.moveType}`,
-            deviceId: d.id,
-            carrier,
-            contractType: cfg.contractType,
-            moveType: cfg.moveType,
-            prevVal: isNaN(prevVal) ? null : prevVal,
-            newVal: best.total
-          });
+          const calc = computeRebateForDeviceChannel(carrier, devId, cfg.contractType, cfg.moveType, configuredChannel);
+          const prevRaw = cfg.rateMap[carrier][cfg.moveType];
+          const prevVal = Number(prevRaw);
+
+          if (calc && calc.total !== null && calc.total !== undefined) {
+            cfg.rateMap[carrier][cfg.moveType] = calc.total;
+            devTouched = true;
+            changedItems.push({
+              cellId: `${cfg.prefix}_${d.id}_${carrier}_${cfg.moveType}`,
+              deviceId: d.id,
+              carrier,
+              contractType: cfg.contractType,
+              moveType: cfg.moveType,
+              prevVal: isNaN(prevVal) ? null : prevVal,
+              newVal: calc.total
+            });
+          } else if (channelsWithDataByBucket[cfg.bk].has(configuredChannel)) {
+            // 해당 단가처에 이 약정유형의 단가표 데이터는 있는데 이 기종만 빠진 경우 -> 품절 처리(단가처 유지)
+            cfg.rateMap[carrier][cfg.moveType] = '품절';
+            devTouched = true;
+            changedItems.push({
+              cellId: `${cfg.prefix}_${d.id}_${carrier}_${cfg.moveType}`,
+              deviceId: d.id,
+              carrier,
+              contractType: cfg.contractType,
+              moveType: cfg.moveType,
+              prevVal: isNaN(prevVal) ? null : prevVal,
+              newVal: '품절'
+            });
+          }
         });
         if (devTouched) touchedDeviceCount++;
       });
