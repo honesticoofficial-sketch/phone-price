@@ -261,10 +261,28 @@
           <div class="text-white/90 font-medium text-[11px] mt-0.5">기존에 입력해두신 모든 데이터(단가, 광고가, 시세표 등)는 100% 안전하게 보관되어 있습니다! 규칙 갱신 후 즉시 복원됩니다.</div>
         </div>
       </div>
-      <button onclick="openCloudTroubleshootModal()" class="px-4 py-2 bg-white text-slate-900 rounded-xl hover:bg-amber-50 font-black shadow-md text-xs whitespace-nowrap transition cursor-pointer flex items-center gap-1.5">
+      <button onclick="openCloudTroubleshootModal('permission')" class="px-4 py-2 bg-white text-slate-900 rounded-xl hover:bg-amber-50 font-black shadow-md text-xs whitespace-nowrap transition cursor-pointer flex items-center gap-1.5">
         <span>🔧 1분 복원 가이드 열기</span>
         <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
       </button>
+    </div>
+
+    <!-- ==================== 클라우드 무료 사용량 초과 경고 상단 배너 ==================== -->
+    <div id="cloudQuotaBanner" class="hidden bg-gradient-to-r from-rose-600 via-orange-600 to-amber-600 text-white px-4 py-3 rounded-2xl shadow-lg border border-rose-300/40 flex flex-wrap items-center justify-between gap-3 text-xs font-bold transition-all mb-4">
+      <div class="flex items-center gap-2.5">
+        <span class="text-xl">🚨</span>
+        <div>
+          <div class="text-sm font-black tracking-tight">[동기화 일시 중단] 오늘의 클라우드 무료 사용량이 초과되어 실시간 반영이 멈췄습니다.</div>
+          <div class="text-white/95 font-medium text-[11px] mt-0.5">다른 PC의 수정 내용·동시 접속자 표시가 실시간으로 갱신되지 않으며, 지금 수정하시는 금액은 현재 PC에 임시 저장됩니다. (매일 오후 5시 자동 초기화 / 요금제 전환 시 즉시 복구)</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="openCloudTroubleshootModal('quota')" class="px-4 py-2 bg-white text-slate-900 rounded-xl hover:bg-amber-50 font-black shadow-md text-xs whitespace-nowrap transition cursor-pointer flex items-center gap-1.5">
+          <span>📊 해결 방법 보기</span>
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </button>
+        <button onclick="dismissCloudQuotaBanner()" class="px-2.5 py-2 bg-black/20 hover:bg-black/30 text-white rounded-xl font-bold text-xs transition cursor-pointer" title="배너 닫기 (상단 상태 배지를 누르면 언제든 다시 볼 수 있습니다)">✕</button>
+      </div>
     </div>
 
     <!-- ==================== 1. PIN 잠금 모달 ==================== -->
@@ -2173,20 +2191,20 @@
       </div>
     </div>
 
-        <!-- ==================== 클라우드 권한 만료 해결 가이드 모달 ==================== -->
+        <!-- ==================== 클라우드 권한 만료 / 사용량 초과 해결 가이드 모달 ==================== -->
     <div id="cloudTroubleshootModal" class="fixed inset-0 z-[10001] bg-slate-950/75 backdrop-blur-md flex items-center justify-center p-3 hidden">
       <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full p-6 sm:p-7 border border-slate-200 space-y-5 max-h-[92vh] overflow-y-auto">
         <div class="flex items-start justify-between border-b border-slate-100 pb-4">
           <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 text-2xl shadow-xs">
+            <div id="cloudTroubleshootIcon" class="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 text-2xl shadow-xs">
               🛡️
             </div>
             <div>
-              <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
-                <span>데이터 원복 및 클라우드(Firebase) 규칙 갱신 가이드</span>
-                <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-50 text-emerald-700 border border-emerald-200">데이터 100% 안전 보관 중</span>
+              <h3 class="text-base font-extrabold text-slate-900 flex flex-wrap items-center gap-2">
+                <span id="cloudTroubleshootTitle">데이터 원복 및 클라우드(Firebase) 규칙 갱신 가이드</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-50 text-emerald-700 border border-emerald-200">기존 데이터 안전 보관 중</span>
               </h3>
-              <p class="text-xs text-slate-500 mt-1">
+              <p id="cloudTroubleshootSubtitle" class="text-xs text-slate-500 mt-1">
                 구글 파이어베이스의 최초 30일 테스트 모드 규칙이 만료되어 발생한 현상입니다. 1분이면 완벽히 원복됩니다.
               </p>
             </div>
@@ -2194,43 +2212,45 @@
           <button onclick="closeCloudTroubleshootModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-lg transition">&times;</button>
         </div>
 
-        <!-- 1. 원인 안심 설명 -->
-        <div class="bg-emerald-50/60 border border-emerald-200 rounded-2xl p-4 text-xs space-y-1.5 text-emerald-900">
-          <div class="font-extrabold text-emerald-800 flex items-center gap-1.5 text-[13px]">
-            <span>✅</span> <span>대표님의 데이터는 절대로 지워지지 않았습니다!</span>
-          </div>
-          <p class="text-emerald-700 leading-relaxed">
-            파이어베이스 클라우드는 규칙이 만료되어도 데이터를 삭제하지 않고 읽기/쓰기 문만 잠급니다. 아래의 규칙을 적용하고 저장하시면 <b>이전에 입력해두셨던 모든 단가, 광고가, 시세표 설정이 1원도 빠짐없이 원래대로 나타납니다.</b>
-          </p>
-        </div>
-
-        <!-- 2. 해결 3단계 -->
-        <div class="space-y-3">
-          <div class="text-xs font-black text-slate-800 flex items-center gap-1.5">
-            <span>📋</span> <span>초간단 3단계 해결 방법 (소요시간 1분)</span>
-          </div>
-
-          <!-- 1단계 -->
-          <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs space-y-1">
-            <div class="font-bold text-slate-800 flex items-center justify-between">
-              <span>1단계. 파이어베이스 콘솔 규칙 페이지 접속</span>
-              <a href="https://console.firebase.google.com/project/phone-price-91c3c/firestore/rules" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-extrabold hover:bg-indigo-700 text-[11px] transition shadow-2xs inline-flex items-center gap-1">
-                <span>🔗 콘솔 규칙 바로가기</span>
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-              </a>
+        <!-- [모드 A] 권한 규칙 만료 안내 -->
+        <div id="cloudTroubleshootPermissionSection" class="space-y-4">
+          <!-- 1. 원인 안심 설명 -->
+          <div class="bg-emerald-50/60 border border-emerald-200 rounded-2xl p-4 text-xs space-y-1.5 text-emerald-900">
+            <div class="font-extrabold text-emerald-800 flex items-center gap-1.5 text-[13px]">
+              <span>✅</span> <span>대표님의 데이터는 절대로 지워지지 않았습니다!</span>
             </div>
-            <p class="text-slate-500 text-[11px]">위 버튼을 클릭하여 파이어베이스 콘솔의 Firestore [규칙] 탭으로 이동합니다.</p>
+            <p class="text-emerald-700 leading-relaxed">
+              파이어베이스 클라우드는 규칙이 만료되어도 데이터를 삭제하지 않고 읽기/쓰기 문만 잠급니다. 아래의 규칙을 적용하고 저장하시면 <b>이전에 입력해두셨던 모든 단가, 광고가, 시세표 설정이 1원도 빠짐없이 원래대로 나타납니다.</b>
+            </p>
           </div>
 
-          <!-- 2단계 -->
-          <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs space-y-2">
-            <div class="font-bold text-slate-800 flex items-center justify-between">
-              <span>2단계. 규칙 창의 내용을 모두 지우고 아래 코드로 붙여넣기</span>
-              <button onclick="copyFirebaseRules()" class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-extrabold hover:bg-emerald-700 text-[11px] transition shadow-2xs inline-flex items-center gap-1" id="copyRulesBtn">
-                <span>📋 규칙 코드 복사</span>
-              </button>
+          <!-- 2. 해결 3단계 -->
+          <div class="space-y-3">
+            <div class="text-xs font-black text-slate-800 flex items-center gap-1.5">
+              <span>📋</span> <span>초간단 3단계 해결 방법 (소요시간 1분)</span>
             </div>
-            <pre class="bg-slate-900 text-emerald-400 p-3 rounded-lg font-mono text-[11px] overflow-x-auto select-all leading-normal">rules_version = '2';
+
+            <!-- 1단계 -->
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs space-y-1">
+              <div class="font-bold text-slate-800 flex items-center justify-between">
+                <span>1단계. 파이어베이스 콘솔 규칙 페이지 접속</span>
+                <a href="https://console.firebase.google.com/project/phone-price-91c3c/firestore/rules" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-extrabold hover:bg-indigo-700 text-[11px] transition shadow-2xs inline-flex items-center gap-1">
+                  <span>🔗 콘솔 규칙 바로가기</span>
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                </a>
+              </div>
+              <p class="text-slate-500 text-[11px]">위 버튼을 클릭하여 파이어베이스 콘솔의 Firestore [규칙] 탭으로 이동합니다.</p>
+            </div>
+
+            <!-- 2단계 -->
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs space-y-2">
+              <div class="font-bold text-slate-800 flex items-center justify-between">
+                <span>2단계. 규칙 창의 내용을 모두 지우고 아래 코드로 붙여넣기</span>
+                <button onclick="copyFirebaseRules()" class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-extrabold hover:bg-emerald-700 text-[11px] transition shadow-2xs inline-flex items-center gap-1" id="copyRulesBtn">
+                  <span>📋 규칙 코드 복사</span>
+                </button>
+              </div>
+              <pre class="bg-slate-900 text-emerald-400 p-3 rounded-lg font-mono text-[11px] overflow-x-auto select-all leading-normal">rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /{document=**} {
@@ -2238,13 +2258,57 @@ service cloud.firestore {
     }
   }
 }</pre>
-            <p class="text-slate-500 text-[11px]">이 규칙은 30일 만료 기한이 없으므로 앞으로 동일한 롤백 문제가 영구적으로 발생하지 않습니다.</p>
+              <p class="text-slate-500 text-[11px]">이 규칙은 30일 만료 기한이 없으므로 앞으로 동일한 롤백 문제가 영구적으로 발생하지 않습니다.</p>
+            </div>
+
+            <!-- 3단계 -->
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs space-y-1">
+              <div class="font-bold text-slate-800">3단계. 우측 상단 [게시 (Publish)] 클릭 후 이 사이트 새로고침</div>
+              <p class="text-slate-500 text-[11px]">파이어베이스 화면 우측 상단의 파란색 <b>[게시]</b> 버튼을 누른 다음, 현재 시세표 사이트로 돌아와서 <b>새로고침(F5)</b>을 하시면 모든 데이터가 즉시 원래대로 복원됩니다!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- [모드 B] 일일 사용량 초과 안내 -->
+        <div id="cloudTroubleshootQuotaSection" class="hidden space-y-4">
+          <div class="bg-rose-50/80 border border-rose-200 rounded-2xl p-4 text-xs space-y-1.5 text-rose-950">
+            <div class="font-extrabold text-rose-800 flex items-center gap-1.5 text-[13px]">
+              <span>🚨</span> <span>왜 다른 사람 수정 내용과 동시 접속자가 안 보이나요?</span>
+            </div>
+            <p class="text-rose-800 leading-relaxed">
+              구글 파이어베이스 <b>무료 요금제(Spark)의 하루 저장/조회 한도</b>를 모두 소진해 클라우드 서버가 일시적으로 저장을 막고 있는 상태입니다.<br/>
+              기존 데이터는 안전하며, 현재 화면에서 수정한 내용은 <b>내 PC 브라우저에 임시 저장</b>되지만 클라우드로 올라가지 않아 다른 직원 화면에는 반영되지 않습니다.
+            </p>
           </div>
 
-          <!-- 3단계 -->
-          <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs space-y-1">
-            <div class="font-bold text-slate-800">3단계. 우측 상단 [게시 (Publish)] 클릭 후 이 사이트 새로고침</div>
-            <p class="text-slate-500 text-[11px]">파이어베이스 화면 우측 상단의 파란색 <b>[게시]</b> 버튼을 누른 다음, 현재 시세표 사이트로 돌아와서 <b>새로고침(F5)</b>을 하시면 모든 데이터가 즉시 원래대로 복원됩니다!</p>
+          <div class="space-y-3">
+            <div class="text-xs font-black text-slate-800 flex items-center gap-1.5">
+              <span>📋</span> <span>해결 방법 2가지</span>
+            </div>
+
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs space-y-1.5">
+              <div class="font-bold text-slate-800 flex items-center justify-between">
+                <span>방법 1. 매일 오후 5시(한국시간) 자동 초기화 대기</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-sky-100 text-sky-700">무료 유지</span>
+              </div>
+              <p class="text-slate-600 text-[11px] leading-relaxed">
+                파이어베이스 무료 한도는 매일 <b>오후 5시(미국 태평양 자정)</b>에 자동으로 초기화됩니다. 초기화 이후 새로고침하시면 실시간 동기화와 동시 접속자 표시가 다시 작동합니다.<br/>
+                <span class="text-slate-500">※ 이번 업데이트로 백그라운드 자동 통신량을 약 90% 줄여 앞으로는 무료 한도를 훨씬 여유롭게 사용할 수 있습니다.</span>
+              </p>
+            </div>
+
+            <div class="bg-indigo-50/70 border border-indigo-200 rounded-xl p-3.5 text-xs space-y-2">
+              <div class="font-bold text-indigo-950 flex flex-wrap items-center justify-between gap-2">
+                <span>방법 2. 지금 바로 복구 · 무제한 사용 (Firebase Blaze 요금제 전환)</span>
+                <a href="https://console.firebase.google.com/project/phone-price-91c3c/usage" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-extrabold hover:bg-indigo-700 text-[11px] transition shadow-2xs inline-flex items-center gap-1">
+                  <span>🔗 사용량·요금제 바로가기</span>
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                </a>
+              </div>
+              <p class="text-indigo-900/90 text-[11px] leading-relaxed">
+                파이어베이스 콘솔 좌측 하단 <b>[Spark → Upgrade (Blaze 종량제)]</b>로 전환하시면 한도 차단이 몇 분 안에 바로 풀립니다. 무료 기본 제공량(하루 쓰기 2만 건·읽기 5만 건)까지는 그대로 무료이며, 초과분만 소액 과금되어 매장 규모에서는 월 수백 원 수준 또는 무료 범위로 유지됩니다.
+              </p>
+            </div>
           </div>
         </div>
 
@@ -5266,6 +5330,8 @@ service cloud.firestore {
       if (unsubscribeSupportRequests) { unsubscribeSupportRequests(); unsubscribeSupportRequests = null; }
       if (unsubscribeStorePresence) { unsubscribeStorePresence(); unsubscribeStorePresence = null; }
       if (presenceHeartbeatTimer) { clearInterval(presenceHeartbeatTimer); presenceHeartbeatTimer = null; }
+      if (cellFocusTimer) { clearTimeout(cellFocusTimer); cellFocusTimer = null; }
+      if (cellBlurTimer) { clearTimeout(cellBlurTimer); cellBlurTimer = null; }
       allHistoryRecords = [];
       allSupportRequests = [];
       currentReqStoreFilter = 'all';
@@ -6044,7 +6110,7 @@ service cloud.firestore {
             localStorage.setItem('phone_sunyak_rates_backup_' + currentStoreId, JSON.stringify(backupSunyakRates));
           }
         } catch(e) {}
-        scheduleStoreSave('', '');
+        scheduleStoreSave('', '', 1800);
       }
     }
     window.updateRateLive = updateRateLive;
@@ -6376,8 +6442,8 @@ service cloud.firestore {
         if (previewEl) {
           previewEl.innerText = generateAdString(activeAdCarrier);
         }
-        // 백그라운드 데이터 저장만 수행 (감사로그 기록 X)
-        scheduleStoreSave('', '');
+        // 백그라운드 데이터 저장만 수행 (감사로그 기록 X, 타이핑 중 불필요한 쓰기 방지용 1.8초 지연)
+        scheduleStoreSave('', '', 1800);
       }
     }
 
@@ -6628,8 +6694,8 @@ service cloud.firestore {
           previewEl.innerText = generateAdString(activeAdCarrier);
         }
 
-        // 백그라운드 데이터 저장만 수행 (감사로그 기록 X)
-        scheduleStoreSave('', '');
+        // 백그라운드 데이터 저장만 수행 (감사로그 기록 X, 타이핑 중 불필요한 쓰기 방지용 1.8초 지연)
+        scheduleStoreSave('', '', 1800);
       }
     }
 
@@ -7777,7 +7843,6 @@ service cloud.firestore {
 
       updateUserHeaderBadge();
       subscribeStoreData();
-      if (typeof subscribeStorePresence === 'function') subscribeStorePresence(targetStoreId);
       if (typeof setCardStore === 'function') setCardStore(targetStoreId);
       if (currentTab === 'compare' && typeof setCompareStore === 'function') setCompareStore(targetStoreId);
       if (typeof loadAdPosterSettings === 'function') {
@@ -7843,6 +7908,12 @@ service cloud.firestore {
     let unsubscribeStorePresence = null;
     let presenceHeartbeatTimer = null;
     let activePresenceWorkers = {};
+    let lastPresenceHeartbeatAt = 0;
+    let cellFocusTimer = null;
+    let cellBlurTimer = null;
+    const PRESENCE_HEARTBEAT_MS = 60000; // 60초 간격 (기존 8초 대비 쓰기·읽기 약 87% 절감)
+    const PRESENCE_ACTIVE_MS = 150000;   // 2.5분 이내 활동 작업자 표시
+    const PRESENCE_STALE_MS = 300000;    // 5분 이상 무응답 세션 자동 정리
 
     function getStorePrefix(storeId = currentStoreId) {
       if (currentRole === 'master') return '본사';
@@ -7887,7 +7958,7 @@ service cloud.firestore {
       let otherCount = 0;
       Object.entries(activePresenceWorkers).forEach(([sid, w]) => {
         if (sid === mySessionId) return;
-        if (!w || !w.workerName || (now - (w.lastSeen || 0) > 25000)) return;
+        if (!w || !w.workerName || (now - (w.lastSeen || 0) > PRESENCE_ACTIVE_MS)) return;
 
         otherCount++;
         const color = WORKER_COLOR_PALETTE[(w.colorIndex !== undefined ? w.colorIndex : (w.workerNum - 1)) % WORKER_COLOR_PALETTE.length];
@@ -7933,14 +8004,16 @@ service cloud.firestore {
           const data = docSnap.data();
           if (!data) return;
 
-          // 45초 이상 경과된 비정상/종료 세션은 비동기 자동 청소
-          if (now - (data.lastSeen || 0) > 45000) {
-            docSnap.ref.delete().catch(() => {});
+          // 오래된 비정상/종료 세션은 비동기 자동 청소 (사용량 초과 상태에서는 쓰기 중단)
+          if (now - (data.lastSeen || 0) > PRESENCE_STALE_MS) {
+            if (!isCloudQuotaExhausted && !isCloudPermissionError) {
+              docSnap.ref.delete().catch(err => handleCloudSyncError(err, '세션 정리', true));
+            }
             return;
           }
 
-          // 25초 이내 활성 세션 수집
-          if (now - (data.lastSeen || 0) < 25000) {
+          // 활성 세션 수집
+          if (now - (data.lastSeen || 0) < PRESENCE_ACTIVE_MS) {
             activeWorkers[sid] = data;
             if (sid !== mySessionId && data.workerNum) {
               takenNumbers.set(data.workerNum, sid);
@@ -7971,54 +8044,83 @@ service cloud.firestore {
         myWorkerColor = WORKER_COLOR_PALETTE[(myNum - 1) % WORKER_COLOR_PALETTE.length];
         try { sessionStorage.setItem('phone_worker_num_' + storeId, myNum); } catch(e) {}
 
-        if (needsSync) {
+        if (needsSync && !isCloudQuotaExhausted && !isCloudPermissionError) {
+          lastPresenceHeartbeatAt = Date.now();
           mySessionDocRef.set({
             sessionId: mySessionId,
             workerNum: myWorkerNum,
             workerName: myWorkerName,
             colorIndex: (myWorkerNum - 1) % WORKER_COLOR_PALETTE.length,
             activeCell: myActiveCellId || null,
-            lastSeen: Date.now()
-          }, { merge: true }).catch(err => console.warn("Session register error:", err));
+            lastSeen: lastPresenceHeartbeatAt
+          }, { merge: true }).catch(err => {
+            console.warn("Session register error:", err);
+            handleCloudSyncError(err, '동시접속 등록', true);
+          });
         }
 
         activePresenceWorkers = activeWorkers;
         updateMyWorkerBadgeUI();
         updateCollaboratorBadgesUI();
         renderPresenceHighlights();
-      }, err => console.warn("Presence snapshot error:", err));
+      }, err => {
+        console.warn("Presence snapshot error:", err);
+        handleCloudSyncError(err, '동시접속 조회', true);
+      });
 
-      // 8초 주기 활성 상태 하트비트 전송
+      // 활성 탭일 때만 60초 주기 하트비트 전송 (백그라운드 탭/사용량 초과 시 쓰기 절약)
       presenceHeartbeatTimer = setInterval(() => {
-        if (!isUnlocked || !currentStoreId) return;
+        if (!isUnlocked || !currentStoreId || document.hidden) return;
+        if (isCloudQuotaExhausted || isCloudPermissionError) return;
+        lastPresenceHeartbeatAt = Date.now();
         mySessionDocRef.set({
           sessionId: mySessionId,
           workerNum: myWorkerNum,
           workerName: myWorkerName,
           colorIndex: (myWorkerNum - 1) % WORKER_COLOR_PALETTE.length,
           activeCell: myActiveCellId || null,
-          lastSeen: Date.now()
-        }, { merge: true }).catch(() => {});
-      }, 8000);
+          lastSeen: lastPresenceHeartbeatAt
+        }, { merge: true }).catch(err => handleCloudSyncError(err, '동시접속 유지', true));
+      }, PRESENCE_HEARTBEAT_MS);
+    }
+
+    function sendPresenceCellUpdate(cellId) {
+      if (!db || !currentStoreId || !isUnlocked || !mySessionId) return;
+      if (isCloudQuotaExhausted || isCloudPermissionError) return;
+      lastPresenceHeartbeatAt = Date.now();
+      db.collection('presence').doc(currentStoreId).collection('sessions').doc(mySessionId).set({
+        activeCell: cellId || null,
+        lastSeen: lastPresenceHeartbeatAt
+      }, { merge: true }).catch(err => handleCloudSyncError(err, '작업 위치 동기화', true));
     }
 
     function broadcastCellFocus(cellId) {
       if (!db || !currentStoreId || !isUnlocked || !mySessionId) return;
+      if (cellBlurTimer) { clearTimeout(cellBlurTimer); cellBlurTimer = null; }
+      const changed = (myActiveCellId !== cellId);
       myActiveCellId = cellId;
-      db.collection('presence').doc(currentStoreId).collection('sessions').doc(mySessionId).set({
-        activeCell: cellId,
-        lastSeen: Date.now()
-      }, { merge: true }).catch(() => {});
+      if (!changed || isCloudQuotaExhausted || isCloudPermissionError) return;
+      if (cellFocusTimer) clearTimeout(cellFocusTimer);
+      cellFocusTimer = setTimeout(() => {
+        cellFocusTimer = null;
+        if (myActiveCellId === cellId) {
+          sendPresenceCellUpdate(cellId);
+        }
+      }, 350);
     }
 
     function broadcastCellBlur(cellId) {
       if (!db || !currentStoreId || !isUnlocked || !mySessionId) return;
+      if (cellFocusTimer) { clearTimeout(cellFocusTimer); cellFocusTimer = null; }
       if (myActiveCellId === cellId) {
-        myActiveCellId = null;
-        db.collection('presence').doc(currentStoreId).collection('sessions').doc(mySessionId).set({
-          activeCell: null,
-          lastSeen: Date.now()
-        }, { merge: true }).catch(() => {});
+        if (cellBlurTimer) clearTimeout(cellBlurTimer);
+        cellBlurTimer = setTimeout(() => {
+          cellBlurTimer = null;
+          if (myActiveCellId === cellId) {
+            myActiveCellId = null;
+            sendPresenceCellUpdate(null);
+          }
+        }, 400);
       }
     }
 
@@ -8035,7 +8137,7 @@ service cloud.firestore {
       Object.entries(activePresenceWorkers).forEach(([sid, w]) => {
         if (sid === mySessionId) return;
         if (!w || !w.activeCell) return;
-        if (now - (w.lastSeen || 0) > 25000) return;
+        if (now - (w.lastSeen || 0) > PRESENCE_ACTIVE_MS) return;
 
         const color = WORKER_COLOR_PALETTE[(w.colorIndex !== undefined ? w.colorIndex : (w.workerNum - 1)) % WORKER_COLOR_PALETTE.length];
         const target = document.querySelector(`[data-cell-id="${w.activeCell}"]`) || document.getElementById(w.activeCell);
@@ -8091,7 +8193,7 @@ service cloud.firestore {
           if (activePresenceWorkers && Object.keys(activePresenceWorkers).length > 0) {
             const now = Date.now();
             for (const [sid, w] of Object.entries(activePresenceWorkers)) {
-              if (sid !== mySessionId && w && w.activeCell === cellId && (now - (w.lastSeen || 0) < 25000)) {
+              if (sid !== mySessionId && w && w.activeCell === cellId && (now - (w.lastSeen || 0) < PRESENCE_ACTIVE_MS)) {
                 showWorkerCollisionNotice(w.workerName);
                 break;
               }
@@ -8114,10 +8216,26 @@ service cloud.firestore {
       }, true);
 
       window.addEventListener('beforeunload', () => {
-        if (db && currentStoreId && mySessionId) {
+        if (db && currentStoreId && mySessionId && !isCloudQuotaExhausted && !isCloudPermissionError) {
           try {
             db.collection('presence').doc(currentStoreId).collection('sessions').doc(mySessionId).delete().catch(() => {});
           } catch(e) {}
+        }
+      });
+
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && db && isUnlocked && currentStoreId && mySessionId && !isCloudQuotaExhausted && !isCloudPermissionError) {
+          if (Date.now() - lastPresenceHeartbeatAt >= 45000) {
+            lastPresenceHeartbeatAt = Date.now();
+            db.collection('presence').doc(currentStoreId).collection('sessions').doc(mySessionId).set({
+              sessionId: mySessionId,
+              workerNum: myWorkerNum,
+              workerName: myWorkerName,
+              colorIndex: (myWorkerNum - 1) % WORKER_COLOR_PALETTE.length,
+              activeCell: myActiveCellId || null,
+              lastSeen: lastPresenceHeartbeatAt
+            }, { merge: true }).catch(err => handleCloudSyncError(err, '동시접속 복귀', true));
+          }
         }
       });
     }
@@ -8219,7 +8337,9 @@ service cloud.firestore {
             }
           }
         }
-        setSyncStatus('online', '클라우드 동기화 완료');
+        if (!isCloudQuotaExhausted && !isCloudPermissionError) {
+          setSyncStatus('online', '클라우드 동기화 완료');
+        }
       }, (err) => {
         console.error("Master config snapshot error:", err);
         setSyncStatus('error', '동기화 연결 실패');
@@ -8515,7 +8635,9 @@ service cloud.firestore {
             }
           }
         }
-        setSyncStatus('online', '클라우드 동기화 완료');
+        if (!isCloudQuotaExhausted && !isCloudPermissionError) {
+          setSyncStatus('online', '클라우드 동기화 완료');
+        }
       }, (err) => {
         console.error("Store data snapshot error:", err);
         setSyncStatus('error', '매장 데이터 연결 실패');
@@ -8671,14 +8793,23 @@ service cloud.firestore {
 
       db.collection('stores').doc(sId).set(payload, { merge: true })
         .then(() => {
-          if (currentStoreId === sId) setSyncStatus('online', '클라우드 동기화 완료');
+          if (isCloudQuotaExhausted) {
+            isCloudQuotaExhausted = false;
+            const quotaBanner = document.getElementById('cloudQuotaBanner');
+            if (quotaBanner) quotaBanner.classList.add('hidden');
+          }
+          if (currentStoreId === sId && !isCloudPermissionError) setSyncStatus('online', '클라우드 동기화 완료');
           if (category && description) {
             logAudit(category, description);
           }
         })
         .catch(err => {
           console.error("Save to store error:", err);
-          if (currentStoreId === sId) setSyncStatus('error', '저장 실패 - 재시도 필요');
+          if (typeof handleCloudSyncError === 'function' && (isCloudQuotaExceededError(err) || (err && err.code === 'permission-denied'))) {
+            handleCloudSyncError(err, '매장 데이터 저장');
+          } else if (currentStoreId === sId) {
+            setSyncStatus('error', '저장 실패 - 재시도 필요');
+          }
         });
     }
 
@@ -8706,7 +8837,7 @@ service cloud.firestore {
       }
     }
 
-    function scheduleStoreSave(category = '', description = '') {
+    function scheduleStoreSave(category = '', description = '', delayMs = 400) {
       const targetStoreId = currentStoreId || 'myeongji';
       // 즉시 매장별 로컬 백업 최신화 (오프라인/샌드박스 및 매장 전환 레이스 보호)
       saveStoreLocalBackups(targetStoreId);
@@ -8716,16 +8847,25 @@ service cloud.firestore {
         console.warn("[데이터 보호] 클라우드 매장 데이터가 아직 완전히 로딩되지 않아 저장을 차단합니다 (리베이트 롤백 방지).");
         return;
       }
-      setSyncStatus('syncing', '클라우드 저장 중...');
+      if (isCloudQuotaExhausted) {
+        setSyncStatus('error', '클라우드 사용량 초과 (클릭)');
+      } else {
+        setSyncStatus('syncing', '클라우드 저장 중...');
+      }
+
+      const prevMeta = (pendingStoreSaveMeta && pendingStoreSaveMeta.storeId === targetStoreId) ? pendingStoreSaveMeta : null;
+      const nextCategory = category || (prevMeta ? prevMeta.category : '');
+      const nextDescription = description || (prevMeta ? prevMeta.description : '');
+      const waitMs = Math.max(250, Number(delayMs) || 400);
 
       if (storeSaveTimer) clearTimeout(storeSaveTimer);
-      pendingStoreSaveMeta = { storeId: targetStoreId, category, description };
+      pendingStoreSaveMeta = { storeId: targetStoreId, category: nextCategory, description: nextDescription };
       storeSaveTimer = setTimeout(() => {
         storeSaveTimer = null;
-        const meta = pendingStoreSaveMeta || { storeId: targetStoreId, category, description };
+        const meta = pendingStoreSaveMeta || { storeId: targetStoreId, category: nextCategory, description: nextDescription };
         pendingStoreSaveMeta = null;
         executeStoreSave(meta.storeId, meta.category, meta.description);
-      }, 400);
+      }, waitMs);
     }
 
     function scheduleMasterSave(category = '', description = '') {
@@ -8756,13 +8896,17 @@ service cloud.firestore {
           })
           .catch(err => {
             console.error("Master save error:", err);
-            setSyncStatus('error', '공시 저장 실패');
+            if (isCloudQuotaExceededError(err) || (err && err.code === 'permission-denied')) {
+              handleCloudSyncError(err, '공시/출고가 저장');
+            } else {
+              setSyncStatus('error', '공시 저장 실패');
+            }
           });
       }, 400);
     }
 
     function logAudit(category, description) {
-      if (!db) return;
+      if (!db || isCloudQuotaExhausted || isCloudPermissionError) return;
       const now = new Date();
       const pad = (n) => String(n).padStart(2, '0');
       const timeStr = `${now.getFullYear()}.${pad(now.getMonth()+1)}.${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
@@ -8777,7 +8921,10 @@ service cloud.firestore {
         role: currentRole,
         category: category,
         description: description
-      }).catch(e => console.error("Error logging audit:", e));
+      }).catch(e => {
+        console.error("Error logging audit:", e);
+        handleCloudSyncError(e, '변경이력 저장', true);
+      });
     }
 
     // ==================== 실시간 변경 내역 (히스토리 모달) ====================
@@ -8786,27 +8933,112 @@ service cloud.firestore {
 
         // ==================== 클라우드 권한/동기화 오류 안전망 & 오프라인 백업/복원 ====================
     let isCloudPermissionError = false;
+    let isCloudQuotaExhausted = false;
+    let cloudQuotaToastShown = false;
 
-    function handleCloudSyncError(err, source = '') {
+    function isCloudQuotaExceededError(err) {
+      if (!err) return false;
+      const code = String(err.code || '').toLowerCase();
+      const msg = String(err.message || err || '').toLowerCase();
+      return code.includes('resource-exhausted') ||
+        code.includes('quota') ||
+        msg.includes('resource-exhausted') ||
+        msg.includes('resource_exhausted') ||
+        msg.includes('quota exceeded') ||
+        msg.includes('quota');
+    }
+
+    function dismissCloudQuotaBanner() {
+      const banner = document.getElementById('cloudQuotaBanner');
+      if (banner) banner.classList.add('hidden');
+    }
+
+    function handleCloudSyncError(err, source = '', silentToast = false) {
       console.error("[클라우드 동기화 오류] (" + source + "):", err);
+      const isQuota = isCloudQuotaExceededError(err);
       const isPerm = err && (
         err.code === 'permission-denied' ||
         (err.message && (err.message.toLowerCase().includes('permission') || err.message.toLowerCase().includes('insufficient')))
       );
-      if (isPerm) {
+      if (isQuota) {
+        const firstDetect = !isCloudQuotaExhausted;
+        isCloudQuotaExhausted = true;
+        if (presenceHeartbeatTimer) {
+          clearInterval(presenceHeartbeatTimer);
+          presenceHeartbeatTimer = null;
+        }
+        const quotaBanner = document.getElementById('cloudQuotaBanner');
+        if (quotaBanner) quotaBanner.classList.remove('hidden');
+        setSyncStatus('error', '클라우드 사용량 초과 (클릭)');
+        if (firstDetect && !cloudQuotaToastShown && !silentToast && typeof showGeneralToast === 'function') {
+          cloudQuotaToastShown = true;
+          showGeneralToast('⚠️ 오늘의 클라우드 무료 사용량이 초과되어 실시간 동기화가 일시 중단되었습니다. (내 PC 임시저장 활성)', 6500);
+        }
+        tryRecoverFromLocalBackup();
+      } else if (isPerm) {
         isCloudPermissionError = true;
         const banner = document.getElementById('cloudPermissionBanner');
         if (banner) banner.classList.remove('hidden');
         setSyncStatus('error', '클라우드 권한 만료 (클릭)');
         tryRecoverFromLocalBackup();
       } else {
-        setSyncStatus('error', source + ' 연결 실패');
+        setSyncStatus('error', (source ? source + ' ' : '') + '연결 실패');
       }
     }
 
-    function openCloudTroubleshootModal() {
+    // Firestore SDK가 내부 백오프 로그로 resource-exhausted를 먼저 출력할 때도 즉시 감지하여 상단 경고 배너 및 상태 배지 전환
+    (function installFirebaseQuotaConsoleMonitor() {
+      if (typeof window === 'undefined' || window.__firebaseQuotaMonitorInstalled) return;
+      window.__firebaseQuotaMonitorInstalled = true;
+      const origConsoleError = console.error.bind(console);
+      console.error = function(...args) {
+        origConsoleError(...args);
+        try {
+          if (args.some(a => {
+            const s = typeof a === 'string' ? a : (a && (a.message || a.code) ? `${a.code || ''} ${a.message || ''}` : '');
+            return (s.includes('@firebase/firestore') || s.includes('FirebaseError')) &&
+              (s.toLowerCase().includes('resource-exhausted') || s.toLowerCase().includes('quota exceeded'));
+          })) {
+            if (!isCloudQuotaExhausted) {
+              setTimeout(() => {
+                handleCloudSyncError({ code: 'resource-exhausted', message: 'Quota exceeded' }, '클라우드 동기화', false);
+              }, 0);
+            }
+          }
+        } catch (_) {}
+      };
+    })();
+
+    function openCloudTroubleshootModal(mode) {
       const modal = document.getElementById('cloudTroubleshootModal');
-      if (modal) modal.classList.remove('hidden');
+      if (!modal) return;
+      const activeMode = mode || (isCloudQuotaExhausted ? 'quota' : 'permission');
+      const permSec = document.getElementById('cloudTroubleshootPermissionSection');
+      const quotaSec = document.getElementById('cloudTroubleshootQuotaSection');
+      const iconEl = document.getElementById('cloudTroubleshootIcon');
+      const titleEl = document.getElementById('cloudTroubleshootTitle');
+      const subEl = document.getElementById('cloudTroubleshootSubtitle');
+
+      if (activeMode === 'quota') {
+        if (permSec) permSec.classList.add('hidden');
+        if (quotaSec) quotaSec.classList.remove('hidden');
+        if (iconEl) {
+          iconEl.innerText = '🚨';
+          iconEl.className = 'w-12 h-12 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 text-2xl shadow-xs';
+        }
+        if (titleEl) titleEl.innerText = '실시간 동기화 일시 중단 안내 (무료 사용량 초과)';
+        if (subEl) subEl.innerText = '파이어베이스 일일 무료 사용량 한도를 초과하여 다른 PC 반영 및 동시접속자 표시가 잠시 멈춘 상태입니다.';
+      } else {
+        if (quotaSec) quotaSec.classList.add('hidden');
+        if (permSec) permSec.classList.remove('hidden');
+        if (iconEl) {
+          iconEl.innerText = '🛡️';
+          iconEl.className = 'w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 text-2xl shadow-xs';
+        }
+        if (titleEl) titleEl.innerText = '데이터 원복 및 클라우드(Firebase) 규칙 갱신 가이드';
+        if (subEl) subEl.innerText = '구글 파이어베이스의 최초 30일 테스트 모드 규칙이 만료되어 발생한 현상입니다. 1분이면 완벽히 원복됩니다.';
+      }
+      modal.classList.remove('hidden');
     }
 
     function closeCloudTroubleshootModal() {
@@ -9025,6 +9257,7 @@ service cloud.firestore {
           renderHistoryTable();
         }, (err) => {
           console.error("Audit history subscription error:", err);
+          if (typeof handleCloudSyncError === 'function') handleCloudSyncError(err, '변경이력 조회', true);
         });
     }
 
@@ -9548,8 +9781,18 @@ service cloud.firestore {
     // ==================== 5.6. 사이트 업데이트 내역 모달 ====================
     const SITE_UPDATES_DATA = [
       {
-        date: '2026. 11. 27',
+        date: '2026. 11. 28',
         tag: '최신',
+        title: '실시간 클라우드 동기화·동시접속 통신 최적화 및 사용량 초과 안내',
+        items: [
+          '동시 접속자 유지 주기와 입력 칸 포커스·타이핑 저장 간격을 최적화해 불필요한 클라우드 사용량 소모를 대폭 줄였습니다.',
+          '매장 전환 시 중복 연결되던 동시접속 등록을 정리해 더 가볍고 안정적으로 동작하도록 개선했습니다.',
+          '클라우드 일일 무료 사용량을 초과한 경우 [클라우드 동기화 완료]로 잘못 표시되던 문제를 고치고, 상단 빨간 안내 배너와 해결 가이드를 띄워 바로 확인하실 수 있도록 개선했습니다.'
+        ]
+      },
+      {
+        date: '2026. 11. 27',
+        tag: '기능 개선',
         title: '공시지원금 변동내역 · 화면 간소화 · 아이콘 통일 및 숨김 기능 개선',
         items: [
           '매장 계정에서는 [공시 & 출고가 설정] 버튼이 숨겨지고, 전 매장 공용 [공시지원금 변동내역] 버튼을 추가했습니다. 당일 변동내역이 있으면 버튼 옆에 색상 표시가 뜹니다.',
@@ -9677,6 +9920,7 @@ service cloud.firestore {
           renderSupportRequests();
         }, (err) => {
           console.error("Support requests subscription error:", err);
+          if (typeof handleCloudSyncError === 'function') handleCloudSyncError(err, '요청사항 조회', true);
         });
     }
 
@@ -19393,7 +19637,7 @@ JSON 규격:
       test2ChannelBonuses[ch] = isNaN(num) ? 0 : num;
       renderTest2BonusSummary();
       renderAllRebateSlotTabMeta();
-      scheduleStoreSave('', '');
+      scheduleStoreSave('', '', 1500);
     }
 
     function renderAllRebateSlotTabMeta() {
