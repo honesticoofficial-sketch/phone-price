@@ -4234,3 +4234,5 @@ service cloud.firestore {
 - **실서버 카탈로그 초기화 버그 수정 & 3사 교차 검색 지원 (`A175`/`A176` 등)**:
   - `subscribeStoreData()`가 Firestore 스냅샷 수신 직후 `resetStoreDeviceData('test2', false)`를 호출할 때 `test2SubsidyCatalog`가 `null`로 초기화되던 버그를 수정하여(`test2`에서는 메모리/로컬스토리지 카탈로그를 보존 + `TEST2_CATALOG_VERSION = '20261128v2'` 갱신), 실서버 로그인 상태에서도 수집된 SK 117 · KT 97 · LG 143 전체 기종이 항상 유지되도록 개선.
   - `renderDevicePickerList`에서 현재 선택한 통신사에 없는 단독/타사 기종(`KT SM-A175NK`, `LG SM-A176L 버디5` 등)도 다른 통신사 태그와 함께 모두 검색·선택 가능하도록 확장하고, 검색 결과 하단에 `[+ '...' 미등록 저가·유심 기종으로 바로 추가]` 버튼도 추가함.
+- **SKT T다이렉트샵 4G/LTE 공시 보완 병합 (`SM-A175N 갤럭시 A17`, `ZEM폰 포켓피스`)**:
+  - 스마트초이스 SK `PHONE_LTE` 목록에서 빠져 있던 SKT 4G 공식 공시 모델 **`갤럭시 A17 (SM-A175N)`** 및 **`ZEM폰 포켓피스`**를 T다이렉트샵 4G 공시 페이지(`shop.tworld.co.kr/notice?modelNwType=PHONE`)에서 추가로 함께 크롤링·병합하도록 `api/test2-subsidies.js` 및 `test2-subsidies-data.json` 업데이트 (`TEST2_CATALOG_VERSION = '20261128v3'`).
