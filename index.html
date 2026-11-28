@@ -4583,6 +4583,7 @@ service cloud.firestore {
       return out;
     }
 
+    const TEST2_CATALOG_VERSION = '20261128v2';
     let test2SubsidyLoadStarted = false;
     function getKstTodayIsoDate() {
       const d = new Date(Date.now() + 9 * 60 * 60 * 1000);
@@ -4595,26 +4596,36 @@ service cloud.firestore {
       if (test2SubsidyLoadStarted && !forceLive) return;
 
       const cMap = (test2SubsidyCatalog && test2SubsidyCatalog.carriers) ? test2SubsidyCatalog.carriers : {};
-      const hasAllCarriers = !!(cMap.SK && cMap.SK.models && cMap.KT && cMap.KT.models && cMap.LG && cMap.LG.models);
+      const hasAllCarriers = !!(
+        cMap.SK && cMap.SK.models && Object.keys(cMap.SK.models).length >= 50 &&
+        cMap.KT && cMap.KT.models && Object.keys(cMap.KT.models).length >= 50 &&
+        cMap.LG && cMap.LG.models && Object.keys(cMap.LG.models).length >= 50
+      );
+      const isCurVersion = (test2SubsidyCatalog && test2SubsidyCatalog.version === TEST2_CATALOG_VERSION);
       const todayKst = getKstTodayIsoDate();
       const syncedDay = test2SubsidyCatalog && test2SubsidyCatalog.syncedAt
         ? new Date(new Date(test2SubsidyCatalog.syncedAt).getTime() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10)
         : '';
 
-      if (hasAllCarriers && syncedDay === todayKst && !forceLive) return;
+      if (hasAllCarriers && isCurVersion && syncedDay === todayKst && !forceLive) return;
       test2SubsidyLoadStarted = true;
 
       try {
         // 1차: 정적 JSON 번들(/test2-subsidies-data.json)에서 즉시 무료 로드 (파이어베이스 사용량 0)
-        if (!hasAllCarriers && !forceLive) {
-          const staticRes = await fetch(`/test2-subsidies-data.json?v=${todayKst}`);
+        if ((!hasAllCarriers || !isCurVersion) && !forceLive) {
+          const staticRes = await fetch(`/test2-subsidies-data.json?v=${TEST2_CATALOG_VERSION}`);
           if (staticRes.ok) {
             const staticJson = await staticRes.json();
             if (staticJson && staticJson.carriers && staticJson.carriers.SK && staticJson.carriers.KT && staticJson.carriers.LG) {
               test2SubsidyCatalog = compactSubsidyCatalogForStorage(staticJson);
+              test2SubsidyCatalog.version = TEST2_CATALOG_VERSION;
               try {
                 localStorage.setItem('phone_test2_subsidy_catalog_' + (currentStoreId || 'test2'), JSON.stringify(test2SubsidyCatalog));
               } catch (e) {}
+              if (test2DailyViewMode === 'budget') {
+                const curRows = test2BudgetDailyRows[activeInputCarrier] || [];
+                if (curRows.length <= 3) importTest2CatalogBudgetModels(activeInputCarrier, true);
+              }
               renderDailyTable();
               renderCalcTable();
               const pickerModalEl = document.getElementById('customDevicePickerModal');
@@ -5356,27 +5367,33 @@ service cloud.firestore {
           existingNames.add((bd.name || '').toLowerCase().replace(/\s+/g, ''));
           if (bd.catalogCode) existingNames.add(String(bd.catalogCode).toLowerCase());
         });
-        const catEntry = test2SubsidyCatalog && test2SubsidyCatalog.carriers && test2SubsidyCatalog.carriers[activeInputCarrier];
-        const catModels = (catEntry && catEntry.models) ? Object.values(catEntry.models) : [];
-        catModels.forEach(m => {
-          if (!m) return;
-          const code = String(m.code || m.c || '').trim();
-          const name = String(m.name || m.n || code).trim();
-          if (!code || !name) return;
-          const normN = name.toLowerCase().replace(/\s+/g, '');
-          if (existingNames.has(normN) || existingNames.has(code.toLowerCase())) return;
-          const grp = m.group || m.g || 'A';
-          const fp = Number(m.factoryPriceMan !== undefined ? m.factoryPriceMan : (m.fp || 0)) || 0;
-          sourcePool.push({
-            id: `cat::${activeInputCarrier}::${code}`,
-            _isCatalogPreview: true,
-            _catalogCarrier: activeInputCarrier,
-            catalogCode: code,
-            name,
-            group: grp,
-            tag: code,
-            price: fp,
-            prices: { SK: fp, KT: fp, LG: fp }
+        const catOrder = [activeInputCarrier, ...['SK', 'KT', 'LG'].filter(c => c !== activeInputCarrier)];
+        catOrder.forEach(cKey => {
+          const catEntry = test2SubsidyCatalog && test2SubsidyCatalog.carriers && test2SubsidyCatalog.carriers[cKey];
+          const catModels = (catEntry && catEntry.models) ? Object.values(catEntry.models) : [];
+          catModels.forEach(m => {
+            if (!m) return;
+            const code = String(m.code || m.c || '').trim();
+            const name = String(m.name || m.n || code).trim();
+            if (!code || !name) return;
+            const normN = name.toLowerCase().replace(/\s+/g, '');
+            const codeKey = code.toLowerCase();
+            if (existingNames.has(normN) || existingNames.has(codeKey)) return;
+            existingNames.add(normN);
+            existingNames.add(codeKey);
+            const grp = m.group || m.g || 'A';
+            const fp = Number(m.factoryPriceMan !== undefined ? m.factoryPriceMan : (m.fp || 0)) || 0;
+            sourcePool.push({
+              id: `cat::${cKey}::${code}`,
+              _isCatalogPreview: true,
+              _catalogCarrier: cKey,
+              catalogCode: code,
+              name,
+              group: grp,
+              tag: cKey === activeInputCarrier ? code : `${cKey} · ${code}`,
+              price: fp,
+              prices: { SK: fp, KT: fp, LG: fp }
+            });
           });
         });
       }
@@ -5468,7 +5485,7 @@ service cloud.firestore {
                 <span class="px-2 py-0.5 rounded-lg text-[10px] font-black shrink-0 bg-slate-100 group-hover:bg-purple-100 group-hover:text-purple-700 text-slate-600 transition border border-slate-200">${escapeHtml(shortName || d.group || '기타')}</span>
                 <div class="truncate">
                   <div class="font-black text-xs text-slate-900 group-hover:text-purple-900 transition truncate">${escapeHtml(d.name)}</div>
-                  <div class="text-[10px] text-slate-400 font-medium">${d._isCatalogPreview ? `${escapeHtml(d.catalogCode)} · 수집공시 · ` : ''}기본 출고가: ${d.coming ? '출시예정' : relPrice + '만'}</div>
+                  <div class="text-[10px] text-slate-400 font-medium">${d._isCatalogPreview ? `${escapeHtml(d._catalogCarrier || activeInputCarrier)} · ${escapeHtml(d.catalogCode)} · 수집공시 · ` : ''}기본 출고가: ${d.coming ? '출시예정' : relPrice + '만'}</div>
                 </div>
               </div>
               <div class="shrink-0 pl-2">
@@ -5484,6 +5501,19 @@ service cloud.firestore {
         `;
       });
 
+      if (includeTest2Extra && activePickerSearch) {
+        const rawSearch = (document.getElementById('devicePickerSearchInput')?.value || activePickerSearch).trim();
+        if (rawSearch) {
+          html += `
+            <div class="pt-3 pb-1">
+              <button type="button" onclick="addCustomBudgetDeviceFromPicker('${escapeHtml(rawSearch).replace(/'/g, "\\'")}')"
+                class="w-full p-3 rounded-2xl border-2 border-dashed border-amber-300 bg-amber-50/70 hover:bg-amber-100/80 text-amber-900 font-black text-xs transition cursor-pointer flex items-center justify-center gap-1.5">
+                <span>+ '${escapeHtml(rawSearch)}' 미등록 저가·유심 기종으로 바로 추가</span>
+              </button>
+            </div>`;
+        }
+      }
+
       if (totalMatches === 0 && (!html || html.trim() === '')) {
         html = `
           <div class="py-12 text-center text-slate-400 space-y-1">
@@ -5495,6 +5525,42 @@ service cloud.firestore {
       }
 
       container.innerHTML = html;
+    }
+
+    function addCustomBudgetDeviceFromPicker(rawName) {
+      if (!isTest2FeatureEnabled() || !rawName) return;
+      ensureTest2BudgetStateInitialized();
+      const cleanName = String(rawName).trim();
+      if (!cleanName) return;
+      const isUsim = /유심|usim|중고개통/i.test(cleanName);
+      const newId = `t2_custom_${Date.now().toString(36)}`;
+      const dev = {
+        id: newId,
+        name: cleanName,
+        group: isUsim ? 'USIM' : 'A',
+        isTest2Budget: true,
+        isUsim,
+        prices: { SK: 0, KT: 0, LG: 0 },
+        sub: { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } },
+        rate: { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } },
+        loc: { SK: { mnp: '도매', chg: '도매' }, KT: { mnp: '도매', chg: '도매' }, LG: { mnp: '도매', chg: '도매' } },
+        rateSunyak: getDefaultSunyakRateMap(),
+        locSunyak: getDefaultSunyakLocMap(),
+        agency: getDefaultAgencyMap(),
+        agencySunyak: getDefaultAgencyMap(),
+        selectedPlanTier: { SK: 'M_50', KT: '61K 이상', LG: '55군' },
+        ad: {
+          SK: { mnp: '', chg: '', note: '', hidden: false, sunyak: isUsim, tag: cleanName },
+          KT: { mnp: '', chg: '', note: '', hidden: false, sunyak: isUsim, tag: cleanName },
+          LG: { mnp: '', chg: '', note: '', hidden: false, sunyak: isUsim, tag: cleanName }
+        }
+      };
+      test2BudgetDevices.push(dev);
+      if (activePickerContext === 'daily') {
+        updateDailyRow(activePickerIndex, newId);
+      }
+      closeCustomDevicePicker();
+      showGeneralToast(`✨ '${cleanName}' 기종을 추가해 해당 줄에 적용했습니다.`);
     }
 
     function onSelectDeviceFromPicker(devId) {
@@ -8907,7 +8973,14 @@ service cloud.firestore {
       let srBackup = null, slBackup = null;
       test2ChannelBonuses = { '도매': 10, '온라인': 13, 'K1': 0, '특판': 0 };
       test2PolicyNotes = { SK: null, KT: null, LG: null };
-      test2SubsidyCatalog = { syncedAt: '', carriers: { SK: null, KT: null, LG: null } };
+      if (sId !== 'test2') {
+        test2SubsidyCatalog = { syncedAt: '', carriers: { SK: null, KT: null, LG: null } };
+      } else if (!(test2SubsidyCatalog && test2SubsidyCatalog.carriers && test2SubsidyCatalog.carriers.SK)) {
+        try {
+          const subSaved = localStorage.getItem('phone_test2_subsidy_catalog_' + sId);
+          if (subSaved) test2SubsidyCatalog = { syncedAt: '', carriers: { SK: null, KT: null, LG: null }, ...JSON.parse(subSaved) };
+        } catch (e) {}
+      }
       test2BudgetDevices = [];
       test2BudgetDailyRows = { SK: [], KT: [], LG: [] };
       let agBackup = null, sagBackup = null, tierBackup = null;
@@ -8933,14 +9006,19 @@ service cloud.firestore {
           if (bonusSaved) test2ChannelBonuses = { ...test2ChannelBonuses, ...JSON.parse(bonusSaved) };
           const notesSaved = localStorage.getItem('phone_test2_policy_notes_' + sId);
           if (notesSaved) test2PolicyNotes = { ...test2PolicyNotes, ...JSON.parse(notesSaved) };
-          const subSaved = localStorage.getItem('phone_test2_subsidy_catalog_' + sId);
-          if (subSaved) test2SubsidyCatalog = { syncedAt: '', carriers: { SK: null, KT: null, LG: null }, ...JSON.parse(subSaved) };
           if (sId === 'test2') {
             const bDevsSaved = localStorage.getItem('phone_test2_budget_devices_' + sId);
             if (bDevsSaved) test2BudgetDevices = JSON.parse(bDevsSaved);
             const bRowsSaved = localStorage.getItem('phone_test2_budget_rows_' + sId);
             if (bRowsSaved) test2BudgetDailyRows = JSON.parse(bRowsSaved);
           }
+        } catch (e) {}
+      } else if (sId === 'test2') {
+        try {
+          const bDevsSaved = localStorage.getItem('phone_test2_budget_devices_' + sId);
+          if (bDevsSaved) test2BudgetDevices = JSON.parse(bDevsSaved);
+          const bRowsSaved = localStorage.getItem('phone_test2_budget_rows_' + sId);
+          if (bRowsSaved) test2BudgetDailyRows = JSON.parse(bRowsSaved);
         } catch (e) {}
       }
       if (sId === 'test2') ensureTest2BudgetStateInitialized();
@@ -8977,7 +9055,10 @@ service cloud.firestore {
 
       currentStoreId = targetStoreId;
       lastUserActionTime = 0;
-      if (targetStoreId !== 'test2') test2DailyViewMode = 'main';
+      if (targetStoreId !== 'test2') {
+        test2DailyViewMode = 'main';
+        test2SubsidyLoadStarted = false;
+      }
 
       resetStoreDeviceData(targetStoreId, true);
       if (typeof loadStoreS26Hike === 'function') loadStoreS26Hike(targetStoreId);
