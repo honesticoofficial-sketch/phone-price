@@ -853,6 +853,23 @@
               <button onclick="setCarrierInput('KT')" id="inputTab-KT" class="px-4 py-1.5 rounded-lg text-xs font-bold text-slate-600 transition">KT</button>
               <button onclick="setCarrierInput('LG')" id="inputTab-LG" class="px-4 py-1.5 rounded-lg text-xs font-bold text-slate-600 transition">LG</button>
             </div>
+            <!-- 테스트매장2 전용 Step 4: 주요기종 / 저가·유심 2분할 스위치 -->
+            <div id="test2DailyViewSwitch" class="hidden items-center gap-1 bg-indigo-50 p-1 rounded-xl border border-indigo-200 shadow-2xs">
+              <button type="button" id="test2DailyModeBtn-main" onclick="setTest2DailyViewMode('main')" class="px-3 py-1.5 rounded-lg text-xs font-black bg-indigo-600 text-white shadow-xs transition cursor-pointer">📱 주요기종</button>
+              <button type="button" id="test2DailyModeBtn-budget" onclick="setTest2DailyViewMode('budget')" class="px-3 py-1.5 rounded-lg text-xs font-bold text-indigo-700 hover:bg-white transition cursor-pointer">💡 저가·유심</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 테스트매장2 전용: 저가·유심(중고개통) 모드 보조 바 -->
+        <div id="dailyTest2BudgetBar" class="hidden flex-wrap items-center justify-between gap-2.5 bg-amber-50/90 border border-amber-200 rounded-xl px-3.5 py-2">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="px-2 py-0.5 rounded-md bg-amber-600 text-white text-[10px] font-black">저가·유심 전용 창</span>
+            <span id="dailyTest2BudgetStats" class="text-[11px] font-bold text-amber-950">보급형(A/와이드/퀀텀) · 유심/중고개통 리베이트 및 실구매가 계산</span>
+          </div>
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <button type="button" onclick="importTest2CatalogBudgetModels(activeInputCarrier)" class="px-2.5 py-1 rounded-lg bg-white hover:bg-amber-100 text-amber-900 border border-amber-300 text-[11px] font-black shadow-2xs transition cursor-pointer">✨ 수집된 A·보급형 불러오기</button>
+            <button type="button" onclick="promptAddTest2BudgetDevice()" class="px-2.5 py-1 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-[11px] font-black shadow-2xs transition cursor-pointer">+ 저가/유심 직접 추가</button>
           </div>
         </div>
 
@@ -919,6 +936,13 @@
                     <span class="flex items-center justify-center">
                       기준 (공시/선약)
                       <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>기종별 공시 · 선약 · 30만 미만 체크</b><br>기종마다 [공시]와 [선약]을 따로 선택할 수 있습니다.<br>• 공시지원금 30만원 미만 기종은 <b>[선약단가 공시적용]</b> 체크 시 공통지원금을 유지한 채 선약단가로 계산됩니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>기종별 공시 · 선약 · 30만 미만 체크</b><br>기종마다 [공시]와 [선약]을 따로 선택할 수 있습니다.<br>• 공시지원금 30만원 미만 기종은 <b>[선약단가 공시적용]</b> 체크 시 공통지원금을 유지한 채 선약단가로 계산됩니다.')" title="기준 안내">?</button>
+                    </span>
+                    <div class="column-resizer" onmousedown="initColResize(event, this, 'dailyTable')" title="경계선을 드래그하여 열 너비 조절"></div>
+                  </th>
+                  <th id="dailyThPlanTierCol" class="hidden relative p-2.5 text-center" style="width: 132px;">
+                    <span class="flex items-center justify-center">
+                      요금제 구간
+                      <button type="button" class="help-btn" onmouseenter="showHelpTip(event, this, '<b>기종별 요금제 구간 선택</b><br>기종마다 적용할 요금제 구간을 선택하면 수집된 공식 공시지원금과 구간별 리베이트가 즉시 반영됩니다.')" onmouseleave="hideHelpTip()" onclick="toggleHelpTip(event, this, '<b>기종별 요금제 구간 선택</b><br>기종마다 적용할 요금제 구간을 선택하면 수집된 공식 공시지원금과 구간별 리베이트가 즉시 반영됩니다.')" title="요금제 구간 안내">?</button>
                     </span>
                     <div class="column-resizer" onmousedown="initColResize(event, this, 'dailyTable')" title="경계선을 드래그하여 열 너비 조절"></div>
                   </th>
@@ -3861,6 +3885,18 @@ service cloud.firestore {
 
     function getEffectiveDeviceSub(d, carrier, type) {
       if (!d) return 0;
+      if (d.isUsim) return 0;
+      if (isTest2FeatureEnabled()) {
+        const explicitTier = (d.selectedPlanTier && d.selectedPlanTier[carrier]) ? d.selectedPlanTier[carrier] : '';
+        const tierId = explicitTier || (d.isTest2Budget && typeof getTest2DefaultMainTier === 'function' ? getTest2DefaultMainTier(carrier, true) : '');
+        if (tierId && typeof findTest2CatalogModelForDevice === 'function') {
+          const catModel = findTest2CatalogModelForDevice(d, carrier);
+          const tiers = catModel && (catModel.t || catModel.tiers);
+          if (tiers && tiers[tierId] && tiers[tierId][type] !== undefined) {
+            return Number(tiers[tierId][type]) || 0;
+          }
+        }
+      }
       if (d.id === 's26') {
         if (storeS26Hike[carrier] === true) return 75;
         if (storeS26Hike[carrier] === false) return 60;
@@ -4020,6 +4056,341 @@ service cloud.firestore {
     let test2SubsidyCatalog = { syncedAt: '', carriers: { SK: null, KT: null, LG: null } };
     let test2PlanModalState = { carrier: 'SK', group: 'ALL', selectedTier: '' };
     let test2PickerState = { deviceId: '', contractType: 'gongsi', moveType: 'mnp', channel: '도매' };
+    let test2DailyViewMode = 'main'; // 'main' (주요기종) | 'budget' (저가·유심)
+    let test2BudgetDevices = [];
+    let test2BudgetDailyRows = { SK: [], KT: [], LG: [] };
+
+    function getDefaultSelectedPlanTierMap() {
+      return { SK: '', KT: '', LG: '' };
+    }
+
+    function getTest2DefaultMainTier(carrier, isBudget = false) {
+      if (carrier === 'SK') return isBudget ? 'M_50' : 'P_119';
+      if (carrier === 'KT') return isBudget ? '69K 이상' : '110K 이상';
+      if (carrier === 'LG') return isBudget ? '85군' : '115군';
+      return '';
+    }
+
+    function getTest2SelectedPlanTier(d, carrier) {
+      if (d && d.selectedPlanTier && d.selectedPlanTier[carrier]) {
+        return d.selectedPlanTier[carrier];
+      }
+      return getTest2DefaultMainTier(carrier, !!(d && d.isTest2Budget));
+    }
+
+    function findTest2CatalogModelForDevice(d, carrier) {
+      if (!d || !carrier || !test2SubsidyCatalog || !test2SubsidyCatalog.carriers) return null;
+      const entry = test2SubsidyCatalog.carriers[carrier];
+      if (!entry || !entry.models) return null;
+      const models = entry.models;
+
+      if (d.catalogCode && models[d.catalogCode]) {
+        return models[d.catalogCode];
+      }
+      if (d.code && models[d.code]) {
+        return models[d.code];
+      }
+      const list = Object.values(models);
+      const norm = (s) => String(s || '').toLowerCase().replace(/\s+/g, '').replace(/갤럭시|galaxy|apple|애플|256gb?|512gb?|128gb?/g, '');
+      const devNameNorm = norm(d.name || '');
+      const devIdLow = String(d.id || '').toLowerCase();
+
+      if (d.id === 's26') {
+        const wantNew = (typeof isS26HikeActive === 'function') && isS26HikeActive(carrier);
+        const s26Matches = list.filter(m => /s26(?!.*(플러스|\+|울트라|ultra))|sm-s942/i.test(`${m.n || m.name || ''} ${m.c || m.code || ''}`));
+        if (s26Matches.length > 0) {
+          const picked = s26Matches.find(m => wantNew ? /new|140/i.test(`${m.n || m.name || ''} ${m.fp || m.factoryPriceMan || ''}`) : !/new/i.test(m.n || m.name || ''));
+          if (picked) return picked;
+        }
+      }
+
+      if (devNameNorm) {
+        const exact = list.find(m => norm(m.n || m.name || '') === devNameNorm);
+        if (exact) return exact;
+        const partial = list.find(m => {
+          const mn = norm(m.n || m.name || '');
+          return mn && (mn.includes(devNameNorm) || devNameNorm.includes(mn));
+        });
+        if (partial) return partial;
+      }
+      return list.find(m => String(m.c || m.code || '').toLowerCase() === devIdLow) || null;
+    }
+
+    function getDefaultTest2BudgetDevices() {
+      return [
+        {
+          id: 't2_usim_new',
+          name: '유심 단독 / 신규·번이 (중고개통)',
+          group: 'USIM',
+          isTest2Budget: true,
+          isUsim: true,
+          prices: { SK: 0, KT: 0, LG: 0 },
+          sub: { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } },
+          rate: { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } },
+          loc: { SK: { mnp: '도매', chg: '도매' }, KT: { mnp: '도매', chg: '도매' }, LG: { mnp: '도매', chg: '도매' } },
+          rateSunyak: getDefaultSunyakRateMap(),
+          locSunyak: getDefaultSunyakLocMap(),
+          agency: getDefaultAgencyMap(),
+          agencySunyak: getDefaultAgencyMap(),
+          selectedPlanTier: { SK: 'M_50', KT: '61K 이상', LG: '55군' },
+          ad: {
+            SK: { mnp: '', chg: '', note: '', hidden: false, sunyak: true, tag: '유심신규/번이' },
+            KT: { mnp: '', chg: '', note: '', hidden: false, sunyak: true, tag: '유심신규/번이' },
+            LG: { mnp: '', chg: '', note: '', hidden: false, sunyak: true, tag: '유심신규/번이' }
+          }
+        },
+        {
+          id: 't2_usim_chg',
+          name: '유심 기변 (중고·자급제)',
+          group: 'USIM',
+          isTest2Budget: true,
+          isUsim: true,
+          prices: { SK: 0, KT: 0, LG: 0 },
+          sub: { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } },
+          rate: { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } },
+          loc: { SK: { mnp: '도매', chg: '도매' }, KT: { mnp: '도매', chg: '도매' }, LG: { mnp: '도매', chg: '도매' } },
+          rateSunyak: getDefaultSunyakRateMap(),
+          locSunyak: getDefaultSunyakLocMap(),
+          agency: getDefaultAgencyMap(),
+          agencySunyak: getDefaultAgencyMap(),
+          selectedPlanTier: { SK: 'M_50', KT: '61K 이상', LG: '55군' },
+          ad: {
+            SK: { mnp: '', chg: '', note: '', hidden: false, sunyak: true, tag: '유심기변' },
+            KT: { mnp: '', chg: '', note: '', hidden: false, sunyak: true, tag: '유심기변' },
+            LG: { mnp: '', chg: '', note: '', hidden: false, sunyak: true, tag: '유심기변' }
+          }
+        },
+        {
+          id: 't2_a37',
+          name: '갤럭시 A37 5G',
+          group: 'A',
+          isTest2Budget: true,
+          isUsim: false,
+          catalogCode: 'SM-A376N',
+          prices: { SK: 59.84, KT: 59.84, LG: 59.84 },
+          sub: { SK: { mnp: 35, chg: 35 }, KT: { mnp: 35, chg: 35 }, LG: { mnp: 35, chg: 35 } },
+          rate: { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } },
+          loc: { SK: { mnp: '도매', chg: '도매' }, KT: { mnp: '도매', chg: '도매' }, LG: { mnp: '도매', chg: '도매' } },
+          rateSunyak: getDefaultSunyakRateMap(),
+          locSunyak: getDefaultSunyakLocMap(),
+          agency: getDefaultAgencyMap(),
+          agencySunyak: getDefaultAgencyMap(),
+          selectedPlanTier: { SK: 'M_50', KT: '61K 이상', LG: '55군' },
+          ad: {
+            SK: { mnp: '', chg: '', note: '', hidden: false, sunyak: false, tag: 'A37' },
+            KT: { mnp: '', chg: '', note: '', hidden: false, sunyak: false, tag: 'A37' },
+            LG: { mnp: '', chg: '', note: '', hidden: false, sunyak: false, tag: 'A37' }
+          }
+        }
+      ];
+    }
+
+    function ensureTest2BudgetStateInitialized() {
+      if (!Array.isArray(test2BudgetDevices) || test2BudgetDevices.length === 0) {
+        test2BudgetDevices = getDefaultTest2BudgetDevices();
+      } else {
+        test2BudgetDevices.forEach(bd => {
+          if (!bd) return;
+          bd.isTest2Budget = true;
+          if (!bd.rate) bd.rate = { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } };
+          if (!bd.loc) bd.loc = { SK: { mnp: '도매', chg: '도매' }, KT: { mnp: '도매', chg: '도매' }, LG: { mnp: '도매', chg: '도매' } };
+          if (!bd.rateSunyak) bd.rateSunyak = getDefaultSunyakRateMap();
+          if (!bd.locSunyak) bd.locSunyak = getDefaultSunyakLocMap();
+          if (!bd.agency) bd.agency = getDefaultAgencyMap();
+          if (!bd.agencySunyak) bd.agencySunyak = getDefaultAgencyMap();
+          if (!bd.selectedPlanTier) bd.selectedPlanTier = getDefaultSelectedPlanTierMap();
+        });
+      }
+      if (!test2BudgetDailyRows || typeof test2BudgetDailyRows !== 'object') {
+        test2BudgetDailyRows = { SK: [], KT: [], LG: [] };
+      }
+      ['SK', 'KT', 'LG'].forEach(c => {
+        if (!Array.isArray(test2BudgetDailyRows[c]) || test2BudgetDailyRows[c].length === 0) {
+          test2BudgetDailyRows[c] = test2BudgetDevices.map(bd => bd.id);
+        }
+      });
+    }
+
+    function findDailyDeviceById(id) {
+      if (!id || id === 'empty') return null;
+      const mainDev = devices.find(x => x.id === id);
+      if (mainDev) return mainDev;
+      if (isTest2FeatureEnabled() && Array.isArray(test2BudgetDevices)) {
+        return test2BudgetDevices.find(x => x.id === id) || null;
+      }
+      return null;
+    }
+
+    function setTest2DailyViewMode(mode) {
+      if (!isTest2FeatureEnabled()) {
+        test2DailyViewMode = 'main';
+        return;
+      }
+      test2DailyViewMode = (mode === 'budget') ? 'budget' : 'main';
+      ensureTest2BudgetStateInitialized();
+      updateTest2DailyUiVisibility();
+      renderDailyTable();
+    }
+
+    function importTest2CatalogBudgetModels(carrier = activeInputCarrier) {
+      if (!isTest2FeatureEnabled()) return;
+      ensureTest2BudgetStateInitialized();
+      const catEntry = test2SubsidyCatalog && test2SubsidyCatalog.carriers && test2SubsidyCatalog.carriers[carrier];
+      const models = catEntry && catEntry.models ? Object.values(catEntry.models) : [];
+      const aModels = models.filter(m => m && (m.group === 'A' || m.g === 'A'));
+      if (aModels.length === 0) {
+        alert(`먼저 상단의 [🔄 공시 전체 불러오기]를 눌러 ${carrier} A시리즈·보급형 공시지원금 목록을 수집해 주세요.`);
+        return;
+      }
+      const rows = test2BudgetDailyRows[carrier] || (test2BudgetDailyRows[carrier] = []);
+      let addedCount = 0;
+      aModels.forEach(m => {
+        const code = String(m.code || m.c || '').trim();
+        const name = String(m.name || m.n || code).trim();
+        if (!code) return;
+        let existing = test2BudgetDevices.find(x => x.catalogCode === code || x.id === `t2_${code.toLowerCase()}` || x.name === name);
+        const factoryMan = Number(m.factoryPriceMan !== undefined ? m.factoryPriceMan : (m.fp || 0)) || 0;
+        if (!existing) {
+          const id = `t2_${code.toLowerCase().replace(/[^a-z0-9]/g, '')}`;
+          const tiersObj = m.tiers || m.t || {};
+          const defTier = getTest2DefaultMainTier(carrier, true);
+          const defSub = tiersObj[defTier] || { mnp: 0, chg: 0 };
+          existing = {
+            id,
+            name,
+            group: 'A',
+            isTest2Budget: true,
+            isUsim: false,
+            catalogCode: code,
+            prices: { SK: factoryMan, KT: factoryMan, LG: factoryMan },
+            sub: {
+              SK: { mnp: Number(defSub.mnp) || 0, chg: Number(defSub.chg) || 0 },
+              KT: { mnp: Number(defSub.mnp) || 0, chg: Number(defSub.chg) || 0 },
+              LG: { mnp: Number(defSub.mnp) || 0, chg: Number(defSub.chg) || 0 }
+            },
+            rate: { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } },
+            loc: { SK: { mnp: '도매', chg: '도매' }, KT: { mnp: '도매', chg: '도매' }, LG: { mnp: '도매', chg: '도매' } },
+            rateSunyak: getDefaultSunyakRateMap(),
+            locSunyak: getDefaultSunyakLocMap(),
+            agency: getDefaultAgencyMap(),
+            agencySunyak: getDefaultAgencyMap(),
+            selectedPlanTier: { SK: 'M_50', KT: '61K 이상', LG: '55군' },
+            ad: {
+              SK: { mnp: '', chg: '', note: '', hidden: false, sunyak: false, tag: name },
+              KT: { mnp: '', chg: '', note: '', hidden: false, sunyak: false, tag: name },
+              LG: { mnp: '', chg: '', note: '', hidden: false, sunyak: false, tag: name }
+            }
+          };
+          test2BudgetDevices.push(existing);
+        } else if (factoryMan > 0) {
+          if (!existing.prices) existing.prices = {};
+          existing.prices[carrier] = factoryMan;
+        }
+        if (!rows.includes(existing.id)) {
+          rows.push(existing.id);
+          addedCount++;
+        }
+      });
+      saveLayouts('저가폰 목록 불러오기', `[${carrier}] A시리즈·보급형 ${addedCount}개 기종 추가`);
+      renderDailyTable();
+      showGeneralToast(`✨ [${carrier}] 수집된 A시리즈·보급형 ${addedCount}종을 저가·유심 창에 추가했습니다. (전체 ${rows.length}줄)`);
+    }
+
+    function promptAddTest2BudgetDevice() {
+      if (!isTest2FeatureEnabled()) return;
+      ensureTest2BudgetStateInitialized();
+      const rawName = prompt('추가할 저가폰 모델명 또는 유심 개통 이름을 입력하세요 (예: 갤럭시 와이드9, 유심 추가회선)');
+      if (!rawName || !rawName.trim()) return;
+      const cleanName = rawName.trim();
+      const isUsim = /유심|usim|중고개통/i.test(cleanName);
+      let priceNum = 0;
+      if (!isUsim) {
+        const rawPrice = prompt(`'${cleanName}' 출고가(만원 단위 숫자)를 입력하세요 (모르면 0):`, '0');
+        priceNum = Number(rawPrice) || 0;
+      }
+      const newId = `t2_custom_${Date.now().toString(36)}`;
+      const dev = {
+        id: newId,
+        name: cleanName,
+        group: isUsim ? 'USIM' : 'A',
+        isTest2Budget: true,
+        isUsim,
+        prices: { SK: priceNum, KT: priceNum, LG: priceNum },
+        sub: { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } },
+        rate: { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } },
+        loc: { SK: { mnp: '도매', chg: '도매' }, KT: { mnp: '도매', chg: '도매' }, LG: { mnp: '도매', chg: '도매' } },
+        rateSunyak: getDefaultSunyakRateMap(),
+        locSunyak: getDefaultSunyakLocMap(),
+        agency: getDefaultAgencyMap(),
+        agencySunyak: getDefaultAgencyMap(),
+        selectedPlanTier: { SK: 'M_50', KT: '61K 이상', LG: '55군' },
+        ad: {
+          SK: { mnp: '', chg: '', note: '', hidden: false, sunyak: isUsim, tag: cleanName },
+          KT: { mnp: '', chg: '', note: '', hidden: false, sunyak: isUsim, tag: cleanName },
+          LG: { mnp: '', chg: '', note: '', hidden: false, sunyak: isUsim, tag: cleanName }
+        }
+      };
+      test2BudgetDevices.push(dev);
+      const rows = test2BudgetDailyRows[activeInputCarrier] || (test2BudgetDailyRows[activeInputCarrier] = []);
+      rows.push(newId);
+      saveLayouts('저가·유심 기종 추가', `[${activeInputCarrier}] '${cleanName}' 추가`);
+      renderDailyTable();
+    }
+
+    function setTest2DevicePlanTier(deviceId, carrier, tierId) {
+      if (!isTest2FeatureEnabled()) return;
+      if (typeof markUserAction === 'function') markUserAction();
+      const d = findDailyDeviceById(deviceId);
+      if (!d) return;
+      if (!d.selectedPlanTier) d.selectedPlanTier = getDefaultSelectedPlanTierMap();
+      d.selectedPlanTier[carrier] = tierId || '';
+
+      const changedItems = [];
+      ['gongsi', 'sunyak'].forEach(contractType => {
+        const isSunyak = contractType === 'sunyak';
+        const rateMap = isSunyak
+          ? (d.rateSunyak || (d.rateSunyak = getDefaultSunyakRateMap()))
+          : (d.rate || (d.rate = { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } }));
+        const locMap = isSunyak ? d.locSunyak : d.loc;
+        const agMap = isSunyak ? d.agencySunyak : d.agency;
+        if (!rateMap[carrier]) rateMap[carrier] = { mnp: 0, chg: 0 };
+
+        ['mnp', 'chg'].forEach(moveType => {
+          const ch = (locMap && locMap[carrier] && locMap[carrier][moveType]) || '도매';
+          const ag = (agMap && agMap[carrier] && agMap[carrier][moveType]) || '';
+          const calc = (typeof computeRebateForDeviceChannel === 'function')
+            ? computeRebateForDeviceChannel(carrier, d.id, contractType, moveType, ch, ag, tierId)
+            : null;
+          if (calc && calc.tierExactMatched && calc.total !== null && calc.total !== undefined) {
+            const prevVal = Number(rateMap[carrier][moveType]);
+            if (prevVal !== calc.total) {
+              rateMap[carrier][moveType] = calc.total;
+              changedItems.push({
+                cellId: `${isSunyak ? 'rateSunyak' : 'rate'}_${d.id}_${carrier}_${moveType}`,
+                deviceId: d.id,
+                carrier,
+                contractType,
+                moveType,
+                prevVal: isNaN(prevVal) ? null : prevVal,
+                newVal: calc.total
+              });
+            }
+          }
+        });
+      });
+
+      if (typeof saveStoreLocalBackups === 'function') saveStoreLocalBackups();
+      renderDailyTable();
+      renderCalcTable();
+      if (currentTab === 'ad') updateActiveAdMarginsOnly();
+      if (changedItems.length > 0 && typeof triggerRebateCellGlow === 'function') {
+        triggerRebateCellGlow(changedItems);
+      }
+      const subM = getEffectiveDeviceSub(d, carrier, 'mnp');
+      const subC = getEffectiveDeviceSub(d, carrier, 'chg');
+      showGeneralToast(`📶 [${d.name} · ${carrier}] 요금제 구간 '${tierId || getTest2DefaultMainTier(carrier)}' 적용 (공시 ${subM}/${subC}만)`);
+      scheduleStoreSave('요금제 구간 변경', `${d.name} (${carrier}) 구간: ${tierId}`);
+    }
 
     // 몽키컨설팅 공식 요금제 지급구간표 (SK v7.1 / KT v8.1 / LG v7.9 - 2026.11.03)
     const TEST2_CARRIER_PLAN_TIERS = {
@@ -4591,6 +4962,10 @@ service cloud.firestore {
         localStorage.setItem(`phone_calc_rows_${sKey}`, JSON.stringify(calcRows));
         localStorage.setItem(`phone_daily_carrier_rows_${sKey}`, JSON.stringify(dailyCarrierRows));
         localStorage.setItem(`phone_ad_carrier_orders_${sKey}`, JSON.stringify(adCarrierOrders));
+        if (sKey === 'test2') {
+          localStorage.setItem(`phone_test2_budget_rows_${sKey}`, JSON.stringify(test2BudgetDailyRows));
+          localStorage.setItem(`phone_test2_budget_devices_${sKey}`, JSON.stringify(test2BudgetDevices));
+        }
       } catch (e) {}
       scheduleStoreSave(category, description);
     }
@@ -4619,6 +4994,20 @@ service cloud.firestore {
           const parsed = JSON.parse(savedAd);
           if (parsed && typeof parsed === 'object') adCarrierOrders = parsed;
         }
+
+        if (sKey === 'test2') {
+          const savedBudgetDevs = localStorage.getItem(`phone_test2_budget_devices_${sKey}`);
+          if (savedBudgetDevs) {
+            const parsedBDevs = JSON.parse(savedBudgetDevs);
+            if (Array.isArray(parsedBDevs) && parsedBDevs.length > 0) test2BudgetDevices = parsedBDevs;
+          }
+          const savedBudgetRows = localStorage.getItem(`phone_test2_budget_rows_${sKey}`);
+          if (savedBudgetRows) {
+            const parsedBRows = JSON.parse(savedBudgetRows);
+            if (parsedBRows && typeof parsedBRows === 'object') test2BudgetDailyRows = parsedBRows;
+          }
+          ensureTest2BudgetStateInitialized();
+        }
       } catch (e) {
         calcRows = [...defaultIds];
       }
@@ -4645,6 +5034,17 @@ service cloud.firestore {
         dailyCarrierRows[carrier] = devices.map(d => d.id);
       }
       return dailyCarrierRows[carrier];
+    }
+
+    function getActiveDailyRows(carrier = activeInputCarrier) {
+      if (isTest2FeatureEnabled() && test2DailyViewMode === 'budget') {
+        ensureTest2BudgetStateInitialized();
+        if (!test2BudgetDailyRows[carrier] || !Array.isArray(test2BudgetDailyRows[carrier])) {
+          test2BudgetDailyRows[carrier] = test2BudgetDevices.map(bd => bd.id);
+        }
+        return test2BudgetDailyRows[carrier];
+      }
+      return getDailyRows(carrier);
     }
 
     // 탭 2 해당 통신사 목록에 기종이 존재하는지 확인 (삭제 시 false -> 넷가표에서 해당 통신사 품절 처리)
@@ -4807,11 +5207,14 @@ service cloud.firestore {
       const container = document.getElementById('devicePickerListContainer');
       if (!container) return;
 
+      const sourcePool = (activePickerContext === 'daily' && isTest2FeatureEnabled() && test2DailyViewMode === 'budget')
+        ? [...(typeof test2BudgetDevices !== 'undefined' ? test2BudgetDevices : []), ...devices]
+        : devices;
       const groups = [
-        { key: 'S', label: '갤럭시 S 시리즈', color: 'purple', badge: '🟣 S시리즈', items: devices.filter(d => d.group === 'S' || (!d.group && (d.name || '').includes('S'))) },
-        { key: 'FOLD', label: '갤럭시 Z 플립·폴드', color: 'blue', badge: '🔵 Z폴더블', items: devices.filter(d => d.group === 'FOLD' || (!d.group && ((d.name || '').includes('플립') || (d.name || '').includes('폴드')))) },
-        { key: 'IPHONE', label: '아이폰 시리즈', color: 'emerald', badge: '🍏 아이폰', items: devices.filter(d => d.group === 'IPHONE' || (!d.group && ((d.name || '').includes('아이폰') || (d.name || '').includes('15') || (d.name || '').includes('16') || (d.name || '').includes('17') || (d.name || '').includes('18')))) },
-        { key: 'ETC', label: '보급형 및 기타', color: 'amber', badge: '🟡 기타', items: devices.filter(d => d.group !== 'S' && d.group !== 'FOLD' && d.group !== 'IPHONE' && !(d.name || '').includes('S') && !(d.name || '').includes('플립') && !(d.name || '').includes('폴드') && !(d.name || '').includes('아이폰')) }
+        { key: 'S', label: '갤럭시 S 시리즈', color: 'purple', badge: '🟣 S시리즈', items: sourcePool.filter(d => d.group === 'S' || (!d.group && (d.name || '').includes('S'))) },
+        { key: 'FOLD', label: '갤럭시 Z 플립·폴드', color: 'blue', badge: '🔵 Z폴더블', items: sourcePool.filter(d => d.group === 'FOLD' || (!d.group && ((d.name || '').includes('플립') || (d.name || '').includes('폴드')))) },
+        { key: 'IPHONE', label: '아이폰 시리즈', color: 'emerald', badge: '🍏 아이폰', items: sourcePool.filter(d => d.group === 'IPHONE' || (!d.group && ((d.name || '').includes('아이폰') || (d.name || '').includes('15') || (d.name || '').includes('16') || (d.name || '').includes('17') || (d.name || '').includes('18')))) },
+        { key: 'ETC', label: '저가형 · 유심 및 기타', color: 'amber', badge: '🟡 저가·유심·기타', items: sourcePool.filter(d => d.group !== 'S' && d.group !== 'FOLD' && d.group !== 'IPHONE' && !(d.name || '').includes('S') && !(d.name || '').includes('플립') && !(d.name || '').includes('폴드') && !(d.name || '').includes('아이폰')) }
       ];
 
       let filteredGroups = groups;
@@ -5261,7 +5664,7 @@ service cloud.firestore {
 
     // 2. 단가 입력표(TAB 2) 행 조작 함수들 (해당 통신사 전용)
     function addDailyRow(modelId = 'empty') {
-      const rows = getDailyRows(activeInputCarrier);
+      const rows = getActiveDailyRows(activeInputCarrier);
       rows.push(modelId);
       saveLayouts();
       renderDailyTable();
@@ -5276,7 +5679,7 @@ service cloud.firestore {
       }, 50);
     }
     function addDailyEmptyRow() {
-      const rows = getDailyRows(activeInputCarrier);
+      const rows = getActiveDailyRows(activeInputCarrier);
       rows.push('empty');
       saveLayouts();
       renderDailyTable();
@@ -5290,6 +5693,15 @@ service cloud.firestore {
       }, 50);
     }
     function resetDailyRows() {
+      if (isTest2FeatureEnabled() && test2DailyViewMode === 'budget') {
+        if (confirm(`[${activeInputCarrier}] 저가·유심 창을 기본 유심/저가폰 목록으로 초기화하시겠습니까?`)) {
+          ensureTest2BudgetStateInitialized();
+          test2BudgetDailyRows[activeInputCarrier] = test2BudgetDevices.map(d => d.id);
+          saveLayouts();
+          renderDailyTable();
+        }
+        return;
+      }
       if (confirm(`[${activeInputCarrier}] 대리점 단가표를 기본 기종 전체 목록으로 초기화하시겠습니까?`)) {
         dailyCarrierRows[activeInputCarrier] = devices.map(d => d.id);
         saveLayouts();
@@ -5299,26 +5711,28 @@ service cloud.firestore {
     }
     function deleteDailyRow(idx) {
       if (typeof markUserAction === 'function') markUserAction();
-      const rows = getDailyRows(activeInputCarrier);
+      const rows = getActiveDailyRows(activeInputCarrier);
       const deletedId = rows[idx];
-      const d = devices.find(x => x.id === deletedId);
+      const d = findDailyDeviceById(deletedId);
       const name = d ? d.name : (deletedId === 'empty' ? '구분선' : deletedId);
       rows.splice(idx, 1);
       saveLayouts('대리점 단가 수정', `[${activeInputCarrier}] '${name}' 기종 행 삭제 완료`);
       renderDailyTable();
-      renderCalcTable(); // 넷가 산출표 즉시 품절 연동!
-      if (typeof renderAdPosterTable === 'function' && currentTab === 'adtable') renderAdPosterTable();
-      if (typeof renderDetailSheet === 'function' && currentTab === 'detail') renderDetailSheet();
+      if (!(isTest2FeatureEnabled() && test2DailyViewMode === 'budget')) {
+        renderCalcTable(); // 넷가 산출표 즉시 품절 연동!
+        if (typeof renderAdPosterTable === 'function' && currentTab === 'adtable') renderAdPosterTable();
+        if (typeof renderDetailSheet === 'function' && currentTab === 'detail') renderDetailSheet();
+      }
     }
     function updateDailyRow(idx, val) {
-      const rows = getDailyRows(activeInputCarrier);
+      const rows = getActiveDailyRows(activeInputCarrier);
       rows[idx] = val;
       saveLayouts();
       renderDailyTable();
       renderCalcTable();
     }
     function moveDeviceDaily(index, direction) {
-      const rows = getDailyRows(activeInputCarrier);
+      const rows = getActiveDailyRows(activeInputCarrier);
       const targetIndex = index + direction;
       if (targetIndex < 0 || targetIndex >= rows.length) return;
       const temp = rows[index];
@@ -5947,11 +6361,13 @@ service cloud.firestore {
           : ((d.agency && d.agency[carrier] && d.agency[carrier][type]) ? d.agency[carrier][type] : ''))
         : '';
       const locDisp = (isTest2 && agText && agText !== '기본') ? `${locText}(${agText})` : locText;
+      const explicitTier = (isTest2 && d.selectedPlanTier && d.selectedPlanTier[carrier]) ? d.selectedPlanTier[carrier] : '';
+      const tierSubTag = explicitTier ? `<span class="text-slate-500 font-semibold ml-0.5">· ${escapeHtml(explicitTier)}</span>` : '';
       const modeSubTag = sunyakMode
         ? `<span class="text-amber-600 font-bold ml-0.5">· 선약</span>`
         : (sunyakForGongsi ? `<span class="text-indigo-600 font-bold ml-0.5">· 선약공시</span>` : '');
-      const locHtml = (locDisp || modeSubTag)
-        ? `<div class="text-[10px] text-slate-400 font-normal leading-none mt-0.5 tracking-tight">${locDisp}${modeSubTag}</div>`
+      const locHtml = (locDisp || modeSubTag || tierSubTag)
+        ? `<div class="text-[10px] text-slate-400 font-normal leading-none mt-0.5 tracking-tight">${locDisp}${tierSubTag}${modeSubTag}</div>`
         : '';
 
       if (netDisplayMode === 'all') {
@@ -6228,11 +6644,15 @@ service cloud.firestore {
       const autoBtn = document.getElementById('btnRebateAutoInput');
       const ctrlBar = document.getElementById('dailyTest2ControlsBar');
       const modeCol = document.getElementById('dailyThModeCol');
+      const tierCol = document.getElementById('dailyThPlanTierCol');
+      const viewSwitch = document.getElementById('test2DailyViewSwitch');
+      const budgetBar = document.getElementById('dailyTest2BudgetBar');
       const policyPanel = document.getElementById('dailyUnlistedPolicyPanel');
       const splitWrap = document.getElementById('dailyMainSplitContainer');
       const dailyTabText = document.getElementById('tabBtnDailyText');
       const appliedBanner = document.getElementById('dailyAutoAppliedBanner');
 
+      if (!enabled) test2DailyViewMode = 'main';
       if (dailyTabText) {
         dailyTabText.innerText = enabled ? '리베이트' : '리베이트입력';
       }
@@ -6246,6 +6666,28 @@ service cloud.firestore {
       }
       if (modeCol) {
         modeCol.classList.toggle('hidden', !enabled);
+      }
+      if (tierCol) {
+        tierCol.classList.toggle('hidden', !enabled);
+      }
+      if (viewSwitch) {
+        viewSwitch.classList.toggle('hidden', !enabled);
+        viewSwitch.classList.toggle('inline-flex', enabled);
+        const mainBtn = document.getElementById('test2DailyModeBtn-main');
+        const budgetBtn = document.getElementById('test2DailyModeBtn-budget');
+        if (mainBtn && budgetBtn) {
+          mainBtn.className = test2DailyViewMode === 'main'
+            ? 'px-3 py-1.5 rounded-lg text-xs font-black bg-indigo-600 text-white shadow-xs transition cursor-pointer'
+            : 'px-3 py-1.5 rounded-lg text-xs font-bold text-indigo-700 hover:bg-white transition cursor-pointer';
+          budgetBtn.className = test2DailyViewMode === 'budget'
+            ? 'px-3 py-1.5 rounded-lg text-xs font-black bg-amber-600 text-white shadow-xs transition cursor-pointer'
+            : 'px-3 py-1.5 rounded-lg text-xs font-bold text-indigo-700 hover:bg-white transition cursor-pointer';
+        }
+      }
+      if (budgetBar) {
+        const showBudgetBar = enabled && test2DailyViewMode === 'budget';
+        budgetBar.classList.toggle('hidden', !showBudgetBar);
+        budgetBar.classList.toggle('flex', showBudgetBar);
       }
       if (policyPanel) {
         policyPanel.classList.toggle('hidden', !enabled);
@@ -6276,7 +6718,8 @@ service cloud.firestore {
       dailyBody.innerHTML = '';
 
       const isTest2 = isTest2FeatureEnabled();
-      const dailyRows = getDailyRows(activeInputCarrier);
+      const isBudgetView = isTest2 && test2DailyViewMode === 'budget';
+      const dailyRows = getActiveDailyRows(activeInputCarrier);
       dailyRows.forEach((rowId, idx) => {
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50 border-b border-slate-100 transition";
@@ -6305,7 +6748,7 @@ service cloud.firestore {
                 <svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-purple-600 shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
               </button>
             </td>
-            <td colspan="${isTest2 ? 5 : 4}" class="p-2.5 bg-slate-50/40 text-slate-400 text-center select-none text-xs font-medium tracking-widest">
+            <td colspan="${isTest2 ? 6 : 4}" class="p-2.5 bg-slate-50/40 text-slate-400 text-center select-none text-xs font-medium tracking-widest">
               <span class="inline-flex items-center gap-2 text-slate-400">
                 <span class="w-12 h-px bg-slate-200"></span>
                 <span>구분선</span>
@@ -6317,14 +6760,18 @@ service cloud.firestore {
           return;
         }
 
-        const d = devices.find(x => x.id === rowId);
+        const d = findDailyDeviceById(rowId);
         if (!d) return;
 
         const rowRateType = getDailyRowActiveRateType(d, activeInputCarrier);
         const isSunyakView = isTest2 && (rowRateType === 'sunyak');
         const isDeviceSunyak = isTest2 && isAdSunyak(d, activeInputCarrier);
         const isDeviceSunyakGongsi = isTest2 && !isDeviceSunyak && isAdSunyakForGongsi(d, activeInputCarrier);
-        const showLowSubCheck = isTest2 && !isDeviceSunyak && isLowSubModelForSunyakGongsi(d, activeInputCarrier);
+        const showLowSubCheck = isTest2 && !isDeviceSunyak && !d.isUsim && isLowSubModelForSunyakGongsi(d, activeInputCarrier);
+        const activeTierId = isTest2 ? getTest2SelectedPlanTier(d, activeInputCarrier) : '';
+        const explicitTierId = (isTest2 && d.selectedPlanTier && d.selectedPlanTier[activeInputCarrier]) ? d.selectedPlanTier[activeInputCarrier] : '';
+        const subMnp = getEffectiveDeviceSub(d, activeInputCarrier, 'mnp');
+        const subChg = getEffectiveDeviceSub(d, activeInputCarrier, 'chg');
 
         const rateObj = isSunyakView
           ? ((d.rateSunyak && d.rateSunyak[activeInputCarrier]) ? d.rateSunyak[activeInputCarrier] : { mnp: 0, chg: 0 })
@@ -6346,10 +6793,10 @@ service cloud.firestore {
         const curAgMnp = (agObj && agObj.mnp) ? agObj.mnp : '';
         const curAgChg = (agObj && agObj.chg) ? agObj.chg : '';
         const mnpCands = (isTest2 && typeof getTest2ChannelAgencyCandidates === 'function')
-          ? getTest2ChannelAgencyCandidates(activeInputCarrier, d.id, rowRateType, 'mnp', curLocMnp)
+          ? getTest2ChannelAgencyCandidates(activeInputCarrier, d.id, rowRateType, 'mnp', curLocMnp, explicitTierId)
           : [];
         const chgCands = (isTest2 && typeof getTest2ChannelAgencyCandidates === 'function')
-          ? getTest2ChannelAgencyCandidates(activeInputCarrier, d.id, rowRateType, 'chg', curLocChg)
+          ? getTest2ChannelAgencyCandidates(activeInputCarrier, d.id, rowRateType, 'chg', curLocChg, explicitTierId)
           : [];
         const dispAgMnp = curAgMnp || (mnpCands.length > 0 && mnpCands[0].agencyName && mnpCands[0].agencyName !== '기본' ? mnpCands[0].agencyName : '');
         const dispAgChg = curAgChg || (chgCands.length > 0 && chgCands[0].agencyName && chgCands[0].agencyName !== '기본' ? chgCands[0].agencyName : '');
@@ -6393,6 +6840,41 @@ service cloud.firestore {
           </td>
         ` : '';
 
+        const tierOpts = (isTest2 && TEST2_CARRIER_PLAN_TIERS[activeInputCarrier]) ? TEST2_CARRIER_PLAN_TIERS[activeInputCarrier] : [];
+        const devEffPrice = getEffectiveDevicePrice(d, activeInputCarrier);
+        const mnpRateNum = parseFloat(rateObj.mnp);
+        const chgRateNum = parseFloat(rateObj.chg);
+        const calcFinalBuyHtml = (rNum, subAmt, label) => {
+          if (!isBudgetView || isNaN(rNum)) return '';
+          if (d.isUsim) {
+            return `<div class="mt-0.5 text-[10px] font-extrabold text-emerald-700">지원 +${rNum}만</div>`;
+          }
+          const appliedSub = (isDeviceSunyak ? 0 : subAmt);
+          const finalBuy = Math.round((devEffPrice - appliedSub - rNum) * 100) / 100;
+          return `<div class="mt-0.5 text-[10px] font-extrabold ${finalBuy <= 0 ? 'text-rose-600' : 'text-indigo-700'}">${label} 실구매 ${finalBuy}만</div>`;
+        };
+        const mnpFinalHint = calcFinalBuyHtml(mnpRateNum, subMnp, '번이');
+        const chgFinalHint = calcFinalBuyHtml(chgRateNum, subChg, '기변');
+
+        const dailyPlanTierColHtml = isTest2 ? `
+          <td class="p-2 text-center align-middle">
+            <select data-device-id="${d.id}"
+                    data-cell-id="planTier_${d.id}_${activeInputCarrier}"
+                    onchange="setTest2DevicePlanTier('${d.id}', '${activeInputCarrier}', this.value)"
+                    class="w-full max-w-[116px] px-1.5 py-1 bg-white border border-slate-300 rounded-lg text-[11px] font-bold text-slate-800 focus:ring-1 focus:ring-indigo-500 cursor-pointer">
+              ${tierOpts.map(t => `<option value="${escapeHtml(t.id)}" ${t.id === activeTierId ? 'selected' : ''}>${escapeHtml(t.label)} (${escapeHtml(t.feeHint)})</option>`).join('')}
+            </select>
+            <div class="mt-0.5 text-[10px] font-semibold ${d.isUsim ? 'text-amber-600' : 'text-slate-500'} truncate">
+              ${d.isUsim ? '유심(공시 0)' : `공시 ${subMnp}/${subChg}만`}
+            </div>
+          </td>
+        ` : '';
+        const budgetMetaHtml = isBudgetView ? `
+          <div class="mt-0.5 text-[10px] font-semibold text-amber-800 truncate">
+            ${d.isUsim ? '유심·중고개통 전용' : `출고가 ${devEffPrice || '-'}만 · 공시 ${subMnp}/${subChg}만`}
+          </div>
+        ` : '';
+
         tr.innerHTML = `
           <td class="p-1.5 text-center text-slate-400 font-medium whitespace-nowrap">
             <div class="flex items-center justify-center gap-1">
@@ -6417,6 +6899,7 @@ service cloud.firestore {
               <span class="truncate">${d.name}</span>
               <svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-purple-600 shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
             </button>
+            ${budgetMetaHtml}
             ${d.id === 's26' ? `
               <div class="mt-1 flex items-center pl-0.5">
                 <label class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 hover:text-slate-900 cursor-pointer select-none">
@@ -6430,6 +6913,7 @@ service cloud.firestore {
             ` : ''}
           </td>
           ${dailyModeColHtml}
+          ${dailyPlanTierColHtml}
           <!-- 번이 단가 -->
           <td class="p-2 text-center overflow-visible relative">
             <input type="text"
@@ -6444,6 +6928,7 @@ service cloud.firestore {
                    class="w-full max-w-[85px] px-2 py-1 text-center font-black bg-white border ${inputBorderCls} rounded-lg text-sm focus:ring-2 focus:outline-none${mnpGlowCls}" />
             ${mnpDeltaHtml}
             ${altMnpHint}
+            ${mnpFinalHint}
           </td>
           <!-- 번이 단가처 -->
           <td class="p-2 text-center overflow-visible relative">
@@ -6478,6 +6963,7 @@ service cloud.firestore {
                    class="w-full max-w-[85px] px-2 py-1 text-center font-black bg-white border ${inputBorderCls} rounded-lg text-sm focus:ring-2 focus:outline-none${chgGlowCls}" />
             ${chgDeltaHtml}
             ${altChgHint}
+            ${chgFinalHint}
           </td>
           <!-- 기변 단가처 -->
           <td class="p-2 text-center overflow-visible relative">
@@ -6521,7 +7007,7 @@ service cloud.firestore {
 
     function updateRateLive(id, type, val) {
       if (typeof markUserAction === 'function') markUserAction();
-      const d = devices.find(x => x.id === id);
+      const d = findDailyDeviceById(id);
       if (d) {
         const isSunyakEdit = isTest2FeatureEnabled() && getDailyRowActiveRateType(d, activeInputCarrier) === 'sunyak';
         if (isSunyakEdit) {
@@ -6548,6 +7034,7 @@ service cloud.firestore {
           localStorage.setItem('phone_rates_backup_' + currentStoreId, JSON.stringify(backupRates));
           if (isTest2FeatureEnabled()) {
             localStorage.setItem('phone_sunyak_rates_backup_' + currentStoreId, JSON.stringify(backupSunyakRates));
+            localStorage.setItem('phone_test2_budget_devices_' + currentStoreId, JSON.stringify(test2BudgetDevices));
           }
         } catch(e) {}
         scheduleStoreSave('', '', 1800);
@@ -6557,7 +7044,7 @@ service cloud.firestore {
 
     function updateLocation(id, type, val, selectEl) {
       if (typeof markUserAction === 'function') markUserAction();
-      const d = devices.find(x => x.id === id);
+      const d = findDailyDeviceById(id);
       if (d) {
         const isTest2 = isTest2FeatureEnabled();
         const isSunyakEdit = isTest2 && getDailyRowActiveRateType(d, activeInputCarrier) === 'sunyak';
@@ -6674,7 +7161,7 @@ service cloud.firestore {
 
     function updateRate(id, type, val, inputEl) {
       if (typeof markUserAction === 'function') markUserAction();
-      const d = devices.find(x => x.id === id);
+      const d = findDailyDeviceById(id);
       if (d) {
         const isSunyakEdit = isTest2FeatureEnabled() && getDailyRowActiveRateType(d, activeInputCarrier) === 'sunyak';
         const targetMap = isSunyakEdit
@@ -6704,6 +7191,7 @@ service cloud.firestore {
           localStorage.setItem('phone_rates_backup_' + currentStoreId, JSON.stringify(backupRates));
           if (isTest2FeatureEnabled()) {
             localStorage.setItem('phone_sunyak_rates_backup_' + currentStoreId, JSON.stringify(backupSunyakRates));
+            localStorage.setItem('phone_test2_budget_devices_' + currentStoreId, JSON.stringify(test2BudgetDevices));
           }
         } catch(e) {}
         const typeKo = type === 'mnp' ? '번이' : '기변';
@@ -6810,7 +7298,7 @@ service cloud.firestore {
 
     function setAdSunyakForCarrier(deviceId, carrier, useSunyak) {
       const targetCarrier = carrier || activeAdCarrier;
-      const d = devices.find(x => x.id === deviceId);
+      const d = findDailyDeviceById(deviceId);
       if (!d || !targetCarrier) return;
       if (!d.ad) d.ad = {};
       if (!d.ad[targetCarrier]) d.ad[targetCarrier] = { mnp: '', chg: '', note: '', hidden: false, tag: '' };
@@ -6843,7 +7331,7 @@ service cloud.firestore {
     function toggleSunyakForGongsiForCarrier(deviceId, carrier, checked) {
       if (!isTest2FeatureEnabled()) return;
       const targetCarrier = carrier || activeAdCarrier;
-      const d = devices.find(x => x.id === deviceId);
+      const d = findDailyDeviceById(deviceId);
       if (!d || !targetCarrier) return;
       if (!d.ad) d.ad = {};
       if (!d.ad[targetCarrier]) d.ad[targetCarrier] = { mnp: '', chg: '', note: '', hidden: false, tag: '' };
@@ -8229,7 +8717,9 @@ service cloud.firestore {
       test2ChannelBonuses = { '도매': 10, '온라인': 13, 'K1': 0, '특판': 0 };
       test2PolicyNotes = { SK: null, KT: null, LG: null };
       test2SubsidyCatalog = { syncedAt: '', carriers: { SK: null, KT: null, LG: null } };
-      let agBackup = null, sagBackup = null;
+      test2BudgetDevices = [];
+      test2BudgetDailyRows = { SK: [], KT: [], LG: [] };
+      let agBackup = null, sagBackup = null, tierBackup = null;
       if (restoreLocalBackup) {
         try {
           const rs = localStorage.getItem('phone_rates_backup_' + sId);
@@ -8246,14 +8736,23 @@ service cloud.firestore {
           if (ags) agBackup = JSON.parse(ags);
           const sags = localStorage.getItem('phone_sunyak_agencies_backup_' + sId);
           if (sags) sagBackup = JSON.parse(sags);
+          const tps = localStorage.getItem('phone_test2_plan_tiers_' + sId);
+          if (tps) tierBackup = JSON.parse(tps);
           const bonusSaved = localStorage.getItem('phone_test2_bonuses_' + sId);
           if (bonusSaved) test2ChannelBonuses = { ...test2ChannelBonuses, ...JSON.parse(bonusSaved) };
           const notesSaved = localStorage.getItem('phone_test2_policy_notes_' + sId);
           if (notesSaved) test2PolicyNotes = { ...test2PolicyNotes, ...JSON.parse(notesSaved) };
           const subSaved = localStorage.getItem('phone_test2_subsidy_catalog_' + sId);
           if (subSaved) test2SubsidyCatalog = { syncedAt: '', carriers: { SK: null, KT: null, LG: null }, ...JSON.parse(subSaved) };
+          if (sId === 'test2') {
+            const bDevsSaved = localStorage.getItem('phone_test2_budget_devices_' + sId);
+            if (bDevsSaved) test2BudgetDevices = JSON.parse(bDevsSaved);
+            const bRowsSaved = localStorage.getItem('phone_test2_budget_rows_' + sId);
+            if (bRowsSaved) test2BudgetDailyRows = JSON.parse(bRowsSaved);
+          }
         } catch (e) {}
       }
+      if (sId === 'test2') ensureTest2BudgetStateInitialized();
       devices.forEach(d => {
         if (!d || d.id === 'empty') return;
         d.rate = (rBackup && rBackup[d.id]) ? JSON.parse(JSON.stringify(rBackup[d.id])) : { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } };
@@ -8262,6 +8761,7 @@ service cloud.firestore {
         d.locSunyak = (slBackup && slBackup[d.id]) ? JSON.parse(JSON.stringify(slBackup[d.id])) : getDefaultSunyakLocMap();
         d.agency = (agBackup && agBackup[d.id]) ? JSON.parse(JSON.stringify(agBackup[d.id])) : getDefaultAgencyMap();
         d.agencySunyak = (sagBackup && sagBackup[d.id]) ? JSON.parse(JSON.stringify(sagBackup[d.id])) : getDefaultAgencyMap();
+        d.selectedPlanTier = (tierBackup && tierBackup[d.id]) ? JSON.parse(JSON.stringify(tierBackup[d.id])) : getDefaultSelectedPlanTierMap();
         d.ad = (aBackup && aBackup[d.id]) ? JSON.parse(JSON.stringify(aBackup[d.id])) : {
           SK: { mnp: '', chg: '', note: '', hidden: false, sunyak: false, tag: d.tag || '' },
           KT: { mnp: '', chg: '', note: '', hidden: false, sunyak: false, tag: d.tag || '' },
@@ -8286,6 +8786,7 @@ service cloud.firestore {
 
       currentStoreId = targetStoreId;
       lastUserActionTime = 0;
+      if (targetStoreId !== 'test2') test2DailyViewMode = 'main';
 
       resetStoreDeviceData(targetStoreId, true);
       if (typeof loadStoreS26Hike === 'function') loadStoreS26Hike(targetStoreId);
@@ -8934,6 +9435,24 @@ service cloud.firestore {
                 try { localStorage.setItem('phone_test2_subsidy_catalog_' + currentStoreId, JSON.stringify(test2SubsidyCatalog)); } catch(e) {}
                 if (typeof updateTest2SubsidySyncBadge === 'function') updateTest2SubsidySyncBadge();
               }
+              if (data.test2SelectedPlanTiers && typeof data.test2SelectedPlanTiers === 'object') {
+                Object.keys(data.test2SelectedPlanTiers).forEach(deviceId => {
+                  const localD = devices.find(d => d.id === deviceId);
+                  if (localD && data.test2SelectedPlanTiers[deviceId]) {
+                    localD.selectedPlanTier = data.test2SelectedPlanTiers[deviceId];
+                  }
+                });
+                try { localStorage.setItem('phone_test2_plan_tiers_' + currentStoreId, JSON.stringify(data.test2SelectedPlanTiers)); } catch(e) {}
+              }
+              if (Array.isArray(data.test2BudgetDevices)) {
+                test2BudgetDevices = JSON.parse(JSON.stringify(data.test2BudgetDevices));
+                try { localStorage.setItem('phone_test2_budget_devices_' + currentStoreId, JSON.stringify(test2BudgetDevices)); } catch(e) {}
+              }
+              if (data.test2BudgetDailyRows && typeof data.test2BudgetDailyRows === 'object') {
+                test2BudgetDailyRows = JSON.parse(JSON.stringify(data.test2BudgetDailyRows));
+                try { localStorage.setItem('phone_test2_budget_rows_' + currentStoreId, JSON.stringify(test2BudgetDailyRows)); } catch(e) {}
+              }
+              if (currentStoreId === 'test2') ensureTest2BudgetStateInitialized();
               if (data.test2ChannelBonuses && typeof data.test2ChannelBonuses === 'object') {
                 test2ChannelBonuses = { '도매': 10, '온라인': 13, 'K1': 0, '특판': 0, ...data.test2ChannelBonuses };
                 try { localStorage.setItem('phone_test2_bonuses_' + currentStoreId, JSON.stringify(test2ChannelBonuses)); } catch(e) {}
@@ -9073,6 +9592,7 @@ service cloud.firestore {
       const sunyakLocs = {};
       const agencies = {};
       const sunyakAgencies = {};
+      const selectedPlanTiers = {};
       devices.forEach(d => {
         if (!d || d.id === 'empty') return;
         rates[d.id] = d.rate;
@@ -9083,6 +9603,7 @@ service cloud.firestore {
           sunyakLocs[d.id] = d.locSunyak || getDefaultSunyakLocMap();
           agencies[d.id] = d.agency || getDefaultAgencyMap();
           sunyakAgencies[d.id] = d.agencySunyak || getDefaultAgencyMap();
+          selectedPlanTiers[d.id] = d.selectedPlanTier || getDefaultSelectedPlanTierMap();
         }
       });
       try {
@@ -9094,6 +9615,9 @@ service cloud.firestore {
           localStorage.setItem('phone_sunyak_locs_backup_' + sId, JSON.stringify(sunyakLocs));
           localStorage.setItem('phone_agencies_backup_' + sId, JSON.stringify(agencies));
           localStorage.setItem('phone_sunyak_agencies_backup_' + sId, JSON.stringify(sunyakAgencies));
+          localStorage.setItem('phone_test2_plan_tiers_' + sId, JSON.stringify(selectedPlanTiers));
+          localStorage.setItem('phone_test2_budget_devices_' + sId, JSON.stringify(test2BudgetDevices));
+          localStorage.setItem('phone_test2_budget_rows_' + sId, JSON.stringify(test2BudgetDailyRows));
           localStorage.setItem('phone_test2_bonuses_' + sId, JSON.stringify(test2ChannelBonuses));
           localStorage.setItem('phone_test2_policy_notes_' + sId, JSON.stringify(test2PolicyNotes));
           localStorage.setItem('phone_test2_subsidy_catalog_' + sId, JSON.stringify(test2SubsidyCatalog));
@@ -9107,12 +9631,12 @@ service cloud.firestore {
         localStorage.setItem('phone_s26_hike_' + sId, JSON.stringify(storeS26Hike));
         localStorage.setItem('phone_ad_margin_base_' + sId, adMarginBase);
       } catch(e) {}
-      return { rates, locs, ads, sunyakRates, sunyakLocs, agencies, sunyakAgencies };
+      return { rates, locs, ads, sunyakRates, sunyakLocs, agencies, sunyakAgencies, selectedPlanTiers };
     }
 
     function executeStoreSave(targetStoreId, category = '', description = '') {
       const sId = targetStoreId || currentStoreId || 'myeongji';
-      const { rates, locs, ads, sunyakRates, sunyakLocs, agencies, sunyakAgencies } = saveStoreLocalBackups(sId);
+      const { rates, locs, ads, sunyakRates, sunyakLocs, agencies, sunyakAgencies, selectedPlanTiers } = saveStoreLocalBackups(sId);
 
       const storeLabel = getStoreMeta(sId).name;
       const actor = currentRole === 'master' ? `본사 (마스터 - ${storeLabel})` : currentStoreName;
@@ -9147,6 +9671,9 @@ service cloud.firestore {
         payload.sunyakLocs = sunyakLocs;
         payload.agencies = agencies;
         payload.sunyakAgencies = sunyakAgencies;
+        payload.test2SelectedPlanTiers = selectedPlanTiers;
+        payload.test2BudgetDevices = JSON.parse(JSON.stringify(test2BudgetDevices || []));
+        payload.test2BudgetDailyRows = JSON.parse(JSON.stringify(test2BudgetDailyRows || { SK: [], KT: [], LG: [] }));
         payload.test2ChannelBonuses = JSON.parse(JSON.stringify(test2ChannelBonuses));
         payload.test2PolicyNotes = JSON.parse(JSON.stringify(test2PolicyNotes));
         payload.test2SubsidyCatalog = compactSubsidyCatalogForStorage(test2SubsidyCatalog);
@@ -20304,6 +20831,12 @@ JSON 규격:
           if (d.id === 'iphonedu_l7y0') aliasHint = ' (아18듀오 / IP_DUO_256GW)';
           lines.push(`- id="${d.id}", name="${d.name}", 현재매장출고가=${effPrice}만, 공시지원금(번이/기변)=${subMnp}/${subChg}만${aliasHint}`);
         });
+      if (isTest2FeatureEnabled() && Array.isArray(test2BudgetDevices) && test2BudgetDevices.length > 0) {
+        test2BudgetDevices.forEach(bd => {
+          if (!bd || bd.id === 'empty') return;
+          lines.push(`- id="${bd.id}", name="${bd.name}"${bd.catalogCode ? ` (${bd.catalogCode})` : ''} [저가·유심 목록]`);
+        });
+      }
       return lines.join('\n');
     }
 
@@ -20323,8 +20856,13 @@ JSON 규격:
 - 매장 기준 메인 요금제: ${planCfg || '플래그십 메인 최고구간 (예: SK 프리미엄 109 / P_109구간, KT 초이스/스페셜, LG 프리미어 등)'}
 - 현재 매장 S26 출고가인상반영 상태: ${s26HikeOn ? '체크됨 (s26_new / 출고가 140.36만 NEW 기준 사용 중)' : '체크해제 (s26 / 출고가 125.4만 일반 기준 사용 중)'}
 
-[우리 매장 기종 목록 — 반드시 이 id 목록에 있는 모델만 matchedDevices에 포함하고, 목록에 없는 구형 모델(예: 아이폰16, 저가 A시리즈 등)은 matchedDevices에서 제외하세요]
+[우리 매장 기종 목록 — 반드시 이 id 목록에 있는 모델만 matchedDevices에 포함하고, 목록에 없는 구형 모델은 matchedDevices에서 제외하세요]
 ${catalogText}
+
+[통신사 요금제 구간 기준 참고 (단가표에 여러 요금제 구간 금액이 나뉘어 적힌 경우 해당 구간 ID를 tierRebates에 함께 기록)]
+- SK: P_119, I_100, F_79, L_69, M_50, R_43, S_33, 기본구간
+- KT: 110K 이상, 100K 이상, 90K 이상, 69K 이상, 61K 이상, 55K 이상, 37K 이상, 37K 미만
+- LG: 115군, 105군, 95군, 85군, 75군, 70군, 61군, 55군, 47군, 37군, 33군, 28군, 28군 미만
 
 [첨부 구두정책 문구]
 ${policyText ? policyText : '(구두정책 텍스트 없음)'}
@@ -20538,7 +21076,7 @@ JSON 응답 스키마:
       return Array.isArray(list) ? list : [];
     }
 
-    function computeRebateForDeviceChannel(carrier, deviceId, contractType, moveType, channel, agencyName = '') {
+    function computeRebateForDeviceChannel(carrier, deviceId, contractType, moveType, channel, agencyName = '', planTier = '') {
       const noteObj = test2PolicyNotes && test2PolicyNotes[carrier];
       if (!noteObj || !noteObj.rawCandidatesByDevice) return null;
 
@@ -20547,16 +21085,35 @@ JSON 응답 스키마:
         : (moveType === 'chg' ? 'gongsiChg' : 'gongsiMnp');
 
       const wantAgency = (agencyName && agencyName !== '__BEST__') ? String(agencyName).trim() : '';
+      const dRef = findDailyDeviceById(deviceId);
+      const wantTier = String(planTier || (dRef && dRef.selectedPlanTier && dRef.selectedPlanTier[carrier]) || '').trim();
+      let tierExactMatched = false;
 
       const pickChannelCand = (arr, chName) => {
         if (!Array.isArray(arr) || arr.length === 0) return null;
         const chMatches = arr.filter(c => c && c.channel === chName && c.rawBase !== null && c.rawBase !== undefined && !isNaN(Number(c.rawBase)));
         if (chMatches.length === 0) return null;
+
+        let scoped = chMatches;
+        if (wantTier) {
+          const tierPool = chMatches.filter(c => String(c.planTier || '').trim() === wantTier);
+          if (tierPool.length > 0) {
+            scoped = tierPool;
+            tierExactMatched = true;
+          } else {
+            const generalPool = chMatches.filter(c => !c.planTier);
+            if (generalPool.length > 0) scoped = generalPool;
+          }
+        } else {
+          const generalPool = chMatches.filter(c => !c.planTier);
+          if (generalPool.length > 0) scoped = generalPool;
+        }
+
         if (wantAgency) {
-          const exact = chMatches.find(c => (c.agencyName || '기본') === wantAgency);
+          const exact = scoped.find(c => (c.agencyName || '기본') === wantAgency);
           return exact || null;
         }
-        return chMatches.reduce((best, cur) => (Number(cur.rawBase) > Number(best.rawBase) ? cur : best), chMatches[0]);
+        return scoped.reduce((best, cur) => (Number(cur.rawBase) > Number(best.rawBase) ? cur : best), scoped[0]);
       };
 
       let cand = null;
@@ -20608,16 +21165,21 @@ JSON 응답 스키마:
         adjSum,
         deductSum,
         agencyName: cand.agencyName || '기본',
+        planTier: cand.planTier || '',
+        tierExactMatched,
         isManualAgency: !!wantAgency
       };
     }
 
-    function getTest2ChannelAgencyCandidates(carrier, deviceId, contractType, moveType, channel) {
+    function getTest2ChannelAgencyCandidates(carrier, deviceId, contractType, moveType, channel, planTier = '') {
       const noteObj = test2PolicyNotes && test2PolicyNotes[carrier];
       if (!noteObj || !noteObj.rawCandidatesByDevice) return [];
       const bucketKey = (contractType === 'sunyak')
         ? (moveType === 'chg' ? 'sunyakChg' : 'sunyakMnp')
         : (moveType === 'chg' ? 'gongsiChg' : 'gongsiMnp');
+
+      const dRef = findDailyDeviceById(deviceId);
+      const wantTier = String(planTier || (dRef && dRef.selectedPlanTier && dRef.selectedPlanTier[carrier]) || '').trim();
 
       let arr = [];
       if (deviceId === 's26') {
@@ -20636,13 +21198,25 @@ JSON 응답 스키마:
         arr = Array.isArray(list) ? list.filter(c => c && c.channel === channel && c.rawBase !== null && c.rawBase !== undefined && !isNaN(Number(c.rawBase))) : [];
       }
 
+      if (wantTier) {
+        const tierList = arr.filter(c => String(c.planTier || '').trim() === wantTier);
+        if (tierList.length > 0) arr = tierList;
+        else {
+          const genList = arr.filter(c => !c.planTier);
+          if (genList.length > 0) arr = genList;
+        }
+      } else {
+        const genList = arr.filter(c => !c.planTier);
+        if (genList.length > 0) arr = genList;
+      }
+
       const seenAgencies = new Set();
       const out = [];
       arr.forEach(c => {
         const ag = String(c.agencyName || '기본').trim() || '기본';
         if (seenAgencies.has(ag)) return;
         seenAgencies.add(ag);
-        const calc = computeRebateForDeviceChannel(carrier, deviceId, contractType, moveType, channel, ag);
+        const calc = computeRebateForDeviceChannel(carrier, deviceId, contractType, moveType, channel, ag, wantTier);
         if (calc) out.push(calc);
       });
       return out.sort((a, b) => b.total - a.total);
@@ -20695,7 +21269,7 @@ JSON 응답 스키마:
 
     function openTest2ChannelPicker(deviceId, contractType, moveType) {
       if (!isTest2FeatureEnabled()) return;
-      const d = devices.find(x => x.id === deviceId);
+      const d = findDailyDeviceById(deviceId);
       if (!d) return;
       const isSunyak = contractType === 'sunyak';
       const locMap = isSunyak ? d.locSunyak : d.loc;
@@ -20723,7 +21297,7 @@ JSON 응답 스키마:
       if (!body) return;
 
       const { deviceId, contractType, moveType, channel } = test2PickerState;
-      const d = devices.find(x => x.id === deviceId);
+      const d = findDailyDeviceById(deviceId);
       if (!d) return;
       const carrier = activeInputCarrier;
       const isSunyak = contractType === 'sunyak';
@@ -20829,7 +21403,7 @@ JSON 응답 스키마:
     function updateTest2ChannelSelection(deviceId, contractType, moveType, channel, agencyName = '') {
       if (!isTest2FeatureEnabled()) return;
       if (typeof markUserAction === 'function') markUserAction();
-      const d = devices.find(x => x.id === deviceId);
+      const d = findDailyDeviceById(deviceId);
       if (!d) return;
       const carrier = activeInputCarrier;
       const isSunyakEdit = contractType === 'sunyak';
@@ -21149,21 +21723,26 @@ JSON 응답 스키마:
 
         matched.forEach(item => {
           const isS26New = item.deviceId === 's26_new';
-          const d = isS26New ? devices.find(x => x.id === 's26') : devices.find(x => x.id === item.deviceId);
+          const d = isS26New ? devices.find(x => x.id === 's26') : findDailyDeviceById(item.deviceId);
           if (!d) return;
           const storeKey = isS26New ? 's26_new' : d.id;
           if (!newRawByDevice[storeKey]) {
             newRawByDevice[storeKey] = { gongsiMnp: [], gongsiChg: [], sunyakMnp: [], sunyakChg: [] };
           }
-          const pushRaw = (bucketKey, rawVal, agencyName = '기본') => {
+          const pushRaw = (bucketKey, rawVal, agencyName = '기본', planTier = '') => {
             if (rawVal === null || rawVal === undefined || rawVal === '' || isNaN(Number(rawVal))) return;
             const numVal = Number(rawVal);
             const agName = String(agencyName || '기본').trim() || '기본';
-            const existing = newRawByDevice[storeKey][bucketKey].find(c => c && c.channel === ch && (c.agencyName || '기본') === agName);
+            const tierKey = String(planTier || '').trim();
+            const existing = newRawByDevice[storeKey][bucketKey].find(
+              c => c && c.channel === ch && (c.agencyName || '기본') === agName && String(c.planTier || '') === tierKey
+            );
             if (existing) {
               if (numVal > Number(existing.rawBase)) existing.rawBase = numVal;
             } else {
-              newRawByDevice[storeKey][bucketKey].push({ channel: ch, agencyName: agName, rawBase: numVal });
+              const rec = { channel: ch, agencyName: agName, rawBase: numVal };
+              if (tierKey) rec.planTier = tierKey;
+              newRawByDevice[storeKey][bucketKey].push(rec);
             }
           };
           const agenciesList = Array.isArray(item.agencies) ? item.agencies : [];
@@ -21171,16 +21750,26 @@ JSON 응답 스키마:
           agenciesList.forEach(ag => {
             if (!ag) return;
             const agName = String(ag.agencyName || '기본').trim() || '기본';
-            const addBucket = (bk, v) => {
+            const addBucket = (bk, v, pt = '') => {
               if (v !== null && v !== undefined && v !== '' && !isNaN(Number(v))) {
-                pushRaw(bk, v, agName);
-                pushedBuckets[bk] = true;
+                pushRaw(bk, v, agName, pt);
+                if (!pt) pushedBuckets[bk] = true;
               }
             };
             addBucket('gongsiMnp', ag.rawGongsiMnp);
             addBucket('gongsiChg', ag.rawGongsiChg);
             addBucket('sunyakMnp', ag.rawSunyakMnp);
             addBucket('sunyakChg', ag.rawSunyakChg);
+            if (ag.tierRebates && typeof ag.tierRebates === 'object') {
+              Object.keys(ag.tierRebates).forEach(tKey => {
+                const trObj = ag.tierRebates[tKey];
+                if (!trObj) return;
+                addBucket('gongsiMnp', trObj.rawGongsiMnp, tKey);
+                addBucket('gongsiChg', trObj.rawGongsiChg, tKey);
+                addBucket('sunyakMnp', trObj.rawSunyakMnp, tKey);
+                addBucket('sunyakChg', trObj.rawSunyakChg, tKey);
+              });
+            }
           });
           if (!pushedBuckets.gongsiMnp) pushRaw('gongsiMnp', item.rawGongsiMnp, item.bestAgencyName || '기본');
           if (!pushedBuckets.gongsiChg) pushRaw('gongsiChg', item.rawGongsiChg, item.bestAgencyName || '기본');
@@ -21239,12 +21828,16 @@ JSON 응답 스키마:
       });
 
       const activeDailyRows = (typeof getDailyRows === 'function' ? getDailyRows(carrier) : []).filter(id => id && id !== 'empty');
+      const activeBudgetRows = (isTest2FeatureEnabled() && test2BudgetDailyRows && Array.isArray(test2BudgetDailyRows[carrier]))
+        ? test2BudgetDailyRows[carrier].filter(id => id && id !== 'empty')
+        : [];
       const targetDeviceIds = [...new Set([
         ...activeDailyRows,
+        ...activeBudgetRows,
         ...Object.keys(mergedRawByDevice).map(k => (k === 's26_new' ? 's26' : k))
       ])];
       targetDeviceIds.forEach(devId => {
-        const d = devices.find(x => x.id === devId);
+        const d = findDailyDeviceById(devId);
         if (!d) return;
         if (!d.rate) d.rate = { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } };
         if (!d.rate[carrier]) d.rate[carrier] = { mnp: 0, chg: 0 };
@@ -21350,7 +21943,7 @@ JSON 응답 스키마:
         Object.keys(noteObj.rawCandidatesByDevice).map(k => (k === 's26_new' ? 's26' : k))
       )];
       targetDeviceIds.forEach(deviceId => {
-        const d = devices.find(x => x.id === deviceId);
+        const d = findDailyDeviceById(deviceId);
         if (!d) return;
 
         ['gongsi', 'sunyak'].forEach(contractType => {
@@ -21808,7 +22401,7 @@ JSON 응답 스키마:
       if (!snap) return;
       const c = snap.carrier;
       snap.rates.forEach(r => {
-        const d = devices.find(x => x.id === r.id);
+        const d = findDailyDeviceById(r.id);
         if (!d) return;
         if (r.rate && d.rate) d.rate[c] = JSON.parse(JSON.stringify(r.rate));
         if (r.loc && d.loc) d.loc[c] = JSON.parse(JSON.stringify(r.loc));
