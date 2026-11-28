@@ -19661,7 +19661,9 @@ ${policyText ? policyText : '(구두정책 텍스트 없음)'}
 1. 이미지 좌측 상단의 단가처 표기(예: "SK_도매", "SK_온라인", "KT_도매" 등)와 날짜, 각 이미지가 공시개통인지 선약개통인지 정확히 읽어주세요.
 2. 표의 칸 밀림 주의: "신규" 열이 비어있는 경우가 매우 많습니다! 반드시 각 열 헤더의 "MNP(번호이동)"와 "기변(기기변경)" 열에 정확히 위치한 숫자(만원 단위)를 그대로 추출하세요. 해당 칸이 빈칸이거나 품절이면 null을 반환하세요.
 3. rawGongsi / rawSunyak 에는 이미지 표에 적힌 **원본 1차 단가(만원 단위 숫자)** 만 넣으세요. (채널 가산금 ${channelBonus}만 원, 하단 부가, 구두정책 추가지원금은 절대로 raw 숫자에 미리 더하지 마세요 — 앱 JS가 정확히 가산합니다!)
-4. 만약 한 화면에 SK_Y / SK_D 처럼 하위 라인이 2개 있는 경우, 표준 수치(차이가 있으면 두 라인 중 유리하거나 기준에 맞는 수치를 취하고 note에 차이 기록)를 넣어주세요.
+4. ★ 복수 대리점/하위 라인 최고단가 비교 (TS vs 1D, SK_Y vs SK_D 등 — 매우 중요!):
+   - 한 단가표 화면이나 같은 슬롯의 여러 장 이미지 안에 대리점/라인이 2개 이상 있는 경우(예: "TS" vs "1D", "SK_Y" vs "SK_D" 등), 한 대리점으로 통일하지 말고 **각 기종마다, 그리고 공시 번이 / 공시 기변 / 선약 번이 / 선약 기변 각 칸마다 독립적으로 비교해 가장 높은(할인이 큰) 숫자**를 선택하세요!
+   - 예) 갤26은 TS 55 / 1D 59 → 59 선택, 아이폰18프로는 TS 48 / 1D 42 → 48 선택! 어떤 대리점을 채택했는지는 note에 간단히 기록해 주세요.
 5. ★ 갤럭시 S26 일반(s26) vs S26 NEW(s26_new) 분리 판독 (매우 중요!):
    - 공시 단가표 및 선약 단가표 이미지에 '갤26 / SM-S942N (125.4만)'과 '갤26new / S26 NEW / SM-S942N_NEW (140.36만)' 두 행이 모두 있으면, **반드시 일반 행은 id="s26", NEW(인상) 행은 id="s26_new"로 각각 따로 추출**하세요!
    - 특히 **선약(선택약정) 이미지에서도** '갤26new / SM-S942N_NEW / 140.36만' 행의 선약 번이·기변 숫자를 일반 's26' 숫자와 절대로 섞지 말고 반드시 id="s26_new"에 넣으세요! (만약 표에 1개 행만 있으면 모델명과 출고가가 140.36만/new인지 125.4만인지 확인해 맞는 id에 넣으세요.)
@@ -19840,23 +19842,28 @@ JSON 응답 스키마:
         ? (moveType === 'chg' ? 'sunyakChg' : 'sunyakMnp')
         : (moveType === 'chg' ? 'gongsiChg' : 'gongsiMnp');
 
+      const pickHighestChannelCand = (arr, chName) => {
+        if (!Array.isArray(arr) || arr.length === 0) return null;
+        const matches = arr.filter(c => c && c.channel === chName && c.rawBase !== null && c.rawBase !== undefined && !isNaN(Number(c.rawBase)));
+        if (matches.length === 0) return null;
+        return matches.reduce((best, cur) => (Number(cur.rawBase) > Number(best.rawBase) ? cur : best), matches[0]);
+      };
+
       let cand = null;
       if (deviceId === 's26') {
         const preferNew = (typeof isS26HikeActive === 'function') && isS26HikeActive(carrier);
         const orderKeys = preferNew ? ['s26_new', 's26'] : ['s26', 's26_new'];
         for (const k of orderKeys) {
           const arr = noteObj.rawCandidatesByDevice[k] && noteObj.rawCandidatesByDevice[k][bucketKey];
-          const found = Array.isArray(arr) ? arr.find(c => c && c.channel === channel) : null;
-          if (found && found.rawBase !== null && found.rawBase !== undefined && !isNaN(Number(found.rawBase))) {
+          const found = pickHighestChannelCand(arr, channel);
+          if (found) {
             cand = found;
             break;
           }
         }
       } else {
         const list = noteObj.rawCandidatesByDevice[deviceId] && noteObj.rawCandidatesByDevice[deviceId][bucketKey];
-        if (Array.isArray(list) && list.length > 0) {
-          cand = list.find(c => c && c.channel === channel) || null;
-        }
+        cand = pickHighestChannelCand(list, channel);
       }
 
       if (!cand || cand.rawBase === null || cand.rawBase === undefined || isNaN(Number(cand.rawBase))) return null;
@@ -20131,7 +20138,13 @@ JSON 응답 스키마:
           }
           const pushRaw = (bucketKey, rawVal) => {
             if (rawVal === null || rawVal === undefined || rawVal === '' || isNaN(Number(rawVal))) return;
-            newRawByDevice[storeKey][bucketKey].push({ channel: ch, rawBase: Number(rawVal) });
+            const numVal = Number(rawVal);
+            const existing = newRawByDevice[storeKey][bucketKey].find(c => c && c.channel === ch);
+            if (existing) {
+              if (numVal > Number(existing.rawBase)) existing.rawBase = numVal;
+            } else {
+              newRawByDevice[storeKey][bucketKey].push({ channel: ch, rawBase: numVal });
+            }
           };
           pushRaw('gongsiMnp', item.rawGongsiMnp);
           pushRaw('gongsiChg', item.rawGongsiChg);
