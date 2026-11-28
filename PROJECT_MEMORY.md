@@ -4230,3 +4230,4 @@ service cloud.firestore {
    - Edge CDP(`verify_sync.ps1`)에서 `test2Step34ColsVisible`, `tierSubSyncedOk`, `tierRebateSwitchedOk`, `budgetBarVisible`, `budgetHasUsimAndA36`, `budgetShowsFinalBuy`, `mainRowsUnchangedAfterBudget`, 타 매장 격리(`myeongjiStillUsesSelect`) 및 JS 오류 `0건` 모두 통과 확인 후 GitHub `main` 푸시.
 - **추가 개선 (클라우드 무료 용량 절약 & 불필요 버튼 제거)**:
   - 상단 바(`#dailyTest2ControlsBar`)에서 수동 `[📊 요금제 구간·전체공시]` · `[🔄 공시 전체 불러오기]` 버튼을 제거하고, 3사 크롤링 결과(`test2-subsidies-data.json`, 357기종, ~146KB)를 Vercel 정적 자산 + 브라우저 `localStorage`로만 자동 로드·갱신(`ensureTest2SubsidyCatalogLoaded`)하여 Firebase Firestore 저장/읽기 사용량 추가 소모 `0` 달성 (`payload.test2SubsidyCatalog` 제거).
+- **기종 선택(드롭다운) A시리즈 전체 검색 보완**: `renderDevicePickerList`가 `test2`의 `주요기종` / `저가·유심` 모드 구분 없이 수집된 전체 카탈로그(`test2SubsidyCatalog`)의 A시리즈·보급형까지 함께 검색·선택(`onSelectTest2CatalogDeviceFromPicker`)하도록 수정하고, `!(name.includes('S'))` 오작동 필터를 `classifyPickerGroup`으로 정비함.
