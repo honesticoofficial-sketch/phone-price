@@ -4176,3 +4176,17 @@ service cloud.firestore {
    - 사용자 요청("복사기능만 살려놓고 PDF 인쇄기능은 제휴카드 안내서 말고 다 버튼 삭제해줘")에 따라 넷가표(`printNetTablePdf`), 시세표(`printAdPoster`), 시세 상세내역(`printDetailSheet`) 상단의 PDF/인쇄 버튼 3종을 제거하고 `[클립보드 복사]` 버튼만 깔끔하게 유지.
    - 제휴카드 안내서(`#tab-card`)의 `A4 고화질 인쇄 / PDF 저장` (`printCardA4`) 버튼만 유지.
    - `SITE_UPDATES_DATA` (`2026. 11. 28`) 및 `verify_sync.ps1` 검증 재통과 후 GitHub `main` 푸시 완료.
+
+---
+
+## 105. 🧪 [제105장] 테스트매장2 전용 개편: 기종별 공시·선약 직접 선택 열 · 30만 미만 `선약단가 공시적용` 체크(리베이트·넷가·광고 연동) · 선약 미리보기 arrow 제거 (2026-11-28)
+
+1. **`리베이트` 표(`#dailyTable`)에 기종별 `기준 (공시/선약)` 열 신설 (`#dailyThModeCol`, `test2` 전용)**:
+   - 기존처럼 상단에서 전체 표를 `공시단가` / `선약단가`로 한꺼번에 뒤집지 않아도, 기본값 `기종별 선택`(`activeDailyRateType = 'auto'`) 상태에서 **기종별 각 줄**에서 직접 **`[공시]` / `[선약]`** 을 자유롭게 선택해 섞어 보며 수정 가능 (`getDailyRowActiveRateType`).
+   - 보조용 상단 보기 바(`#dailyTest2ControlsBar`)는 `기종별 선택` · `공시단가 전체` · `선약단가 전체` 3단 전환으로 개선해, 필요 시 전체 일괄 조회도 여전히 가능.
+2. **공시지원금 30만원 미만(`sub < 30`) `[ ] 선약단가 공시적용` 체크박스 양방향 연동 (`리베이트` ↔ `넷가표` ↔ `광고가격`)**:
+   - `isLowSubModelForSunyakGongsi` 기준을 정확히 **`30만원 미만 (< 30)`** 으로 정비하고, 기존 `광고가격` 탭뿐 아니라 **`리베이트` 탭의 `기준 (공시/선약)` 열 안에도** `[ ] 선약단가 공시적용` 체크박스를 즉시 노출.
+   - `setAdSunyakForCarrier` / `toggleSunyakForGongsiForCarrier`로 어느 탭에서 바꾸든 즉시 양쪽 표에 동기화되며, **`넷가표`(`renderCell`)에서도 `test2`는 기종별 `선약` / `선약단가 공시적용` 및 `d.locSunyak` 단가처를 그대로 반영**해 `· 선약` / `· 선약공시` 표시와 함께 실계산 연동.
+   - `실매장`(`myeongji`, `gwangan`, `test1`)에서는 `#dailyThModeCol`이 `hidden` 유지되고 `renderCell`도 기존과 100% 동일하게 격리됨.
+3. **번호이동·기변 단가 하단 반대편 미리보기 깔끔화 (`altMnpHint` / `altChgHint`)**:
+   - 정책 체크 등 변동 시 `triggerRebateCellGlow`가 하단 미리보기 문구를 `선약 95→95.5(+0.5)` 처럼 화살표 형식으로 덮어씌우던 로직을 제거하고, 항상 깔끔한 현재 금액(**`선약 95.5`** / **`공시 40`**)만 표시하도록 개선.
