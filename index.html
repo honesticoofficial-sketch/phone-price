@@ -60,6 +60,29 @@
     body { font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     input[type=number]::-webkit-inner-spin-button, 
     input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    /* 실시간 동시 수정 하이라이트 & 작업자 뱃지 (수정 시에만 표시) */
+    @keyframes workerPulse {
+      0%, 100% { transform: translateX(-50%) scale(1); opacity: 1; }
+      50% { transform: translateX(-50%) scale(1.03); opacity: 0.9; }
+    }
+    .worker-cell-badge {
+      position: absolute;
+      top: -11px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 35;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 1px 7px;
+      border-radius: 9999px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+      white-space: nowrap;
+      pointer-events: none;
+      animation: workerPulse 1.8s infinite ease-in-out;
+    }
+    .worker-editing-active {
+      transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, background-color 0.15s ease-in-out;
+    }
     /* 테스트매장2: 정책/단가처 변경 시 영향 받는 기종 금액칸 2초 그라데이션 테두리 발광 애니메이션 */
     @keyframes rebateCellGlow {
       0% {
@@ -5290,6 +5313,9 @@ service cloud.firestore {
       if (masterSettingsBtn) { masterSettingsBtn.classList.add('hidden'); masterSettingsBtn.classList.remove('flex'); }
       if (unsubscribeAuditHistory) { unsubscribeAuditHistory(); unsubscribeAuditHistory = null; }
       if (unsubscribeSupportRequests) { unsubscribeSupportRequests(); unsubscribeSupportRequests = null; }
+      if (unsubscribeStorePresence) { unsubscribeStorePresence(); unsubscribeStorePresence = null; }
+      if (cellFocusTimer) { clearTimeout(cellFocusTimer); cellFocusTimer = null; }
+      if (cellBlurTimer) { clearTimeout(cellBlurTimer); cellBlurTimer = null; }
       allHistoryRecords = [];
       allSupportRequests = [];
       currentReqStoreFilter = 'all';
@@ -5306,6 +5332,13 @@ service cloud.firestore {
       if (pModal) pModal.classList.remove('hidden');
       const userBadge = document.getElementById('userBadge');
       if (userBadge) userBadge.classList.add('hidden');
+      if (db && currentStoreId && mySessionId && myBroadcastedCellId && !isCloudQuotaExhausted && !isCloudPermissionError) {
+        try {
+          db.collection('presence').doc(currentStoreId).collection('sessions').doc(mySessionId).delete().catch(() => {});
+        } catch(e) {}
+      }
+      myBroadcastedCellId = null;
+      myActiveCellId = null;
       const switcher = document.getElementById('masterStoreSwitcher');
       if (switcher) switcher.classList.add('hidden');
     }
@@ -6010,6 +6043,7 @@ service cloud.firestore {
         `;
         dailyBody.appendChild(tr);
       });
+      if (typeof renderPresenceHighlights === 'function') renderPresenceHighlights();
       if (isTest2 && typeof renderDailyUnlistedPolicyPanel === 'function') renderDailyUnlistedPolicyPanel();
     }
 
@@ -6619,6 +6653,7 @@ service cloud.firestore {
       const previewText = generateAdString(activeAdCarrier);
       const previewEl = document.getElementById('adPreviewText');
       if (previewEl) previewEl.innerText = previewText;
+      if (typeof renderPresenceHighlights === 'function') renderPresenceHighlights();
     }
 
     // 광고표 번이가 / 기변가 / 비고 실시간 및 완료 저장
@@ -7820,6 +7855,241 @@ service cloud.firestore {
       }
     }
 
+    // ==================== 수정 시에만 표시되는 실시간 동시 수정 하이라이트 (대기 사용량 0) ====================
+    const WORKER_COLOR_PALETTE = [
+      { name: 'red', label: '빨강', dot: 'bg-rose-500', border: '#f43f5e', bg: '#ffe4e6', text: '#e11d48', badgeBg: 'bg-rose-600', icon: '🔴' },
+      { name: 'blue', label: '파랑', dot: 'bg-blue-500', border: '#3b82f6', bg: '#dbeafe', text: '#1d4ed8', badgeBg: 'bg-blue-600', icon: '🔵' },
+      { name: 'purple', label: '보라', dot: 'bg-purple-500', border: '#a855f7', bg: '#f3e8ff', text: '#7e22ce', badgeBg: 'bg-purple-600', icon: '🟣' },
+      { name: 'green', label: '초록', dot: 'bg-emerald-500', border: '#10b981', bg: '#d1fae5', text: '#047857', badgeBg: 'bg-emerald-600', icon: '🟢' },
+      { name: 'orange', label: '주황', dot: 'bg-amber-500', border: '#f59e0b', bg: '#fef3c7', text: '#b45309', badgeBg: 'bg-amber-600', icon: '🟠' },
+      { name: 'cyan', label: '하늘', dot: 'bg-cyan-500', border: '#06b6d4', bg: '#cffafe', text: '#0e7490', badgeBg: 'bg-cyan-600', icon: '🩵' }
+    ];
+
+    let mySessionId = (function() {
+      let sid = sessionStorage.getItem('phone_worker_session_id');
+      if (!sid) {
+        sid = 's_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now().toString(36);
+        try { sessionStorage.setItem('phone_worker_session_id', sid); } catch(e) {}
+      }
+      return sid;
+    })();
+
+    let myWorkerNum = 1;
+    let myWorkerName = '작업자1';
+    let myActiveCellId = null;
+    let myBroadcastedCellId = null;
+    let unsubscribeStorePresence = null;
+    let activePresenceWorkers = {};
+    let cellFocusTimer = null;
+    let cellBlurTimer = null;
+    const PRESENCE_ACTIVE_MS = 180000; // 최근 3분 이내 수정 중인 셀만 유효 처리 (대기 하트비트·삭제 쓰기 없음)
+
+    function getWorkerStorePrefix(storeId = currentStoreId) {
+      if (currentRole === 'master') return '본사';
+      return getStoreMeta(storeId).shortName;
+    }
+
+    function subscribeStorePresence(storeId = currentStoreId) {
+      if (unsubscribeStorePresence) {
+        unsubscribeStorePresence();
+        unsubscribeStorePresence = null;
+      }
+      myBroadcastedCellId = null;
+      if (!db || !storeId) return;
+
+      const prefix = getWorkerStorePrefix(storeId);
+      const sessionsCollRef = db.collection('presence').doc(storeId).collection('sessions');
+
+      // 상단 접속자 목록이나 대기 하트비트 없이, 실제 타자 입력(수정 중)인 셀만 수신
+      unsubscribeStorePresence = sessionsCollRef.onSnapshot(snapshot => {
+        const now = Date.now();
+        const activeWorkers = {};
+        const takenNumbers = new Map();
+
+        snapshot.forEach(docSnap => {
+          const sid = docSnap.id;
+          const data = docSnap.data();
+          if (!data) return;
+          if (now - (data.lastSeen || 0) <= PRESENCE_ACTIVE_MS) {
+            activeWorkers[sid] = data;
+            if (sid !== mySessionId && data.workerNum) {
+              takenNumbers.set(data.workerNum, sid);
+            }
+          }
+        });
+
+        let myNum = myWorkerNum;
+        if (!myNum || takenNumbers.has(myNum)) {
+          for (let i = 1; i <= 20; i++) {
+            if (!takenNumbers.has(i)) {
+              myNum = i;
+              break;
+            }
+          }
+        }
+        myWorkerNum = myNum;
+        myWorkerName = `${prefix}${myNum}`;
+        try { sessionStorage.setItem('phone_worker_num_' + storeId, myNum); } catch(e) {}
+
+        activePresenceWorkers = activeWorkers;
+        renderPresenceHighlights();
+      }, err => {
+        console.warn("Presence snapshot error:", err);
+        if (typeof handleCloudSyncError === 'function') handleCloudSyncError(err, '수정중 표시 조회', true);
+      });
+    }
+
+    function sendPresenceCellUpdate(cellId) {
+      if (!db || !currentStoreId || !isUnlocked || !mySessionId) return;
+      if (isCloudQuotaExhausted || isCloudPermissionError) return;
+      myBroadcastedCellId = cellId || null;
+      db.collection('presence').doc(currentStoreId).collection('sessions').doc(mySessionId).set({
+        sessionId: mySessionId,
+        workerNum: myWorkerNum,
+        workerName: myWorkerName,
+        colorIndex: (myWorkerNum - 1) % WORKER_COLOR_PALETTE.length,
+        activeCell: cellId || null,
+        lastSeen: Date.now()
+      }, { merge: true }).catch(err => {
+        if (typeof handleCloudSyncError === 'function') handleCloudSyncError(err, '수정중 표시 동기화', true);
+      });
+    }
+
+    function broadcastCellFocus(cellId) {
+      if (!db || !currentStoreId || !isUnlocked || !mySessionId) return;
+      if (cellBlurTimer) { clearTimeout(cellBlurTimer); cellBlurTimer = null; }
+      myActiveCellId = cellId;
+      if (!cellId || myBroadcastedCellId === cellId || isCloudQuotaExhausted || isCloudPermissionError) return;
+      if (cellFocusTimer) clearTimeout(cellFocusTimer);
+      cellFocusTimer = setTimeout(() => {
+        cellFocusTimer = null;
+        if (myActiveCellId === cellId && myBroadcastedCellId !== cellId) {
+          sendPresenceCellUpdate(cellId);
+        }
+      }, 250);
+    }
+
+    function broadcastCellBlur(cellId) {
+      if (!db || !currentStoreId || !isUnlocked || !mySessionId) return;
+      if (cellFocusTimer) { clearTimeout(cellFocusTimer); cellFocusTimer = null; }
+      if (myActiveCellId === cellId) {
+        myActiveCellId = null;
+      }
+      if (myBroadcastedCellId === cellId) {
+        if (cellBlurTimer) clearTimeout(cellBlurTimer);
+        cellBlurTimer = setTimeout(() => {
+          cellBlurTimer = null;
+          if (myBroadcastedCellId === cellId && myActiveCellId !== cellId) {
+            sendPresenceCellUpdate(null);
+          }
+        }, 400);
+      }
+    }
+
+    function renderPresenceHighlights() {
+      document.querySelectorAll('.worker-cell-badge').forEach(el => el.remove());
+      document.querySelectorAll('.worker-editing-active').forEach(el => {
+        el.classList.remove('worker-editing-active');
+        el.style.borderColor = '';
+        el.style.boxShadow = '';
+        el.style.backgroundColor = '';
+      });
+
+      const now = Date.now();
+      Object.entries(activePresenceWorkers).forEach(([sid, w]) => {
+        if (sid === mySessionId) return;
+        if (!w || !w.activeCell) return;
+        if (now - (w.lastSeen || 0) > PRESENCE_ACTIVE_MS) return;
+
+        const color = WORKER_COLOR_PALETTE[(w.colorIndex !== undefined ? w.colorIndex : (w.workerNum - 1)) % WORKER_COLOR_PALETTE.length];
+        const target = document.querySelector(`[data-cell-id="${w.activeCell}"]`) || document.getElementById(w.activeCell);
+
+        if (target) {
+          target.classList.add('worker-editing-active');
+          target.style.borderColor = color.border;
+          target.style.boxShadow = `0 0 0 2px ${color.border}66`;
+          target.style.backgroundColor = color.bg;
+
+          const parent = target.parentElement;
+          if (parent) {
+            if (getComputedStyle(parent).position === 'static') {
+              parent.style.position = 'relative';
+            }
+            const badge = document.createElement('span');
+            badge.className = `worker-cell-badge ${color.badgeBg} text-white`;
+            badge.innerHTML = `${color.icon} <b>${w.workerName}</b> 수정 중`;
+            badge.title = `${w.workerName} 님이 현재 이 칸을 수정하고 있습니다.`;
+            parent.appendChild(badge);
+          }
+        }
+      });
+    }
+
+    let workerCollisionToastTimer = null;
+    function showWorkerCollisionNotice(workerName) {
+      let toast = document.getElementById('workerCollisionToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'workerCollisionToast';
+        toast.className = 'fixed bottom-6 right-6 z-50 bg-slate-900/95 text-white px-4 py-3 rounded-2xl shadow-2xl border border-slate-700/80 text-xs font-bold flex items-center gap-2.5 transition transform duration-200';
+        document.body.appendChild(toast);
+      }
+      toast.innerHTML = `<span class="text-amber-400 text-sm">⚠️</span> <span><b>${workerName}</b> 님이 현재 이 칸을 수정 중입니다! 동시에 수정하면 덮어씌워질 수 있으니 주의해 주세요.</span>`;
+      toast.classList.remove('hidden', 'opacity-0', 'translate-y-4');
+      if (workerCollisionToastTimer) clearTimeout(workerCollisionToastTimer);
+      workerCollisionToastTimer = setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-4');
+        setTimeout(() => toast.classList.add('hidden'), 200);
+      }, 3500);
+    }
+
+    if (typeof window !== 'undefined') {
+      function resolvePresenceCellId(el) {
+        if (!el || !el.getAttribute) return null;
+        let cellId = el.getAttribute('data-cell-id');
+        if (!cellId && el.id && (el.id.startsWith('cond-') || el.id.startsWith('discount-'))) {
+          cellId = el.id;
+        }
+        return cellId || null;
+      }
+
+      document.addEventListener('focusin', function(e) {
+        const cellId = resolvePresenceCellId(e.target);
+        if (cellId && activePresenceWorkers && Object.keys(activePresenceWorkers).length > 0) {
+          const now = Date.now();
+          for (const [sid, w] of Object.entries(activePresenceWorkers)) {
+            if (sid !== mySessionId && w && w.activeCell === cellId && (now - (w.lastSeen || 0) < PRESENCE_ACTIVE_MS)) {
+              showWorkerCollisionNotice(w.workerName);
+              break;
+            }
+          }
+        }
+      }, true);
+
+      // 실제로 값을 수정(input)할 때만 '수정 중' 테두리·배지 동기화 (대기/단순 클릭 시 사용량 0)
+      document.addEventListener('input', function(e) {
+        const cellId = resolvePresenceCellId(e.target);
+        if (cellId) {
+          broadcastCellFocus(cellId);
+        }
+      }, true);
+
+      document.addEventListener('focusout', function(e) {
+        const cellId = resolvePresenceCellId(e.target);
+        if (cellId) {
+          broadcastCellBlur(cellId);
+        }
+      }, true);
+
+      window.addEventListener('beforeunload', () => {
+        if (db && currentStoreId && mySessionId && myBroadcastedCellId && !isCloudQuotaExhausted && !isCloudPermissionError) {
+          try {
+            db.collection('presence').doc(currentStoreId).collection('sessions').doc(mySessionId).delete().catch(() => {});
+          } catch(e) {}
+        }
+      });
+    }
+
     // ==================== Firebase Firestore 실시간 동기화 & 영속화 로직 ====================
     function initFirestoreListeners() {
       if (typeof resetStoreDeviceData === 'function') resetStoreDeviceData(currentStoreId, true);
@@ -7972,6 +8242,10 @@ service cloud.firestore {
       knownDeviceIds = null;
       if (typeof loadColorPresets === 'function') loadColorPresets(currentStoreId);
       if (!db) return;
+
+      if (typeof subscribeStorePresence === 'function') {
+        subscribeStorePresence(currentStoreId);
+      }
 
       const storeLabel = getStoreMeta(currentStoreId).name;
       setSyncStatus('syncing', `${storeLabel} 데이터 로딩...`);
@@ -9355,11 +9629,11 @@ service cloud.firestore {
       {
         date: '2026. 11. 28',
         tag: '최신',
-        title: '동시 접속자 추적 제거로 클라우드 사용량 대폭 절감 & 한도 초과 안내 추가',
+        title: '접속자 목록 제거 · 수정 시에만 수정중 색상 표시 · 시세표 PDF 하단 잘림 수정',
         items: [
-          '클라우드 무료 사용량을 가장 많이 소모하던 상단 [접속자/작업자] 실시간 추적 및 수정 중 색상 표시 기능을 완전히 제거했습니다.',
-          '이제 단가·광고가격·설정 등 실제 데이터를 고칠 때만 필요한 통신이 발생해 하루 사용량을 매우 여유롭게 유지할 수 있습니다.',
-          '클라우드 일일 무료 사용량을 초과한 경우 [클라우드 동기화 완료]로 잘못 표시되던 문제를 고치고, 상단 빨간 안내 배너와 해결 가이드를 띄워 바로 확인하실 수 있도록 개선했습니다.'
+          '상단 [접속자] 목록과 백그라운드 유지 신호(8초 타이머)를 없애고, 누군가 실제로 칸을 수정할 때만 해당 칸에 색상 테두리와 [OO 수정 중] 표시가 뜨도록 개선했습니다.',
+          '시세표 [PDF / 고화질 인쇄] 출력 시 하단이 잘리던 문제를 고쳐 시세표 전체가 A4 1장에 안 잘리고 온전히 나오도록 수정했습니다.',
+          '클라우드 무료 사용량 초과 시 [클라우드 동기화 완료]로 잘못 뜨던 문제를 고치고, 상단 빨간 경고 배너와 해결 안내창을 추가했습니다.'
         ]
       },
       {
@@ -17853,6 +18127,11 @@ JSON 규격:
       printClone.querySelectorAll('button').forEach(el => el.remove());
       const printDiscountBanner = printClone.querySelector('#posterDiscountNoticeBanner');
       if (printDiscountBanner) printDiscountBanner.remove();
+      printClone.classList.remove('shadow-2xl');
+      printClone.style.width = '740px';
+      printClone.style.maxWidth = '740px';
+      printClone.style.margin = '0 auto';
+      printClone.style.overflow = 'visible';
 
       const cTitle = printClone.querySelector('#posterStoreTitle');
       if (cTitle) {
@@ -17881,8 +18160,8 @@ JSON 규격:
         printIframe.style.position = 'fixed';
         printIframe.style.left = '-9999px';
         printIframe.style.top = '0';
-        printIframe.style.width = '760px';
-        printIframe.style.height = '1000px';
+        printIframe.style.width = '780px';
+        printIframe.style.height = '2400px';
         printIframe.style.border = '0';
         printIframe.style.visibility = 'hidden';
         document.body.appendChild(printIframe);
@@ -17899,22 +18178,51 @@ JSON 규격:
   ${parentLinks}
   ${parentStyles}
   <style>
-    @page { size: auto; margin: 6mm !important; }
+    @page { size: A4 portrait; margin: 6mm !important; }
     * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     html, body {
       font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif !important;
       margin: 0 !important;
       padding: 0 !important;
       background: #ffffff !important;
-      display: flex !important;
-      justify-content: center !important;
+      display: block !important;
+      width: 100% !important;
+      height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
     }
     #posterPrintContainer {
-      width: 760px !important;
-      max-width: 760px !important;
+      width: 740px !important;
+      max-width: 740px !important;
       margin: 0 auto !important;
+      padding: 0 !important;
       background: #ffffff !important;
       box-sizing: border-box !important;
+      height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+    }
+    @media print {
+      @page { size: A4 portrait; margin: 6mm !important; }
+      html, body {
+        width: 100% !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+      }
+      #posterPrintContainer {
+        width: 740px !important;
+        max-width: 740px !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
     }
   </style>
 </head>
@@ -17931,13 +18239,36 @@ JSON 규격:
 </html>`);
       doc.close();
 
-      setTimeout(() => {
-        printIframe.contentWindow.focus();
-        printIframe.contentWindow.print();
-        setTimeout(() => {
-          try { window.focus(); } catch(e) {}
-        }, 800);
-      }, 500);
+      // Tailwind 렌더링 완료 후 A4 세로 1장(6mm 여백 제외 약 1040px x 740px) 안에 하단 잘림 없이 자동 맞춤 배율 적용
+      const applyPosterPrintFitAndPrint = (attempt = 0) => {
+        const pCont = doc.getElementById('posterPrintContainer');
+        const pSheet = doc.getElementById('adPosterSheet');
+        const tailwindReady = pSheet && parseFloat(getComputedStyle(pSheet).paddingTop || '0') > 0;
+        if (!tailwindReady && attempt < 12) {
+          setTimeout(() => applyPosterPrintFitAndPrint(attempt + 1), 100);
+          return;
+        }
+        if (pCont) {
+          pCont.style.zoom = '1';
+          const safeMaxH = 1040;
+          const safeMaxW = 740;
+          const actualH = Math.max(pCont.scrollHeight, pSheet ? Math.ceil(pSheet.getBoundingClientRect().height) : 0);
+          const actualW = Math.max(pCont.scrollWidth, pSheet ? Math.ceil(pSheet.getBoundingClientRect().width) : 0);
+          if (actualH > safeMaxH || actualW > safeMaxW) {
+            const fitScale = Math.min(safeMaxH / Math.max(actualH, 1), safeMaxW / Math.max(actualW, 1));
+            pCont.style.zoom = fitScale.toFixed(3);
+          }
+        }
+        if (!window.__skipPosterNativePrintDialog) {
+          printIframe.contentWindow.focus();
+          printIframe.contentWindow.print();
+          setTimeout(() => {
+            try { window.focus(); } catch(e) {}
+          }, 800);
+        }
+      };
+
+      setTimeout(() => applyPosterPrintFitAndPrint(0), 250);
     }
 
     // ==================== TAB 5: 시세 상세내역 자동 산출 & 클립보드 복사 ====================
