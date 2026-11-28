@@ -263,7 +263,27 @@ async function fetchCarrierFullCatalog(carrier, includeLte = true) {
   const tasks = [fetchService(meta.phone5g, '5G', ['SS', 'AP', 'ETC'])];
   if (includeLte) tasks.push(fetchService(meta.phoneLte, 'LTE', ['SS', 'ETC']));
 
-  const chunks = await Promise.all(tasks);
+  // SKT 4G/LTE 보완도 병렬로 함께 조회 (타임아웃 제한 4.5초로 전체 응답 지연 방지)
+  let twPromise = Promise.resolve([[], []]);
+  if (carrier === 'SK' && includeLte) {
+    const fetchTwPhone = async (scrbTypCd) => {
+      try {
+        const res = await fetch(`https://shop.tworld.co.kr/notice?modelNwType=PHONE&scrbTypCd=${scrbTypCd}`, {
+          headers: { 'User-Agent': SMARTCHOICE_UA },
+          signal: AbortSignal.timeout ? AbortSignal.timeout(4500) : undefined
+        });
+        if (!res.ok) return [];
+        const html = await res.text();
+        const m = html.match(/_this\.products\s*=\s*parseObject\((\[[\s\S]*?\])\);/);
+        return m ? JSON.parse(m[1]) : [];
+      } catch (_) {
+        return [];
+      }
+    };
+    twPromise = Promise.all([fetchTwPhone('20'), fetchTwPhone('31')]).catch(() => [[], []]);
+  }
+
+  const [chunks, twPair] = await Promise.all([Promise.all(tasks), twPromise]);
   const merged = {};
   chunks.forEach(chunk => {
     Object.keys(chunk).forEach(code => {
@@ -275,19 +295,9 @@ async function fetchCarrierFullCatalog(carrier, includeLte = true) {
     });
   });
 
-  // SKT 4G/LTE 보완: 스마트초이스에서 빠지는 T다이렉트샵 4G 공시 단말(갤럭시 A17 등) 병합
-  if (carrier === 'SK' && includeLte) {
+  if (carrier === 'SK' && includeLte && Array.isArray(twPair)) {
     try {
-      const fetchTwPhone = async (scrbTypCd) => {
-        const res = await fetch(`https://shop.tworld.co.kr/notice?modelNwType=PHONE&scrbTypCd=${scrbTypCd}`, {
-          headers: { 'User-Agent': SMARTCHOICE_UA }
-        });
-        if (!res.ok) return [];
-        const html = await res.text();
-        const m = html.match(/_this\.products\s*=\s*parseObject\((\[[\s\S]*?\])\);/);
-        return m ? JSON.parse(m[1]) : [];
-      };
-      const [mnpRows, chgRows] = await Promise.all([fetchTwPhone('20'), fetchTwPhone('31')]);
+      const [mnpRows, chgRows] = twPair;
       const normKey = s => String(s || '').toLowerCase().replace(/\s+/g, '').replace(/\d+(g|gb|t|tb)$/i, '');
       const existingByName = new Set(Object.values(merged).map(v => normKey(v.name)));
       const twMap = {};
