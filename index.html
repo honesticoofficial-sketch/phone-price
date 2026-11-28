@@ -19665,16 +19665,16 @@ ${policyText ? policyText : '(구두정책 텍스트 없음)'}
 5. ★ 갤럭시 S26 일반(s26) vs S26 NEW(s26_new) 분리 판독 (매우 중요!):
    - 공시 단가표 및 선약 단가표 이미지에 '갤26 / SM-S942N (125.4만)'과 '갤26new / S26 NEW / SM-S942N_NEW (140.36만)' 두 행이 모두 있으면, **반드시 일반 행은 id="s26", NEW(인상) 행은 id="s26_new"로 각각 따로 추출**하세요!
    - 특히 **선약(선택약정) 이미지에서도** '갤26new / SM-S942N_NEW / 140.36만' 행의 선약 번이·기변 숫자를 일반 's26' 숫자와 절대로 섞지 말고 반드시 id="s26_new"에 넣으세요! (만약 표에 1개 행만 있으면 모델명과 출고가가 140.36만/new인지 125.4만인지 확인해 맞는 id에 넣으세요.)
-5. 이미지 하단의 부가서비스/특별점 부가 판독:
-   - "✅ ... 반영 (미가입시 차감)" 처럼 **이미 표 숫자에 포함되어 있는 항목**은 addonBonusMan에 더하지 말고, 대신 아래 **includedDeductions** 배열에 넣어서 사용자가 체크를 풀 때 차감액(deductMan)만큼 빠지게 해주세요!
+6. 이미지 하단의 부가서비스/특별점 부가 판독:
+   - "✅ ... 반영 (미가입시 차감)" 또는 "추가지원금 미입력 시 차감 (-N만)" 처럼 **미입력/미가입 시 깎이는 차감 항목**은 매장에서 기본적으로 모두 입력·가입하므로 **최초 계산 시 절대 미리 빼지 마세요(차감 미반영 상태가 기본)!** 이런 항목은 addonBonusMan에 음수(-)로 넣지 말고 반드시 아래 **includedDeductions** 배열에 양수(deductMan)로 넣으세요!
    - "추가 5000" 또는 "보험 가입시 추가 5,000원" 처럼 가입 시 표 숫자에 **추가로 더해지는 금액**만 만원 단위로 변환해 addonBonusMan(예: 5000원 -> 0.5)에 넣으세요.
-6. 구두정책 문구 분류 규칙 (매우 중요 — 특히 구간별 차등 지급 주의!):
-   - **policyAdjustments (체크 해제 시 빠지는 가산 정책)**: 표 숫자에 아직 안 들어가 있어서 일반 번이/기변(공시 또는 선약) 단가에 실제로 더하는 구두정책(예: 추지 정책, 선약 기변 구두정책, 특정 기종 추가금)을 넣으세요.
+7. 구두정책 문구 분류 규칙 (매우 중요 — 특히 구간별 차등 지급 & 미입력 차감 주의!):
+   - **policyAdjustments (체크 해제 시 빠지는 가산 정책)**: 표 숫자에 아직 안 들어가 있어서 일반 번이/기변(공시 또는 선약) 단가에 실제로 **더하는(+) 구두정책**(예: 추지 정책, 선약 기변 구두정책, 특정 기종 추가금)만 넣으세요. (절대로 음수 차감 항목을 넣지 마세요!)
    - **★ 구간별 차등 지급(예: "20만▲ +5만 / 10만▲ +3만 / 05만▲ +1만", "20만 이상 +3만") 판독 절대 규칙**:
      * "20만▲ +5만", "10만▲ +3만", "05만▲ +1만" 은 **단가표 원단가(rawBase) 구간별로 최고 1개 구간만 지급**하는 뜻입니다! (절대로 5+3+1 = +9만 으로 합산하지 마세요!)
      * 구간별 차등 지급은 절대로 여러 개의 객체로 쪼개지 말고, **반드시 하나의 policyAdjustments 객체 안의 tiers 배열에 모두 묶어서 1개만** 반환하세요! (amountMan은 0으로 두고 tiers에 { "minRebateMan": 20, "amountMan": 5 } 형태로 넣으세요.)
      * 공시 구간과 선약 구간이 다르면 공시용 1개 객체 + 선약용 1개 객체로 각각 tiers를 묶어 반환하세요.
-   - **includedDeductions (단가표 포함 조건 — 체크 해제 시 차감)**: 단가표 숫자에 이미 포함되어 있으나 미가입/미달성 시 차감되는 조건(예: 부가서비스 미가입시 -2만, 그레이드 미적용시 -3만 등)을 넣으세요.
+   - **includedDeductions (단가표 포함 조건 / 미입력·미가입 시 차감 — 기본 상태는 차감 미반영!)**: "추가지원금 미입력 시 차감", "부가서비스 미가입 시 차감", "그레이드 미적용 시 차감" 등 미입력/미가입 시 차감되는 조건은 **반드시 여기에 양수 deductMan으로** 넣으세요. (최초 입력 시에는 차감 미반영으로 정상 원단가가 그대로 나오고, 사용자가 체크를 풀 때만 차감됩니다.)
    - **unlistedPolicies (참고용 특수조건)**: "010 신규", "010 청년", "010 ZEM", "회선183일/요금제 123일 유지조건" 등 금액 가산/차감과 무관한 유지조건·유의사항만 분류해 주세요.
 
 JSON 응답 스키마:
@@ -20027,20 +20027,66 @@ JSON 응답 스키마:
         const ch = entry.channel;
         const chBonus = Number(entry.channelBonus || 0);
         const parsed = entry.parsed || {};
-        const addonBonus = Number(parsed.addonBonusMan) || 0;
+        let addonBonus = Number(parsed.addonBonusMan) || 0;
         const rawAdj = Array.isArray(parsed.policyAdjustments) ? parsed.policyAdjustments : [];
-        const adjustments = normalizePolicyAdjustments(rawAdj, ch);
-        const rawInc = Array.isArray(parsed.includedDeductions) ? parsed.includedDeductions : [];
-        const includedDeductions = rawInc
-          .filter(inc => inc && Math.abs(Number(inc.deductMan) || 0) > 0)
-          .map((inc, idx) => ({
-            ...inc,
-            id: inc.id || `${ch}_inc_${idx}`,
+        const normalizedAdjAll = normalizePolicyAdjustments(rawAdj, ch);
+        const adjustments = [];
+        const autoConvertedDeductions = [];
+
+        // '추가지원금 미입력 차감' 등 음수(-) 차감 항목은 최초 반영 시 차감 미반영(원단가 유지) 상태로 유지하고 includedDeductions(체크 해제 시 차감)로 자동 전환!
+        if (addonBonus < 0) {
+          autoConvertedDeductions.push({
+            id: `${ch}_inc_addon_neg`,
             enabled: true,
-            deductMan: Math.abs(Number(inc.deductMan) || 0),
-            category: inc.category || '부가서비스',
-            title: inc.title || '단가표 포함 조건'
-          }));
+            deductMan: Math.abs(addonBonus),
+            category: '부가서비스',
+            title: '하단 조건 (미입력/미가입 시 차감)',
+            contractType: 'all',
+            moveType: 'all',
+            includeDeviceIds: [],
+            excludeDeviceIds: [],
+            conditionNote: parsed.addonSummary || `미입력/미가입 시 -${Math.abs(addonBonus)}만 차감 (기본: 차감 미반영)`
+          });
+          addonBonus = 0;
+        }
+
+        normalizedAdjAll.forEach((a, idx) => {
+          const hasTiers = Array.isArray(a.tiers) && a.tiers.length > 0;
+          const amt = Number(a.amountMan) || 0;
+          const txt = `${a.title || ''} ${a.conditionNote || ''}`;
+          const isNegDeduction = !hasTiers && (amt < 0 || (amt > 0 && /(?:미입력|미가입|미적용|미달성).*(?:차감|감액)|(?:차감|감액).*(?:미입력|미가입|미적용|미달성)/.test(txt)));
+          if (isNegDeduction) {
+            autoConvertedDeductions.push({
+              id: `${ch}_inc_from_adj_${idx}`,
+              enabled: true,
+              deductMan: Math.abs(amt),
+              category: /(?:추가지원금|추지|구두)/.test(txt) ? '구두정책' : '부가서비스',
+              title: (a.title || '미입력 시 차감 조건').replace(/^-/, ''),
+              contractType: a.contractType || 'all',
+              moveType: a.moveType || 'all',
+              includeDeviceIds: a.includeDeviceIds || [],
+              excludeDeviceIds: a.excludeDeviceIds || [],
+              conditionNote: a.conditionNote || `미입력/미가입 시 -${Math.abs(amt)}만 차감 (기본: 차감 미반영)`
+            });
+          } else {
+            adjustments.push(a);
+          }
+        });
+
+        const rawInc = Array.isArray(parsed.includedDeductions) ? parsed.includedDeductions : [];
+        const includedDeductions = [
+          ...rawInc
+            .filter(inc => inc && Math.abs(Number(inc.deductMan) || 0) > 0)
+            .map((inc, idx) => ({
+              ...inc,
+              id: inc.id || `${ch}_inc_${idx}`,
+              enabled: true,
+              deductMan: Math.abs(Number(inc.deductMan) || 0),
+              category: inc.category || '부가서비스',
+              title: inc.title || '단가표 포함 조건'
+            })),
+          ...autoConvertedDeductions
+        ];
 
         const matched = Array.isArray(parsed.matchedDevices) ? parsed.matchedDevices : [];
         const rawUnlisted = Array.isArray(parsed.unlistedPolicies) ? parsed.unlistedPolicies : [];
@@ -20395,7 +20441,7 @@ JSON 응답 스키마:
         const dAmt = Math.abs(Number(inc.deductMan) || 0);
         amountText = dAmt ? `미적용시 -${dAmt}만` : '';
         const isOn = inc.enabled !== false;
-        statusLabel = isOn ? '조건 포함 (기본단가)' : `체크 해제 (-${dAmt}만 차감중)`;
+        statusLabel = isOn ? '차감 미반영 (기본값)' : `체크 해제 (-${dAmt}만 차감중)`;
         statusCls = isOn ? 'bg-indigo-100 text-indigo-700' : 'bg-rose-100 text-rose-700';
 
         const cLabel = inc.contractType === 'sunyak' ? '선약' : (inc.contractType === 'gongsi' ? '공시' : '공시·선약 전체');
