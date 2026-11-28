@@ -4193,3 +4193,20 @@ service cloud.firestore {
 4. **AI 자동단가입력 단가처 고정(도매 우선·기존 설정 유지) & 미기재 단가처 선택 시 경고 후 `[품절]` 전환**:
    - `applyMultiChannelRebatesToTest2Store` 및 `toggleS26PriceHike`가 더 이상 단가가 더 높다는 이유로 사용자의 `단가처`(`d.loc`/`d.locSunyak`, 기본값 `도매`)를 다른 단가처(`온라인`/`K1` 등)로 임의 변경하지 않음. 사용자가 직접 설정해 둔 단가처를 기준으로 계산·입력하며, 해당 단가처 단가표에서 빠진 기종만 `품절`로 표시.
    - `updateLocation()`에서 분석 완료된 다른 단가처(`온라인` 등)로 변경했는데 그 기종이 해당 단가표에 없는 경우, 경고 팝업(`... 단가가 없어 [품절]로 표시됩니다.`) 후 기존 단가처로 되돌리지 않고 **선택한 단가처로 변경을 완료한 뒤 해당 가격칸을 `품절`로 전환**.
+
+---
+
+## 106. 🛠️ [제106장] 테스트매장2 전용 1~2단계 완료: 요금제 구간별 전체 기종 공시 수집 & 버튼식 다중 대리점 미리보기/선택 (2026-11-28)
+
+1. **1단계 — 공식 요금제 지급구간표 학습 + A시리즈 포함 전체 기종 공시지원금 독립 크롤링 (`test2` 전용, 실매장 완전 분리)**:
+   - 실매장이 사용하는 `global_config/devices_master` 및 `global_config/subsidy_changes`에는 전혀 손대지 않고, 테스트매장2 전용 조회 서버리스 API(`api/test2-subsidies.js`)를 신규 구축.
+   - 스마트초이스(`smartchoice.or.kr`) `getTelProductList.do` + `dantongTelList.do`에서 SKT · KT · LG U+ 통신 3사의 5G/LTE 전체 단말기(삼성 S/폴드/A시리즈/LTE 보급형, 애플 아이폰, 기타) 요금제별 공통지원금을 병렬 수집.
+   - 업로드된 몽키컨설팅 공식 **요금제 지급구간표 3종**(SK v7.1 `8개 구간`, KT v8.1 `8개 구간`, LG U+ v7.9 `13개 구간`) 기준으로 실제 요금제명(`라이트59 업`, `5GX`, `베이지21GB`, `키즈38/주니어`, `플러스플랜/플러스렌`, `ZEM플랜 퍼팩트/베스트` 등)과 월정액을 자동 분류하여 매핑.
+   - 테스트매장2 상단 바(`#dailyTest2ControlsBar`)에 `[📊 요금제 구간·전체공시]` 및 `[🔄 공시 전체 불러오기]` 버튼을 추가하고, `#test2PlanChartModal` 모달에서 통신사별 구간표 클릭 필터 · 기종군 필터(`전체 / A시리즈·보급형 / S·플래그십 / 폴드·플립 / 아이폰`) · 모델 검색 제공. 수집 결과는 `stores/test2.test2SubsidyCatalog`에 독립 저장.
+2. **2단계 — 단가처 버튼식 개편 & 개수 제한 없는 세부 대리점 분리 저장/미리보기 선택 UI (`test2` 전용)**:
+   - `buildRebatePromptForSlot` 및 `applyMultiChannelRebatesToTest2Store`를 확장해 한 단가표 슬롯(예: `도매`) 안에 대리점/라인이 2곳 이상이든(`TS`, `1D`, `SK-D`, `SK-Y` 등) 개수 제한 없이 전부 `agencies` 배열로 분리 저장.
+   - AI 자동단가입력 시에는 사용자 기존 `단가처`(기본 `도매`)를 유지한 채 해당 단가처 내부의 최고가 대리점을 자동 선택하고, `d.agency` / `d.agencySunyak` 상태를 `stores/test2`에만 별도 보관(`undoLastRebateAutoApply` 복구 포함).
+   - 테스트매장2 `#dailyTable`의 `번이 단가처` · `기변 단가처` 열을 기존 `<select>` 드롭다운 대신 **버튼식 선택기 + `#test2ChannelPickerModal` 미리보기 모달**로 개편(명지·광안·테스트1은 기존 드롭다운 그대로 유지). 클릭 시 `[도매 / 온라인 / K1 / 특판]` 예상 최고가와 세부 대리점별 실제 계산 단가(`1D 69만`, `TS 65만` 등)를 미리보기로 비교하고 1클릭 전환(재고 없음 선택 시 경고 후 `품절` 전환) 가능.
+3. **검증 및 배포**:
+   - Edge CDP 모의 환경(`verify_sync.ps1`)에서 `TEST2_CARRIER_PLAN_TIERS` (8/8/13), `#test2PlanChartModal` A시리즈 필터, 무제한 대리점 파싱/최고가 자동선택, 버튼식 대리점 전환(`1D`→`TS` 즉시 반영), 타 매장(`myeongji`) 완전 격리, JS 오류 `0건` 검증 완료.
+   - GitHub `main` 푸시 후 Vercel 실서버(`/api/test2-subsidies?carrier=SK/KT/LG`)에서 3사 전체 기종 및 요금제 구간 실시간 JSON 응답 확인 완료.
