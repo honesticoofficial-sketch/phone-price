@@ -4137,3 +4137,26 @@ service cloud.firestore {
    - `renderDailyTable` 입력/선택 요소에 `data-device-id`를 부여해 작업 중 백그라운드 스냅샷 덮어쓰기를 방지하고, 레거시 `updatePosterNoticeTextFromChecklist` 미정의 호출을 안전 가드 처리해 콘솔 오류 0건 달성.
 13. **Edge CDP 샌드박스 검증 완료**:
    - 명지점(`152411`) 미노출 격리, 테스트매장2(`222222`) 탭명·버튼·통신사별 슬롯 분리·즉시 완료 복귀·미분석 단가처 알림 및 복원·구버전 재분석 안내·단가처별 실시간 비교 힌트(`도매 60/온라인 58`)·순차 업로드 병합·단가처 전환 자동계산·포함조건 체크 해제 차감·미입력 차감 기본 미반영·구간별 차등 지급(0/1/3/5만 & 0/3만)·복수 대리점(`TS` vs `1D`) 칸별 최고가 채택·상세 팝업·변동 금액 배지 및 2초 발광·오프탭 바로가기·AI 시작 날짜/시간 표시·S26 일반/NEW 공시/선약 분리 전환 100% PASS (JS 콘솔 에러 0건).
+
+
+---
+
+## 104. 🚨 [제104장] 실시간 클라우드 동기화 장애 검수 · Firebase 일일 무료 한도(`resource-exhausted`) 진단 · 통신량 90% 절감 최적화 & 사용량 초과 경고 UI 구축 (2026-11-28)
+
+1. **장애 원인 확정 (외부 클라우드 할당량 + 내부 백그라운드 과다 쓰기)**:
+   - 실서버 라이브 검수(Firestore REST 조회 + Edge CDP 콘솔 캡처) 결과, 4개 매장(`myeongji`, `gwangan`, `test1`, `test2`) 및 `presence` 마지막 쓰기 시각이 `2026-11-27`에서 멈추고, `2026-11-28` 쓰기가 전부 실패하며 Firestore SDK 내부 백오프 오류(`FirebaseError: [code=resource-exhausted]: Quota exceeded`)가 발생 중임을 확인.
+   - 기존 코드의 다중 원인:
+     1) **동시접속(`presenceHeartbeatTimer`) 8초 주기 무조건 `.set()`** + 매번 모든 열린 탭에 `onSnapshot` 읽기 연쇄 발생 + 45초마다 삭제 `.delete()` 쓰기 + 모든 칸 클릭/포커스 해제(`broadcastCellFocus`/`Blur`)마다 즉시 `.set()` 2회 발생 + `masterSwitchStore`에서 `subscribeStorePresence` 중복 호출.
+     2) **실시간 입력 중복 저장**: `updateRateLive`/`updateAdValLive`/`updateAdTagLive`(`oninput`, 400ms)와 `onchange` 커밋 저장(`400ms`)이 연달아 2번씩 Firestore 쓰기 + `audit_history` 쓰기를 유발.
+     3) **가짜 "완료" 표시 & 오류 은폐**: `presence` `.catch(() => {})` 및 `executeStoreSave` `.catch()`가 `resource-exhausted`를 사용자에게 알리지 않고 삼키고, `subscribeStoreData`가 로컬/읽기 스냅샷 수신 시 무조건 상단 배지를 초록색 `클라우드 동기화 완료`로 덮어씌워 사용자가 장애를 인지할 수 없었음.
+2. **전 매장 공용 쓰기·읽기 약 90% 절감 최적화 (`index.html`)**:
+   - **동시접속 하트비트 최적화**: `PRESENCE_HEARTBEAT_MS`를 `8초` → **`60초`**로 상향하고, `document.hidden`(백그라운드 탭) 및 `isCloudQuotaExhausted`/`isCloudPermissionError` 상태에서는 하트비트·세션 정리를 자동 중단. 탭 복귀(`visibilitychange`) 시 45초 경과분만 즉시 갱신. 활성 인정 기준은 `PRESENCE_ACTIVE_MS = 150000`(2.5분), 비정상 세션 자동 정리 기준은 `PRESENCE_STALE_MS = 300000`(5분)으로 균형 조정(`updateCollaboratorBadgesUI`, `subscribeStorePresence`, `renderPresenceHighlights`, `focusin` 충돌 경고 일괄 적용).
+   - **포커스 위치 디바운스 병합**: `broadcastCellFocus` (`350ms`) · `broadcastCellBlur` (`400ms`) 디바운스를 적용해, 칸을 빠르게 이동할 때 중간 경유 칸·`null` 쓰기를 생략하고 최종 정착 칸 1회만 전송. `masterSwitchStore`의 중복 `subscribeStorePresence()` 호출 제거.
+   - **타이핑 vs 확정 저장 병합**: `scheduleStoreSave(category, description, delayMs)`에 `delayMs` 파라미터 및 기존 감사 메타(`category`/`description`) 보존 병합 로직을 도입해 `updateRateLive`/`updateAdValLive`/`updateAdTagLive`는 `1800ms`, `updateTest2ChannelBonusInput`은 `1500ms` 지연 저장하고, 사용자가 입력 완료(`onchange`, `400ms`) 시 앞선 임시 타이머를 대체하여 1회만 저장.
+3. **사용량 초과(`resource-exhausted`) 즉시 감지 · 경고 배너 & 해결 가이드 구축**:
+   - `isCloudQuotaExceededError()`, `handleCloudSyncError()` 확장, Firestore SDK 백오프 로그 감지(`installFirebaseQuotaConsoleMonitor`), 그리고 `executeStoreSave`/`scheduleMasterSave`/`logAudit`/`subscribeAuditHistory`/`subscribeSupportRequests`/모든 `presence` `.catch` 연동을 통해 한도 초과 즉시 `isCloudQuotaExhausted = true` 설정.
+   - 상단 **`#cloudQuotaBanner`**(빨간-주황 경고 배너 + 닫기 버튼) 및 상태 배지 **`클라우드 사용량 초과 (클릭)`** 전환, `subscribeStoreData`/`poster_notices` 스냅샷 수신 시에도 초과 상태에서는 초록색 `클라우드 동기화 완료`로 덮어쓰지 않도록 보호.
+   - `#cloudTroubleshootModal`에 **`[모드 B] 일일 사용량 초과 안내`** 섹션을 추가해 ① **매일 오후 5시(한국시간) 자동 초기화 대기(무료 유지)** ② **Firebase 콘솔 Blaze(종량제) 업그레이드 즉시 복구 링크** 안내. 이후 실제 쓰기가 성공(`executeStoreSave` `.then()`)하면 자동으로 초과 플래그 해제 및 배너 숨김(자가 복구).
+   - 전 매장 공용 업데이트 사항이므로 `SITE_UPDATES_DATA` 최상단(`2026. 11. 28`, `최신`)에도 PIN·비공개 정보 없이 반영 완료.
+4. **Edge CDP 샌드박스 검증 완료 (`verify_sync.ps1`)**:
+   - Mock Firestore 환경에서 `103105` 잠금 해제·명지점↔테스트매장2 전환 격리(`리베이트입력` vs `리베이트`), 셀 포커스 연속 이동(`1`회 쓰기 병합), 연속 타이핑+확정(`stores` `1`회 + `audit_history` `1`회 병합), `resource-exhausted` 감지·배너·배지 보호·가이드 모달 전환·쓰기 성공 시 자동 복구, `SITE_UPDATES_DATA` 비공개 정보 미노출 모두 100% PASS (JS/런타임 에러 0건).
