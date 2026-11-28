@@ -19813,6 +19813,19 @@ JSON 응답 스키마:
       return true;
     }
 
+    function formatAiStartDateTime(dateObj = new Date()) {
+      const kstStr = dateObj.toLocaleString('sv-SE', { timeZone: 'Asia/Seoul' });
+      const [datePart] = kstStr.split(' ');
+      const [y, m, d] = datePart.split('-');
+      const dateFormatted = `${y}. ${m}. ${d}`;
+      const timeFormatted = dateObj.toLocaleTimeString('ko-KR', { timeZone: 'Asia/Seoul', hour: '2-digit', minute: '2-digit' });
+      return {
+        date: dateFormatted,
+        time: timeFormatted,
+        full: `${dateFormatted} ${timeFormatted}`
+      };
+    }
+
     async function runRebateAutoAnalysis() {
       const apiKey = geminiApiKey || DEFAULT_GEMINI_KEY;
       if (!apiKey) {
@@ -19836,6 +19849,7 @@ JSON 응답 스키마:
         return;
       }
 
+      const startedInfo = formatAiStartDateTime(new Date());
       showRebateAutoStep('loading');
       const loadingMsg = document.getElementById('rebateAutoLoadingMsg');
 
@@ -19862,7 +19876,7 @@ JSON 응답 스키마:
         }
 
         if (loadingMsg) loadingMsg.innerText = '단가처별 최고 리베이트를 비교 산정하고 입력표에 반영하는 중...';
-        applyMultiChannelRebatesToTest2Store(channelResults, { carrier });
+        applyMultiChannelRebatesToTest2Store(channelResults, { carrier, startedAt: startedInfo });
       } catch (err) {
         console.error('Rebate auto analysis error:', err);
         showRebateAutoStep('input');
@@ -19898,7 +19912,8 @@ JSON 응답 스키마:
     }
 
     function applyMultiChannelRebatesToTest2Store(channelResults, opts) {
-      const { carrier } = opts;
+      const { carrier, startedAt } = opts;
+      const startStamp = startedAt && startedAt.full ? startedAt : formatAiStartDateTime(new Date());
       const resultsArr = Array.isArray(channelResults) ? channelResults : [];
       const round2 = (n) => Math.round(n * 100) / 100;
 
@@ -19958,6 +19973,9 @@ JSON 응답 스키마:
           channel: ch,
           channelBonus: chBonus,
           sheetDate: parsed.sheetDate || '',
+          analyzedAtDate: startStamp.date,
+          analyzedAtTime: startStamp.time,
+          analyzedAtFull: startStamp.full,
           detectedHeader: parsed.detectedHeader || `${carrier}_${ch}`,
           planTier: parsed.planTier || '',
           addon: {
@@ -20020,7 +20038,7 @@ JSON 응답 스키마:
       const usedChannels = mergedSections.map(s => s.channel);
       test2PolicyNotes[carrier] = {
         channelSummary: usedChannels.join(' · '),
-        updatedAt: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }),
+        updatedAt: startStamp.full,
         sections: mergedSections,
         rawCandidatesByDevice: mergedRawByDevice
       };
@@ -20514,7 +20532,7 @@ JSON 응답 스키마:
           <div class="border border-slate-200/90 rounded-xl bg-white/80 p-2.5 space-y-2">
             <div class="flex items-center justify-between gap-1 border-b border-slate-100 pb-1.5">
               <span class="px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200 text-[11px] font-black">${escapeHtml(sec.channel || sec.detectedHeader || '채널')}</span>
-              <span class="text-[10px] font-semibold text-slate-400 truncate">${escapeHtml(sec.sheetDate || '')} ${sec.planTier ? '· ' + escapeHtml(sec.planTier) : ''}</span>
+              <span class="text-[10px] font-semibold text-slate-400 truncate">${escapeHtml(sec.analyzedAtFull || sec.sheetDate || '')}${sec.planTier ? ' · ' + escapeHtml(sec.planTier) : ''}</span>
             </div>
             <div class="space-y-1.5">
               ${rows.length > 0 ? rows.join('') : `<div class="text-[11px] text-slate-400 text-center py-1">정리된 정책 없음</div>`}
