@@ -4172,3 +4172,7 @@ service cloud.firestore {
 7. **최종 선택(③번) 및 시세표 PDF 하단 잘림 수정 반영 (`2026-11-28`)**:
    - **상단 접속자 창 제거 + 수정 중 색상 표시만 경량 유지**: `#collaboratorsContainer` / `#myWorkerBadge` 및 `8초` 타이머·대기 등록·삭제 쓰기는 완전히 제거한 상태를 유지하고, 실제로 값을 수정(`input`)할 때만 해당 칸에 색상 테두리 + `OO 수정 중` 배지를 띄우는 `renderPresenceHighlights`·`broadcastCellFocus`·`broadcastCellBlur`만 가볍게 연동.
    - **시세표 `PDF / 고화질 인쇄` (`printAdPoster`) 하단 잘림 해결**: `<head>`의 제휴카드 A4 인쇄용 `@media print { html, body { height: 297mm !important; max-height: 297mm !important; overflow: hidden !important; } }` 스타일이 iframe에도 복사되어 시세표 하단이 잘리던 원인을 규명. `printAdPoster` iframe 내부 스타일에서 `@media print`의 `height: auto !important; max-height: none !important; overflow: visible !important; display: block !important;`로 재정의하고, Tailwind 렌더링 완료 후 A4 세로 규격(`1040px × 740px`)에 맞춘 자동 배율(`zoom = fitScale`)을 적용해 하단 잘림 없이 1장에 온전히 출력되도록 수정.
+8. **제휴카드 안내서 외 PDF/인쇄 버튼 삭제 & 복사 버튼 전용 정리 (`2026-11-28`)**:
+   - 사용자 요청("복사기능만 살려놓고 PDF 인쇄기능은 제휴카드 안내서 말고 다 버튼 삭제해줘")에 따라 넷가표(`printNetTablePdf`), 시세표(`printAdPoster`), 시세 상세내역(`printDetailSheet`) 상단의 PDF/인쇄 버튼 3종을 제거하고 `[클립보드 복사]` 버튼만 깔끔하게 유지.
+   - 제휴카드 안내서(`#tab-card`)의 `A4 고화질 인쇄 / PDF 저장` (`printCardA4`) 버튼만 유지.
+   - `SITE_UPDATES_DATA` (`2026. 11. 28`) 및 `verify_sync.ps1` 검증 재통과 후 GitHub `main` 푸시 완료.
