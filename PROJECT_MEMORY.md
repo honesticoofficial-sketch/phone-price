@@ -4231,3 +4231,6 @@ service cloud.firestore {
 - **추가 개선 (클라우드 무료 용량 절약 & 불필요 버튼 제거)**:
   - 상단 바(`#dailyTest2ControlsBar`)에서 수동 `[📊 요금제 구간·전체공시]` · `[🔄 공시 전체 불러오기]` 버튼을 제거하고, 3사 크롤링 결과(`test2-subsidies-data.json`, 357기종, ~146KB)를 Vercel 정적 자산 + 브라우저 `localStorage`로만 자동 로드·갱신(`ensureTest2SubsidyCatalogLoaded`)하여 Firebase Firestore 저장/읽기 사용량 추가 소모 `0` 달성 (`payload.test2SubsidyCatalog` 제거).
 - **기종 선택(드롭다운) A시리즈 전체 검색 보완**: `renderDevicePickerList`가 `test2`의 `주요기종` / `저가·유심` 모드 구분 없이 수집된 전체 카탈로그(`test2SubsidyCatalog`)의 A시리즈·보급형까지 함께 검색·선택(`onSelectTest2CatalogDeviceFromPicker`)하도록 수정하고, `!(name.includes('S'))` 오작동 필터를 `classifyPickerGroup`으로 정비함.
+- **실서버 카탈로그 초기화 버그 수정 & 3사 교차 검색 지원 (`A175`/`A176` 등)**:
+  - `subscribeStoreData()`가 Firestore 스냅샷 수신 직후 `resetStoreDeviceData('test2', false)`를 호출할 때 `test2SubsidyCatalog`가 `null`로 초기화되던 버그를 수정하여(`test2`에서는 메모리/로컬스토리지 카탈로그를 보존 + `TEST2_CATALOG_VERSION = '20261128v2'` 갱신), 실서버 로그인 상태에서도 수집된 SK 117 · KT 97 · LG 143 전체 기종이 항상 유지되도록 개선.
+  - `renderDevicePickerList`에서 현재 선택한 통신사에 없는 단독/타사 기종(`KT SM-A175NK`, `LG SM-A176L 버디5` 등)도 다른 통신사 태그와 함께 모두 검색·선택 가능하도록 확장하고, 검색 결과 하단에 `[+ '...' 미등록 저가·유심 기종으로 바로 추가]` 버튼도 추가함.
