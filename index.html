@@ -7462,8 +7462,68 @@ service cloud.firestore {
         showGeneralToast(`⚡ [${storeLabel} · ${carrier}] 갤럭시 S26: '출고가 인상 NEW 버전' (출고가 140.36만 / 공시 75만) 매장 단독 적용!`);
       }
 
+      // 테스트매장2: 저장된 S26 일반 / S26 NEW 분석 단가가 있으면 체크 상태에 맞춰 공시·선약 단가 자동 전환
+      let s26ChangedItems = [];
+      if (isTest2FeatureEnabled() && typeof test2PolicyNotes !== 'undefined' && test2PolicyNotes[carrier] && test2PolicyNotes[carrier].rawCandidatesByDevice) {
+        const rawMap = test2PolicyNotes[carrier].rawCandidatesByDevice;
+        if (rawMap['s26'] || rawMap['s26_new']) {
+          if (!d.rate) d.rate = { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } };
+          if (!d.rate[carrier]) d.rate[carrier] = { mnp: 0, chg: 0 };
+          if (!d.loc) d.loc = { SK: { mnp: '도매', chg: '도매' }, KT: { mnp: '도매', chg: '도매' }, LG: { mnp: '도매', chg: '도매' } };
+          if (!d.loc[carrier]) d.loc[carrier] = { mnp: '도매', chg: '도매' };
+          if (!d.rateSunyak) d.rateSunyak = getDefaultSunyakRateMap();
+          if (!d.rateSunyak[carrier]) d.rateSunyak[carrier] = { mnp: 0, chg: 0 };
+          if (!d.locSunyak) d.locSunyak = getDefaultSunyakLocMap();
+          if (!d.locSunyak[carrier]) d.locSunyak[carrier] = { mnp: '도매', chg: '도매' };
+
+          [
+            { contractType: 'gongsi', moveType: 'mnp', rateMap: d.rate, locMap: d.loc, prefix: 'rate' },
+            { contractType: 'gongsi', moveType: 'chg', rateMap: d.rate, locMap: d.loc, prefix: 'rate' },
+            { contractType: 'sunyak', moveType: 'mnp', rateMap: d.rateSunyak, locMap: d.locSunyak, prefix: 'rateSunyak' },
+            { contractType: 'sunyak', moveType: 'chg', rateMap: d.rateSunyak, locMap: d.locSunyak, prefix: 'rateSunyak' }
+          ].forEach(cfg => {
+            const curCh = cfg.locMap[carrier][cfg.moveType] || '도매';
+            let calc = (typeof computeRebateForDeviceChannel === 'function')
+              ? computeRebateForDeviceChannel(carrier, 's26', cfg.contractType, cfg.moveType, curCh)
+              : null;
+            if (!calc) {
+              const allSecs = Array.isArray(test2PolicyNotes[carrier].sections) ? test2PolicyNotes[carrier].sections : [];
+              const candidates = allSecs
+                .map(s => {
+                  const res = computeRebateForDeviceChannel(carrier, 's26', cfg.contractType, cfg.moveType, s.channel);
+                  return res ? { channel: s.channel, total: res.total } : null;
+                })
+                .filter(Boolean);
+              if (candidates.length > 0) {
+                const best = candidates.reduce((b, cur) => (cur.total > b.total ? cur : b), candidates[0]);
+                calc = { total: best.total };
+                cfg.locMap[carrier][cfg.moveType] = best.channel;
+              }
+            }
+            if (calc && calc.total !== null && calc.total !== undefined) {
+              const prevVal = Number(cfg.rateMap[carrier][cfg.moveType]);
+              if (prevVal !== calc.total) {
+                cfg.rateMap[carrier][cfg.moveType] = calc.total;
+                s26ChangedItems.push({
+                  cellId: `${cfg.prefix}_s26_${carrier}_${cfg.moveType}`,
+                  deviceId: 's26',
+                  carrier,
+                  contractType: cfg.contractType,
+                  moveType: cfg.moveType,
+                  prevVal: isNaN(prevVal) ? null : prevVal,
+                  newVal: calc.total
+                });
+              }
+            }
+          });
+        }
+      }
+
       scheduleStoreSave('출고가/공시 설정', `[${storeLabel}] 갤럭시 S26 (${carrier}) ${nextHiked ? '출고가 인상 NEW(140.36만/75만)' : '일반 버전(125.4만/60만)'} 전환`);
       render();
+      if (s26ChangedItems.length > 0 && typeof triggerRebateCellGlow === 'function') {
+        triggerRebateCellGlow(s26ChangedItems);
+      }
       if (typeof renderDetailSheet === 'function' && currentTab === 'detail') renderDetailSheet();
       if (typeof renderAdPosterTable === 'function' && currentTab === 'adtable') renderAdPosterTable();
     }
@@ -19548,14 +19608,19 @@ JSON 규격:
     });
 
     function buildTargetDevicesPromptSummary(carrier) {
-      return devices
+      const lines = [];
+      devices
         .filter(d => d && d.id !== 'empty')
-        .map(d => {
+        .forEach(d => {
+          if (d.id === 's26') {
+            lines.push(`- id="s26", name="갤럭시 S26 256G (일반 버전 / new 미표기)", 출고가=125.4만(1,254,000원), 공시지원금(번이/기변)=60/60만 (모델명 예: 갤26, SM-S942N — _NEW나 new가 붙지 않은 일반 행만 매칭)`);
+            lines.push(`- id="s26_new", name="갤럭시 S26 256G NEW (출고가 인상 반영)", 출고가=140.36만(1,403,600원), 공시지원금(번이/기변)=75/75만 (모델명 예: 갤26new, 갤26 NEW, S26 NEW, SM-S942N_NEW — new가 붙거나 출고가가 140.36만/1,403,600원인 행만 매칭)`);
+            return;
+          }
           const effPrice = getEffectiveDevicePrice(d, carrier);
           const subMnp = getEffectiveDeviceSub(d, carrier, 'mnp');
           const subChg = getEffectiveDeviceSub(d, carrier, 'chg');
           let aliasHint = '';
-          if (d.id === 's26') aliasHint = ' (주의: 출고가 140.36만=갤26new/SM-S942N_NEW, 125.4만=갤26/SM-S942N 중 현재 매장 출고가 ' + effPrice + '만에 맞는 행을 매칭)';
           if (d.id === 'fold8') aliasHint = ' (폴드8 / SM-F971N, 512G 아님)';
           if (d.id === 'flip8') aliasHint = ' (플립8 / SM-F776N, 512G 아님)';
           if (d.id === 'fold8u') aliasHint = ' (폴드8울트라 / SM-F976N, 512G 아님)';
@@ -19565,15 +19630,16 @@ JSON 규격:
           if (d.id === 'iphone18_m37r') aliasHint = ' (아18프로 / IP18P_256GB)';
           if (d.id === 'iphone18_ocr3') aliasHint = ' (아18프로맥스 / IP18PM_256GB)';
           if (d.id === 'iphonedu_l7y0') aliasHint = ' (아18듀오 / IP_DUO_256GW)';
-          return `- id="${d.id}", name="${d.name}", 현재매장출고가=${effPrice}만, 공시지원금(번이/기변)=${subMnp}/${subChg}만${aliasHint}`;
-        })
-        .join('\n');
+          lines.push(`- id="${d.id}", name="${d.name}", 현재매장출고가=${effPrice}만, 공시지원금(번이/기변)=${subMnp}/${subChg}만${aliasHint}`);
+        });
+      return lines.join('\n');
     }
 
     function buildRebatePromptForSlot(carrier, channel, channelBonus, policyText, imgCount) {
       const planCfg = (typeof carrierConditions !== 'undefined' && carrierConditions[carrier])
         ? `${carrierConditions[carrier].planName || ''} (${carrierConditions[carrier].plan || ''})`
         : '';
+      const s26HikeOn = (typeof isS26HikeActive === 'function') && isS26HikeActive(carrier);
       const catalogText = buildTargetDevicesPromptSummary(carrier);
       return `
 당신은 대한민국 휴대폰 판매점의 통신사(${carrier}) 일일 대리점 단가표(리베이트) 및 구두정책 정산 전문가입니다.
@@ -19583,6 +19649,7 @@ JSON 규격:
 - 통신사: ${carrier}
 - 단가처 슬롯: ${channel}
 - 매장 기준 메인 요금제: ${planCfg || '플래그십 메인 최고구간 (예: SK 프리미엄 109 / P_109구간, KT 초이스/스페셜, LG 프리미어 등)'}
+- 현재 매장 S26 출고가인상반영 상태: ${s26HikeOn ? '체크됨 (s26_new / 출고가 140.36만 NEW 기준 사용 중)' : '체크해제 (s26 / 출고가 125.4만 일반 기준 사용 중)'}
 
 [우리 매장 기종 목록 — 반드시 이 id 목록에 있는 모델만 matchedDevices에 포함하고, 목록에 없는 구형 모델(예: 아이폰16, 저가 A시리즈 등)은 matchedDevices에서 제외하세요]
 ${catalogText}
@@ -19595,6 +19662,9 @@ ${policyText ? policyText : '(구두정책 텍스트 없음)'}
 2. 표의 칸 밀림 주의: "신규" 열이 비어있는 경우가 매우 많습니다! 반드시 각 열 헤더의 "MNP(번호이동)"와 "기변(기기변경)" 열에 정확히 위치한 숫자(만원 단위)를 그대로 추출하세요. 해당 칸이 빈칸이거나 품절이면 null을 반환하세요.
 3. rawGongsi / rawSunyak 에는 이미지 표에 적힌 **원본 1차 단가(만원 단위 숫자)** 만 넣으세요. (채널 가산금 ${channelBonus}만 원, 하단 부가, 구두정책 추가지원금은 절대로 raw 숫자에 미리 더하지 마세요 — 앱 JS가 정확히 가산합니다!)
 4. 만약 한 화면에 SK_Y / SK_D 처럼 하위 라인이 2개 있는 경우, 표준 수치(차이가 있으면 두 라인 중 유리하거나 기준에 맞는 수치를 취하고 note에 차이 기록)를 넣어주세요.
+5. ★ 갤럭시 S26 일반(s26) vs S26 NEW(s26_new) 분리 판독 (매우 중요!):
+   - 공시 단가표 및 선약 단가표 이미지에 '갤26 / SM-S942N (125.4만)'과 '갤26new / S26 NEW / SM-S942N_NEW (140.36만)' 두 행이 모두 있으면, **반드시 일반 행은 id="s26", NEW(인상) 행은 id="s26_new"로 각각 따로 추출**하세요!
+   - 특히 **선약(선택약정) 이미지에서도** '갤26new / SM-S942N_NEW / 140.36만' 행의 선약 번이·기변 숫자를 일반 's26' 숫자와 절대로 섞지 말고 반드시 id="s26_new"에 넣으세요! (만약 표에 1개 행만 있으면 모델명과 출고가가 140.36만/new인지 125.4만인지 확인해 맞는 id에 넣으세요.)
 5. 이미지 하단의 부가서비스/특별점 부가 판독:
    - "✅ ... 반영 (미가입시 차감)" 처럼 **이미 표 숫자에 포함되어 있는 항목**은 addonBonusMan에 더하지 말고, 대신 아래 **includedDeductions** 배열에 넣어서 사용자가 체크를 풀 때 차감액(deductMan)만큼 빠지게 해주세요!
    - "추가 5000" 또는 "보험 가입시 추가 5,000원" 처럼 가입 시 표 숫자에 **추가로 더해지는 금액**만 만원 단위로 변환해 addonBonusMan(예: 5000원 -> 0.5)에 넣으세요.
@@ -19764,16 +19834,31 @@ JSON 응답 스키마:
 
     function computeRebateForDeviceChannel(carrier, deviceId, contractType, moveType, channel) {
       const noteObj = test2PolicyNotes && test2PolicyNotes[carrier];
-      if (!noteObj || !noteObj.rawCandidatesByDevice || !noteObj.rawCandidatesByDevice[deviceId]) return null;
+      if (!noteObj || !noteObj.rawCandidatesByDevice) return null;
 
       const bucketKey = (contractType === 'sunyak')
         ? (moveType === 'chg' ? 'sunyakChg' : 'sunyakMnp')
         : (moveType === 'chg' ? 'gongsiChg' : 'gongsiMnp');
 
-      const list = noteObj.rawCandidatesByDevice[deviceId][bucketKey];
-      if (!Array.isArray(list) || list.length === 0) return null;
+      let cand = null;
+      if (deviceId === 's26') {
+        const preferNew = (typeof isS26HikeActive === 'function') && isS26HikeActive(carrier);
+        const orderKeys = preferNew ? ['s26_new', 's26'] : ['s26', 's26_new'];
+        for (const k of orderKeys) {
+          const arr = noteObj.rawCandidatesByDevice[k] && noteObj.rawCandidatesByDevice[k][bucketKey];
+          const found = Array.isArray(arr) ? arr.find(c => c && c.channel === channel) : null;
+          if (found && found.rawBase !== null && found.rawBase !== undefined && !isNaN(Number(found.rawBase))) {
+            cand = found;
+            break;
+          }
+        }
+      } else {
+        const list = noteObj.rawCandidatesByDevice[deviceId] && noteObj.rawCandidatesByDevice[deviceId][bucketKey];
+        if (Array.isArray(list) && list.length > 0) {
+          cand = list.find(c => c && c.channel === channel) || null;
+        }
+      }
 
-      const cand = list.find(c => c && c.channel === channel);
       if (!cand || cand.rawBase === null || cand.rawBase === undefined || isNaN(Number(cand.rawBase))) return null;
 
       const sections = Array.isArray(noteObj.sections) ? noteObj.sections : [];
@@ -19991,14 +20076,16 @@ JSON 응답 스키마:
         };
 
         matched.forEach(item => {
-          const d = devices.find(x => x.id === item.deviceId);
+          const isS26New = item.deviceId === 's26_new';
+          const d = isS26New ? devices.find(x => x.id === 's26') : devices.find(x => x.id === item.deviceId);
           if (!d) return;
-          if (!newRawByDevice[d.id]) {
-            newRawByDevice[d.id] = { gongsiMnp: [], gongsiChg: [], sunyakMnp: [], sunyakChg: [] };
+          const storeKey = isS26New ? 's26_new' : d.id;
+          if (!newRawByDevice[storeKey]) {
+            newRawByDevice[storeKey] = { gongsiMnp: [], gongsiChg: [], sunyakMnp: [], sunyakChg: [] };
           }
           const pushRaw = (bucketKey, rawVal) => {
             if (rawVal === null || rawVal === undefined || rawVal === '' || isNaN(Number(rawVal))) return;
-            newRawByDevice[d.id][bucketKey].push({ channel: ch, rawBase: Number(rawVal) });
+            newRawByDevice[storeKey][bucketKey].push({ channel: ch, rawBase: Number(rawVal) });
           };
           pushRaw('gongsiMnp', item.rawGongsiMnp);
           pushRaw('gongsiChg', item.rawGongsiChg);
@@ -20043,10 +20130,13 @@ JSON 응답 스키마:
         rawCandidatesByDevice: mergedRawByDevice
       };
 
-      // 병합된 전체 단가처 후보를 기준으로 기종별 최고 단가처 비교·선정
+      // 병합된 전체 단가처 후보를 기준으로 기종별 최고 단가처 비교·선정 (s26_new는 s26에서 통합 처리)
       const changedItems = [];
       let touchedDeviceCount = 0;
-      Object.keys(mergedRawByDevice).forEach(devId => {
+      const targetDeviceIds = [...new Set(
+        Object.keys(mergedRawByDevice).map(k => (k === 's26_new' ? 's26' : k))
+      )];
+      targetDeviceIds.forEach(devId => {
         const d = devices.find(x => x.id === devId);
         if (!d) return;
         if (!d.rate) d.rate = { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } };
@@ -20059,17 +20149,21 @@ JSON 응답 스키마:
         if (!d.locSunyak[carrier]) d.locSunyak[carrier] = { mnp: '도매', chg: '도매' };
 
         let devTouched = false;
-        const rawBuckets = mergedRawByDevice[devId];
         [
           { bk: 'gongsiMnp', contractType: 'gongsi', moveType: 'mnp', rateMap: d.rate, locMap: d.loc, prefix: 'rate' },
           { bk: 'gongsiChg', contractType: 'gongsi', moveType: 'chg', rateMap: d.rate, locMap: d.loc, prefix: 'rate' },
           { bk: 'sunyakMnp', contractType: 'sunyak', moveType: 'mnp', rateMap: d.rateSunyak, locMap: d.locSunyak, prefix: 'rateSunyak' },
           { bk: 'sunyakChg', contractType: 'sunyak', moveType: 'chg', rateMap: d.rateSunyak, locMap: d.locSunyak, prefix: 'rateSunyak' }
         ].forEach(cfg => {
-          const candidates = (rawBuckets[cfg.bk] || [])
-            .map(c => {
-              const calc = computeRebateForDeviceChannel(carrier, devId, cfg.contractType, cfg.moveType, c.channel);
-              return calc ? { channel: c.channel, total: calc.total } : null;
+          const rawChannelSet = new Set();
+          (mergedRawByDevice[devId]?.[cfg.bk] || []).forEach(c => { if (c && c.channel) rawChannelSet.add(c.channel); });
+          if (devId === 's26') {
+            (mergedRawByDevice['s26_new']?.[cfg.bk] || []).forEach(c => { if (c && c.channel) rawChannelSet.add(c.channel); });
+          }
+          const candidates = Array.from(rawChannelSet)
+            .map(chName => {
+              const calc = computeRebateForDeviceChannel(carrier, devId, cfg.contractType, cfg.moveType, chName);
+              return calc ? { channel: chName, total: calc.total } : null;
             })
             .filter(Boolean);
           if (candidates.length === 0) return;
@@ -20131,7 +20225,10 @@ JSON 응답 스키마:
       if (!noteObj || !noteObj.rawCandidatesByDevice) return;
 
       const changedItems = [];
-      Object.keys(noteObj.rawCandidatesByDevice).forEach(deviceId => {
+      const targetDeviceIds = [...new Set(
+        Object.keys(noteObj.rawCandidatesByDevice).map(k => (k === 's26_new' ? 's26' : k))
+      )];
+      targetDeviceIds.forEach(deviceId => {
         const d = devices.find(x => x.id === deviceId);
         if (!d) return;
 
