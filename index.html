@@ -5951,6 +5951,7 @@ service cloud.firestore {
           <!-- 번이 단가 -->
           <td class="p-2 text-center overflow-visible relative">
             <input type="text"
+                   data-device-id="${d.id}"
                    data-cell-id="${mnpCellId}"
                    value="${rateObj.mnp}"
                    data-orig-val="${rateObj.mnp}"
@@ -5964,13 +5965,15 @@ service cloud.firestore {
           </td>
           <!-- 번이 단가처 드롭다운 -->
           <td class="p-2 text-center overflow-visible relative">
-            <select data-cell-id="${isSunyakView ? 'locSunyak' : 'loc'}_${d.id}_${activeInputCarrier}_mnp" onchange="updateLocation('${d.id}', 'mnp', this.value, this)" class="w-full max-w-[85px] px-1 py-1 bg-white border border-slate-300 rounded-lg text-xs font-medium text-slate-700 focus:ring-1 focus:ring-blue-500">
+            <select data-device-id="${d.id}" data-cell-id="${isSunyakView ? 'locSunyak' : 'loc'}_${d.id}_${activeInputCarrier}_mnp" onchange="updateLocation('${d.id}', 'mnp', this.value, this)" class="w-full max-w-[85px] px-1 py-1 bg-white border border-slate-300 rounded-lg text-xs font-medium text-slate-700 focus:ring-1 focus:ring-blue-500">
               ${LOCATION_OPTIONS.map(opt => `<option value="${opt}" ${opt === curLocMnp ? 'selected' : ''}>${opt}</option>`).join('')}
             </select>
+            ${isTest2 && typeof getTest2ChannelCompareHintHtml === 'function' ? getTest2ChannelCompareHintHtml(activeInputCarrier, d.id, isSunyakView ? 'sunyak' : 'gongsi', 'mnp', curLocMnp) : ''}
           </td>
           <!-- 기변 단가 -->
           <td class="p-2 text-center overflow-visible relative">
             <input type="text"
+                   data-device-id="${d.id}"
                    data-cell-id="${chgCellId}"
                    value="${rateObj.chg}"
                    data-orig-val="${rateObj.chg}"
@@ -5984,9 +5987,10 @@ service cloud.firestore {
           </td>
           <!-- 기변 단가처 드롭다운 -->
           <td class="p-2 text-center overflow-visible relative">
-            <select data-cell-id="${isSunyakView ? 'locSunyak' : 'loc'}_${d.id}_${activeInputCarrier}_chg" onchange="updateLocation('${d.id}', 'chg', this.value, this)" class="w-full max-w-[85px] px-1 py-1 bg-white border border-slate-300 rounded-lg text-xs font-medium text-slate-700 focus:ring-1 focus:ring-blue-500">
+            <select data-device-id="${d.id}" data-cell-id="${isSunyakView ? 'locSunyak' : 'loc'}_${d.id}_${activeInputCarrier}_chg" onchange="updateLocation('${d.id}', 'chg', this.value, this)" class="w-full max-w-[85px] px-1 py-1 bg-white border border-slate-300 rounded-lg text-xs font-medium text-slate-700 focus:ring-1 focus:ring-blue-500">
               ${LOCATION_OPTIONS.map(opt => `<option value="${opt}" ${opt === curLocChg ? 'selected' : ''}>${opt}</option>`).join('')}
             </select>
+            ${isTest2 && typeof getTest2ChannelCompareHintHtml === 'function' ? getTest2ChannelCompareHintHtml(activeInputCarrier, d.id, isSunyakView ? 'sunyak' : 'gongsi', 'chg', curLocChg) : ''}
           </td>
         `;
         dailyBody.appendChild(tr);
@@ -6070,6 +6074,11 @@ service cloud.firestore {
         let calc = null;
         if (isTest2 && typeof test2PolicyNotes !== 'undefined' && test2PolicyNotes[activeInputCarrier]) {
           const noteObj = test2PolicyNotes[activeInputCarrier];
+          if (!noteObj.rawCandidatesByDevice || Object.keys(noteObj.rawCandidatesByDevice).length === 0) {
+            alert(`현재 [${activeInputCarrier}] 데이터는 이전 버전에서 분석된 기록이라 단가처별 비교 단가가 저장되어 있지 않습니다.\n상단 [AI 자동단가입력]을 한 번 다시 실행하시면 도매·온라인 전환 시 단가가 즉시 바뀝니다.`);
+            if (selectEl) selectEl.value = oldVal;
+            return;
+          }
           const sections = Array.isArray(noteObj.sections) ? noteObj.sections : [];
           const hasAnalyzedChannel = sections.some(s => s && s.channel === val);
 
@@ -6123,6 +6132,7 @@ service cloud.firestore {
             }]);
           }
           if (typeof saveStoreLocalBackups === 'function') saveStoreLocalBackups();
+          if (typeof refreshTest2ChannelHintCell === 'function') refreshTest2ChannelHintCell(activeInputCarrier, d.id, contractType, type, val);
           renderCalcTable();
           if (currentTab === 'ad') updateActiveAdMarginsOnly();
           rateChangedMsg = ` (단가 자동전환: ${isNaN(prevRate) ? '-' : prevRate} → ${calc.total}만)`;
@@ -8225,7 +8235,7 @@ service cloud.firestore {
             masterNoticeItems = data.items;
             localStorage.setItem('phone_master_poster_notices', JSON.stringify(masterNoticeItems));
             renderPosterNoticeChecklist();
-            updatePosterNoticeTextFromChecklist();
+            if (typeof updatePosterNoticeTextFromChecklist === 'function') updatePosterNoticeTextFromChecklist();
           }
         }
       }, err => {
@@ -8977,7 +8987,7 @@ service cloud.firestore {
           syncDiscountInputs();
           syncCarrierConditionInputs();
           renderPosterNoticeChecklist();
-          updatePosterNoticeTextFromChecklist();
+          if (typeof updatePosterNoticeTextFromChecklist === 'function') updatePosterNoticeTextFromChecklist();
 
           // 5. 클라우드 동기화 (가능한 경우)
           if (db && !isCloudPermissionError) {
@@ -17261,7 +17271,7 @@ JSON 규격:
       }
 
       renderPosterNoticeChecklist();
-      updatePosterNoticeTextFromChecklist();
+      if (typeof updatePosterNoticeTextFromChecklist === 'function') updatePosterNoticeTextFromChecklist();
       closeMasterPosterNoticeModal();
       updateSaveProgressDone('마스터 설정 저장 완료', '모든 매장에 [필수확인] 마스터 항목이 동기화되었습니다.');
     }
@@ -19893,6 +19903,40 @@ JSON 응답 스키마:
       return { total, rawBase: Number(cand.rawBase), chBonus, addonBonus, adjSum, deductSum };
     }
 
+    function getTest2ChannelCompareHintInnerHtml(carrier, deviceId, contractType, moveType, activeChannel) {
+      const noteObj = test2PolicyNotes && test2PolicyNotes[carrier];
+      if (!noteObj) return '';
+      if (!noteObj.rawCandidatesByDevice || Object.keys(noteObj.rawCandidatesByDevice).length === 0) {
+        return `<span class="text-amber-600 font-semibold">재분석 필요</span>`;
+      }
+      const sections = Array.isArray(noteObj.sections) ? noteObj.sections : [];
+      const items = [];
+      sections.forEach(sec => {
+        if (!sec || !sec.channel) return;
+        const calc = computeRebateForDeviceChannel(carrier, deviceId, contractType, moveType, sec.channel);
+        if (!calc) return;
+        const isCur = sec.channel === activeChannel;
+        items.push(`<span class="${isCur ? 'text-indigo-700 font-black' : 'text-slate-400 font-semibold'}">${escapeHtml(sec.channel)} ${calc.total}</span>`);
+      });
+      if (items.length === 0) return '';
+      return items.join('<span class="text-slate-300 mx-0.5">/</span>');
+    }
+
+    function getTest2ChannelCompareHintHtml(carrier, deviceId, contractType, moveType, activeChannel) {
+      const inner = getTest2ChannelCompareHintInnerHtml(carrier, deviceId, contractType, moveType, activeChannel);
+      const key = `${contractType}_${deviceId}_${carrier}_${moveType}`;
+      return `<div data-ch-hint="${key}" class="mt-0.5 text-[10px] leading-tight truncate ${inner ? '' : 'hidden'}">${inner}</div>`;
+    }
+
+    function refreshTest2ChannelHintCell(carrier, deviceId, contractType, moveType, activeChannel) {
+      const key = `${contractType}_${deviceId}_${carrier}_${moveType}`;
+      const el = document.querySelector(`[data-ch-hint="${key}"]`);
+      if (!el) return;
+      const inner = getTest2ChannelCompareHintInnerHtml(carrier, deviceId, contractType, moveType, activeChannel);
+      el.innerHTML = inner;
+      el.classList.toggle('hidden', !inner);
+    }
+
     function doesAdjustmentMatchDevice(adj, deviceId, contractType, moveType) {
       if (!adj) return false;
       const cMatch = !adj.contractType || adj.contractType === 'all' || adj.contractType === contractType;
@@ -20301,6 +20345,9 @@ JSON 응답 스키마:
 
           ['mnp', 'chg'].forEach(moveType => {
             const channel = (locMap && locMap[carrier] && locMap[carrier][moveType]) ? locMap[carrier][moveType] : '도매';
+            if (carrier === activeInputCarrier && typeof refreshTest2ChannelHintCell === 'function') {
+              refreshTest2ChannelHintCell(carrier, deviceId, contractType, moveType, channel);
+            }
             const calc = computeRebateForDeviceChannel(carrier, deviceId, contractType, moveType, channel);
             if (!calc) return;
 
