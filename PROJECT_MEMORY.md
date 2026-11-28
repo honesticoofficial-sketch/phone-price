@@ -4160,3 +4160,8 @@ service cloud.firestore {
    - 전 매장 공용 업데이트 사항이므로 `SITE_UPDATES_DATA` 최상단(`2026. 11. 28`, `최신`)에도 PIN·비공개 정보 없이 반영 완료.
 4. **Edge CDP 샌드박스 검증 완료 (`verify_sync.ps1`)**:
    - Mock Firestore 환경에서 `103105` 잠금 해제·명지점↔테스트매장2 전환 격리(`리베이트입력` vs `리베이트`), 셀 포커스 연속 이동(`1`회 쓰기 병합), 연속 타이핑+확정(`stores` `1`회 + `audit_history` `1`회 병합), `resource-exhausted` 감지·배너·배지 보호·가이드 모달 전환·쓰기 성공 시 자동 복구, `SITE_UPDATES_DATA` 비공개 정보 미노출 모두 100% PASS (JS/런타임 에러 0건).
+5. **사용자 추가 요청 반영 — 대기·단순 클릭 사용량 완전 0화 ("수정 시에만 동기화 · 수정중 색상 표시")**:
+   - **대기/단순 클릭 통신 완전 제거**: `presenceHeartbeatTimer` 주기 타이머, `visibilitychange` 복귀 쓰기, 로그인/매장전환 시 자동 세션 등록 `.set()`, 오래된 세션 자동 `.delete()`, `focusin` 단순 클릭 쓰기를 모두 제거해 화면만 켜두고 대기하거나 클릭만 할 때는 `presence` 쓰기·읽기 **0건** 달성.
+   - **실제 수정(`input`) 시에만 `수정 중` 색상 표시**: 사용자가 값을 실제로 고치기 시작(`input` 이벤트)할 때만 `broadcastCellFocus(cellId)`로 1회 전송해 다른 작업자 화면에 `[작업자 N 수정 중]` 테두리·배지 표시 및 충돌 알림을 띄우고, 실제로 수정 표시를 보냈던 칸을 벗어날 때(`myBroadcastedCellId === cellId`)만 `null`로 해제(`focusout`).
+   - 상단 협업 바(`#collaboratorsContainer`)는 `작업자: [내 이름 (나)]` + 실제 수정 중인 작업자만 표시(없으면 `수정 시 실시간 표시` 안내).
+   - `SITE_UPDATES_DATA` (`2026. 11. 28`) 및 `verify_sync.ps1` 검증 업데이트 후 GitHub `main` 재푸시 완료.
