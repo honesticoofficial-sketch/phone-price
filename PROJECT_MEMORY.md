@@ -4165,3 +4165,7 @@ service cloud.firestore {
    - **실제 수정(`input`) 시에만 `수정 중` 색상 표시**: 사용자가 값을 실제로 고치기 시작(`input` 이벤트)할 때만 `broadcastCellFocus(cellId)`로 1회 전송해 다른 작업자 화면에 `[작업자 N 수정 중]` 테두리·배지 표시 및 충돌 알림을 띄우고, 실제로 수정 표시를 보냈던 칸을 벗어날 때(`myBroadcastedCellId === cellId`)만 `null`로 해제(`focusout`).
    - 상단 협업 바(`#collaboratorsContainer`)는 `작업자: [내 이름 (나)]` + 실제 수정 중인 작업자만 표시(없으면 `수정 시 실시간 표시` 안내).
    - `SITE_UPDATES_DATA` (`2026. 11. 28`) 및 `verify_sync.ps1` 검증 업데이트 후 GitHub `main` 재푸시 완료.
+6. **사용자 최종 결정 — 동시 접속자 추적(`presence`) 기능 완전 제거**:
+   - "접속자 확인하는 기능 없애자 그냥 저거가 많이 먹는거아니야?" 요청에 따라 상단 `#collaboratorsContainer` / `#myWorkerBadge` UI, `.worker-cell-badge` / `.worker-editing-active` CSS, `presence/{storeId}/sessions` Firestore 구독/쓰기/삭제 및 `subscribeStorePresence`, `broadcastCellFocus`, `broadcastCellBlur`, `renderPresenceHighlights`, `showWorkerCollisionNotice` 전체 완전 제거.
+   - 이제 Firestore 통신은 순수 **매장 데이터(`stores`), 공시/출고가(`global_config`), 변경이력(`audit_history`), 요청사항(`support_requests`)** 만 사용하며 실시간 접속자 추적 오버헤드는 **0건**임.
+   - `SITE_UPDATES_DATA` (`2026. 11. 28`) 및 `verify_sync.ps1` 검증 재통과 후 GitHub `main` 푸시 완료.
