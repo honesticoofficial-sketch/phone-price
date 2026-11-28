@@ -959,6 +959,7 @@
               </div>
               <button type="button" onclick="clearTest2PolicyNotesForCarrier()" class="text-[11px] font-bold text-slate-400 hover:text-rose-600 transition cursor-pointer" title="현재 통신사 정책 메모 비우기">비우기</button>
             </div>
+            <div id="dailyUnlistedPolicyChangeNotice" class="hidden rounded-xl border border-indigo-200 bg-indigo-50/90 px-3 py-2 text-[11px] font-bold text-indigo-950 flex items-center justify-between gap-2"></div>
             <div id="dailyUnlistedPolicyBody" class="space-y-2.5 text-xs">
               <div class="text-center py-6 text-slate-400 text-[11px] leading-relaxed">
                 상단 <strong class="text-indigo-600">AI 자동단가입력</strong> 버튼으로 이미지와 구두정책을 넣으면, 조건별 대분류가 여기에 깔끔하게 정리됩니다.
@@ -5902,6 +5903,8 @@ service cloud.firestore {
         const chgCellId = `${isSunyakView ? 'rateSunyak' : 'rate'}_${d.id}_${activeInputCarrier}_chg`;
         const mnpGlowCls = (typeof isRebateCellGlowing === 'function' && isRebateCellGlowing(mnpCellId)) ? ' rebate-cell-glow' : '';
         const chgGlowCls = (typeof isRebateCellGlowing === 'function' && isRebateCellGlowing(chgCellId)) ? ' rebate-cell-glow' : '';
+        const mnpDeltaHtml = (isTest2 && typeof getRebateChangeBadgeHtml === 'function') ? getRebateChangeBadgeHtml(mnpCellId) : '';
+        const chgDeltaHtml = (isTest2 && typeof getRebateChangeBadgeHtml === 'function') ? getRebateChangeBadgeHtml(chgCellId) : '';
         const altMnpHint = isTest2
           ? `<div data-alt-hint="${d.id}_${activeInputCarrier}_mnp" class="mt-0.5 text-[10px] font-bold text-slate-400 inline-block ${hasAltMnp ? '' : 'hidden'}">${hasAltMnp ? `${altLabel} ${altObj.mnp}` : ''}</div>`
           : '';
@@ -5956,11 +5959,12 @@ service cloud.firestore {
                    oninput="updateRateLive('${d.id}', 'mnp', this.value)"
                    onchange="updateRate('${d.id}', 'mnp', this.value, this)"
                    class="w-full max-w-[85px] px-2 py-1 text-center font-black bg-white border ${isSunyakView ? 'border-amber-300 text-amber-900 focus:ring-amber-500' : 'border-slate-300 text-slate-900 focus:ring-blue-500'} rounded-lg text-sm focus:ring-2 focus:outline-none${mnpGlowCls}" />
+            ${mnpDeltaHtml}
             ${altMnpHint}
           </td>
           <!-- 번이 단가처 드롭다운 -->
           <td class="p-2 text-center overflow-visible relative">
-            <select data-cell-id="${isSunyakView ? 'locSunyak' : 'loc'}_${d.id}_${activeInputCarrier}_mnp" onchange="updateLocation('${d.id}', 'mnp', this.value)" class="w-full max-w-[85px] px-1 py-1 bg-white border border-slate-300 rounded-lg text-xs font-medium text-slate-700 focus:ring-1 focus:ring-blue-500">
+            <select data-cell-id="${isSunyakView ? 'locSunyak' : 'loc'}_${d.id}_${activeInputCarrier}_mnp" onchange="updateLocation('${d.id}', 'mnp', this.value, this)" class="w-full max-w-[85px] px-1 py-1 bg-white border border-slate-300 rounded-lg text-xs font-medium text-slate-700 focus:ring-1 focus:ring-blue-500">
               ${LOCATION_OPTIONS.map(opt => `<option value="${opt}" ${opt === curLocMnp ? 'selected' : ''}>${opt}</option>`).join('')}
             </select>
           </td>
@@ -5975,11 +5979,12 @@ service cloud.firestore {
                    oninput="updateRateLive('${d.id}', 'chg', this.value)"
                    onchange="updateRate('${d.id}', 'chg', this.value, this)"
                    class="w-full max-w-[85px] px-2 py-1 text-center font-black bg-white border ${isSunyakView ? 'border-amber-300 text-amber-900 focus:ring-amber-500' : 'border-slate-300 text-slate-900 focus:ring-blue-500'} rounded-lg text-sm focus:ring-2 focus:outline-none${chgGlowCls}" />
+            ${chgDeltaHtml}
             ${altChgHint}
           </td>
           <!-- 기변 단가처 드롭다운 -->
           <td class="p-2 text-center overflow-visible relative">
-            <select data-cell-id="${isSunyakView ? 'locSunyak' : 'loc'}_${d.id}_${activeInputCarrier}_chg" onchange="updateLocation('${d.id}', 'chg', this.value)" class="w-full max-w-[85px] px-1 py-1 bg-white border border-slate-300 rounded-lg text-xs font-medium text-slate-700 focus:ring-1 focus:ring-blue-500">
+            <select data-cell-id="${isSunyakView ? 'locSunyak' : 'loc'}_${d.id}_${activeInputCarrier}_chg" onchange="updateLocation('${d.id}', 'chg', this.value, this)" class="w-full max-w-[85px] px-1 py-1 bg-white border border-slate-300 rounded-lg text-xs font-medium text-slate-700 focus:ring-1 focus:ring-blue-500">
               ${LOCATION_OPTIONS.map(opt => `<option value="${opt}" ${opt === curLocChg ? 'selected' : ''}>${opt}</option>`).join('')}
             </select>
           </td>
@@ -6040,7 +6045,7 @@ service cloud.firestore {
     }
     window.updateRateLive = updateRateLive;
 
-    function updateLocation(id, type, val) {
+    function updateLocation(id, type, val, selectEl) {
       if (typeof markUserAction === 'function') markUserAction();
       const d = devices.find(x => x.id === id);
       if (d) {
@@ -6053,44 +6058,74 @@ service cloud.firestore {
         if (isSunyakEdit) {
           if (!d.locSunyak) d.locSunyak = getDefaultSunyakLocMap();
           if (!d.locSunyak[activeInputCarrier]) d.locSunyak[activeInputCarrier] = { mnp: '도매', chg: '도매' };
-          oldVal = d.locSunyak[activeInputCarrier][type];
-          if (oldVal === val) return;
-          d.locSunyak[activeInputCarrier][type] = val;
+          oldVal = d.locSunyak[activeInputCarrier][type] || '도매';
         } else {
           if (!d.loc) d.loc = { SK: { mnp: '도매', chg: '도매' }, KT: { mnp: '도매', chg: '도매' }, LG: { mnp: '도매', chg: '도매' } };
           if (!d.loc[activeInputCarrier]) d.loc[activeInputCarrier] = { mnp: '도매', chg: '도매' };
-          oldVal = d.loc[activeInputCarrier][type];
-          if (oldVal === val) return;
+          oldVal = d.loc[activeInputCarrier][type] || '도매';
+        }
+        if (oldVal === val) return;
+
+        // 테스트매장2: 선택한 단가처에 분석된 단가가 있는지 먼저 검사 (없으면 알림 후 되돌림)
+        let calc = null;
+        if (isTest2 && typeof test2PolicyNotes !== 'undefined' && test2PolicyNotes[activeInputCarrier]) {
+          const noteObj = test2PolicyNotes[activeInputCarrier];
+          const sections = Array.isArray(noteObj.sections) ? noteObj.sections : [];
+          const hasAnalyzedChannel = sections.some(s => s && s.channel === val);
+
+          if (!hasAnalyzedChannel) {
+            alert(`아직 [${activeInputCarrier} · ${val}] 단가표 이미지 분석을 진행하지 않았습니다.\n상단 [AI 자동단가입력]에서 ${val} 단가표를 넣어 먼저 분석해 주세요.`);
+            if (selectEl) selectEl.value = oldVal;
+            return;
+          }
+
+          if (typeof computeRebateForDeviceChannel === 'function') {
+            calc = computeRebateForDeviceChannel(activeInputCarrier, d.id, contractType, type, val);
+          }
+          if (!calc || calc.total === null || calc.total === undefined) {
+            const typeKo = type === 'mnp' ? '번이' : '기변';
+            const kindKo = isSunyakEdit ? '선약' : '공시';
+            alert(`[${d.name}] 기종은 [${activeInputCarrier} · ${val}] 단가표에 ${kindKo} ${typeKo} 단가가 없거나 품절 상태입니다.`);
+            if (selectEl) selectEl.value = oldVal;
+            return;
+          }
+        }
+
+        if (isSunyakEdit) {
+          d.locSunyak[activeInputCarrier][type] = val;
+        } else {
           d.loc[activeInputCarrier][type] = val;
         }
 
-        // 테스트매장2: 선택한 단가처(도매/온라인/K1/특판)의 분석 단가가 있으면 해당 단가처 기준으로 자동 재계산 반영
-        if (isTest2 && typeof computeRebateForDeviceChannel === 'function') {
-          const calc = computeRebateForDeviceChannel(activeInputCarrier, d.id, contractType, type, val);
-          if (calc && calc.total !== null && calc.total !== undefined) {
-            const targetRateMap = isSunyakEdit
-              ? (d.rateSunyak || (d.rateSunyak = getDefaultSunyakRateMap()))
-              : (d.rate || (d.rate = { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } }));
-            if (!targetRateMap[activeInputCarrier]) targetRateMap[activeInputCarrier] = { mnp: 0, chg: 0 };
-            const prevRate = targetRateMap[activeInputCarrier][type];
-            targetRateMap[activeInputCarrier][type] = calc.total;
+        if (isTest2 && calc) {
+          const targetRateMap = isSunyakEdit
+            ? (d.rateSunyak || (d.rateSunyak = getDefaultSunyakRateMap()))
+            : (d.rate || (d.rate = { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } }));
+          if (!targetRateMap[activeInputCarrier]) targetRateMap[activeInputCarrier] = { mnp: 0, chg: 0 };
+          const prevRate = Number(targetRateMap[activeInputCarrier][type]);
+          targetRateMap[activeInputCarrier][type] = calc.total;
 
-            const cellId = `${isSunyakEdit ? 'rateSunyak' : 'rate'}_${d.id}_${activeInputCarrier}_${type}`;
-            const inputEl = document.querySelector(`input[data-cell-id="${cellId}"]`);
-            if (inputEl) {
-              inputEl.value = calc.total;
-              inputEl.dataset.origVal = calc.total;
-            }
-            if (typeof triggerRebateCellGlow === 'function') {
-              triggerRebateCellGlow([{ cellId, deviceId: d.id, carrier: activeInputCarrier, contractType, moveType: type }]);
-            }
-            if (typeof saveStoreLocalBackups === 'function') saveStoreLocalBackups();
-            renderCalcTable();
-            if (currentTab === 'ad') updateActiveAdMarginsOnly();
-            rateChangedMsg = ` (단가 자동전환: ${prevRate ?? '-'} → ${calc.total}만)`;
-          } else {
-            renderCalcTable();
+          const cellId = `${isSunyakEdit ? 'rateSunyak' : 'rate'}_${d.id}_${activeInputCarrier}_${type}`;
+          const inputEl = document.querySelector(`input[data-cell-id="${cellId}"]`);
+          if (inputEl) {
+            inputEl.value = calc.total;
+            inputEl.dataset.origVal = calc.total;
           }
+          if (typeof triggerRebateCellGlow === 'function') {
+            triggerRebateCellGlow([{
+              cellId,
+              deviceId: d.id,
+              carrier: activeInputCarrier,
+              contractType,
+              moveType: type,
+              prevVal: isNaN(prevRate) ? null : prevRate,
+              newVal: calc.total
+            }]);
+          }
+          if (typeof saveStoreLocalBackups === 'function') saveStoreLocalBackups();
+          renderCalcTable();
+          if (currentTab === 'ad') updateActiveAdMarginsOnly();
+          rateChangedMsg = ` (단가 자동전환: ${isNaN(prevRate) ? '-' : prevRate} → ${calc.total}만)`;
         }
 
         const typeKo = type === 'mnp' ? '번이' : '기변';
@@ -19032,19 +19067,41 @@ JSON 규격:
     };
 
     let pendingRebateGlowCells = {};
+    let pendingRebateChangeBadges = {};
 
     function isRebateCellGlowing(cellId) {
       return !!(pendingRebateGlowCells && pendingRebateGlowCells[cellId] && pendingRebateGlowCells[cellId] > Date.now());
     }
 
+    function getRebateChangeBadgeHtml(cellId) {
+      const info = pendingRebateChangeBadges && pendingRebateChangeBadges[cellId];
+      if (!info || info.expiresAt <= Date.now()) {
+        return `<div data-change-badge="${cellId}" class="hidden mt-0.5 text-[10px] font-black leading-tight"></div>`;
+      }
+      const diff = Math.round((info.newVal - info.prevVal) * 100) / 100;
+      const diffStr = diff > 0 ? `+${diff}` : `${diff}`;
+      const cls = diff >= 0 ? 'bg-indigo-100 text-indigo-700 border-indigo-200' : 'bg-rose-100 text-rose-700 border-rose-200';
+      return `<div data-change-badge="${cellId}" class="mt-0.5 inline-flex items-center px-1.5 py-0.2 rounded-md border ${cls} text-[10px] font-black leading-tight">${info.prevVal} → ${info.newVal} (${diffStr})</div>`;
+    }
+
     function triggerRebateCellGlow(changedItems) {
       if (!Array.isArray(changedItems) || changedItems.length === 0) return;
-      const expireAt = Date.now() + 2150;
+      const glowExpireAt = Date.now() + 2150;
+      const badgeExpireAt = Date.now() + 4500;
       const offTabBtnTypes = new Set();
 
       changedItems.forEach(item => {
         if (!item || !item.cellId) return;
-        pendingRebateGlowCells[item.cellId] = expireAt;
+        pendingRebateGlowCells[item.cellId] = glowExpireAt;
+
+        const hasDelta = (item.prevVal !== null && item.prevVal !== undefined && !isNaN(Number(item.prevVal)) && item.newVal !== null && item.newVal !== undefined && !isNaN(Number(item.newVal)) && Number(item.prevVal) !== Number(item.newVal));
+        if (hasDelta) {
+          pendingRebateChangeBadges[item.cellId] = {
+            prevVal: Number(item.prevVal),
+            newVal: Number(item.newVal),
+            expiresAt: badgeExpireAt
+          };
+        }
 
         if (item.carrier === activeInputCarrier) {
           if (item.contractType === activeDailyRateType) {
@@ -19059,10 +19116,31 @@ JSON 규격:
                 }
               }, 2200);
             }
+            const badgeEl = document.querySelector(`[data-change-badge="${item.cellId}"]`);
+            if (badgeEl && hasDelta) {
+              const diff = Math.round((Number(item.newVal) - Number(item.prevVal)) * 100) / 100;
+              const diffStr = diff > 0 ? `+${diff}` : `${diff}`;
+              const cls = diff >= 0 ? 'bg-indigo-100 text-indigo-700 border-indigo-200' : 'bg-rose-100 text-rose-700 border-rose-200';
+              badgeEl.className = `mt-0.5 inline-flex items-center px-1.5 py-0.2 rounded-md border ${cls} text-[10px] font-black leading-tight`;
+              badgeEl.innerText = `${item.prevVal} → ${item.newVal} (${diffStr})`;
+              setTimeout(() => {
+                const cur = pendingRebateChangeBadges[item.cellId];
+                if (!cur || cur.expiresAt <= Date.now()) {
+                  badgeEl.classList.add('hidden');
+                }
+              }, 4600);
+            }
           } else {
             offTabBtnTypes.add(item.contractType);
             const hintEl = document.querySelector(`[data-alt-hint="${item.deviceId}_${item.carrier}_${item.moveType}"]`);
             if (hintEl) {
+              if (hasDelta) {
+                const label = item.contractType === 'sunyak' ? '선약' : '공시';
+                const diff = Math.round((Number(item.newVal) - Number(item.prevVal)) * 100) / 100;
+                const diffStr = diff > 0 ? `+${diff}` : `${diff}`;
+                hintEl.innerText = `${label} ${item.prevVal}→${item.newVal}(${diffStr})`;
+                hintEl.classList.remove('hidden');
+              }
               hintEl.classList.remove('rebate-hint-glow');
               void hintEl.offsetWidth;
               hintEl.classList.add('rebate-hint-glow');
@@ -19518,9 +19596,12 @@ ${policyText ? policyText : '(구두정책 텍스트 없음)'}
 3. rawGongsi / rawSunyak 에는 이미지 표에 적힌 **원본 1차 단가(만원 단위 숫자)** 만 넣으세요. (채널 가산금 ${channelBonus}만 원, 하단 부가, 구두정책 추가지원금은 절대로 raw 숫자에 미리 더하지 마세요 — 앱 JS가 정확히 가산합니다!)
 4. 만약 한 화면에 SK_Y / SK_D 처럼 하위 라인이 2개 있는 경우, 표준 수치(차이가 있으면 두 라인 중 유리하거나 기준에 맞는 수치를 취하고 note에 차이 기록)를 넣어주세요.
 5. 이미지 하단의 부가서비스/특별점 부가 판독:
-   - "✅ ... 반영 (미가입시 차감)" 처럼 이미 표 숫자에 반영된 항목은 addonBonusMan에 더하지 마세요 (모두 가입 조건이므로 차감=0).
-   - "추가 5000" 또는 "보험 가입시 추가 5,000원" 처럼 가입 시 **추가로 더해지는 금액**만 만원 단위로 변환해 addonBonusMan(예: 5000원 -> 0.5)에 넣으세요.
-6. 구두정책 문구에서 일반 번이/기변(공시 또는 선약) 개통 시 단가에 실제로 가산·차감되는 구두정책(선약 기변 추가지원금, 특정 모델 구두정책 등)은 반드시 policyAdjustments 배열에 넣어주세요. "010 신규", "010 청년", "010 ZEM", "✅단가표 포함 그레이드"처럼 일반 번이/기변 금액에 직접 가산되지 않는 참고 조건만 unlistedPolicies에 분류해 주세요.
+   - "✅ ... 반영 (미가입시 차감)" 처럼 **이미 표 숫자에 포함되어 있는 항목**은 addonBonusMan에 더하지 말고, 대신 아래 **includedDeductions** 배열에 넣어서 사용자가 체크를 풀 때 차감액(deductMan)만큼 빠지게 해주세요!
+   - "추가 5000" 또는 "보험 가입시 추가 5,000원" 처럼 가입 시 표 숫자에 **추가로 더해지는 금액**만 만원 단위로 변환해 addonBonusMan(예: 5000원 -> 0.5)에 넣으세요.
+6. 구두정책 문구 분류 규칙 (매우 중요):
+   - **policyAdjustments (체크 해제 시 빠지는 가산 정책)**: 표 숫자에 아직 안 들어가 있어서 일반 번이/기변(공시 또는 선약) 단가에 실제로 더하는 구두정책(예: 선약 기변 구두정책 +5만, 특정 기종 추가금 +3만)을 넣으세요.
+   - **includedDeductions (단가표 포함 조건 — 체크 해제 시 차감)**: 단가표 숫자에 이미 포함되어 있으나 미가입/미달성 시 차감되는 조건(예: 부가서비스 미가입시 -2만, 그레이드 미적용시 -3만 등)을 넣으세요.
+   - **unlistedPolicies (참고용 특수조건)**: "010 신규", "010 청년", "010 ZEM", 금액 변동 없는 단순 유의사항만 분류해 주세요.
 
 JSON 응답 스키마:
 {
@@ -19539,6 +19620,18 @@ JSON 응답 스키마:
       "rawSunyakMnp": 47,
       "rawSunyakChg": 65,
       "note": "특이사항"
+    }
+  ],
+  "includedDeductions": [
+    {
+      "title": "마이스마트콜/부가 포함 조건",
+      "category": "부가서비스 | 그레이드/유의사항 | 구두정책",
+      "contractType": "all",
+      "moveType": "all",
+      "deductMan": 2,
+      "includeDeviceIds": [],
+      "excludeDeviceIds": [],
+      "conditionNote": "단가표 포함 조건 (체크 해제 시 -2만 차감)"
     }
   ],
   "policyAdjustments": [
@@ -19588,18 +19681,20 @@ JSON 응답 스키마:
       const adjustments = (sec && Array.isArray(sec.appliedAdjustments)) ? sec.appliedAdjustments : [];
       const adjSum = adjustments.reduce((acc, adj) => {
         if (!adj || adj.enabled === false) return acc;
-        const cMatch = !adj.contractType || adj.contractType === 'all' || adj.contractType === contractType;
-        const mMatch = !adj.moveType || adj.moveType === 'all' || adj.moveType === moveType;
-        if (!cMatch || !mMatch) return acc;
-        const inc = Array.isArray(adj.includeDeviceIds) && adj.includeDeviceIds.length > 0;
-        if (inc && !adj.includeDeviceIds.includes(deviceId)) return acc;
-        const exc = Array.isArray(adj.excludeDeviceIds) && adj.excludeDeviceIds.includes(deviceId);
-        if (exc) return acc;
+        if (!doesAdjustmentMatchDevice(adj, deviceId, contractType, moveType)) return acc;
         return acc + (Number(adj.amountMan) || 0);
       }, 0);
 
-      const total = Math.round((Number(cand.rawBase) + chBonus + addonBonus + adjSum) * 100) / 100;
-      return { total, rawBase: Number(cand.rawBase), chBonus, addonBonus, adjSum };
+      // 단가표 포함 조건: 체크 상태(enabled !== false)면 차감 0, 체크 해제(enabled === false)면 deductMan만큼 차감!
+      const includedList = (sec && Array.isArray(sec.includedDeductions)) ? sec.includedDeductions : [];
+      const deductSum = includedList.reduce((acc, inc) => {
+        if (!inc || inc.enabled !== false) return acc;
+        if (!doesAdjustmentMatchDevice(inc, deviceId, contractType, moveType)) return acc;
+        return acc + Math.abs(Number(inc.deductMan) || 0);
+      }, 0);
+
+      const total = Math.round((Number(cand.rawBase) + chBonus + addonBonus + adjSum - deductSum) * 100) / 100;
+      return { total, rawBase: Number(cand.rawBase), chBonus, addonBonus, adjSum, deductSum };
     }
 
     function doesAdjustmentMatchDevice(adj, deviceId, contractType, moveType) {
@@ -19703,6 +19798,10 @@ JSON 응답 스키마:
       const resultsArr = Array.isArray(channelResults) ? channelResults : [];
       const round2 = (n) => Math.round(n * 100) / 100;
 
+      const prevNote = (test2PolicyNotes && test2PolicyNotes[carrier])
+        ? JSON.parse(JSON.stringify(test2PolicyNotes[carrier]))
+        : null;
+
       // 되돌리기 스냅샷 저장
       rebateAutoState.lastBackup = {
         carrier,
@@ -19713,13 +19812,12 @@ JSON 응답 스키마:
           rateSunyak: d.rateSunyak ? d.rateSunyak[carrier] : null,
           locSunyak: d.locSunyak ? d.locSunyak[carrier] : null
         })))),
-        policyNote: test2PolicyNotes[carrier] ? JSON.parse(JSON.stringify(test2PolicyNotes[carrier])) : null
+        policyNote: prevNote
       };
 
-      const rawCandidatesByDevice = {};
-      const candidatesByDev = {};
       const mismatches = [];
-      const channelSections = [];
+      const newSectionsByChannel = {};
+      const newRawByDevice = {};
 
       resultsArr.forEach(entry => {
         const ch = entry.channel;
@@ -19733,6 +19831,18 @@ JSON 응답 스키마:
           enabled: true,
           title: (a.title || '구두정책').replace(/미포함\s*추가지원금/g, '구두정책')
         }));
+        const rawInc = Array.isArray(parsed.includedDeductions) ? parsed.includedDeductions : [];
+        const includedDeductions = rawInc
+          .filter(inc => inc && Math.abs(Number(inc.deductMan) || 0) > 0)
+          .map((inc, idx) => ({
+            ...inc,
+            id: inc.id || `${ch}_inc_${idx}`,
+            enabled: true,
+            deductMan: Math.abs(Number(inc.deductMan) || 0),
+            category: inc.category || '부가서비스',
+            title: inc.title || '단가표 포함 조건'
+          }));
+
         const matched = Array.isArray(parsed.matchedDevices) ? parsed.matchedDevices : [];
         const rawUnlisted = Array.isArray(parsed.unlistedPolicies) ? parsed.unlistedPolicies : [];
         const unlisted = rawUnlisted.map(u => ({
@@ -19745,7 +19855,7 @@ JSON 응답 스키마:
           mismatches.push(`[${ch}] 슬롯 이미지 상단 표기가 '${parsed.detectedHeader || detectedCh}'로 인식됨`);
         }
 
-        channelSections.push({
+        newSectionsByChannel[ch] = {
           channel: ch,
           channelBonus: chBonus,
           sheetDate: parsed.sheetDate || '',
@@ -19758,48 +19868,70 @@ JSON 응답 스키마:
           },
           addonSummary: parsed.addonSummary || '',
           addonBonus,
+          includedDeductions,
           unlistedPolicies: unlisted,
           appliedAdjustments: adjustments
-        });
+        };
 
         matched.forEach(item => {
           const d = devices.find(x => x.id === item.deviceId);
           if (!d) return;
-          if (!rawCandidatesByDevice[d.id]) {
-            rawCandidatesByDevice[d.id] = { gongsiMnp: [], gongsiChg: [], sunyakMnp: [], sunyakChg: [] };
+          if (!newRawByDevice[d.id]) {
+            newRawByDevice[d.id] = { gongsiMnp: [], gongsiChg: [], sunyakMnp: [], sunyakChg: [] };
           }
-          if (!candidatesByDev[d.id]) {
-            candidatesByDev[d.id] = { d, gongsiMnp: [], gongsiChg: [], sunyakMnp: [], sunyakChg: [] };
-          }
-
-          const pushCandidate = (bucketKey, rawVal, contractType, moveType) => {
+          const pushRaw = (bucketKey, rawVal) => {
             if (rawVal === null || rawVal === undefined || rawVal === '' || isNaN(Number(rawVal))) return;
-            const base = Number(rawVal);
-            rawCandidatesByDevice[d.id][bucketKey].push({ channel: ch, rawBase: base });
-
-            const pol = adjustments.reduce((acc, adj) => (
-              doesAdjustmentMatchDevice(adj, d.id, contractType, moveType) ? acc + (Number(adj.amountMan) || 0) : acc
-            ), 0);
-            const total = round2(base + chBonus + addonBonus + pol);
-            candidatesByDev[d.id][bucketKey].push({ channel: ch, total });
+            newRawByDevice[d.id][bucketKey].push({ channel: ch, rawBase: Number(rawVal) });
           };
-
-          pushCandidate('gongsiMnp', item.rawGongsiMnp, 'gongsi', 'mnp');
-          pushCandidate('gongsiChg', item.rawGongsiChg, 'gongsi', 'chg');
-          pushCandidate('sunyakMnp', item.rawSunyakMnp, 'sunyak', 'mnp');
-          pushCandidate('sunyakChg', item.rawSunyakChg, 'sunyak', 'chg');
+          pushRaw('gongsiMnp', item.rawGongsiMnp);
+          pushRaw('gongsiChg', item.rawGongsiChg);
+          pushRaw('sunyakMnp', item.rawSunyakMnp);
+          pushRaw('sunyakChg', item.rawSunyakChg);
         });
       });
 
-      const pickBest = (list) => {
-        if (!list || list.length === 0) return null;
-        return list.reduce((best, cur) => (cur.total > best.total ? cur : best), list[0]);
+      // 기존에 같은 통신사로 분석했던 다른 단가처가 있으면 유지·병합 (예: 도매 먼저 넣고 나중에 온라인 추가해도 둘 다 보존!)
+      const newlyAnalyzedChannels = Object.keys(newSectionsByChannel);
+      const mergedSections = [];
+      if (prevNote && Array.isArray(prevNote.sections)) {
+        prevNote.sections.forEach(oldSec => {
+          if (oldSec && oldSec.channel && !newlyAnalyzedChannels.includes(oldSec.channel)) {
+            mergedSections.push(oldSec);
+          }
+        });
+      }
+      newlyAnalyzedChannels.forEach(ch => mergedSections.push(newSectionsByChannel[ch]));
+
+      const mergedRawByDevice = {};
+      const allDeviceIds = new Set([
+        ...Object.keys((prevNote && prevNote.rawCandidatesByDevice) ? prevNote.rawCandidatesByDevice : {}),
+        ...Object.keys(newRawByDevice)
+      ]);
+      allDeviceIds.forEach(devId => {
+        const oldEntry = (prevNote && prevNote.rawCandidatesByDevice && prevNote.rawCandidatesByDevice[devId]) || {};
+        const newEntry = newRawByDevice[devId] || {};
+        mergedRawByDevice[devId] = {};
+        ['gongsiMnp', 'gongsiChg', 'sunyakMnp', 'sunyakChg'].forEach(bk => {
+          const kept = (Array.isArray(oldEntry[bk]) ? oldEntry[bk] : []).filter(c => c && !newlyAnalyzedChannels.includes(c.channel));
+          const added = Array.isArray(newEntry[bk]) ? newEntry[bk] : [];
+          mergedRawByDevice[devId][bk] = [...kept, ...added];
+        });
+      });
+
+      const usedChannels = mergedSections.map(s => s.channel);
+      test2PolicyNotes[carrier] = {
+        channelSummary: usedChannels.join(' · '),
+        updatedAt: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }),
+        sections: mergedSections,
+        rawCandidatesByDevice: mergedRawByDevice
       };
 
+      // 병합된 전체 단가처 후보를 기준으로 기종별 최고 단가처 비교·선정
       const changedItems = [];
-      const appliedDevList = Object.values(candidatesByDev);
-      appliedDevList.forEach(entry => {
-        const d = entry.d;
+      let touchedDeviceCount = 0;
+      Object.keys(mergedRawByDevice).forEach(devId => {
+        const d = devices.find(x => x.id === devId);
+        if (!d) return;
         if (!d.rate) d.rate = { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } };
         if (!d.rate[carrier]) d.rate[carrier] = { mnp: 0, chg: 0 };
         if (!d.loc) d.loc = { SK: { mnp: '도매', chg: '도매' }, KT: { mnp: '도매', chg: '도매' }, LG: { mnp: '도매', chg: '도매' } };
@@ -19809,56 +19941,57 @@ JSON 응답 스키마:
         if (!d.locSunyak) d.locSunyak = getDefaultSunyakLocMap();
         if (!d.locSunyak[carrier]) d.locSunyak[carrier] = { mnp: '도매', chg: '도매' };
 
-        const bestGMnp = pickBest(entry.gongsiMnp);
-        const bestGChg = pickBest(entry.gongsiChg);
-        const bestSMnp = pickBest(entry.sunyakMnp);
-        const bestSChg = pickBest(entry.sunyakChg);
+        let devTouched = false;
+        const rawBuckets = mergedRawByDevice[devId];
+        [
+          { bk: 'gongsiMnp', contractType: 'gongsi', moveType: 'mnp', rateMap: d.rate, locMap: d.loc, prefix: 'rate' },
+          { bk: 'gongsiChg', contractType: 'gongsi', moveType: 'chg', rateMap: d.rate, locMap: d.loc, prefix: 'rate' },
+          { bk: 'sunyakMnp', contractType: 'sunyak', moveType: 'mnp', rateMap: d.rateSunyak, locMap: d.locSunyak, prefix: 'rateSunyak' },
+          { bk: 'sunyakChg', contractType: 'sunyak', moveType: 'chg', rateMap: d.rateSunyak, locMap: d.locSunyak, prefix: 'rateSunyak' }
+        ].forEach(cfg => {
+          const candidates = (rawBuckets[cfg.bk] || [])
+            .map(c => {
+              const calc = computeRebateForDeviceChannel(carrier, devId, cfg.contractType, cfg.moveType, c.channel);
+              return calc ? { channel: c.channel, total: calc.total } : null;
+            })
+            .filter(Boolean);
+          if (candidates.length === 0) return;
 
-        if (bestGMnp) {
-          d.rate[carrier].mnp = bestGMnp.total;
-          d.loc[carrier].mnp = bestGMnp.channel;
-          changedItems.push({ cellId: `rate_${d.id}_${carrier}_mnp`, deviceId: d.id, carrier, contractType: 'gongsi', moveType: 'mnp' });
-        }
-        if (bestGChg) {
-          d.rate[carrier].chg = bestGChg.total;
-          d.loc[carrier].chg = bestGChg.channel;
-          changedItems.push({ cellId: `rate_${d.id}_${carrier}_chg`, deviceId: d.id, carrier, contractType: 'gongsi', moveType: 'chg' });
-        }
-        if (bestSMnp) {
-          d.rateSunyak[carrier].mnp = bestSMnp.total;
-          d.locSunyak[carrier].mnp = bestSMnp.channel;
-          changedItems.push({ cellId: `rateSunyak_${d.id}_${carrier}_mnp`, deviceId: d.id, carrier, contractType: 'sunyak', moveType: 'mnp' });
-        }
-        if (bestSChg) {
-          d.rateSunyak[carrier].chg = bestSChg.total;
-          d.locSunyak[carrier].chg = bestSChg.channel;
-          changedItems.push({ cellId: `rateSunyak_${d.id}_${carrier}_chg`, deviceId: d.id, carrier, contractType: 'sunyak', moveType: 'chg' });
-        }
+          const best = candidates.reduce((b, cur) => (cur.total > b.total ? cur : b), candidates[0]);
+          const prevVal = Number(cfg.rateMap[carrier][cfg.moveType]);
+          cfg.rateMap[carrier][cfg.moveType] = best.total;
+          cfg.locMap[carrier][cfg.moveType] = best.channel;
+          devTouched = true;
+          changedItems.push({
+            cellId: `${cfg.prefix}_${d.id}_${carrier}_${cfg.moveType}`,
+            deviceId: d.id,
+            carrier,
+            contractType: cfg.contractType,
+            moveType: cfg.moveType,
+            prevVal: isNaN(prevVal) ? null : prevVal,
+            newVal: best.total
+          });
+        });
+        if (devTouched) touchedDeviceCount++;
       });
 
-      const usedChannels = channelSections.map(s => s.channel);
-      test2PolicyNotes[carrier] = {
-        channelSummary: usedChannels.join(' · '),
-        updatedAt: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }),
-        sections: channelSections,
-        rawCandidatesByDevice
-      };
+      if (typeof saveStoreLocalBackups === 'function') saveStoreLocalBackups();
 
       // 모달 내 완료 상태 표시 후 바로 리베이트 테이블 화면으로 복귀
       showRebateAutoStep('done');
       const loadingTitle = document.getElementById('rebateAutoLoadingTitle');
       const loadingMsg = document.getElementById('rebateAutoLoadingMsg');
       if (loadingTitle) loadingTitle.innerText = `${carrier} 자동입력 완료!`;
-      if (loadingMsg) loadingMsg.innerText = `${usedChannels.join(' + ')} 비교 · ${appliedDevList.length}개 기종 반영됨`;
+      if (loadingMsg) loadingMsg.innerText = `${newlyAnalyzedChannels.join(' + ')} 분석 완료 · ${touchedDeviceCount}개 기종 반영됨`;
 
       activeInputCarrier = carrier;
       setCarrierInput(carrier);
       render();
       showDailyAutoAppliedBanner(
-        `${carrier} AI 자동단가입력 완료 (${appliedDevList.length}개 기종 · ${usedChannels.join(' + ')} 최고단가 반영)`,
+        `${carrier} AI 자동단가입력 완료 (${touchedDeviceCount}개 기종 · 보유 단가처: ${usedChannels.join(' + ')})`,
         mismatches.length > 0 ? mismatches.join(' / ') : ''
       );
-      scheduleStoreSave('AI 단가 자동입력', `${carrier} (${usedChannels.join('·')}) 단가표 ${appliedDevList.length}개 기종 최고단가 비교 반영`);
+      scheduleStoreSave('AI 단가 자동입력', `${carrier} (${newlyAnalyzedChannels.join('·')}) 단가표 ${touchedDeviceCount}개 기종 반영`);
 
       setTimeout(() => {
         closeRebateAutoModal();
@@ -19866,7 +19999,17 @@ JSON 응답 스키마:
       }, 650);
     }
 
-    function recalculateTest2RatesFromPolicies(carrier) {
+    function showPolicyChangeNoticeBanner(htmlContent, isWarning = false) {
+      const el = document.getElementById('dailyUnlistedPolicyChangeNotice');
+      if (!el) return;
+      el.className = isWarning
+        ? 'rounded-xl border border-amber-200 bg-amber-50/90 px-3 py-2 text-[11px] font-bold text-amber-950 flex items-center justify-between gap-2'
+        : 'rounded-xl border border-indigo-200 bg-indigo-50/90 px-3 py-2 text-[11px] font-bold text-indigo-950 flex items-center justify-between gap-2';
+      el.innerHTML = htmlContent;
+      el.classList.remove('hidden');
+    }
+
+    function recalculateTest2RatesFromPolicies(carrier, toggledTitle = '') {
       const noteObj = test2PolicyNotes && test2PolicyNotes[carrier];
       if (!noteObj || !noteObj.rawCandidatesByDevice) return;
 
@@ -19892,7 +20035,7 @@ JSON 응답 스키마:
             if (prevVal !== calc.total) {
               rateMap[carrier][moveType] = calc.total;
               const cellId = `${isSunyak ? 'rateSunyak' : 'rate'}_${deviceId}_${carrier}_${moveType}`;
-              changedItems.push({ cellId, deviceId, carrier, contractType, moveType });
+              changedItems.push({ cellId, deviceId, carrier, contractType, moveType, prevVal, newVal: calc.total });
 
               if (carrier === activeInputCarrier) {
                 if (contractType === activeDailyRateType) {
@@ -19921,13 +20064,44 @@ JSON 응답 스키마:
       if (typeof saveStoreLocalBackups === 'function') saveStoreLocalBackups();
       renderDailyUnlistedPolicyPanel();
       triggerRebateCellGlow(changedItems);
-      scheduleStoreSave('정책 체크 반영', `${carrier} 구두정책/부가 적용 변경 (${changedItems.length}칸 재계산)`);
+
+      // 사용자가 어느 기종/어느 단가 탭에서 얼마가 바뀌었는지 한눈에 보도록 알림 표시
+      if (changedItems.length === 0) {
+        showPolicyChangeNoticeBanner(`<span>현재 표에 해당 조건의 영향을 받는 단가처 기종이 없습니다.</span>`, true);
+      } else {
+        const curTabCount = changedItems.filter(x => x.contractType === activeDailyRateType).length;
+        const otherType = activeDailyRateType === 'gongsi' ? 'sunyak' : 'gongsi';
+        const otherLabel = otherType === 'sunyak' ? '선약단가' : '공시단가';
+        const otherCount = changedItems.filter(x => x.contractType === otherType).length;
+        const sample = changedItems[0];
+        const diff = Math.round((sample.newVal - sample.prevVal) * 100) / 100;
+        const diffStr = diff > 0 ? `+${diff}만` : `${diff}만`;
+
+        if (curTabCount > 0 && otherCount === 0) {
+          showPolicyChangeNoticeBanner(
+            `<span>${toggledTitle ? escapeHtml(toggledTitle) + ' · ' : ''}<strong>${curTabCount}개 칸</strong> 변경 (${diffStr})</span>`
+          );
+        } else if (otherCount > 0 && curTabCount === 0) {
+          showPolicyChangeNoticeBanner(
+            `<span><strong>${otherLabel}</strong> ${otherCount}개 칸 변경 (${diffStr})</span>
+             <button type="button" onclick="setDailyRateType('${otherType}')" class="px-2 py-0.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-black shrink-0 cursor-pointer">${otherLabel} 보기</button>`
+          );
+        } else {
+          showPolicyChangeNoticeBanner(
+            `<span>공시·선약 총 <strong>${changedItems.length}개 칸</strong> 변경 (${diffStr})</span>
+             <button type="button" onclick="setDailyRateType('${otherType}')" class="px-2 py-0.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-black shrink-0 cursor-pointer">${otherLabel} 보기</button>`
+          );
+        }
+      }
+
+      scheduleStoreSave('정책 체크 반영', `${carrier} 조건 변경 (${changedItems.length}칸 재계산)`);
     }
 
-    function toggleTest2PolicyCheckbox(carrier, secIdx, kind, adjIdx, checked) {
+    function toggleTest2PolicyCheckbox(carrier, secIdx, kind, itemIdx, checked) {
       const noteObj = test2PolicyNotes && test2PolicyNotes[carrier];
       if (!noteObj || !Array.isArray(noteObj.sections) || !noteObj.sections[secIdx]) return;
       const sec = noteObj.sections[secIdx];
+      let label = '';
 
       if (kind === 'addon') {
         if (!sec.addon) {
@@ -19935,11 +20109,17 @@ JSON 응답 스키마:
         } else {
           sec.addon.enabled = !!checked;
         }
+        label = '부가서비스';
+      } else if (kind === 'inc') {
+        if (!Array.isArray(sec.includedDeductions) || !sec.includedDeductions[itemIdx]) return;
+        sec.includedDeductions[itemIdx].enabled = !!checked;
+        label = sec.includedDeductions[itemIdx].title || '포함 조건';
       } else if (kind === 'adj') {
-        if (!Array.isArray(sec.appliedAdjustments) || !sec.appliedAdjustments[adjIdx]) return;
-        sec.appliedAdjustments[adjIdx].enabled = !!checked;
+        if (!Array.isArray(sec.appliedAdjustments) || !sec.appliedAdjustments[itemIdx]) return;
+        sec.appliedAdjustments[itemIdx].enabled = !!checked;
+        label = sec.appliedAdjustments[itemIdx].title || '구두정책';
       }
-      recalculateTest2RatesFromPolicies(carrier);
+      recalculateTest2RatesFromPolicies(carrier, label);
     }
 
     function openPolicyDetailModal(carrier, secIdx, kind, itemIdx) {
@@ -19960,6 +20140,7 @@ JSON 응답 스키마:
 
       const catBadgeColors = {
         '구두정책': 'bg-emerald-100 text-emerald-800',
+        '포함조건': 'bg-indigo-100 text-indigo-800',
         '010신규/청년/ZEM': 'bg-purple-100 text-purple-800',
         '그레이드/유의사항': 'bg-amber-100 text-amber-800',
         '부가서비스': 'bg-sky-100 text-sky-800'
@@ -19991,6 +20172,24 @@ JSON 응답 스키마:
           statusLabel = '단가표 기본 포함';
           statusCls = 'bg-sky-100 text-sky-700';
         }
+      } else if (kind === 'inc') {
+        const inc = (sec.includedDeductions || [])[itemIdx];
+        if (!inc) return;
+        cat = inc.category || '포함조건';
+        title = inc.title || '단가표 포함 조건';
+        detail = inc.conditionNote || inc.title || '단가표 포함 조건입니다.';
+        const dAmt = Math.abs(Number(inc.deductMan) || 0);
+        amountText = dAmt ? `미적용시 -${dAmt}만` : '';
+        const isOn = inc.enabled !== false;
+        statusLabel = isOn ? '조건 포함 (기본단가)' : `체크 해제 (-${dAmt}만 차감중)`;
+        statusCls = isOn ? 'bg-indigo-100 text-indigo-700' : 'bg-rose-100 text-rose-700';
+
+        const cLabel = inc.contractType === 'sunyak' ? '선약' : (inc.contractType === 'gongsi' ? '공시' : '공시·선약 전체');
+        const mLabel = inc.moveType === 'mnp' ? '번호이동' : (inc.moveType === 'chg' ? '기기변경' : '번이·기변 전체');
+        const incList = Array.isArray(inc.includeDeviceIds) && inc.includeDeviceIds.length > 0
+          ? inc.includeDeviceIds.map(id => devices.find(d => d.id === id)?.name || id).join(', ')
+          : '매장 등록 기종 전체';
+        impactMsg = `• 기준: ${chName} / ${cLabel} / ${mLabel}\n• 대상: ${incList}\n• 체크 해제 시 -${dAmt}만원 차감된 단가로 즉시 바뀝니다.`;
       } else if (kind === 'adj') {
         const adj = (sec.appliedAdjustments || [])[itemIdx];
         if (!adj) return;
@@ -20065,6 +20264,7 @@ JSON 응답 스키마:
 
       const catBadgeColors = {
         '구두정책': 'bg-emerald-100 text-emerald-800',
+        '포함조건': 'bg-indigo-100 text-indigo-800',
         '010신규/청년/ZEM': 'bg-purple-100 text-purple-800',
         '그레이드/유의사항': 'bg-amber-100 text-amber-800',
         '부가서비스': 'bg-sky-100 text-sky-800'
@@ -20080,9 +20280,10 @@ JSON 응답 스키마:
       const secHtml = sections.map((sec, secIdx) => {
         const list = Array.isArray(sec.unlistedPolicies) ? sec.unlistedPolicies : [];
         const adj = Array.isArray(sec.appliedAdjustments) ? sec.appliedAdjustments : [];
+        const incList = Array.isArray(sec.includedDeductions) ? sec.includedDeductions : [];
         const addonObj = sec.addon || { enabled: true, amountMan: Number(sec.addonBonus) || 0, summary: sec.addonSummary || '' };
         const hasAddonBonus = !!addonObj.amountMan;
-        const hasAddonInfoOnly = !hasAddonBonus && !!(addonObj.summary || sec.addonSummary);
+        const hasAddonInfoOnly = !hasAddonBonus && !!(addonObj.summary || sec.addonSummary) && incList.length === 0;
 
         const rows = [];
 
@@ -20106,6 +20307,30 @@ JSON 응답 스키마:
             </div>
           `);
         }
+
+        incList.forEach((inc, incIdx) => {
+          const isOn = inc.enabled !== false;
+          const dAmt = Math.abs(Number(inc.deductMan) || 0);
+          const cat = inc.category || '포함조건';
+          const catCls = catBadgeColors[cat] || 'bg-indigo-100 text-indigo-800';
+          rows.push(`
+            <div onclick="openPolicyDetailModal('${targetCarrier}', ${secIdx}, 'inc', ${incIdx})"
+                 class="flex items-center justify-between gap-2 px-2.5 py-2 rounded-xl border ${isOn ? 'bg-white border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/40' : 'bg-rose-50/70 border-rose-200'} transition cursor-pointer group">
+              <div class="flex items-center gap-2 min-w-0">
+                <input type="checkbox" ${isOn ? 'checked' : ''}
+                       onclick="event.stopPropagation()"
+                       onchange="toggleTest2PolicyCheckbox('${targetCarrier}', ${secIdx}, 'inc', ${incIdx}, this.checked)"
+                       class="w-3.5 h-3.5 rounded border-slate-300 text-indigo-600 focus:ring-1 focus:ring-indigo-500 cursor-pointer shrink-0" />
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-black ${catCls} shrink-0">${escapeHtml(cat)}</span>
+                <span class="text-[11px] font-extrabold text-slate-800 truncate ${isOn ? '' : 'line-through text-rose-700'}">${escapeHtml(inc.title || '포함 조건')}</span>
+              </div>
+              <div class="flex items-center gap-1 shrink-0">
+                <span class="text-[11px] font-black ${isOn ? 'text-slate-500' : 'text-rose-600'}">${isOn ? `해제시 -${dAmt}만` : `-${dAmt}만`}</span>
+                <svg class="w-3.5 h-3.5 text-slate-300 group-hover:text-indigo-500 transition" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+              </div>
+            </div>
+          `);
+        });
 
         adj.forEach((a, adjIdx) => {
           const isOn = a.enabled !== false;
@@ -20179,8 +20404,12 @@ JSON 응답 스키마:
     function renderDailyUnlistedPolicyPanel() {
       const bodyEl = document.getElementById('dailyUnlistedPolicyBody');
       const subEl = document.getElementById('dailyUnlistedPolicySubtitle');
+      const noticeEl = document.getElementById('dailyUnlistedPolicyChangeNotice');
       if (!bodyEl) return;
       const noteObj = test2PolicyNotes && test2PolicyNotes[activeInputCarrier];
+      if (!noteObj && noticeEl) {
+        noticeEl.classList.add('hidden');
+      }
       if (subEl) {
         subEl.innerText = noteObj
           ? `${activeInputCarrier} · 클릭 시 상세 팝업 · 체크 해제로 단가 반영`
@@ -20193,6 +20422,8 @@ JSON 응답 스키마:
       if (!isTest2FeatureEnabled()) return;
       if (!test2PolicyNotes) test2PolicyNotes = { SK: null, KT: null, LG: null };
       test2PolicyNotes[activeInputCarrier] = null;
+      const noticeEl = document.getElementById('dailyUnlistedPolicyChangeNotice');
+      if (noticeEl) noticeEl.classList.add('hidden');
       renderDailyUnlistedPolicyPanel();
       scheduleStoreSave('', '');
     }
