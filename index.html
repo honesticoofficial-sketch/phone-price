@@ -4215,6 +4215,69 @@ service cloud.firestore {
       return null;
     }
 
+    function ensureTest2CatalogModelMaterialized(m, carrier = activeInputCarrier) {
+      if (!m) return '';
+      ensureTest2BudgetStateInitialized();
+      const code = String(m.code || m.c || '').trim();
+      const name = String(m.name || m.n || code).trim();
+      if (!code) return '';
+      let existing = test2BudgetDevices.find(x => x.catalogCode === code || x.id === `t2_${code.toLowerCase().replace(/[^a-z0-9]/g, '')}` || x.name === name);
+      const factoryMan = Number(m.factoryPriceMan !== undefined ? m.factoryPriceMan : (m.fp || 0)) || 0;
+      const tiersObj = m.tiers || m.t || {};
+      const grp = m.group || m.g || (/유심|usim/i.test(name) ? 'USIM' : 'A');
+      if (!existing) {
+        const id = `t2_${code.toLowerCase().replace(/[^a-z0-9]/g, '')}`;
+        const defTier = getTest2DefaultMainTier(carrier, grp === 'A' || grp === 'USIM');
+        const defSub = tiersObj[defTier] || { mnp: 0, chg: 0 };
+        existing = {
+          id,
+          name,
+          group: grp,
+          isTest2Budget: true,
+          isUsim: grp === 'USIM',
+          catalogCode: code,
+          prices: { SK: factoryMan, KT: factoryMan, LG: factoryMan },
+          sub: {
+            SK: { mnp: Number(defSub.mnp) || 0, chg: Number(defSub.chg) || 0 },
+            KT: { mnp: Number(defSub.mnp) || 0, chg: Number(defSub.chg) || 0 },
+            LG: { mnp: Number(defSub.mnp) || 0, chg: Number(defSub.chg) || 0 }
+          },
+          rate: { SK: { mnp: 0, chg: 0 }, KT: { mnp: 0, chg: 0 }, LG: { mnp: 0, chg: 0 } },
+          loc: { SK: { mnp: '도매', chg: '도매' }, KT: { mnp: '도매', chg: '도매' }, LG: { mnp: '도매', chg: '도매' } },
+          rateSunyak: getDefaultSunyakRateMap(),
+          locSunyak: getDefaultSunyakLocMap(),
+          agency: getDefaultAgencyMap(),
+          agencySunyak: getDefaultAgencyMap(),
+          selectedPlanTier: grp === 'A' || grp === 'USIM'
+            ? { SK: 'M_50', KT: '61K 이상', LG: '55군' }
+            : getDefaultSelectedPlanTierMap(),
+          ad: {
+            SK: { mnp: '', chg: '', note: '', hidden: false, sunyak: false, tag: name },
+            KT: { mnp: '', chg: '', note: '', hidden: false, sunyak: false, tag: name },
+            LG: { mnp: '', chg: '', note: '', hidden: false, sunyak: false, tag: name }
+          }
+        };
+        test2BudgetDevices.push(existing);
+      } else if (factoryMan > 0) {
+        if (!existing.prices) existing.prices = {};
+        existing.prices[carrier] = factoryMan;
+      }
+      return existing.id;
+    }
+
+    function onSelectTest2CatalogDeviceFromPicker(carrier, catalogCode) {
+      if (!isTest2FeatureEnabled()) return;
+      const catEntry = test2SubsidyCatalog && test2SubsidyCatalog.carriers && test2SubsidyCatalog.carriers[carrier];
+      const model = catEntry && catEntry.models && catEntry.models[catalogCode];
+      if (!model) return;
+      const devId = ensureTest2CatalogModelMaterialized(model, carrier);
+      if (!devId) return;
+      if (activePickerContext === 'daily') {
+        updateDailyRow(activePickerIndex, devId);
+      }
+      closeCustomDevicePicker();
+    }
+
     function setTest2DailyViewMode(mode) {
       if (!isTest2FeatureEnabled()) {
         test2DailyViewMode = 'main';
@@ -4227,6 +4290,16 @@ service cloud.firestore {
         const hasCat = !!(test2SubsidyCatalog && test2SubsidyCatalog.carriers && test2SubsidyCatalog.carriers[activeInputCarrier] && test2SubsidyCatalog.carriers[activeInputCarrier].models);
         if (hasCat && curRows.length <= 3) {
           importTest2CatalogBudgetModels(activeInputCarrier, true);
+        } else if (!hasCat && typeof ensureTest2SubsidyCatalogLoaded === 'function') {
+          ensureTest2SubsidyCatalogLoaded(false).then(() => {
+            if (isTest2FeatureEnabled() && test2DailyViewMode === 'budget') {
+              const rNow = test2BudgetDailyRows[activeInputCarrier] || [];
+              if (rNow.length <= 3) {
+                importTest2CatalogBudgetModels(activeInputCarrier, true);
+                renderDailyTable();
+              }
+            }
+          });
         }
       }
       updateTest2DailyUiVisibility();
@@ -4544,6 +4617,10 @@ service cloud.firestore {
               } catch (e) {}
               renderDailyTable();
               renderCalcTable();
+              const pickerModalEl = document.getElementById('customDevicePickerModal');
+              if (pickerModalEl && !pickerModalEl.classList.contains('hidden')) {
+                renderDevicePickerList();
+              }
               const staticDay = test2SubsidyCatalog.syncedAt
                 ? new Date(new Date(test2SubsidyCatalog.syncedAt).getTime() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10)
                 : '';
@@ -5268,14 +5345,60 @@ service cloud.firestore {
       const container = document.getElementById('devicePickerListContainer');
       if (!container) return;
 
-      const sourcePool = (activePickerContext === 'daily' && isTest2FeatureEnabled() && test2DailyViewMode === 'budget')
-        ? [...(typeof test2BudgetDevices !== 'undefined' ? test2BudgetDevices : []), ...devices]
-        : devices;
+      const includeTest2Extra = (activePickerContext === 'daily' && isTest2FeatureEnabled());
+      const sourcePool = [...devices];
+      if (includeTest2Extra) {
+        ensureTest2BudgetStateInitialized();
+        const existingNames = new Set(sourcePool.map(d => (d.name || '').toLowerCase().replace(/\s+/g, '')));
+        test2BudgetDevices.forEach(bd => {
+          if (!bd) return;
+          sourcePool.push(bd);
+          existingNames.add((bd.name || '').toLowerCase().replace(/\s+/g, ''));
+          if (bd.catalogCode) existingNames.add(String(bd.catalogCode).toLowerCase());
+        });
+        const catEntry = test2SubsidyCatalog && test2SubsidyCatalog.carriers && test2SubsidyCatalog.carriers[activeInputCarrier];
+        const catModels = (catEntry && catEntry.models) ? Object.values(catEntry.models) : [];
+        catModels.forEach(m => {
+          if (!m) return;
+          const code = String(m.code || m.c || '').trim();
+          const name = String(m.name || m.n || code).trim();
+          if (!code || !name) return;
+          const normN = name.toLowerCase().replace(/\s+/g, '');
+          if (existingNames.has(normN) || existingNames.has(code.toLowerCase())) return;
+          const grp = m.group || m.g || 'A';
+          const fp = Number(m.factoryPriceMan !== undefined ? m.factoryPriceMan : (m.fp || 0)) || 0;
+          sourcePool.push({
+            id: `cat::${activeInputCarrier}::${code}`,
+            _isCatalogPreview: true,
+            _catalogCarrier: activeInputCarrier,
+            catalogCode: code,
+            name,
+            group: grp,
+            tag: code,
+            price: fp,
+            prices: { SK: fp, KT: fp, LG: fp }
+          });
+        });
+      }
+
+      const classifyPickerGroup = (d) => {
+        if (!d) return 'ETC';
+        if (d.group === 'S') return 'S';
+        if (d.group === 'FOLD') return 'FOLD';
+        if (d.group === 'IPHONE') return 'IPHONE';
+        if (d.group === 'A' || d.group === 'USIM' || d.group === 'ETC') return 'ETC';
+        const nm = d.name || '';
+        if (nm.includes('플립') || nm.includes('폴드')) return 'FOLD';
+        if (nm.includes('아이폰') || nm.includes('15') || nm.includes('16') || nm.includes('17') || nm.includes('18')) return 'IPHONE';
+        if (/갤럭시\s*S|\bS2\d/i.test(nm)) return 'S';
+        return 'ETC';
+      };
+
       const groups = [
-        { key: 'S', label: '갤럭시 S 시리즈', color: 'purple', badge: '🟣 S시리즈', items: sourcePool.filter(d => d.group === 'S' || (!d.group && (d.name || '').includes('S'))) },
-        { key: 'FOLD', label: '갤럭시 Z 플립·폴드', color: 'blue', badge: '🔵 Z폴더블', items: sourcePool.filter(d => d.group === 'FOLD' || (!d.group && ((d.name || '').includes('플립') || (d.name || '').includes('폴드')))) },
-        { key: 'IPHONE', label: '아이폰 시리즈', color: 'emerald', badge: '🍏 아이폰', items: sourcePool.filter(d => d.group === 'IPHONE' || (!d.group && ((d.name || '').includes('아이폰') || (d.name || '').includes('15') || (d.name || '').includes('16') || (d.name || '').includes('17') || (d.name || '').includes('18')))) },
-        { key: 'ETC', label: '저가형 · 유심 및 기타', color: 'amber', badge: '🟡 저가·유심·기타', items: sourcePool.filter(d => d.group !== 'S' && d.group !== 'FOLD' && d.group !== 'IPHONE' && !(d.name || '').includes('S') && !(d.name || '').includes('플립') && !(d.name || '').includes('폴드') && !(d.name || '').includes('아이폰')) }
+        { key: 'S', label: '갤럭시 S 시리즈', color: 'purple', badge: '🟣 S시리즈', items: sourcePool.filter(d => classifyPickerGroup(d) === 'S') },
+        { key: 'FOLD', label: '갤럭시 Z 플립·폴드', color: 'blue', badge: '🔵 Z폴더블', items: sourcePool.filter(d => classifyPickerGroup(d) === 'FOLD') },
+        { key: 'IPHONE', label: '아이폰 시리즈', color: 'emerald', badge: '🍏 아이폰', items: sourcePool.filter(d => classifyPickerGroup(d) === 'IPHONE') },
+        { key: 'ETC', label: 'A시리즈 · 저가폰 · 유심 및 기타', color: 'amber', badge: '🟡 A시리즈·저가·유심', items: sourcePool.filter(d => classifyPickerGroup(d) === 'ETC') }
       ];
 
       let filteredGroups = groups;
@@ -5313,8 +5436,9 @@ service cloud.firestore {
           matchingItems = matchingItems.filter(d => {
             const name = (d.name || '').toLowerCase();
             const tag = (d.tag || '').toLowerCase();
+            const code = (d.catalogCode || d.code || '').toLowerCase();
             const shortName = getDefaultShortName(d).toLowerCase();
-            return name.includes(activePickerSearch) || tag.includes(activePickerSearch) || shortName.includes(activePickerSearch);
+            return name.includes(activePickerSearch) || tag.includes(activePickerSearch) || code.includes(activePickerSearch) || shortName.includes(activePickerSearch);
           });
         }
 
@@ -5334,14 +5458,17 @@ service cloud.firestore {
           const isSel = (d.id === activePickerCurrentId);
           const shortName = getDefaultShortName(d);
           const relPrice = (d.prices && d.prices.SK !== undefined) ? d.prices.SK : (d.price || 0);
+          const clickAttr = d._isCatalogPreview
+            ? `onSelectTest2CatalogDeviceFromPicker('${escapeHtml(d._catalogCarrier || activeInputCarrier)}', '${escapeHtml(d.catalogCode || '')}')`
+            : `onSelectDeviceFromPicker('${d.id}')`;
 
           html += `
-            <div onclick="onSelectDeviceFromPicker('${d.id}')" class="p-2.5 rounded-2xl border transition cursor-pointer flex items-center justify-between group ${isSel ? 'border-2 border-purple-600 bg-purple-50/70 shadow-xs' : 'border-slate-200 hover:border-purple-300 hover:bg-purple-50/30'}">
+            <div onclick="${clickAttr}" class="p-2.5 rounded-2xl border transition cursor-pointer flex items-center justify-between group ${isSel ? 'border-2 border-purple-600 bg-purple-50/70 shadow-xs' : 'border-slate-200 hover:border-purple-300 hover:bg-purple-50/30'}">
               <div class="flex items-center gap-2.5 min-w-0">
-                <span class="px-2 py-0.5 rounded-lg text-[10px] font-black shrink-0 bg-slate-100 group-hover:bg-purple-100 group-hover:text-purple-700 text-slate-600 transition border border-slate-200">${shortName}</span>
+                <span class="px-2 py-0.5 rounded-lg text-[10px] font-black shrink-0 bg-slate-100 group-hover:bg-purple-100 group-hover:text-purple-700 text-slate-600 transition border border-slate-200">${escapeHtml(shortName || d.group || '기타')}</span>
                 <div class="truncate">
-                  <div class="font-black text-xs text-slate-900 group-hover:text-purple-900 transition truncate">${d.name}</div>
-                  <div class="text-[10px] text-slate-400 font-medium">기본 출고가: ${d.coming ? '출시예정' : relPrice + '만'}</div>
+                  <div class="font-black text-xs text-slate-900 group-hover:text-purple-900 transition truncate">${escapeHtml(d.name)}</div>
+                  <div class="text-[10px] text-slate-400 font-medium">${d._isCatalogPreview ? `${escapeHtml(d.catalogCode)} · 수집공시 · ` : ''}기본 출고가: ${d.coming ? '출시예정' : relPrice + '만'}</div>
                 </div>
               </div>
               <div class="shrink-0 pl-2">
