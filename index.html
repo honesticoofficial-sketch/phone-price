@@ -728,10 +728,6 @@
             <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
             <span>넷가표 클립보드 복사</span>
           </button>
-          <button onclick="printNetTablePdf()" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs sm:text-sm font-extrabold shadow-sm flex items-center gap-1.5 transition cursor-pointer" title="브라우저 무오차 고화질 PDF 저장 및 인쇄">
-            <svg class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
-            <span>PDF / 고화질 인쇄</span>
-          </button>
         </div>
         <span class="text-xs text-slate-500 flex items-center gap-1">
           <svg class="w-3.5 h-3.5 text-amber-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
@@ -1162,10 +1158,6 @@
               <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
               <span>시세표 클립보드 복사</span>
             </button>
-            <button type="button" onclick="printAdPoster()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs sm:text-sm font-extrabold shadow-sm transition flex items-center gap-1.5 cursor-pointer" title="브라우저 공식 그래픽 엔진으로 오차 0% PDF 저장 및 인쇄">
-              <svg class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
-              <span>PDF / 고화질 인쇄</span>
-            </button>
           </div>
         </div>
 
@@ -1492,10 +1484,6 @@
             <button type="button" id="detailCopyBtn" onclick="copyDetailSheetToClipboard()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs sm:text-sm font-extrabold shadow-sm transition flex items-center gap-1.5 cursor-pointer">
               <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
               <span>시세 상세내역 클립보드 복사</span>
-            </button>
-            <button type="button" onclick="printDetailSheet()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs sm:text-sm font-extrabold shadow-sm transition flex items-center gap-1.5 cursor-pointer" title="브라우저 인쇄 / PDF 저장">
-              <svg class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
-              <span>PDF / 인쇄</span>
             </button>
           </div>
         </div>
@@ -9629,10 +9617,10 @@ service cloud.firestore {
       {
         date: '2026. 11. 28',
         tag: '최신',
-        title: '접속자 목록 제거 · 수정 시에만 수정중 색상 표시 · 시세표 PDF 하단 잘림 수정',
+        title: '수정 시에만 수정중 색상 표시 · 복사 버튼 중심 간소화 · 한도 초과 안내 추가',
         items: [
           '상단 [접속자] 목록과 백그라운드 유지 신호(8초 타이머)를 없애고, 누군가 실제로 칸을 수정할 때만 해당 칸에 색상 테두리와 [OO 수정 중] 표시가 뜨도록 개선했습니다.',
-          '시세표 [PDF / 고화질 인쇄] 출력 시 하단이 잘리던 문제를 고쳐 시세표 전체가 A4 1장에 안 잘리고 온전히 나오도록 수정했습니다.',
+          '실무에서 이미지 복사를 주로 쓰는 넷가표·시세표·시세 상세내역은 [클립보드 복사] 버튼만 남기고 PDF/인쇄 버튼을 정리했습니다. (제휴카드 안내서 PDF/인쇄는 그대로 유지됩니다.)',
           '클라우드 무료 사용량 초과 시 [클라우드 동기화 완료]로 잘못 뜨던 문제를 고치고, 상단 빨간 경고 배너와 해결 안내창을 추가했습니다.'
         ]
       },
