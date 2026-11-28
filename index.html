@@ -4228,7 +4228,8 @@ service cloud.firestore {
       if (!existing) {
         const id = `t2_${code.toLowerCase().replace(/[^a-z0-9]/g, '')}`;
         const defTier = getTest2DefaultMainTier(carrier, grp === 'A' || grp === 'USIM');
-        const defSub = tiersObj[defTier] || { mnp: 0, chg: 0 };
+        const fallbackTier = Object.values(tiersObj)[0] || { mnp: 0, chg: 0 };
+        const defSub = tiersObj[defTier] || fallbackTier;
         existing = {
           id,
           name,
@@ -4583,7 +4584,7 @@ service cloud.firestore {
       return out;
     }
 
-    const TEST2_CATALOG_VERSION = '20261128v2';
+    const TEST2_CATALOG_VERSION = '20261128v3';
     let test2SubsidyLoadStarted = false;
     function getKstTodayIsoDate() {
       const d = new Date(Date.now() + 9 * 60 * 60 * 1000);
