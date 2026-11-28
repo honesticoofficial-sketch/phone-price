@@ -4210,3 +4210,21 @@ service cloud.firestore {
 3. **검증 및 배포**:
    - Edge CDP 모의 환경(`verify_sync.ps1`)에서 `TEST2_CARRIER_PLAN_TIERS` (8/8/13), `#test2PlanChartModal` A시리즈 필터, 무제한 대리점 파싱/최고가 자동선택, 버튼식 대리점 전환(`1D`→`TS` 즉시 반영), 타 매장(`myeongji`) 완전 격리, JS 오류 `0건` 검증 완료.
    - GitHub `main` 푸시 후 Vercel 실서버(`/api/test2-subsidies?carrier=SK/KT/LG`)에서 3사 전체 기종 및 요금제 구간 실시간 JSON 응답 확인 완료.
+
+---
+
+## 107. 📶 [제107장] 테스트매장2 전용 3~4단계 완료: 기종별 요금제 구간 선택 열 & 주요기종 / 저가·유심 2분할 스위치 (2026-11-28)
+
+1. **3단계 — 기종별 `요금제 구간` 선택 열 신설 & 공시·리베이트 즉시 연동 (`test2` 전용)**:
+   - `#dailyTable` 헤더에 `#dailyThPlanTierCol` (`요금제 구간`)을 테스트매장2 전용으로 신설(타 매장은 `hidden` 격리).
+   - 각 행에서 통신사별 공식 요금제 구간(`SK 8구간`, `KT 8구간`, `LG 13구간`)을 기종마다 개별 선택(`setTest2DevicePlanTier`)하면:
+     - `test2SubsidyCatalog`에서 해당 기종·요금제 구간의 공식 공시지원금을 찾아 `getEffectiveDeviceSub()` → `넷가표` · `광고가격` · `30만 미만 선약공시` 판별까지 실시간 반영.
+     - AI 단가표 분석 시 요금제 구간별 단가(`tierRebates`)가 추출된 경우 해당 구간의 리베이트 단가로 자동 전환(`tierExactMatched`)되며, 단일 구간 시트일 때는 기존 입력 단가를 덮어쓰지 않고 보존.
+   - `d.selectedPlanTier`는 `localStorage` 및 `stores/test2`에만 독립 저장.
+2. **4단계 — 통신사 버튼 옆 `[📱 주요기종 | 💡 저가·유심]` 2분할 스위치 & 전용 상담 창 (`test2` 전용)**:
+   - `#inputTab-SK/KT/LG` 바로 옆에 `#test2DailyViewSwitch` 2분할 스위치를 추가(`setTest2DailyViewMode`, 타 매장 완전 비노출).
+   - `📱 주요기종` 모드에서는 기존 주력 기종 목록(`dailyCarrierRows`)을 그대로 유지하고, `💡 저가·유심` 모드로 전환하면 독립 목록(`test2BudgetDailyRows` / `test2BudgetDevices`: 유심 단독·신규·번이/기변 및 A시리즈·보급형)으로 전환됨.
+   - `[✨ 수집된 A·보급형 불러오기]`(`importTest2CatalogBudgetModels`)로 1단계에서 수집한 A시리즈·보급형 기종을 1클릭으로 추가하고, `[+ 저가/유심 직접 추가]`(`promptAddTest2BudgetDevice`)로 수동 추가도 지원.
+   - 저가·유심 창 안에서는 기종별 **출고가 · 공시지원금 · 예상 실구매가(할부원금)** 및 유심 **지원금(+XX만)**을 행 안에 즉시 표시하고, 2~3단계 기능(단가처 버튼식 대리점 선택 + 요금제 구간 선택 + 공시/선약)을 모두 동일하게 사용할 수 있음.
+3. **검증 및 배포**:
+   - Edge CDP(`verify_sync.ps1`)에서 `test2Step34ColsVisible`, `tierSubSyncedOk`, `tierRebateSwitchedOk`, `budgetBarVisible`, `budgetHasUsimAndA36`, `budgetShowsFinalBuy`, `mainRowsUnchangedAfterBudget`, 타 매장 격리(`myeongjiStillUsesSelect`) 및 JS 오류 `0건` 모두 통과 확인 후 GitHub `main` 푸시.
