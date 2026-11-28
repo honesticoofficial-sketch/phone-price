@@ -275,6 +275,64 @@ async function fetchCarrierFullCatalog(carrier, includeLte = true) {
     });
   });
 
+  // SKT 4G/LTE 보완: 스마트초이스에서 빠지는 T다이렉트샵 4G 공시 단말(갤럭시 A17 등) 병합
+  if (carrier === 'SK' && includeLte) {
+    try {
+      const fetchTwPhone = async (scrbTypCd) => {
+        const res = await fetch(`https://shop.tworld.co.kr/notice?modelNwType=PHONE&scrbTypCd=${scrbTypCd}`, {
+          headers: { 'User-Agent': SMARTCHOICE_UA }
+        });
+        if (!res.ok) return [];
+        const html = await res.text();
+        const m = html.match(/_this\.products\s*=\s*parseObject\((\[[\s\S]*?\])\);/);
+        return m ? JSON.parse(m[1]) : [];
+      };
+      const [mnpRows, chgRows] = await Promise.all([fetchTwPhone('20'), fetchTwPhone('31')]);
+      const normKey = s => String(s || '').toLowerCase().replace(/\s+/g, '').replace(/\d+(g|gb|t|tb)$/i, '');
+      const existingByName = new Set(Object.values(merged).map(v => normKey(v.name)));
+      const twMap = {};
+      const ingest = (rows, field) => {
+        (Array.isArray(rows) ? rows : []).forEach(p => {
+          if (!p || !p.productNm) return;
+          const k = normKey(p.productNm);
+          if (!k || existingByName.has(k)) return;
+          if (!twMap[k]) {
+            const fullName = `${p.productNm || ''}`.trim();
+            const canonicalCode = /갤럭시\s*a17/i.test(fullName) ? 'SM-A175N' : `TW-${p.modelCd || k}`;
+            twMap[k] = {
+              code: canonicalCode,
+              name: fullName,
+              maker: p.companyNm || '삼성',
+              group: inferModelGroup(fullName, canonicalCode),
+              service: 'LTE',
+              factoryPriceMan: wonToMan(p.factoryPrice),
+              effDate: String(p.effStaDt || '').replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3'),
+              tiers: {},
+              tierId: classifyPlanTier('SK', p.prodNm || '베스트 89', Number(p.basicCharge) || 89000),
+              mnp: 0,
+              chg: 0
+            };
+          }
+          const subMan = wonToMan(p.telecomSaleAmt);
+          if (subMan > twMap[k][field]) twMap[k][field] = subMan;
+        });
+      };
+      ingest(mnpRows, 'mnp');
+      ingest(chgRows, 'chg');
+      Object.values(twMap).forEach(item => {
+        const tierId = item.tierId || 'F_79';
+        item.tiers[tierId] = {
+          mnp: item.mnp || item.chg || 0,
+          chg: item.chg || item.mnp || 0,
+          planName: '베스트 89(T 우주)',
+          planFeeMan: 8.9
+        };
+        delete item.tierId; delete item.mnp; delete item.chg;
+        if (!merged[item.code]) merged[item.code] = item;
+      });
+    } catch (_) {}
+  }
+
   return merged;
 }
 
