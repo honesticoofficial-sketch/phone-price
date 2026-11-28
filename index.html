@@ -366,11 +366,11 @@
           <span id="myWorkerText">내 작업자: -</span>
         </div>
 
-        <!-- 동시 접속 중인 작업자 목록 (구글 시트 스타일 실시간 협업 바) -->
-        <div id="collaboratorsContainer" class="hidden items-center gap-1.5 px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 shadow-2xs" title="현재 같은 매장에 동시 접속 중인 작업자들입니다">
+        <!-- 동시 접속 중인 작업자 목록 (수정 시에만 동기화해 사용량 절감) -->
+        <div id="collaboratorsContainer" class="hidden items-center gap-1.5 px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 shadow-2xs" title="단가·광고가 등을 실제 수정 중인 작업자만 실시간으로 표시해 클라우드 사용량을 아낍니다">
           <span class="text-slate-400 font-medium text-[11px] flex items-center gap-1">
             <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 20 20" fill="currentColor"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/></svg>
-            <span>접속자:</span>
+            <span>작업자:</span>
           </span>
           <div id="collaboratorBadges" class="flex items-center gap-1 flex-wrap"></div>
         </div>
@@ -5352,11 +5352,13 @@ service cloud.firestore {
       if (myWorkerBadge) myWorkerBadge.classList.add('hidden');
       const collabContainer = document.getElementById('collaboratorsContainer');
       if (collabContainer) collabContainer.classList.add('hidden');
-      if (db && currentStoreId && mySessionId) {
+      if (db && currentStoreId && mySessionId && myBroadcastedCellId && !isCloudQuotaExhausted && !isCloudPermissionError) {
         try {
           db.collection('presence').doc(currentStoreId).collection('sessions').doc(mySessionId).delete().catch(() => {});
         } catch(e) {}
       }
+      myBroadcastedCellId = null;
+      myActiveCellId = null;
       const switcher = document.getElementById('masterStoreSwitcher');
       if (switcher) switcher.classList.add('hidden');
     }
@@ -7905,15 +7907,13 @@ service cloud.firestore {
     let myWorkerName = '작업자1';
     let myWorkerColor = WORKER_COLOR_PALETTE[0];
     let myActiveCellId = null;
+    let myBroadcastedCellId = null;
     let unsubscribeStorePresence = null;
     let presenceHeartbeatTimer = null;
     let activePresenceWorkers = {};
-    let lastPresenceHeartbeatAt = 0;
     let cellFocusTimer = null;
     let cellBlurTimer = null;
-    const PRESENCE_HEARTBEAT_MS = 60000; // 60초 간격 (기존 8초 대비 쓰기·읽기 약 87% 절감)
-    const PRESENCE_ACTIVE_MS = 150000;   // 2.5분 이내 활동 작업자 표시
-    const PRESENCE_STALE_MS = 300000;    // 5분 이상 무응답 세션 자동 정리
+    const PRESENCE_ACTIVE_MS = 180000;   // 최근 3분 이내 수정 활동 작업자만 표시 (백그라운드 주기 통신 없음)
 
     function getStorePrefix(storeId = currentStoreId) {
       if (currentRole === 'master') return '본사';
@@ -7954,7 +7954,7 @@ service cloud.firestore {
         </span>
       `;
 
-      // 다른 작업자들 표시
+      // 다른 작업자들 표시 (실제 수정 활동이 있는 작업자만 표시해 대기 통신량 0 유지)
       let otherCount = 0;
       Object.entries(activePresenceWorkers).forEach(([sid, w]) => {
         if (sid === mySessionId) return;
@@ -7967,13 +7967,17 @@ service cloud.firestore {
         html += `
           <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-black border shadow-2xs transition"
                 style="background-color: ${color.bg}; border-color: ${color.border}; color: ${color.text};"
-                title="${w.workerName}: ${isEditing ? '입력 중 (' + w.activeCell + ')' : '대기 중'}">
+                title="${w.workerName}: ${isEditing ? '수정 중 (' + w.activeCell + ')' : '방금 수정 완료'}">
             <span class="w-1.5 h-1.5 rounded-full ${color.dot}"></span>
             <span>${w.workerName}</span>
             ${isEditing ? `<span class="text-[9px] animate-pulse">✏️</span>` : ''}
           </span>
         `;
       });
+
+      if (otherCount === 0) {
+        html += `<span class="text-[10px] font-medium text-slate-400 pl-0.5">수정 시 실시간 표시</span>`;
+      }
 
       badgesBox.innerHTML = html;
     }
@@ -7987,13 +7991,13 @@ service cloud.firestore {
         clearInterval(presenceHeartbeatTimer);
         presenceHeartbeatTimer = null;
       }
+      myBroadcastedCellId = null;
       if (!db || !storeId) return;
 
       const prefix = getStorePrefix(storeId);
       const sessionsCollRef = db.collection('presence').doc(storeId).collection('sessions');
-      const mySessionDocRef = sessionsCollRef.doc(mySessionId);
 
-      // 세션 서브컬렉션 실시간 구독
+      // 세션 서브컬렉션 실시간 구독 (대기 중 자동 쓰기·삭제·하트비트 완전 중단 -> 수정할 때만 1회 기록)
       unsubscribeStorePresence = sessionsCollRef.onSnapshot(snapshot => {
         const now = Date.now();
         const activeWorkers = {};
@@ -8004,16 +8008,8 @@ service cloud.firestore {
           const data = docSnap.data();
           if (!data) return;
 
-          // 오래된 비정상/종료 세션은 비동기 자동 청소 (사용량 초과 상태에서는 쓰기 중단)
-          if (now - (data.lastSeen || 0) > PRESENCE_STALE_MS) {
-            if (!isCloudQuotaExhausted && !isCloudPermissionError) {
-              docSnap.ref.delete().catch(err => handleCloudSyncError(err, '세션 정리', true));
-            }
-            return;
-          }
-
-          // 활성 세션 수집
-          if (now - (data.lastSeen || 0) < PRESENCE_ACTIVE_MS) {
+          // 오래된 세션은 서버 delete 쓰기 없이 화면 표시에서만 자동 제외
+          if (now - (data.lastSeen || 0) <= PRESENCE_ACTIVE_MS) {
             activeWorkers[sid] = data;
             if (sid !== mySessionId && data.workerNum) {
               takenNumbers.set(data.workerNum, sid);
@@ -8021,10 +8017,8 @@ service cloud.firestore {
           }
         });
 
-        // 내 작업자 번호 결정 (다른 활성 세션과 중복 방지)
+        // 내 작업자 번호 결정 (로컬 메모리에서만 중복 방지, 대기 중 Firestore 쓰기 없음)
         let myNum = myWorkerNum;
-        let needsSync = false;
-
         if (!myNum || takenNumbers.has(myNum)) {
           for (let i = 1; i <= 20; i++) {
             if (!takenNumbers.has(i)) {
@@ -8032,32 +8026,12 @@ service cloud.firestore {
               break;
             }
           }
-          needsSync = true;
-        }
-
-        if (!snapshot.docs.some(d => d.id === mySessionId)) {
-          needsSync = true;
         }
 
         myWorkerNum = myNum;
         myWorkerName = `${prefix}${myNum}`;
         myWorkerColor = WORKER_COLOR_PALETTE[(myNum - 1) % WORKER_COLOR_PALETTE.length];
         try { sessionStorage.setItem('phone_worker_num_' + storeId, myNum); } catch(e) {}
-
-        if (needsSync && !isCloudQuotaExhausted && !isCloudPermissionError) {
-          lastPresenceHeartbeatAt = Date.now();
-          mySessionDocRef.set({
-            sessionId: mySessionId,
-            workerNum: myWorkerNum,
-            workerName: myWorkerName,
-            colorIndex: (myWorkerNum - 1) % WORKER_COLOR_PALETTE.length,
-            activeCell: myActiveCellId || null,
-            lastSeen: lastPresenceHeartbeatAt
-          }, { merge: true }).catch(err => {
-            console.warn("Session register error:", err);
-            handleCloudSyncError(err, '동시접속 등록', true);
-          });
-        }
 
         activePresenceWorkers = activeWorkers;
         updateMyWorkerBadgeUI();
@@ -8067,57 +8041,49 @@ service cloud.firestore {
         console.warn("Presence snapshot error:", err);
         handleCloudSyncError(err, '동시접속 조회', true);
       });
-
-      // 활성 탭일 때만 60초 주기 하트비트 전송 (백그라운드 탭/사용량 초과 시 쓰기 절약)
-      presenceHeartbeatTimer = setInterval(() => {
-        if (!isUnlocked || !currentStoreId || document.hidden) return;
-        if (isCloudQuotaExhausted || isCloudPermissionError) return;
-        lastPresenceHeartbeatAt = Date.now();
-        mySessionDocRef.set({
-          sessionId: mySessionId,
-          workerNum: myWorkerNum,
-          workerName: myWorkerName,
-          colorIndex: (myWorkerNum - 1) % WORKER_COLOR_PALETTE.length,
-          activeCell: myActiveCellId || null,
-          lastSeen: lastPresenceHeartbeatAt
-        }, { merge: true }).catch(err => handleCloudSyncError(err, '동시접속 유지', true));
-      }, PRESENCE_HEARTBEAT_MS);
     }
 
     function sendPresenceCellUpdate(cellId) {
       if (!db || !currentStoreId || !isUnlocked || !mySessionId) return;
       if (isCloudQuotaExhausted || isCloudPermissionError) return;
-      lastPresenceHeartbeatAt = Date.now();
+      myBroadcastedCellId = cellId || null;
       db.collection('presence').doc(currentStoreId).collection('sessions').doc(mySessionId).set({
+        sessionId: mySessionId,
+        workerNum: myWorkerNum,
+        workerName: myWorkerName,
+        colorIndex: (myWorkerNum - 1) % WORKER_COLOR_PALETTE.length,
         activeCell: cellId || null,
-        lastSeen: lastPresenceHeartbeatAt
+        lastSeen: Date.now()
       }, { merge: true }).catch(err => handleCloudSyncError(err, '작업 위치 동기화', true));
     }
 
     function broadcastCellFocus(cellId) {
+      // 단순 클릭·포커스만으로는 서버에 쓰지 않고, 실제 값 수정 시(input/change)에만 전송
       if (!db || !currentStoreId || !isUnlocked || !mySessionId) return;
       if (cellBlurTimer) { clearTimeout(cellBlurTimer); cellBlurTimer = null; }
-      const changed = (myActiveCellId !== cellId);
       myActiveCellId = cellId;
-      if (!changed || isCloudQuotaExhausted || isCloudPermissionError) return;
+      if (!cellId || myBroadcastedCellId === cellId || isCloudQuotaExhausted || isCloudPermissionError) return;
       if (cellFocusTimer) clearTimeout(cellFocusTimer);
       cellFocusTimer = setTimeout(() => {
         cellFocusTimer = null;
-        if (myActiveCellId === cellId) {
+        if (myActiveCellId === cellId && myBroadcastedCellId !== cellId) {
           sendPresenceCellUpdate(cellId);
         }
-      }, 350);
+      }, 250);
     }
 
     function broadcastCellBlur(cellId) {
       if (!db || !currentStoreId || !isUnlocked || !mySessionId) return;
       if (cellFocusTimer) { clearTimeout(cellFocusTimer); cellFocusTimer = null; }
       if (myActiveCellId === cellId) {
+        myActiveCellId = null;
+      }
+      // 실제로 수정 중 표시를 서버에 보냈던 칸을 빠져나갈 때만 해제 쓰기 수행 (단순 클릭 이탈은 0 writes)
+      if (myBroadcastedCellId === cellId) {
         if (cellBlurTimer) clearTimeout(cellBlurTimer);
         cellBlurTimer = setTimeout(() => {
           cellBlurTimer = null;
-          if (myActiveCellId === cellId) {
-            myActiveCellId = null;
+          if (myBroadcastedCellId === cellId && myActiveCellId !== cellId) {
             sendPresenceCellUpdate(null);
           }
         }, 400);
@@ -8182,14 +8148,19 @@ service cloud.firestore {
     }
 
     if (typeof window !== 'undefined') {
-      document.addEventListener('focusin', function(e) {
-        const el = e.target;
-        if (!el || !el.getAttribute) return;
+      function resolvePresenceCellId(el) {
+        if (!el || !el.getAttribute) return null;
         let cellId = el.getAttribute('data-cell-id');
         if (!cellId && el.id && (el.id.startsWith('cond-') || el.id.startsWith('discount-'))) {
           cellId = el.id;
         }
+        return cellId || null;
+      }
+
+      document.addEventListener('focusin', function(e) {
+        const cellId = resolvePresenceCellId(e.target);
         if (cellId) {
+          // 다른 작업자가 이미 이 칸을 수정 중이면 주의 안내만 표시 (단순 클릭으로는 서버 쓰기 안 함)
           if (activePresenceWorkers && Object.keys(activePresenceWorkers).length > 0) {
             const now = Date.now();
             for (const [sid, w] of Object.entries(activePresenceWorkers)) {
@@ -8199,43 +8170,29 @@ service cloud.firestore {
               }
             }
           }
+        }
+      }, true);
+
+      // 실제로 값을 수정하기 시작할 때(input)에만 '수정 중' 색상표시 동기화
+      document.addEventListener('input', function(e) {
+        const cellId = resolvePresenceCellId(e.target);
+        if (cellId) {
           broadcastCellFocus(cellId);
         }
       }, true);
 
       document.addEventListener('focusout', function(e) {
-        const el = e.target;
-        if (!el || !el.getAttribute) return;
-        let cellId = el.getAttribute('data-cell-id');
-        if (!cellId && el.id && (el.id.startsWith('cond-') || el.id.startsWith('discount-'))) {
-          cellId = el.id;
-        }
+        const cellId = resolvePresenceCellId(e.target);
         if (cellId) {
           broadcastCellBlur(cellId);
         }
       }, true);
 
       window.addEventListener('beforeunload', () => {
-        if (db && currentStoreId && mySessionId && !isCloudQuotaExhausted && !isCloudPermissionError) {
+        if (db && currentStoreId && mySessionId && myBroadcastedCellId && !isCloudQuotaExhausted && !isCloudPermissionError) {
           try {
             db.collection('presence').doc(currentStoreId).collection('sessions').doc(mySessionId).delete().catch(() => {});
           } catch(e) {}
-        }
-      });
-
-      document.addEventListener('visibilitychange', () => {
-        if (!document.hidden && db && isUnlocked && currentStoreId && mySessionId && !isCloudQuotaExhausted && !isCloudPermissionError) {
-          if (Date.now() - lastPresenceHeartbeatAt >= 45000) {
-            lastPresenceHeartbeatAt = Date.now();
-            db.collection('presence').doc(currentStoreId).collection('sessions').doc(mySessionId).set({
-              sessionId: mySessionId,
-              workerNum: myWorkerNum,
-              workerName: myWorkerName,
-              colorIndex: (myWorkerNum - 1) % WORKER_COLOR_PALETTE.length,
-              activeCell: myActiveCellId || null,
-              lastSeen: lastPresenceHeartbeatAt
-            }, { merge: true }).catch(err => handleCloudSyncError(err, '동시접속 복귀', true));
-          }
         }
       });
     }
@@ -9783,10 +9740,10 @@ service cloud.firestore {
       {
         date: '2026. 11. 28',
         tag: '최신',
-        title: '실시간 클라우드 동기화·동시접속 통신 최적화 및 사용량 초과 안내',
+        title: '수정 시에만 실시간 동기화·수정중 색상 표시 (대기 사용량 0) 및 한도 안내',
         items: [
-          '동시 접속자 유지 주기와 입력 칸 포커스·타이핑 저장 간격을 최적화해 불필요한 클라우드 사용량 소모를 대폭 줄였습니다.',
-          '매장 전환 시 중복 연결되던 동시접속 등록을 정리해 더 가볍고 안정적으로 동작하도록 개선했습니다.',
+          '화면을 켜두고 대기하거나 칸을 단순 클릭만 할 때는 클라우드 통신을 하지 않고, 실제로 금액·내용을 수정할 때만 동기화와 [작업자 수정 중] 색상 테두리가 표시되도록 최적화했습니다.',
+          '기존 8초 주기 동시접속 유지 신호와 자동 삭제 쓰기를 없애 하루 무료 사용량 소모를 극소화했습니다.',
           '클라우드 일일 무료 사용량을 초과한 경우 [클라우드 동기화 완료]로 잘못 표시되던 문제를 고치고, 상단 빨간 안내 배너와 해결 가이드를 띄워 바로 확인하실 수 있도록 개선했습니다.'
         ]
       },
